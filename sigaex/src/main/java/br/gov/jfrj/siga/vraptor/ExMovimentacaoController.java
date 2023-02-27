@@ -16,6 +16,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1989,7 +1990,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("podeTramitarEmParalelo", podeTramitarEmParalelo);
 		result.include("podeNotificar", podeNotificar);
 	}
-
+	
 	@Transacional
 	@Post("/app/expediente/mov/transferir_gravar")
 	public void transferirGravar(final int postback, final String sigla,
@@ -2003,7 +2004,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final DpPessoaSelecao responsavelSel, final CpGrupoDeEmailSelecao grupoSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
-			final String obsOrgao, final String protocolo, final Integer tipoTramite) throws Exception {
+			final String obsOrgao, final String protocolo, final Integer tipoTramite, final boolean adicionarRestricaoAcessoAntesTramite) throws Exception {
 		this.setPostback(postback);
 			
 		if ((responsavelSel.getObjeto() != null || lotaResponsavelSel.getObjeto() != null) && !new ExPodeRestringirTramitacao(getTitular(), getLotaTitular(), 
@@ -2043,7 +2044,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		
 		if(builder.getMob().getDoc().getMobilGeral().isAcessoRestrito()) {
-			if (tipoResponsavel == 2) {
+			if (tipoResponsavel == 1) {
 	    		result.include("msgCabecClass", "alert-danger");
 	    		result.include("mensagemCabec", String.format("Documento com restrição de acesso. Não permitido tramitação para %s.",SigaMessages.getMessage("usuario.lotacao")));
 	    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
@@ -2051,8 +2052,31 @@ public class ExMovimentacaoController extends ExController {
 						tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo,
 						tipoTramite);
 				return;
-			} else if (tipoResponsavel == 2 ){
-				//TODO: Implementar regra de incluso no tramite
+			} else if (tipoResponsavel == 2 ) {
+				if (!builder.getMob().getDoc().getMobilGeral()
+						.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+						.contains(responsavelSel.getObjeto())) {
+					if (adicionarRestricaoAcessoAntesTramite) {
+						restringirAcessoAntesDeTramitar(builder.getMob().getDoc(),responsavelSel.getObjeto());	
+					} else {
+						result.include(SigaModal.CONFIRMACAO, 
+								SigaModal
+									.mensagem("Documento Restrito. Usuário não está na lista de restrição de acesso. Deseja incluir?")
+									.titulo("Confirmação")
+									.inverterBotoes()
+									.classBotaoDeAcao("btn-success")
+									.classBotaoDeFechar("btn-danger")
+									.linkBotaoDeAcao("javascript:submeter(true);"));
+						
+			    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
+								subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp,
+								tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo,
+								tipoTramite);
+			    		return;
+					}
+
+					
+				}
 			}	
 		}
 		
@@ -2205,6 +2229,26 @@ public class ExMovimentacaoController extends ExController {
 			result.include("origemRedirectTransferirGravar", true);
 			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
 		}
+	}
+	
+	private void restringirAcessoAntesDeTramitar(final ExDocumento documento , final DpPessoa pessoaASerAdicionada) {
+		Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), documento.getMobilGeral());
+		
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
+		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());	
+		
+		List<DpPessoa> listaPessoasRestricaoAcesso = new ArrayList<DpPessoa>();
+		listaPessoasRestricaoAcesso.add(pessoaASerAdicionada);
+		
+		ExNivelAcesso nivelAcesso = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_PESSOAS, ExNivelAcesso.class, false);
+		
+		
+		Ex.getInstance()
+				.getBL()
+				.restringirAcesso(getCadastrante(), getLotaTitular(), documento,
+						null, mov.getLotaResp(), mov.getResp(),
+						listaPessoasRestricaoAcesso, mov.getTitular(),
+						mov.getNmFuncaoSubscritor(), nivelAcesso);
 	}
 
 	private void forwardToTransferir(final String sigla, final int tipoResponsavel,

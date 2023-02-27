@@ -1,9 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	buffer="64kb"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <siga:pagina titulo="Restringir Acesso">
 
@@ -74,6 +73,7 @@
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
        				<input type="hidden" name="usu" id="usu" value=""/>
+       				<input type="hidden" id="resetarRestricaoAcesso" name="resetarRestricaoAcesso" value="false"/>
        				<div class="row">
 						<div class="col-sm-4">
 							<div class="form-group">
@@ -89,6 +89,18 @@
 							    </select>
 							</div>
 						</div>
+						
+						<c:if test="${not empty listaAcessoRestrito}">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<div class="form-check form-check-inline mt-4">
+										<input type="checkbox" id="chkResetDefault" name="chkResetDefault" class="form-check-input ml-3"  />
+										<label class="form-check-label" for="chkResetDefault">Retornar ao Nível de Acesso Padrão</label>
+									</div>
+								</div>
+							</div>
+						</c:if>
+						
 					</div>	
 					<div class="row">
 						<div class="col-sm-12">
@@ -106,50 +118,47 @@
 					</div>	
 					<div class='row bg-light' id="divUsuarios">
 						<!-- Pessoas selecionadas -->		
-						<div class='col-sm-12 mt-3 mb-1'><label><b>Pessoas Selecionadas</b></label></div>				
+									
 					</div>				
-											
-					
-					
-					<div class="table-responsive">
-						<table border="0" class="table table-sm table-striped">
-							<thead class="thead-dark">
-								<tr>
-									<th align="left" width="10%">Matrícula</th>
-									<th align="left">Nome</th>						
-									<th align="left"><fmt:message key="usuario.lotacao"/></th>
-									<th align="left">Função</th>
-									<th align="left"><c:if test="${siga_cliente != 'GOVSP'}">Localidade</c:if></th>
-									<th align="left" width="5%">Excluir</th>					
-								</tr>
-							</thead>
-							<tbody>
-								<c:forEach var="mov" items="${listaAcessoRestrito}">
-									<tr>
-										<td>${mov.subscritor }</td>
-										<td>${mov.subscritor.nomePessoa }</td>
-										<td>${mov.nmLotacao }</td>
-										<td>${mov.nmFuncao }</td>
-										<td><c:if test="${siga_cliente != 'GOVSP'}">${mov.nmLocalidade}</c:if></td>
-										<td><input type="button" value="Excluir" 
-											onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/cancelar_restricao_acesso?id=${mov.idMov}&redirectURL=/app/expediente/mov/restringir_acesso?sigla=${sigla}'" class="btn btn-danger"/>					
-										</td>
-									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
-					</div>
-					
-					
+
 					<div class="row">
 						<div class="col-sm mt-3">
 							<input type="button" value="Ok" id="ok" class="btn btn-primary"/> 
-							<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-cancel ml-2"/> 
+							<input type="button" value="Voltar" onclick="javascript:location.href='${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${sigla}';" class="btn btn-cancel ml-2" />
 						</div>
 					</div>
 				</form>
 			</div>
 		</div>
+		<c:if test="${not empty listaAcessoRestrito}">
+			<h4 class="gt-table-head">Lista de Restrição de Acesso</h4>	
+			<div class="table-responsive">
+				<table border="0" class="table table-sm table-striped">
+					<thead class="thead-dark">
+						<tr>
+							<th align="left" width="10%">Matrícula</th>
+							<th align="left">Nome</th>						
+							<th align="left"><fmt:message key="usuario.lotacao"/></th>
+							<th align="left">Função</th>
+							<th align="left" width="5%">Excluir</th>					
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach var="mov" items="${listaAcessoRestrito}">
+							<tr>
+								<td>${mov.titular }</td>
+								<td>${mov.titular.nomePessoa }</td>
+								<td>${mov.lotaTitular.nomeLotacao }</td>
+								<td>${mov.titular.funcaoString }</td>
+								<td><input type="button" value="Excluir" 
+									onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/cancelar_restricao_acesso?id=${mov.idMov}&redirectURL=/app/expediente/mov/restringir_acesso?sigla=${sigla}'" class="btn btn-danger"/>					
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
+		</c:if>
 	</div>
 </siga:pagina>
 
@@ -179,11 +188,18 @@
 	});
 
 	$("#ok").click(function(){
-		var usuarios = document.getElementById("usu").value;
-		if(usuarios.length > 1) {
+		
+		//reset restrição acesso
+		if (document.getElementById("chkResetDefault") !== null && document.getElementById("chkResetDefault").checked) {
+			document.getElementById("resetarRestricaoAcesso").value = true;
 			frm.submit();
 		} else {
-			alert("Selecione pelo menos uma pessoa.");
+			var usuarios = document.getElementById("usu").value;
+			if(usuarios.length > 1) {
+				frm.submit();
+			} else {
+				alert("Selecione pelo menos uma pessoa.");
+			}
 		}
 	});
 

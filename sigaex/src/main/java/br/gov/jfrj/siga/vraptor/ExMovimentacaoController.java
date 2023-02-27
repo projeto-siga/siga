@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.print.Doc;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -888,47 +889,55 @@ public class ExMovimentacaoController extends ExController {
 	
 	@Transacional
 	@Post("app/expediente/mov/restringir_acesso_gravar")
-	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso) throws Exception {
-		String usuarios[] = usu.split(";");
+	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso, final boolean resetarRestricaoAcesso) throws Exception {
 		
-		List<DpPessoa> listaSubscritor = new ArrayList<DpPessoa>();
-		for (int i = 1; i < usuarios.length; i++) {
-			listaSubscritor.add(dao().consultar(Long.valueOf(usuarios[i]), DpPessoa.class, false));
-		}
-		
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
-		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder);
 		
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia();
+		if (resetarRestricaoAcesso) {
+			if (doc != null && doc.getMobilGeral().isAcessoRestrito()) {
+				desfazerRestringirAcesso(sigla);
+			} else {
+				throw new AplicacaoException("Não é possíver retornar ao Nível de Acesso Padrão. Não há restrição de acesso definida para ser desfeita.");
+			}
+		} else {
+			String usuarios[] = usu.split(";");
+			
+			List<DpPessoa> listaPessoasRestricaoAcesso = new ArrayList<DpPessoa>();
+			for (int i = 1; i < usuarios.length; i++) {
+				listaPessoasRestricaoAcesso.add(dao().consultar(Long.valueOf(usuarios[i]), DpPessoa.class, false));
+			}
+							
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+					.novaInstancia();
 
-		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+			final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
-		ExNivelAcesso exTipoSig = null;
+			ExNivelAcesso exTipoSig = null;
 
-		if (nivelAcesso != null) {
-			exTipoSig = dao()
-					.consultar(nivelAcesso, ExNivelAcesso.class, false);
+			if (nivelAcesso != null) {
+				exTipoSig = dao()
+						.consultar(nivelAcesso, ExNivelAcesso.class, false);
+			}
+			
+			Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), builder.getMob());
+						
+			adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();			
+			
+			Ex.getInstance()
+					.getBL()
+					.restringirAcesso(getCadastrante(), getLotaTitular(), doc,
+							null, mov.getLotaResp(), mov.getResp(),
+							listaPessoasRestricaoAcesso, mov.getTitular(),
+							mov.getNmFuncaoSubscritor(), exTipoSig);
+			
+			removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();
+
+			result.include("msgCabecClass", "alert-warning");
+			result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
 		}
-		
-		Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), builder.getMob());
-					
-		adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();			
-		
-		Ex.getInstance()
-				.getBL()
-				.restringirAcesso(getCadastrante(), getLotaTitular(), doc,
-						null, mov.getLotaResp(), mov.getResp(),
-						listaSubscritor, mov.getTitular(),
-						mov.getNmFuncaoSubscritor(), exTipoSig);
-		
-		removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();
 
-		result.include("msgCabecClass", "alert-warning");
-		result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");
-		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
 	@Transacional
@@ -2039,11 +2048,28 @@ public class ExMovimentacaoController extends ExController {
         			return;
 	        	}
 	        }
-		}
+		}		
 			
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
+		
+		
+		if(builder.getMob().getDoc().getMobilGeral().isAcessoRestrito()) {
+			if (tipoResponsavel == 2) {
+	    		result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", String.format("Documento com restrição de acesso. Não permitido tramitação para %s.",SigaMessages.getMessage("usuario.lotacao")));
+	    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
+						subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp,
+						tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo,
+						tipoTramite);
+				return;
+			} else if (tipoResponsavel == 2 ){
+				//TODO: Implementar regra de incluso no tramite
+			}	
+		}
+		
+		
 		
 		if(responsavelSel != null) {
 			Boolean podeTramitar = Boolean.FALSE;
@@ -2587,6 +2613,15 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
 
+		if(builder.getMob().getDoc().getMobilGeral().isAcessoRestrito() &&  tipoResponsavel == 2) {
+    		result.include("msgCabecClass", "alert-danger");
+    		result.include("mensagemCabec", String.format("Documento com restrição de acesso. Não permitido Definição de Acompanhamento para %s.",SigaMessages.getMessage("usuario.lotacao")));
+    		result.forwardTo(this).aVincularPapel(sigla, responsavelSel, lotaResponsavelSel, tipoResponsavel, idPapel);
+			return;
+
+		}
+		
+		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia();
 		movimentacaoBuilder.setDtMovString(dtMovString)

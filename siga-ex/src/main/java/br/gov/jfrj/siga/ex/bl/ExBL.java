@@ -5908,7 +5908,7 @@ public class ExBL extends CpBL {
 	
 	public void restringirAcesso(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final Date dtMov, DpLotacao lotaResponsavel, final DpPessoa responsavel,
-			final List<DpPessoa> listaSubscritor, final DpPessoa titular, String nmFuncaoSubscritor,
+			final List<DpPessoa> listaPessoasRestricaoAcesso, final DpPessoa titular, String nmFuncaoSubscritor,
 			ExNivelAcesso nivelAcesso) throws AplicacaoException {
 
 		if (nivelAcesso == null) {
@@ -5920,11 +5920,24 @@ public class ExBL extends CpBL {
 
 			List<ExDocumento> documentos = new ArrayList<>();
 			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
+			List<DpPessoa> listaPessoasSubscritoresRestricaoAcesso = new ArrayList<DpPessoa>();
+			
+			
 			documentos.add(doc);
 			documentos.addAll(doc.getExDocumentoFilhoSet());
 			for (ExDocumento exDocumento : documentos) {
-				for (DpPessoa subscritor : listaSubscritor) {					
-					
+				
+				listaPessoasSubscritoresRestricaoAcesso.clear();
+				listaPessoasSubscritoresRestricaoAcesso.addAll(listaPessoasRestricaoAcesso);
+				
+				//mantém Subscritores e Cossignatários caso esteja pendente de assinatura
+				if (exDocumento.isPendenteDeAssinatura()) {
+					listaPessoasSubscritoresRestricaoAcesso.addAll(exDocumento.getSubscritorECosignatarios());
+				}
+				
+				
+				for (DpPessoa subscritor : listaPessoasSubscritoresRestricaoAcesso) {				
+
 					final ExMovimentacao mov = criarNovaMovimentacao(
 							ExTipoDeMovimentacao.RESTRINGIR_ACESSO, cadastrante, lotaCadastrante,
 							exDocumento.getMobilGeral(), dtMov, subscritor, null, titular, null, dtMov);

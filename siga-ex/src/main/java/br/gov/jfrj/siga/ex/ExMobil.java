@@ -126,6 +126,19 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return movsTp;
 	}
 	
+	public List<DpPessoa> getSubscitoresMovimentacoesPorTipo(ITipoDeMovimentacao tpMov, boolean somenteAtivas) {
+		List<ExMovimentacao> movimentacoes = getMovimentacoesPorTipo(tpMov, somenteAtivas);
+		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
+		
+		if (movimentacoes != null) {
+			for (ExMovimentacao movimentacao : movimentacoes) {
+				subscritores.add(movimentacao.getSubscritor());
+			}
+		}
+		return subscritores;
+		
+	}
+	
 	public List<ExMovimentacao> getMovimentacoesPorNome (String descr, boolean somenteAtivas) {
 		return getMovimentacoesPorTipo(ExTipoDeMovimentacao.valueOf(descr), somenteAtivas); 
 	}
@@ -2522,6 +2535,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	public ExRef getRef() {
 		return new ExRef(this);
+	}
+	
+	
+	/**
+	 * Verifica se o mobil geral está com registro de Restrição de Acesso ativo
+	 */
+	public boolean isAcessoRestrito() {
+		return sofreuMov(ExTipoDeMovimentacao.RESTRINGIR_ACESSO,null,doc().getMobilGeral());
 	}
 
 }

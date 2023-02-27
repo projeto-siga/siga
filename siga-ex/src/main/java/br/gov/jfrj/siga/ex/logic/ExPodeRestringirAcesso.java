@@ -43,10 +43,19 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 	protected Expression create() {
 		return And.of(
 
-				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+				new ExPodePorConfiguracao(titular, lotaTitular)
+						.withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
 						.withExTpMov(ExTipoDeMovimentacao.RESTRINGIR_ACESSO),
+				
+				Or.of(
+						And.of(
+								Not.of(new ExEstaFinalizado(doc)),
+								
+								new ExECadastrante(doc, lotaTitular)),
 						
-				new ExPodeMovimentar(mob, titular, lotaTitular),
+						new ExPodeMovimentar(mob.getDoc().getMobilDefaultParaReceberJuntada(), titular, lotaTitular)),			
+				
+				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
 				Or.of(
 

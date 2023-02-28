@@ -606,7 +606,7 @@
 						
 				if ($('#radioPDFSemMarcas').hasClass('active')) {
 					//Remocao de link download completo
-					if(paramoffset == null)
+					if(paramoffset == null || paramoffset == "")
 						$('#pdfsemmarcaslink').removeClass('d-none');
 					
 					$('#pdflink').addClass('d-none');
@@ -615,7 +615,7 @@
 					ifr.src = path + refPDF + paramoffset + "&semmarcas=1";
 				} else if ($('#radioPDFTamanhoOriginal').hasClass('active')) {
 						//Remocao de link download completo
-						if(paramoffset == null)
+						if(paramoffset == null || paramoffset == "")
 							$('#pdftamanhooriginallink').removeClass('d-none');
 						
 						$('#pdflink').addClass('d-none');
@@ -623,7 +623,7 @@
 
 						ifr.src = path + refPDF + paramoffset + "&tamanhoOriginal=true";
 				} else {
-					if(paramoffset == null)
+					if(paramoffset == null || paramoffset == "")
 						$('#pdflink').removeClass('d-none');
 					
 					$('#pdfsemmarcaslink').addClass('d-none');
@@ -732,12 +732,12 @@
 	
 	async function verificarTamanhoDocComplMB(refPDF){
 		await $.ajax({
-			url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivos?arquivo='+refPDF,
+			url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivosDocs?arquivo='+refPDF,
 			type: 'GET',
 			success: function(data) {
 				try {
 					var tamanhoArquivos = JSON.parse(data);
-				  	localStorage.setItem('tamanhoArquivos', JSON.stringify(tamanhoArquivos))
+				  	localStorage.setItem('tamanhoArquivosDocs', JSON.stringify(tamanhoArquivos))
 				} catch(err){
 				  	sigaSpinner.ocultar();
 				}
@@ -746,18 +746,18 @@
 	}
 	
 	async function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
-		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+		var data = JSON.parse(localStorage.getItem('tamanhoArquivosDocs'));
 		if (data == null || data ==''){
 			sigaSpinner.mostrar();
 			await verificarTamanhoDocComplMB(refPDF);
-			data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+			data = JSON.parse(localStorage.getItem('tamanhoArquivosDocs'));
 			sigaSpinner.ocultar();
 		}
 		return data != null ? data['excedeuMB'] : false;
 	}
 	
 	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
-		var data = JSON.parse(localStorage.getItem('tamanhoArquivos'));
+		var data = JSON.parse(localStorage.getItem('tamanhoArquivosDocs'));
 
 		if (data != null){
 			var quantTotalArquivos = data['quantTotalArquivos'];
@@ -767,6 +767,7 @@
 			
 			let numOffsetAtual = paramoffset.match(/\d+/)[0];
 			
+			//Caculo para criacao de botoes
 			const paginate = (items, per, numOffsetAtual) =>
 			  Array .from ({length: Math .ceil (items / per)}, (_, i) => ({
 			    page: i + 1,
@@ -785,17 +786,19 @@
 			let BreakException = {};
 			try {
 				pag.forEach(item => {
+					//Botoes anterior e primeiro
 					if(pag.length > qtdLimiteBtLinkPage && item.page > 1 && item.atual){
 						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", 1, "`);'>", " &laquo;&laquo; ","</a> ");
 						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset - qtdPorLink, "`);'>", " &laquo; ","</a> ");
 					}
+					//Botoes Links PDFs
 					if(item.atual)
 						printLink = true;
-					
 					if(item.atual || printLink){
 						i++;
 						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == item.offset ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", item.range[0], " a ", item.range[1],"</a> ");
 					}
+					//Botoes proximo e ultimo
 					if(pag.length > qtdLimiteBtLinkPage && (pag.length > item.page && qtdLimiteBtLinkPage == i)){
 						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", " &raquo; ","</a> ");
 						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", pag[pag.length - 1].offset, "`);'>", " &raquo;&raquo; ","</a> ");
@@ -824,7 +827,7 @@
 	});
 	
 	window.onload = function () { 
-		localStorage.removeItem('tamanhoArquivos');
+		localStorage.removeItem('tamanhoArquivosDocs');
 	} 
 </script>
 <c:if test="${mob.doc.podeReordenar()}"> 

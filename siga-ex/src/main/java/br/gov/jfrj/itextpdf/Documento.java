@@ -66,12 +66,15 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import static br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao.*;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -593,27 +596,34 @@ public class Documento {
 		return ab;
 	}
 	
-	public static String obterTamanhoArquivos(final String arquivo, boolean completo, final boolean volumes, final boolean semmarcas)  throws Exception {
-		final ExMobil mob = Documento.getMobil(arquivo);
-		final ExMovimentacao mov = Documento.getMov(mob, arquivo);
-		boolean excedeuMB = Boolean.FALSE;
-		boolean estampar = !semmarcas;
-		List<ExArquivoNumerado> ans = Documento.getArquivosNumerados(mob, mov, null, completo, volumes);
+	public static String obterTamanhoArquivosDocs(final DpPessoa dpPessoa, final DpLotacao dpLotacao,
+			final String arquivo, boolean completo, final boolean volumes, final boolean semmarcas)  throws Exception {
 		long bytes = 0;
-		for (ExArquivoNumerado an : ans) {
-			byte[] ab = obterBytesDocumento(mob, estampar, an);
-			bytes += ab.length;
-			if(bytes >= 44*1024*1024) {//Conversao MB para Bytes
-				excedeuMB = Boolean.TRUE;
-				break;
+		boolean excedeuMB = Boolean.FALSE;
+		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();
+		
+		if(Ex.getInstance().getConf().podePorConfiguracao(dpPessoa, dpLotacao, HABILITAR_PAGINACAO_PDF_DOC_COMPLETO)){
+			final ExMobil mob = Documento.getMobil(arquivo);
+			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
+			
+			boolean estampar = !semmarcas;
+			ans = Documento.getArquivosNumerados(mob, mov, null, completo, volumes);
+			
+			for (ExArquivoNumerado an : ans) {
+				byte[] ab = obterBytesDocumento(mob, estampar, an);
+				bytes += ab.length;
+				//Conversao MB para Bytes
+				if(bytes >= 44*1024*1024) {
+					excedeuMB = Boolean.TRUE;
+					break;
+				}
 			}
 		}
 		Map<String,Object> map = new HashMap<>();
-		map.put("tamanhoByte", bytes);
+		map.put("somaArqBytes", bytes);
 		map.put("quantTotalArquivos", ans.size());
 		map.put("excedeuMB", excedeuMB);
-		Gson gson = new Gson(); 
-		String json = gson.toJson(map); 
+		String json = new Gson().toJson(map); 
 		return json;
 	}
 

@@ -607,6 +607,13 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
                     ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
             new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
                     CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+            CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+	
+	HABILITAR_PAGINACAO_PDF_DOC_COMPLETO(65, "Habilitar Paginação PDF Documento Completo", "Esta configuração tem o objetivo de habilitar a Paginação PDF Documento Completo "
+			+ "na funcionalidade Ver Documento Completo, em casos que exista grandes números de Doc. avulsos incluídos / juntados (páginas). O limite para quebra (paginação), será que a soma de documentos seja maior que 500Mb.",
+            new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.MODELO, ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO },
+            new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
+                    CpSituacaoDeConfiguracaoEnum.NAO_PODE },
             CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
  
 	

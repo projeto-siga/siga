@@ -22,6 +22,8 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import static br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao.HABILITAR_PAGINACAO_PDF_DOC_COMPLETO;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
@@ -61,6 +63,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.api.v1.DocumentosSiglaArquivoGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -180,7 +183,10 @@ public class ExArquivoController extends ExController {
 				req.volumes = volumes;
 				req.exibirReordenacao = exibirReordenacao;
 				req.tamanhoOriginal = tamanhoOriginal;
-				req.paramoffset = paramoffset;
+				
+				if(	Ex.getInstance().getConf().podePorConfiguracao(
+						getCadastrante(), getLotaCadastrante(), HABILITAR_PAGINACAO_PDF_DOC_COMPLETO))
+					req.paramoffset = paramoffset;
 				
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
@@ -284,10 +290,11 @@ public class ExArquivoController extends ExController {
 		result.include("filename", filename);
 	}
 	
-	@Get("/public/app/arquivo/obterTamanhoArquivos")
-	public void obterTamanhoArquivos(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
+	@Transacional
+	@Get("/public/app/arquivo/obterTamanhoArquivosDocs")
+	public void obterTamanhoArquivosDocs(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
 		boolean semmarcas = Boolean.TRUE;
-		String json = Documento.obterTamanhoArquivos(arquivo, completo, volumes, semmarcas);
+		String json = Documento.obterTamanhoArquivosDocs(getCadastrante(), getLotaCadastrante(), arquivo, completo, volumes, semmarcas);
 		setMensagem(json);
 		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 	}

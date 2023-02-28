@@ -2341,9 +2341,9 @@ Pede deferimento.</span><br/><br/><br/>
 
 [#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} ]
     [#if reler == true && idAjax != ""]
-            [#local jreler = " sbmt('" + idAjax + "');\""]
+        [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
-            [#local jreler = " sbmt();\""]
+        [#local jreler = " onchange=\"javascript: sbmt();\""]
     [/#if]
 
     [#local v = (.vars[var]!"")?string /]
@@ -2375,12 +2375,12 @@ Pede deferimento.</span><br/><br/><br/>
 	         
 		[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-		<input type="text" id="${var}" name="${var}" value="${v}" size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="00/00/0000"/>		
+		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""} size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="00/00/0000"/>		
 		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>				
 	    [#else]
 	    <span class="valor">${v}</span>
 	    [/#if]
-	    <script>
+        <script type="text/javascript">
 	    	$('.campoData').mousedown(function() {
 	  			$('.campoData').datepicker({
 	            	onSelect: function(){

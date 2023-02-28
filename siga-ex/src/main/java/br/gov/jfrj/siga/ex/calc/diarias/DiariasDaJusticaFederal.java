@@ -271,7 +271,7 @@ public class DiariasDaJusticaFederal {
 			final double cotacaoDoDolar, final TipoDeDiariaEnum tipoDeDiaria, final boolean prorrogacao,
 			final double valorJaRecebido, final double valorUnitarioDoAuxilioAlimentacao,
 			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria,
-			final List<DiariasDaJusticaFederalParametroTrecho> trechos, final List<LocalDate> feriados) {
+			final List<DiariasDaJusticaFederalParametroTrecho> trechos, final List<LocalDate> feriados, final List<LocalDate> diasSemDiaria) {
 		DiariasDaJusticaFederalResultado r = new DiariasDaJusticaFederalResultado();
 		try {
 			if (trechos == null)
@@ -392,6 +392,13 @@ public class DiariasDaJusticaFederal {
 					// Calcula desconto de auxílio transporte
 					dia.descontoDeAuxilioTransporte = valorUnitarioDoAuxilioTransporte;
 				}
+
+                // Zera o valor da diária e dos descontos de alimentação e transporte nos dias em que forem espeficicados
+                if (diasSemDiaria.contains(d)) {
+                    dia.diaria = 0;
+                    dia.descontoDeAuxilioAlimentacao = 0;
+                    dia.descontoDeAuxilioTransporte = 0;
+                }
 
 				// Calcula o subtotal antes da aplicação da glosa
 				dia.subtotalBruto = dia.diaria + dia.acrescimoDeDeslocamento - dia.descontoDeAuxilioAlimentacao

@@ -2380,7 +2380,7 @@ Pede deferimento.</span><br/><br/><br/>
 	    [#else]
 	    <span class="valor">${v}</span>
 	    [/#if]
-	    <script>
+        <script type="text/javascript">
 	    	$('.campoData').mousedown(function() {
 	  			$('.campoData').datepicker({
 	            	onSelect: function(){

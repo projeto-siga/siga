@@ -290,8 +290,7 @@ public class ExArquivoController extends ExController {
 		result.include("filename", filename);
 	}
 	
-	@Transacional
-	@Get("/public/app/arquivo/obterTamanhoArquivosDocs")
+	@Get("/app/arquivo/obterTamanhoArquivosDocs")
 	public void obterTamanhoArquivosDocs(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
 		boolean semmarcas = Boolean.TRUE;
 		String json = Documento.obterTamanhoArquivosDocs(getCadastrante(), getLotaCadastrante(), arquivo, completo, volumes, semmarcas);

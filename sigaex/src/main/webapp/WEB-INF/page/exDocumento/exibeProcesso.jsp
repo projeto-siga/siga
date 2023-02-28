@@ -732,7 +732,7 @@
 	
 	async function verificarTamanhoDocComplMB(refPDF){
 		await $.ajax({
-			url: '${pageContext.request.contextPath}/public/app/arquivo/obterTamanhoArquivosDocs?arquivo='+refPDF,
+			url: '${pageContext.request.contextPath}/app/arquivo/obterTamanhoArquivosDocs?arquivo='+refPDF,
 			type: 'GET',
 			success: function(data) {
 				try {

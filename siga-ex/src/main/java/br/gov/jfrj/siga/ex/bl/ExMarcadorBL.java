@@ -1,12 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -202,6 +196,8 @@ public class ExMarcadorBL {
 				}
 			}
 		}
+
+		acrescentarMarcadorEmAndamentoParaDesentranhamento();
 
 		return;
 	}
@@ -769,7 +765,7 @@ public class ExMarcadorBL {
 
 		if (nivelMDest > 0) {
 			acrescentarMarca(mDest[nivelMDest], 
-					(movDest[nivelMDest].getExMovimentacaoRef() != null && movDest[nivelMDest].getExMovimentacaoRef().getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE) ?
+					(movDest[nivelMDest].getExMovimentacaoRef() != null && ExTipoDeMovimentacao.hasArquivado(movDest[nivelMDest].getExMovimentacaoRef().getExTipoMovimentacao())) ?
 					movDest[nivelMDest].getExMovimentacaoRef().getDtIniMov() : movDest[nivelMDest].getDtIniMov(), movDest[nivelMDest].getResp(),
 					movDest[nivelMDest].getLotaResp());
 			calcularMarcadoresFuturosTemporalidade(movDest[nivelMDest], mDest[nivelMDest]);
@@ -789,7 +785,7 @@ public class ExMarcadorBL {
 		ExTipoDestinacao destinacao = mob.getExDestinacaoFinalEfetiva();
 
 		Date dtIniMarca = null;
-		if (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().getExTipoMovimentacao() == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE)
+		if (mov.getExMovimentacaoRef() != null && ExTipoDeMovimentacao.hasArquivado(mov.getExMovimentacaoRef().getExTipoMovimentacao()))
 			dtIniMarca = mov.getExMovimentacaoRef().getDtIniMov();
 		else
 			dtIniMarca = mov.getDtIniMov();
@@ -885,6 +881,21 @@ public class ExMarcadorBL {
 			}
 		}
 		return movRetorno;
+	}
+	
+	public void acrescentarMarcadorEmAndamentoParaDesentranhamento(){
+		ExMovimentacao ultimaMovimentacaoDesentranhamento = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
+
+		if (Objects.isNull(ultimaMovimentacaoDesentranhamento) 
+				|| Objects.isNull(ultimaMovimentacaoDesentranhamento.getExMovimentacaoRef())) {
+
+			return;
+		}
+			
+		acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), 
+				ultimaMovimentacaoDesentranhamento.getDtIniMov(),
+				ultimaMovimentacaoDesentranhamento.getCadastrante(),
+				ultimaMovimentacaoDesentranhamento.getLotaCadastrante());
 	}
 
 }

@@ -575,6 +575,7 @@ public interface IExApiV1 {
             public Boolean completo;
             public Boolean volumes;
             public Boolean exibirReordenacao;
+            public Boolean tamanhoOriginal;
         }
 
         public static class Response implements ISwaggerResponse, ISwaggerResponseFile {
@@ -637,6 +638,7 @@ public interface IExApiV1 {
             public Boolean completo;
             public Boolean volumes;
             public Boolean exibirReordenacao;
+            public Boolean tamanhoOriginal;
         }
 
         public static class Response implements ISwaggerResponse {

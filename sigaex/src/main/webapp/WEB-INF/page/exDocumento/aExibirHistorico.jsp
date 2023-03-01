@@ -109,7 +109,7 @@
 							</tr>
 						</thead>
 						<c:forEach var="mov" items="${m.movs}">
-								<tr class="${mov.classe} ${mov.disabled}">
+								<tr class="${mov.classe}">
 									<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
 									<c:choose>
 										<c:when test="${dt == dtUlt}">
@@ -119,23 +119,23 @@
 											<c:set var="dtUlt" value="${dt}" />
 										</c:otherwise>
 									</c:choose>
-									<td class="text-center">
+									<td class="text-center ${mov.disabled}">
 										${dt}
 									</td>
 									<td>
 										${mov.descrTipoMovimentacao}
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}"
  											descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}" 
  											lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" /> 
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.cadastrante.nomeAbreviado}"
  											descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" 
  											pessoaParam="${mov.parte.cadastrante.sigla}" /> 
 									</td>
-									<td> 
+									<td class="${mov.disabled}"> 
 										${mov.descricao}
 										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
@@ -145,6 +145,9 @@
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
 												<c:set var="acaourl" value="${pageContext.request.contextPath}${acao.url}"/>
+												<c:if test="${mov.tipoMovimentacaoArquivamento}">
+													<c:set var="acaourl" value="${acao.url}"/>
+												</c:if>
 												<c:if test="${mov.exTipoMovimentacao == 'PUBLICACAO_PORTAL_TRANSPARENCIA' 
 													|| mov.exTipoMovimentacao == 'GERAR_LINK_PUBLICO_PROCESSO'}">
 													<c:set var="acaourl" value="${acao.url}"/>
@@ -161,12 +164,12 @@
 										</siga:links>
 									</td>
 									<c:if test="${exibirCompleto != 'true' and mov.duracaoSpan > 0}">
-										<td class="duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpan}">
+										<td class="${mov.disabled} duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpan}">
 											${mov.duracao}
 										</td>
 									</c:if>
 									<c:if test="${exibirCompleto == 'true' and mov.duracaoSpanExibirCompleto > 0}">
-										<td class="duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpanExibirCompleto}">
+										<td class="${mov.disabled} duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpanExibirCompleto}">
 											${mov.duracao}
 										</td>
 									</c:if>

@@ -6957,18 +6957,22 @@ public class ExBL extends CpBL {
 			method.invoke(exBl, new Object[] { doc });
 		}
 	}
-
+	
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception {
+		return obterPdfPorNumeroAssinatura(num,false);
+	}
+
+	public byte[] obterPdfPorNumeroAssinatura(String num, boolean tamanhoOriginal) throws Exception {
 
 		ExArquivo arq = buscarPorNumeroAssinatura(num);
 
 		Documento documento = new Documento();
 
 		if (arq instanceof ExDocumento)
-			return documento.getDocumento(((ExDocumento) arq).getMobilGeral(), null);
+			return documento.getDocumento(((ExDocumento) arq).getMobilGeral(), null, tamanhoOriginal);
 		if (arq instanceof ExMovimentacao) {
 			ExMovimentacao mov = (ExMovimentacao) arq;
-			return documento.getDocumento(mov.getExMobil(), mov);
+			return documento.getDocumento(mov.getExMobil(), mov, tamanhoOriginal);
 		}
 
 		return null;
@@ -8936,17 +8940,22 @@ public class ExBL extends CpBL {
 	 * sua data de temporalidade.
 	 * 
 	 * */
-	public void reestruturacaoDocsArquivado(ExMobil mob, List<ExMovimentacao> movs, DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+	public void transferirEntreArquivos(ExMobil mob, DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			final DpLotacao lotaDestinoFinal, String descrMov) throws Exception {
 		
 		try {
 			iniciarAlteracao();
 			ExMovimentacao movArquivamentoNova = null;
-			ExMovimentacao movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
+			ExMovimentacao movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE);
+			if (movArquivadaACancelar == null)
+				movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO);
+			
+			if (movArquivadaACancelar == null)
+				movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
 
 			movArquivadaACancelar.setDescrMov(descrMov);
 			
-			movArquivamentoNova = criarNovaMovimentacao(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, cadastrante,
+			movArquivamentoNova = criarNovaMovimentacao(movArquivadaACancelar.getExTipoMovimentacao(), cadastrante,
 					lotaCadastrante, mob, null, null, lotaDestinoFinal, null, null, null);
 			
 			movArquivamentoNova.setExMovimentacaoRef(movArquivadaACancelar);

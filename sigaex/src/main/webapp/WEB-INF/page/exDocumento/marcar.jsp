@@ -98,38 +98,6 @@
 	</div>
 </div>
 
-<div class="modal fade" id="anotacaoObservacaoModal" tabindex="-1"
-	role="dialog" aria-labelledby="anotarModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="anotarModalLabel" style="font-weight: bold;">
-					Anotar
-				</h5>
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body" style="padding-top: 70px; padding-bottom: 60px;">
-					<input type="hidden" name="sigla" value="${m.sigla}" />
-					<div class="form-group">
-						<div class="form-group">
-							<p style="font-size: 13px; color: #9e9e9e;"><span style="font-size: 14px; font-weight: bold;">ATENÇÃO: </span>Anotações cadastradas não 
-							constituem o documento, são apenas  lembretes ou avisos 
-							para os usuários com acesso ao documento, podendo ser 
-							excluídas a qualquer tempo.</p>
-						</div>
-					</div>
-			</div>
-			<div class="modal-footer">
-				<a href="${linkTo[ExMovimentacaoController].aAnotar()}?sigla=${mob.sigla}" 
-					style="background: #007bff; border-radius: 5px; width: 52px; height: 40px; color: white; text-align: center; padding-top: 8px;">Ok</a>
-			</div>
-		</div>
-	</div>
-</div>
-
 <script type="text/javascript" src="/sigaex/javascript/vue.min.js"></script>
 
 

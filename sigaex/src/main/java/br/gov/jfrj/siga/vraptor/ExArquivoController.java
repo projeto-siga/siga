@@ -96,7 +96,7 @@ public class ExArquivoController extends ExController {
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
 			final boolean semmarcas, final boolean volumes, final Long idVisualizacao, boolean exibirReordenacao, 
-							boolean iframe, final String nomeAcao) throws Exception {
+							boolean iframe, final String nomeAcao, boolean tamanhoOriginal) throws Exception {
 		try {						
 			final String servernameport = getRequest().getServerName() + ":" + getRequest().getServerPort();
 			final String contextpath = getRequest().getContextPath();
@@ -178,6 +178,7 @@ public class ExArquivoController extends ExController {
 				req.completo = completo;
 				req.volumes = volumes;
 				req.exibirReordenacao = exibirReordenacao;
+				req.tamanhoOriginal = tamanhoOriginal;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
 				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
@@ -192,7 +193,7 @@ public class ExArquivoController extends ExController {
 					ab = mov.getConteudoBlobpdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					Documento.getDocumento(baos, null, mob, mov, completo, estampar, volumes, hash, null);
+					Documento.getDocumento(baos, null, mob, mov, completo, estampar, volumes, hash, null, tamanhoOriginal);
 					ab = baos.toByteArray();
 				}
 				if (ab == null) {
@@ -281,7 +282,7 @@ public class ExArquivoController extends ExController {
 	}
 	
 	@Get("/public/app/arquivo/obterDownloadDocumento")
-	public Download aObterDownloadDocumento(final String t, boolean completo, final boolean semmarcas, final boolean volumes, final String mime) throws Exception  {
+	public Download aObterDownloadDocumento(final String t, boolean completo, final boolean semmarcas, final boolean volumes, final String mime, final boolean tamanhoOriginal) throws Exception  {
 		try {
 
 			boolean isPdf = "PDF".equalsIgnoreCase(mime);
@@ -334,7 +335,7 @@ public class ExArquivoController extends ExController {
 	
 			if (isPdf) {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				Documento.getDocumento(baos, null, mob, null, completo, semmarcas, volumes, null, null);
+				Documento.getDocumento(baos, null, mob, null, completo, semmarcas, volumes, null, null, tamanhoOriginal);
 				ab = baos.toByteArray();
 				
 				if (ab == null) {

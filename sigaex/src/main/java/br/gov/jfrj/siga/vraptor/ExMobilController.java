@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
@@ -92,8 +93,10 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
 
+	private static final int MAX_ITENS_PAGINA_DUZENTOS = 200;
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
+	private static final int MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE = 200;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1068,21 +1071,30 @@ public class ExMobilController extends
 	}
 
 	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
-	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao, final int offset) {
+	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao,
+													final String dpLotacaoSelecao, 
+													final int offset) {
 
 		assertAcesso("RECLALOTE:Reclassificar em Lote");
 
-		Integer tamanho = null;
-
-		if (siglaClassificacao != null) {
+        Long idDpLotacaoSelecao = 0L;
+		if(Objects.nonNull(dpLotacaoSelecao) && !dpLotacaoSelecao.isEmpty()){
+			idDpLotacaoSelecao = Long.valueOf(dpLotacaoSelecao);	
+		}
+		
+        Integer tamanho = null;
+		if (Objects.nonNull(siglaClassificacao) && !siglaClassificacao.isEmpty()) {
 			tamanho = ExDao.getInstance()
-					.consultarQuantidadeParaReclassificarEmLote(getTitular(), siglaClassificacao);
+					.consultarQuantidadeParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
+                            idDpLotacaoSelecao, siglaClassificacao);
 
 		}
+		
 		if (Objects.nonNull(tamanho)) {
 			List<ExDocumentoVO> documentosPorCodificacaoClassificacao =
-					ExDao.getInstance().consultarParaReclassificarEmLote(getTitular(), siglaClassificacao, offset,
-							MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE);
+					ExDao.getInstance().consultarParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
+                            idDpLotacaoSelecao, siglaClassificacao, offset,
+							MAX_ITENS_PAGINA_DUZENTOS);
 
 			List<ExDocumentoVO> itens = new ArrayList<>();
 			for (ExDocumentoVO item : documentosPorCodificacaoClassificacao) {
@@ -1096,7 +1108,7 @@ public class ExMobilController extends
 			documentosPorCodificacaoClassificacao = null;
 					
 			getP().setOffset(offset);
-			setItemPagina(MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE);
+			setItemPagina(MAX_ITENS_PAGINA_DUZENTOS);
 			setItens(itens);
 			setTamanho(tamanho);
 
@@ -1115,10 +1127,10 @@ public class ExMobilController extends
 
         if (Objects.nonNull(tamanho)) {
 			final List<ExMobil> itens = dao().consultarParaTramitarEmLote(getTitular(), offset,
-					MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+					MAX_ITENS_PAGINA_DUZENTOS);
 
             getP().setOffset(offset);
-            setItemPagina(MAX_ITENS_PAGINA_TRAMITACAO_LOTE);
+            setItemPagina(MAX_ITENS_PAGINA_DUZENTOS);
             setItens(itens);
             setTamanho(tamanho);
             
@@ -1129,4 +1141,42 @@ public class ExMobilController extends
 
         }
     }
+
+	@Get("/app/expediente/doc/listar_docs_para_arquivar_corrente_lote")
+	public void listar_docs_para_arquivar_corrente_lote(final String atendente, final int offset) {
+
+		assertAcesso("ARQLOTE:Arquivar em Lote");
+
+		Long pessoaId = null;
+		Long lotacaoId = null;
+		
+		switch (atendente){
+			case "pessoa":
+				pessoaId = getTitular().getPessoaInicial().getId();
+				break;
+			case "lotacao":
+				lotacaoId = getLotaTitular().getLotacaoInicial().getId();
+				break;
+			default:
+				throw new AplicacaoException("Atendente deve ser informado");
+		}
+		
+		Integer tamanho = dao().consultarQuantidadeParaArquivarCorrenteEmLote(pessoaId, lotacaoId);
+
+		if (Objects.nonNull(tamanho)) {
+			final List<ExMobil> itens = dao().consultarParaArquivarCorrenteEmLote(pessoaId, lotacaoId, 
+					offset, MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+
+			getP().setOffset(offset);
+			setItemPagina(MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+			setItens(itens);
+			setTamanho(tamanho);
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+
+		}
+	}
 }

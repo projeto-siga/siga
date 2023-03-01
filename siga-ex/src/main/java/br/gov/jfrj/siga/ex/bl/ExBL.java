@@ -6957,18 +6957,22 @@ public class ExBL extends CpBL {
 			method.invoke(exBl, new Object[] { doc });
 		}
 	}
-
+	
 	public byte[] obterPdfPorNumeroAssinatura(String num) throws Exception {
+		return obterPdfPorNumeroAssinatura(num,false);
+	}
+
+	public byte[] obterPdfPorNumeroAssinatura(String num, boolean tamanhoOriginal) throws Exception {
 
 		ExArquivo arq = buscarPorNumeroAssinatura(num);
 
 		Documento documento = new Documento();
 
 		if (arq instanceof ExDocumento)
-			return documento.getDocumento(((ExDocumento) arq).getMobilGeral(), null);
+			return documento.getDocumento(((ExDocumento) arq).getMobilGeral(), null, tamanhoOriginal);
 		if (arq instanceof ExMovimentacao) {
 			ExMovimentacao mov = (ExMovimentacao) arq;
-			return documento.getDocumento(mov.getExMobil(), mov);
+			return documento.getDocumento(mov.getExMobil(), mov, tamanhoOriginal);
 		}
 
 		return null;

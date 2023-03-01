@@ -1,12 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -202,6 +196,8 @@ public class ExMarcadorBL {
 				}
 			}
 		}
+
+		acrescentarMarcadorEmAndamentoParaDesentranhamento();
 
 		return;
 	}
@@ -885,6 +881,21 @@ public class ExMarcadorBL {
 			}
 		}
 		return movRetorno;
+	}
+	
+	public void acrescentarMarcadorEmAndamentoParaDesentranhamento(){
+		ExMovimentacao ultimaMovimentacaoDesentranhamento = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
+
+		if (Objects.isNull(ultimaMovimentacaoDesentranhamento) 
+				|| Objects.isNull(ultimaMovimentacaoDesentranhamento.getExMovimentacaoRef())) {
+
+			return;
+		}
+			
+		acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), 
+				ultimaMovimentacaoDesentranhamento.getDtIniMov(),
+				ultimaMovimentacaoDesentranhamento.getCadastrante(),
+				ultimaMovimentacaoDesentranhamento.getLotaCadastrante());
 	}
 
 }

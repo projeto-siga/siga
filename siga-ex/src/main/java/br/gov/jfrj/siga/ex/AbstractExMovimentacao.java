@@ -91,11 +91,29 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                and (mar.cpMarcador.idMarcador=3"
 				+ "                or mar.cpMarcador.idMarcador=14)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		// Somente os "em andamento", "Transferido para Órgão Externo"
-		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
-				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=11)"
+		// Somente os mobis possíveis para o arquivamento em lote
+		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", 
+				query = "select mob from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+				+ "                and (mob.exDocumento.dtFinalizacao is not null)" // doc está finalizado
+				+ "                and (mob.exTipoMobil.idTipoMobil = :tipoMobilVia " // é via ou é geral de processo
+				+ "                		or (mob.exTipoMobil.idTipoMobil = :tipoMobilGeral " 
+				+ "                				and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc != :tipoFormaDocExpediente))" 
+				+ "                and (mar.cpMarcador.idMarcador not in :notInCpMarcadorEnumList)"
+				+ "                and (mar.cpMarcador.idMarcador in :cpMarcadorEnumList)"
 				+ "                ) order by mar.dtIniMarca desc"),
+		@NamedQuery(name = "consultarQuantidadeParaArquivarCorrenteEmLote",
+				query = "select count(*) from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+				+ "                and (mob.exDocumento.dtFinalizacao is not null)"
+				+ "                and (mob.exTipoMobil.idTipoMobil = :tipoMobilVia "
+				+ "                		or (mob.exTipoMobil.idTipoMobil = :tipoMobilGeral "
+				+ "                				and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc != :tipoFormaDocExpediente))"
+				+ "                and (mar.cpMarcador.idMarcador not in :notInCpMarcadorEnumList)"
+				+ "                and (mar.cpMarcador.idMarcador in :cpMarcadorEnumList)"
+				+ "                )"),
 		// Somente os "a recolher para arquivo intermediário"
 		@NamedQuery(name = "consultarParaArquivarIntermediarioEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "

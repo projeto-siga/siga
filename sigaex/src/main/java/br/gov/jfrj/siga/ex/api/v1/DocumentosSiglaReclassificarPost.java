@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -12,6 +13,8 @@ import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 @Transacional
 public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSiglaReclassificarPost {
@@ -27,12 +30,16 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
 
         ctx.assertAcesso(mob, titular, lotaTitular);
 
-        Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser reclassificado por " + titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), ExPodeReclassificar.class, titular, lotaTitular, mob);
+        Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser reclassificado por " 
+                + titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), 
+                ExPodeReclassificar.class, titular, lotaTitular, mob);
 
+        final ExClassificacaoSelecao classificacaoSelecao =
+                validarEBuscarClassificacao(mob.doc().getExClassificacaoAtual().getSigla(), req.novaClassificacao);
+        
         final String motivo = req.motivo;
         final String dtMovString = req.data1;
         final DpPessoaSelecao responsavel = getPessoaSelecaoPorSigla(req.matriculaResponsavel);
-        final ExClassificacaoSelecao classificacaoSelecao = getClassificacaoSelecaoPorSigla(req.novaClassificacao);
 
         final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia().setDescrMov(motivo)
                 .setDtMovString(dtMovString).setCadastrante(cadastrante).setLotaTitular(lotaTitular)
@@ -52,6 +59,21 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
         return "Reclassificar";
     }
 
+    private ExClassificacaoSelecao validarEBuscarClassificacao(final String classificacaoAtual, 
+                                                               final String novaClassificacao){
+        if(classificacaoAtual.equals(novaClassificacao)){
+            throw new AplicacaoException("Classificação selecionada para reclassificar é a mesma da atual. "+
+                    "Selecione valores diferentes para a reclassificação");
+        }
+
+        final ExClassificacaoSelecao classificacaoSelecao = getClassificacaoSelecaoPorSigla(novaClassificacao);
+        if(Objects.isNull(classificacaoSelecao)){
+            throw new AplicacaoException("Classificação selecionada inválida");
+        }
+        
+        return classificacaoSelecao;
+    }
+    
     private ExClassificacaoSelecao getClassificacaoSelecaoPorSigla(String sigla) {
         ExClassificacaoSelecao exClassificacaoSelecao = null;
         if (StringUtils.isNotEmpty(sigla)) {

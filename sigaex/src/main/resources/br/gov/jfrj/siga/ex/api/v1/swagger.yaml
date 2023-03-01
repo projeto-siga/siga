@@ -2845,6 +2845,9 @@ paths:
               status:
                 type: string
                 default: "OK"
+              classificacao:
+                description: Classificação do documento após a reclassificação
+                type: string
         500:
           description: Error ocurred
           schema:

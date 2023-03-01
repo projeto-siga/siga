@@ -51,6 +51,7 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
                 mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);
 
         resp.sigla = mob.doc().getCodigo();
+        resp.classificacao = mob.doc().getExClassificacaoAtual().getDescricaoCompleta();
         resp.status = "OK";
     }
 
@@ -67,7 +68,7 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
         }
 
         final ExClassificacaoSelecao classificacaoSelecao = getClassificacaoSelecaoPorSigla(novaClassificacao);
-        if(Objects.isNull(classificacaoSelecao)){
+        if(Objects.isNull(classificacaoSelecao) || Objects.isNull(classificacaoSelecao.getId())){
             throw new AplicacaoException("Classificação selecionada inválida");
         }
         

@@ -1781,6 +1781,7 @@ public interface IExApiV1 {
         public static class Response implements ISwaggerResponse {
             public String sigla;
             public String status;
+            public String classificacao;
         }
 
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;

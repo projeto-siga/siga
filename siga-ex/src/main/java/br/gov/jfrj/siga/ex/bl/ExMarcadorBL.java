@@ -208,6 +208,9 @@ public class ExMarcadorBL {
 		// Só produzir marcas no último volume de processos administrativos
 		if (mob.doc().isProcesso() && !mob.isUltimoVolume())
 			return;
+		
+		if(mob.isJuntado())
+			return;
 
 		// Conteplar movimentações gerais e também as da via específica
 		List<ExMovimentacao> marcacoes = new ArrayList<>();
@@ -876,8 +879,14 @@ public class ExMarcadorBL {
 	}
 	
 	public void acrescentarMarcadorEmAndamentoParaDesentranhamento(){
-		ExMovimentacao ultimaMovimentacaoDesentranhamento = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
-
+		
+		ExMovimentacao ultimaMovimentacaoDesentranhamento = null;
+		ExMovimentacao ultMovNaoCancelada = mob.getUltimaMovimentacaoNaoCancelada();
+		
+		if (ultMovNaoCancelada.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
+			ultimaMovimentacaoDesentranhamento = ultMovNaoCancelada;			
+		}
+		
 		if (Objects.isNull(ultimaMovimentacaoDesentranhamento) 
 				|| Objects.isNull(ultimaMovimentacaoDesentranhamento.getExMovimentacaoRef())) {
 

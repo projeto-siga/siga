@@ -7,8 +7,6 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.Selecao;
-import br.gov.jfrj.siga.model.SelecaoGenerica;
 import br.gov.jfrj.siga.vraptor.ExClassificacaoSelecao;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
@@ -29,19 +27,17 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
 
         ctx.assertAcesso(mob, titular, lotaTitular);
 
-        Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser reclassificado por " 
-                + titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), 
-                ExPodeReclassificar.class, titular, lotaTitular, mob);
-        
+        Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser reclassificado por " + titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), ExPodeReclassificar.class, titular, lotaTitular, mob);
+
         final String motivo = req.motivo;
-        final String dtMovString = req.data;
-        final DpPessoaSelecao responsavel = (DpPessoaSelecao) getSelecaoPorSigla(req.matriculaResponsavel);
-        final ExClassificacaoSelecao classificacaoSelecao = (ExClassificacaoSelecao) getSelecaoPorSigla(req.novaClassificacao);
-                
-        final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
-                .setDescrMov(motivo).setDtMovString(dtMovString)
-                .setCadastrante(cadastrante).setLotaTitular(lotaTitular)
-                .setSubscritorSel(responsavel).setClassificacaoSel(classificacaoSelecao).construir(dao());
+        final String dtMovString = req.data1;
+        final DpPessoaSelecao responsavel = getPessoaSelecaoPorSigla(req.matriculaResponsavel);
+        final ExClassificacaoSelecao classificacaoSelecao = getClassificacaoSelecaoPorSigla(req.novaClassificacao);
+
+        final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia().setDescrMov(motivo)
+                .setDtMovString(dtMovString).setCadastrante(cadastrante).setLotaTitular(lotaTitular)
+                .setSubscritorSel(responsavel).setClassificacaoSel(classificacaoSelecao)
+                .construir(dao());
         mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
 
         Ex.getInstance().getBL().avaliarReclassificar(cadastrante, lotaCadastrante, mob, mov.getDtMov(),
@@ -56,17 +52,27 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
         return "Reclassificar";
     }
 
-    private Selecao getSelecaoPorSigla(String sigla) {
-        Selecao selecao = null;
-        if(StringUtils.isNotEmpty(sigla)){
-            selecao = new SelecaoGenerica();
-            selecao.setSigla(sigla);
-            selecao.buscarPorSigla();
+    private ExClassificacaoSelecao getClassificacaoSelecaoPorSigla(String sigla) {
+        ExClassificacaoSelecao exClassificacaoSelecao = null;
+        if (StringUtils.isNotEmpty(sigla)) {
+            exClassificacaoSelecao = new ExClassificacaoSelecao();
+            exClassificacaoSelecao.setSigla(sigla);
+            exClassificacaoSelecao.buscarPorSigla();
         }
-        return selecao;
+        return exClassificacaoSelecao;
     }
-    
-    private ExDao dao(){
+
+    private DpPessoaSelecao getPessoaSelecaoPorSigla(String sigla) {
+        DpPessoaSelecao dpPessoaSelecao = null;
+        if (StringUtils.isNotEmpty(sigla)) {
+            dpPessoaSelecao = new DpPessoaSelecao();
+            dpPessoaSelecao.setSigla(sigla);
+            dpPessoaSelecao.buscarPorSigla();
+        }
+        return dpPessoaSelecao;
+    }
+
+    private ExDao dao() {
         return ExDao.getInstance();
     }
 }

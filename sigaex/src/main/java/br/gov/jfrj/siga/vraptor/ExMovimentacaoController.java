@@ -198,6 +198,8 @@ import org.json.JSONObject;
 @Controller
 public class ExMovimentacaoController extends ExController {
 
+	private static final String ACESSO_FORM_TRANSF_ARQ = "TRARQ: Transferência de Documentos Arquivados";
+	
 	private static final String OPCAO_MOSTRAR = "mostrar";
 	private static final int DEFAULT_TIPO_RESPONSAVEL = 1;
 	private static final int DEFAULT_POSTBACK = 1;
@@ -1176,15 +1178,6 @@ public class ExMovimentacaoController extends ExController {
 						+ popup + "&sigla=" + mov.getExMobil().getDoc().getSigla()
 						+ "&id=" + mov.getIdMov());
 			}
-	}
-
-	@Get
-	@Path("app/expediente/mov/abrir_Popup")
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void abrirPopup(boolean popup, String motivo) throws Exception {
-		
-			result.include("motivo", motivo);
-			
 	}
 	
 	@Get("app/expediente/mov/juntar")
@@ -2822,10 +2815,10 @@ public class ExMovimentacaoController extends ExController {
 	public void aTransferirDocArquivadoLote(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
 			Long tamanho, int offsetTransferencia, List<ExDocumento> docArquivadosParaTransferir, int tipoResponsavel) {
 
-		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
+		assertAcesso(ACESSO_FORM_TRANSF_ARQ);
 		
-		result.include("listaTipoRespOrigem", this.getListaTipoRespPerfilOrigem());
-		result.include("listaTipoRespDestino", this.getListaTipoRespPerfilDestino());
+		result.include("listaTipoRespOrigem", this.getListaTipoLotacaoOuMatricula());
+		result.include("listaTipoRespDestino", this.getListaTipoLotacao());
 		result.include("itens", docArquivadosParaTransferir);
 		result.include("lotaResponsavelSel", Objects.isNull(lotaResponsavelSel) ? new DpLotacaoSelecao() : lotaResponsavelSel);
 		result.include("responsavelSel", Objects.isNull(responsavelSel) ? new DpPessoaSelecao() : responsavelSel);
@@ -2842,7 +2835,7 @@ public class ExMovimentacaoController extends ExController {
 	public void pesquisaDocArquivadosParaTransferir(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel,
 			final DpLotacaoSelecao lotacaoDestinatarioSel, int tipoResponsavel) {
 		
-		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
+		assertAcesso(ACESSO_FORM_TRANSF_ARQ);
 		List<ExDocumento> docArquivadosParaTransferir = null;
 		DpPessoa pessoa = new DpPessoa();
 		DpLotacao lotacao = new DpLotacao();
@@ -2861,7 +2854,7 @@ public class ExMovimentacaoController extends ExController {
 			tamanho = CpDao.getInstance().quantidadeMarcasPorLotacaoMarcadores(lotacao, marcadores, true);
 		} else {
 			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Necessario selecionar um usuário/" +SigaMessages.getMessage("usuario.lotacao") + " de origem.");
+			result.include("mensagemCabec", "Necessário selecionar um usuário/" +SigaMessages.getMessage("usuario.lotacao") + " de origem.");
 			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
 					tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
 			return;
@@ -2873,8 +2866,8 @@ public class ExMovimentacaoController extends ExController {
 				: 0;
 
 		docArquivadosParaTransferir = (tamanho <= MAX_ITENS_PAGINA_DUZENTOS)
-				? dao().consultarArquivadosParaTransferirEmLote(pessoa.getIdInicial(), lotacao.getIdInicial(), null, null)
-				: dao().consultarArquivadosParaTransferirEmLote(pessoa.getIdInicial(), lotacao.getIdInicial(), offsetTransferencia, MAX_ITENS_PAGINA_DUZENTOS);
+				? dao().consultarParaTransferirEntreArquivos(pessoa.getIdInicial(), lotacao.getIdInicial(), null, null, marcadores)
+				: dao().consultarParaTransferirEntreArquivos(pessoa.getIdInicial(), lotacao.getIdInicial(), offsetTransferencia, MAX_ITENS_PAGINA_DUZENTOS, marcadores);
 		
 		if (docArquivadosParaTransferir	== null || docArquivadosParaTransferir.isEmpty()) {
 			result.include("msgCabecClass", "alert-danger");
@@ -2895,7 +2888,7 @@ public class ExMovimentacaoController extends ExController {
 			final List<Long> documentosSelecionados, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
 			throws Exception {
 		
-		assertAcesso("TRANSFERENCIA: Transferência de Documentos");
+		assertAcesso(ACESSO_FORM_TRANSF_ARQ);
 		
 		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
 		builder.setCadastrante(getCadastrante())
@@ -2925,15 +2918,10 @@ public class ExMovimentacaoController extends ExController {
 						MapMensagens.put(mobil, msgErroNivelAcessoso);
 					}
 				} else {
-					nmobil = new ExMobil();
-					nmobil = mobil;
-					
-					List<ExMovimentacao> listaMovimentacao = new ArrayList<ExMovimentacao>();
-					listaMovimentacao.addAll(mobil.getExMovimentacaoSet());
 					
 					Ex.getInstance()
 					.getBL()
-					.reestruturacaoDocsArquivado(mobil, listaMovimentacao, getCadastrante(), getLotaCadastrante(), 
+					.transferirEntreArquivos(mobil, getCadastrante(), getLotaCadastrante(), 
 							mov.getLotaDestinoFinal(), motivoTransferencia);
 
 				}
@@ -4917,14 +4905,14 @@ public class ExMovimentacaoController extends ExController {
 		return map;
 	}
 	
-	protected Map<Integer, String> getListaTipoRespPerfilOrigem() {
+	protected Map<Integer, String> getListaTipoLotacaoOuMatricula() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, TipoResponsavelEnum.LOTACAO.getDescricao());
 		map.put(2, TipoResponsavelEnum.MATRICULA.getDescricao());
 		return map;
 	}
 
-	protected Map<Integer, String> getListaTipoRespPerfilDestino() {
+	protected Map<Integer, String> getListaTipoLotacao() {
 		final Map<Integer, String> map = new TreeMap<Integer, String>();
 		map.put(1, TipoResponsavelEnum.LOTACAO.getDescricao());
 		return map;

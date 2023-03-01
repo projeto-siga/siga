@@ -1460,11 +1460,12 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 	
-	public List<ExDocumento> consultarArquivadosParaTransferirEmLote(Long idPessoa, Long idLotacao, Integer offset, Integer tamPagina) {
+	public List<ExDocumento> consultarParaTransferirEntreArquivos(Long idPessoa, Long idLotacao, Integer offset, Integer tamPagina, List<Long> marcadores) {
 		final Query query = em().createNamedQuery("consultarDocumentosArquivados");
 					query.setParameter("pessoaIni", idPessoa != null ? idPessoa : 0);
 					query.setParameter("lotaIni", idLotacao != null ? idLotacao : 0);
-		
+					query.setParameter("enumList", marcadores);
+
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
 		}

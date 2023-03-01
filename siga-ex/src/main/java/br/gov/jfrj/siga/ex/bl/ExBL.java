@@ -8936,17 +8936,22 @@ public class ExBL extends CpBL {
 	 * sua data de temporalidade.
 	 * 
 	 * */
-	public void reestruturacaoDocsArquivado(ExMobil mob, List<ExMovimentacao> movs, DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+	public void transferirEntreArquivos(ExMobil mob, DpPessoa cadastrante, final DpLotacao lotaCadastrante,
 			final DpLotacao lotaDestinoFinal, String descrMov) throws Exception {
 		
 		try {
 			iniciarAlteracao();
 			ExMovimentacao movArquivamentoNova = null;
-			ExMovimentacao movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
+			ExMovimentacao movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE);
+			if (movArquivadaACancelar == null)
+				movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO);
+			
+			if (movArquivadaACancelar == null)
+				movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
 
 			movArquivadaACancelar.setDescrMov(descrMov);
 			
-			movArquivamentoNova = criarNovaMovimentacao(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE, cadastrante,
+			movArquivamentoNova = criarNovaMovimentacao(movArquivadaACancelar.getExTipoMovimentacao(), cadastrante,
 					lotaCadastrante, mob, null, null, lotaDestinoFinal, null, null, null);
 			
 			movArquivamentoNova.setExMovimentacaoRef(movArquivadaACancelar);

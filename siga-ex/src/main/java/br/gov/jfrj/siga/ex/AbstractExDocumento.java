@@ -226,7 +226,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 		@NamedQuery(name = "consultarDocumentosArquivados", query = "select mob from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
 				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"
 				+ "                where ((marca.dpPessoaIni.idPessoa=:pessoaIni or marca.dpLotacaoIni.idLotacao=:lotaIni)"
-				+ "                and (marca.cpMarcador.idMarcador=6 or marca.cpMarcador.idMarcador=12 or marca.cpMarcador.idMarcador=13)"
+				+ "                and (marca.cpMarcador.idMarcador in (:enumList))"
 				+ "                ) order by marca.dtIniMarca desc"),
 		@NamedQuery(name = "consultarDocumentosFinalizadosEntreDatas", query = "select doc from ExDocumento doc where "
 				+ "					doc.exTipoDocumento.idTpDoc = :idTipoDocumento"

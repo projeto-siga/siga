@@ -26,9 +26,6 @@
 
                 <siga:paginador maxItens="200" maxIndices="50" totalItens="${tamanho}"
                                 itens="${itens}" var="documento">
-                    <c:set var="x" scope="request">
-                        chk_${documento.idDoc}
-                    </c:set>
                     <tr class="even">
                         <td width="3%" align="center">
                             <input type="checkbox" name="documentosSelecionados"

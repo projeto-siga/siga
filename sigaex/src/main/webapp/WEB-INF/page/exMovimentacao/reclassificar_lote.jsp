@@ -11,14 +11,16 @@
           media="screen, projection"/>
 
     <c:set var="thead_color" value="${thead_color}" scope="session"/>
-    
+
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
                 <h5>Reclassifica&ccedil;&atilde;o em Lote</h5>
             </div>
             <div class="card-body">
-                <form name="frm" id="frm" class="form" method="post" action="reclassificar_lote_gravar" theme="simple">
+                <form name="frm" id="frm" class="form" method="post" action="listar_docs_reclassificados" theme="simple">
+                    <input type="hidden" name="siglasDocumentosReclassificados" value=""/>
+                    <input type="hidden" name="errosDocumentosNaoReclassificadosJson" value=""/>
                     <div class="row">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -130,6 +132,13 @@
                     Sim</a>
             </div>
         </siga:siga-modal>
+        <siga:siga-modal id="progressModal" exibirRodape="false" centralizar="true" tamanhoGrande="true"
+                         tituloADireita="Reclassifica&ccedil;&atilde;o em lote" linkBotaoDeAcao="#"
+                         botaoFecharNoCabecalho="false">
+            <div class="modal-body">
+                <div id="progressbar-ad"></div>
+            </div>
+        </siga:siga-modal>
     </div>
     <script type="text/javascript">
         function listarDocumentosParaReclassificarEmLote(offset) {
@@ -208,6 +217,107 @@
             sigaModal.fechar('confirmacaoModal');
             document.frm.submit();
         }
+
+        let siglasDocumentosReclassificados = [];
+        let errosDocumentosNaoReclassificadosMap = new Map();
+
+        function enviarParaReclassificarLote() {
+
+            process.push(function () {
+                $('#progressModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
+
+            Array.from($(".chkMobil:checkbox").filter(":checked")).forEach(
+                chk => {
+                    process.push(function () {
+                        return reclassificarPost(chk.value);
+                    });
+                    process.push(function () {
+                        chk.checked = false;
+                    });
+                }
+            );
+
+            process.push(function () {
+                sigaModal.fechar('progressModal');
+                sigaSpinner.mostrar();
+                enviarParaListagemDocumentosReclassificados();
+            });
+
+            process.run();
+        }
+
+        function reclassificarPost(documentoSelSigla) {
+            $.ajax({
+                url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/reclassificar',
+                type: 'POST',
+                async: false,
+                data: { sigla: documentoSelSigla },
+                dataType: 'json',
+                success: function () {
+                    siglasDocumentosReclassificados.push(documentoSelSigla);
+                },
+                error: function (response) {
+                    errosDocumentosNaoReclassificadosMap.set(documentoSelSigla, response.responseJSON.errormsg);
+                }
+            });
+        }
+
+        function enviarParaListagemDocumentosReclassificados() {
+            document.getElementsByName('siglasDocumentosReclassificados')[0].value = siglasDocumentosReclassificados;
+
+            let errosDocumentosNaoReclassificadosJson = JSON.stringify(Object.fromEntries(errosDocumentosNaoReclassificadosMap));
+            document.getElementsByName('errosDocumentosNaoReclassificadosJson')[0].value = errosDocumentosNaoReclassificadosJson;
+
+            document.frm.submit();
+        }
+
+        let process = {
+            steps: [],
+            index: 0,
+            title: "Executando o arquivar em lote dos documentos selecionados",
+            errormsg: "Não foi possível completar a operação",
+            urlRedirect: null,
+            reset: function () {
+                this.steps = [];
+                this.index = 0;
+            },
+            push: function (x) {
+                this.steps.push(x);
+            },
+            run: function () {
+                this.progressbar = $('#progressbar-ad').progressbar();
+                this.nextStep();
+            },
+            finalize: function () {
+            },
+            nextStep: function () {
+                if (typeof this.steps[this.index] == 'string')
+                    eval(this.steps[this.index++]);
+                else {
+                    let ret = this.steps[this.index++]();
+                    if ((typeof ret == 'string') && ret != "OK") {
+                        this.finalize();
+                        return;
+                    }
+                }
+
+                this.progressbar.progressbar("value",
+                    100 * (this.index / this.steps.length));
+
+                if (this.index != this.steps.length) {
+                    let me = this;
+                    window.setTimeout(function () {
+                        me.nextStep();
+                    }, 100);
+                } else {
+                    this.finalize();
+                }
+            }
+        };
 
     </script>
     <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>

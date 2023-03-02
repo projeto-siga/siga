@@ -316,6 +316,13 @@ parameters:
     required: false
     type: string
     pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])
+  dataMovimentacao:
+    name: dataMovimentacao
+    in: formData
+    description: Data de movimentação que será realizada no documento (por exemplo, `2020-12-02`). Deve ser igual ou menor que o dia corrente!
+    required: false
+    type: string
+    pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])  
   idMarcador:
     name: idMarcador
     in: formData

@@ -14,6 +14,10 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.vraptor.Transacional;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.Objects;
 
 @Transacional
@@ -38,15 +42,20 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
                 validarEBuscarClassificacao(mob.doc().getExClassificacaoAtual().getSigla(), req.novaClassificacao);
         
         final String motivo = req.motivo;
-        final String dtMovString = req.data1;
-        final DpPessoaSelecao responsavel = getPessoaSelecaoPorSigla(req.matriculaResponsavel);
+        final Date dataReclassificacao = getDataMovimentacao(req.dataMovimentacao);
+        final DpPessoaSelecao responsavel = validarEBuscarResponsavel(req.matriculaResponsavel);
 
-        final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia().setDescrMov(motivo)
-                .setDtMovString(dtMovString).setCadastrante(cadastrante).setLotaTitular(lotaTitular)
-                .setSubscritorSel(responsavel).setClassificacaoSel(classificacaoSelecao)
+        final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+                .setDescrMov(motivo)
+                .setCadastrante(cadastrante)
+                .setTitularSel(responsavel)
+                .setLotaTitular(lotaTitular)
+                .setResponsavelSel(responsavel)
+                .setClassificacaoSel(classificacaoSelecao)
                 .construir(dao());
         mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
-
+        mov.setDtMov(dataReclassificacao);
+        
         Ex.getInstance().getBL().avaliarReclassificar(cadastrante, lotaCadastrante, mob, mov.getDtMov(),
                 mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);
 
@@ -62,14 +71,14 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
 
     private ExClassificacaoSelecao validarEBuscarClassificacao(final String classificacaoAtual, 
                                                                final String novaClassificacao){
-        if(classificacaoAtual.equals(novaClassificacao)){
-            throw new AplicacaoException("Classificação selecionada para reclassificar é a mesma da atual. "+
-                    "Selecione valores diferentes para a reclassificação");
+        if (classificacaoAtual.equals(novaClassificacao)) {
+            throw new AplicacaoException("Classificação " + novaClassificacao + " é a mesma da atual. " 
+                    + "Selecione valores diferentes para a reclassificação");
         }
 
         final ExClassificacaoSelecao classificacaoSelecao = getClassificacaoSelecaoPorSigla(novaClassificacao);
         if(Objects.isNull(classificacaoSelecao) || Objects.isNull(classificacaoSelecao.getId())){
-            throw new AplicacaoException("Classificação selecionada inválida");
+            throw new AplicacaoException("Classificação " + novaClassificacao + " inválida");
         }
         
         return classificacaoSelecao;
@@ -85,6 +94,17 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
         return exClassificacaoSelecao;
     }
 
+    private DpPessoaSelecao validarEBuscarResponsavel(final String matricula){
+
+        final DpPessoaSelecao dpPessoaSelecao = getPessoaSelecaoPorSigla(matricula);
+        if (StringUtils.isNotEmpty(matricula) && 
+                ( Objects.isNull(dpPessoaSelecao) || Objects.isNull(dpPessoaSelecao.getId()) )) {
+            throw new AplicacaoException("Matrícula do responsável " + matricula + " inválida");
+        }
+
+        return dpPessoaSelecao;
+    }
+    
     private DpPessoaSelecao getPessoaSelecaoPorSigla(String sigla) {
         DpPessoaSelecao dpPessoaSelecao = null;
         if (StringUtils.isNotEmpty(sigla)) {
@@ -93,6 +113,22 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
             dpPessoaSelecao.buscarPorSigla();
         }
         return dpPessoaSelecao;
+    }
+
+    private Date getDataMovimentacao(final String dataMovimentacaoString) throws AplicacaoException {
+        if (StringUtils.isEmpty(dataMovimentacaoString)) {
+            return null;
+        }
+        try {
+            LocalDate localDate = LocalDate.parse(dataMovimentacaoString);
+            if (localDate.isAfter(LocalDate.now())) {
+                throw new AplicacaoException("Data de reclassificação " + dataMovimentacaoString
+                        + " não pode ser maior que a data de hoje");
+            }
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        } catch (DateTimeParseException e) {
+            throw new AplicacaoException("Data de reclassificação inválida: " + dataMovimentacaoString);
+        }
     }
 
     private ExDao dao() {

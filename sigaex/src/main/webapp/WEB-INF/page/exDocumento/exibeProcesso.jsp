@@ -594,16 +594,8 @@
 				document.getElementById('panelPagPdfs').innerHTML = "";
 			} else {
 				//Para exbicao PDFs Grandes Volumes
-				if(await arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
-					if(paramoffset == null){
-						sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
-						//Primeiro Carregamento Link
-						paramoffset = '&paramoffset=1';
-					}
-					criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset);
-				}
-				paramoffset = paramoffset != null ? paramoffset : "";
-						
+				paramoffset = await validarArquivosDocCompletoExcedeuTamanhoExibicao(refHTML, refPDF, semMarcas, paramoffset);
+				
 				if ($('#radioPDFSemMarcas').hasClass('active')) {
 					//Remocao de link download completo
 					if(paramoffset == null || paramoffset == "")
@@ -652,12 +644,15 @@
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
 			} else {
+				//Para exbicao PDFs Grandes Volumes
+				paramoffset = await validarArquivosDocCompletoExcedeuTamanhoExibicao(refHTML, refPDF, semMarcas, paramoffset);
+				
 				if (document.getElementById('radioPDFSemMarcas').checked)
-					ifr.src = path + refPDF + "&semmarcas=1"
+					ifr.src = path + refPDF + paramoffset + "&semmarcas=1"
 				else if (document.getElementById('radioPDFTamanhoOriginal').checked)
-						ifr.src = path + refPDF + "&tamanhoOriginal=true"
+						ifr.src = path + refPDF + paramoffset + "&tamanhoOriginal=true"
 				else
-					ifr.src = path + refPDF;
+					ifr.src = path + refPDF + paramoffset;
 				
 				if(!refPDF.includes("completo=1")) {
 					var url = ifr.src;
@@ -730,6 +725,20 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	}
 	
+	async function validarArquivosDocCompletoExcedeuTamanhoExibicao(refHTML, refPDF, semMarcas, paramoffset){
+		let paramoffsetRet = paramoffset;
+		//Para exbicao PDFs Grandes Volumes
+		if(await arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
+			if(paramoffset == null){
+				sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
+				//Primeiro Carregamento Link
+				paramoffsetRet = '&paramoffset=1';
+			}
+			criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffsetRet);
+		}
+		return paramoffsetRet != null ? paramoffsetRet : "";
+	}
+		
 	async function verificarTamanhoDocComplMB(refPDF){
 		await $.ajax({
 			url: '${pageContext.request.contextPath}/app/arquivo/obterTamanhoArquivosDocs?arquivo='+refPDF,

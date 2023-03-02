@@ -47,6 +47,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.calc.diarias.FreemarkerFormatFactoryMoeda;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.cache.TemplateLoader;
+import freemarker.core.ParseException;
 import freemarker.core.TemplateNumberFormatFactory;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -164,13 +165,22 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			}
 			
 			return processed;
-		} catch (TemplateException e) {
-			if (e.getCauseException() != null
-					&& e.getCauseException() instanceof AplicacaoException)
-				throw (AplicacaoException) e.getCauseException();
-			throw new RuntimeException("Erro executanto template Freemarker: <pre>\n\n" + e.getLocalizedMessage() + "</pre>", e);
-		} catch (IOException e) {
-			return "Erro executando template FreeMarker\n\n" + e.getMessage();
+        } catch (TemplateException e) {
+            if (e.getCause() != null && e.getCause() instanceof AplicacaoException)
+                throw (AplicacaoException) e.getCause();
+            throw new RuntimeException("Erro executanto template Freemarker: <pre>\n\n" + com.crivano.jmodel.Utils.escapeHTML(e.getLocalizedMessage())
+                    + "\n\n---\n" + com.crivano.jmodel.Utils.addLineNumbers(templateFinal, e.getLineNumber(),
+                            e.getEndLineNumber(), e.getColumnNumber(), e.getEndColumnNumber())
+                    + "\n---\n\n" + "</pre>", e);
+        } catch (ParseException e) {
+            if (e.getCause() != null && e.getCause() instanceof AplicacaoException)
+                throw (AplicacaoException) e.getCause();
+            throw new RuntimeException("Erro compilando template Freemarker: <pre>\n\n" + com.crivano.jmodel.Utils.escapeHTML(e.getLocalizedMessage())
+                    + "\n\n---\n" + com.crivano.jmodel.Utils.addLineNumbers(templateFinal, e.getLineNumber(),
+                            e.getEndLineNumber(), e.getColumnNumber(), e.getEndColumnNumber())
+                    + "\n---\n\n" + "</pre>", e);
+        } catch (IOException e) {
+            return "Erro executando template FreeMarker\n\n" + e.getMessage();
 		} finally {
 			root = null;
 		}

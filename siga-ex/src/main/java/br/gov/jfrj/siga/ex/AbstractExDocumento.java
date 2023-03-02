@@ -233,7 +233,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ " 			   JOIN ExMovimentacao em on (em.idMov = mob.ultimaMovimentacaoNaoCancelada and em.exMovimentacaoRef is not null)"		
 				+ "                where ("
 				+ " 			   marca.dpLotacaoIni.idLotacao=:lotaDestinoIni "		
-				+ "                and (marca.cpMarcador.idMarcador=6 or marca.cpMarcador.idMarcador=12 or marca.cpMarcador.idMarcador=13)"
+				+ "                and (marca.cpMarcador.idMarcador in (:enumList))"
 				+ "                ) order by marca.dtIniMarca desc"),
 		@NamedQuery(name = "consultarDocumentosFinalizadosEntreDatas", query = "select doc from ExDocumento doc where "
 				+ "					doc.exTipoDocumento.idTpDoc = :idTipoDocumento"

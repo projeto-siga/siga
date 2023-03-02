@@ -1507,13 +1507,14 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 	
-	public List<Object[]> consultarDocsArquivadosJaTransferidos(Long idPessoa, Long idLotacao, Long idLotacaoDestino){
+	public List<Object[]> consultarDocsArquivadosJaTransferidos(Long idPessoa, Long idLotacao, Long idLotacaoDestino, List<Long> marcadores){
 		
 		final Query query;
 
 		query = em().createNamedQuery("consultarDocumentosArquivadosJaTransferido");
 		query.setParameter("lotaDestinoIni", idLotacaoDestino != null ? idLotacaoDestino : 0);
-
+		query.setParameter("enumList", marcadores);
+		
 		return query.getResultList();
 	}
 

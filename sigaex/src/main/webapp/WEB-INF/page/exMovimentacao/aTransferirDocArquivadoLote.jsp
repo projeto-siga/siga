@@ -114,12 +114,12 @@
 								<div class="col-sm-1 ml-3 my-2 my-sm-0">
 		                    		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
 								</div>
-								<c:if test="${temPermissaoParaExportarDados}">
+								<div class="col-sm-1">
 									<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" 
-									onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/exportarDocsArquivadosTransferidoCsv');">
+										onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/exportarDocsArquivadosTransferidoCsv');">
 										<i class="fa fa-file-csv"></i> Exportar Docs Transf.
 									</button>
-								</c:if>
+								</div>
 							</div>
 						</c:when>
 						<c:otherwise>

@@ -119,7 +119,6 @@ public class ExRelatorioController extends ExController {
 	private static final String ACESSO_TRAMESP = "TRAMESP: Tempo Médio de Tramitação Por Espécie Documental";
 	private static final String ACESSO_VOLTRAMMOD = "VOLTRAMMOD: Volume de Tramitação Por Nome do Documento";
 	private static final String ACESSO_RELTEMPOMEDIOSITUACAO = "RELTEMPOMEDIOSITUACAO:Tempo médio por Situação";
-;	private static final String ACESSO_RELTRANSFERENCIA_DOCS = "RELTRANSFERENCIA: Relatório de Transferência de Documentos";
 	private static final String APPLICATION_PDF = "application/pdf";
 
 	/**
@@ -2069,8 +2068,11 @@ public class ExRelatorioController extends ExController {
 	public Download exportarDocsArquivadosTransferidoCsv(Long idOrgaoUsu, final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, 
 			final DpLotacaoSelecao lotacaoDestinatarioSel) throws UnsupportedEncodingException {
 
-		assertAcesso(ACESSO_RELTRANSFERENCIA_DOCS);
-
+		List<Long> marcadores = new ArrayList<Long>();
+		marcadores.add(CpMarcadorEnum.ARQUIVADO_CORRENTE.getId());
+		marcadores.add(CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());
+		marcadores.add(CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId());
+		
 		if (lotaResponsavelSel.getId() == null && responsavelSel.getId() == null) {
 			throw new AplicacaoException("Necessário informar um Usuário/" + SigaMessages.getMessage("usuario.lotacao") + " de ORIGEM.");
 		}
@@ -2089,7 +2091,7 @@ public class ExRelatorioController extends ExController {
 		}
 		
 		lotacaoDestino = CpDao.getInstance().consultar(lotacaoDestinatarioSel.getId(), DpLotacao.class, false).getLotacaoAtual();
-		List<Object[]> listDocsArquivadosJaTransferidos = dao().consultarDocsArquivadosJaTransferidos(pessoa.getIdInicial(), lotacao.getIdInicial(), lotacaoDestino.getIdInicial());
+		List<Object[]> listDocsArquivadosJaTransferidos = dao().consultarDocsArquivadosJaTransferidos(pessoa.getIdInicial(), lotacao.getIdInicial(), lotacaoDestino.getIdInicial(), marcadores);
 		
 		if (listDocsArquivadosJaTransferidos.isEmpty()) {
 			result.include("msgCabecClass", "alert-warning");

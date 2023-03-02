@@ -72,7 +72,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		cfg.setNumberFormat("0.######");
 		cfg.setLocalizedLookup(false);
 		cfg.setLogTemplateExceptions(false);
-		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
 		
 		Map<String, TemplateNumberFormatFactory> customNumberFormats = new HashMap<>();
 		customNumberFormats.put("moeda", FreemarkerFormatFactoryMoeda.INSTANCE);
@@ -114,17 +114,26 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		if (attrs.containsKey("descricaodefault"))
 			root.put("gerar_descricaodefault", true);
 
-		String sTemplate = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";
-		if (ou != null) {
-			sTemplate += "[#include \"" + ou.getAcronimoOrgaoUsu() + "\"]";
+		String template = (String) attrs.get("template");
+		
+		// Se o template não contem entrevista nem documento, processar com JModel
+		if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@dadosComplementares")) {
+		    template = com.crivano.jmodel.Template.markdownToFreemarker(null, template);
+		    System.out.println(template);
 		}
-		if (attrs.get("template") != null)
-			sTemplate += "\n" + (String) attrs.get("template");
-		sTemplate += "\n[/#compress]";
+
+		String templateFinal = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";
+		if (ou != null) {
+			templateFinal += "[#include \"" + ou.getAcronimoOrgaoUsu() + "\"]";
+		}
+		if (attrs.get("template") != null) {
+            templateFinal += "\n" + template;
+        }
+		templateFinal += "\n[/#compress]";
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); Writer out = new OutputStreamWriter(baos, StandardCharsets.UTF_8)) {
 			Template temp = new Template((String) attrs.get("nmMod"),
-					new StringReader(sTemplate), cfg);
+					new StringReader(templateFinal), cfg);
 			temp.process(root, out);
 			out.flush();
 			String processed = baos.toString(StandardCharsets.UTF_8.name());
@@ -159,7 +168,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			if (e.getCauseException() != null
 					&& e.getCauseException() instanceof AplicacaoException)
 				throw (AplicacaoException) e.getCauseException();
-			throw new RuntimeException("Erro executanto template Freemarker: " + e.getMessage(), e);
+			throw new RuntimeException("Erro executanto template Freemarker: <pre>\n\n" + e.getLocalizedMessage() + "</pre>", e);
 		} catch (IOException e) {
 			return "Erro executando template FreeMarker\n\n" + e.getMessage();
 		} finally {

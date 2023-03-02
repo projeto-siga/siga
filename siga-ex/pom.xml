@@ -130,6 +130,11 @@
 			<artifactId>swaggerservlet</artifactId>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.crivano</groupId>
+			<artifactId>jmodel</artifactId>
+		</dependency>
+		
 		<!-- PDF Related -->
 		<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
 		<dependency>

@@ -241,16 +241,9 @@ public class ExAcesso {
 
 		if (doc == null)
 			return acessos;
-
-		List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
 		
-		if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) 									
-			listaMov = doc.getListaMovimentacaoPorRestricaoAcesso();
-		else
-			listaMov.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
-		
-		if(listaMov.isEmpty()) {
-
+		//Caso o Acesso esteja restrito, valerá a lista de pessoas na qual foi limitada
+		if (!doc.getMobilGeral().isAcessoRestrito()) {
 		
 			// Aberto
 			if (doc.isPendenteDeAssinatura()) {
@@ -369,47 +362,15 @@ public class ExAcesso {
 				}
 			}
 		} else {
-			List<ExMovimentacao> listaAcomp =  new ArrayList<ExMovimentacao>();
-			listaAcomp.addAll(doc.getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.VINCULACAO_PAPEL));
-			
-			for(ExMobil exMobil : doc.getExMobilSet()) {
-				listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoDeMovimentacao.TRANSFERENCIA));
-			}
-			
-			if(doc.getPai() != null) {
-				for (ExMobil exMobil : doc.getPai().getExMobilSet()) {
-					listaAcomp.addAll(exMobil.getMovsNaoCanceladas(ExTipoDeMovimentacao.TRANSFERENCIA));
-				}				
-			}
-			
-			for (ExMovimentacao exMovimentacao : listaMov) {
-				add(exMovimentacao.getCadastrante());
-								
-				if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
-					add(exMovimentacao.getSubscritor());					
-				} else {					
-					if(exMovimentacao.getSubscritor().equals(doc.getCadastrante())) {
-						add(doc.getCadastrante());
-					}
-					if(exMovimentacao.getSubscritor().equals(doc.getDestinatario())) {
-						add(doc.getDestinatario());
-					}
-					if(exMovimentacao.getSubscritor().equals(doc.getSubscritor())) {
-						add(doc.getSubscritor());
-					}
-					if(exMovimentacao.getSubscritor().equals(doc.getTitular())) {
-						add(doc.getTitular());
-					}
-					
-					for (ExMovimentacao exMovimentacaoAcomp : listaAcomp) {
-						if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getSubscritor())) {
-							add(exMovimentacao.getSubscritor());
-						}
-						if(exMovimentacao.getSubscritor().equals(exMovimentacaoAcomp.getResp())) {
-							add(exMovimentacao.getSubscritor());
-						}
-					}
-				}				
+			for (ExMovimentacao exMovimentacao : doc.getMobilGeral().getMovsNaoCanceladas (ExTipoDeMovimentacao.RESTRINGIR_ACESSO)) {
+				//Mantém último cadastrante de Restrição de Acesso na lista de Acesso para que não perca acesso imediato após ação
+				//Não usado a Cancelada, para na exclusão o cadastrante da última restrição não perder o acesso
+				//Então no mínimo, se houver a exclusão de todas as restrições, o operador não perde o acesso
+				add(doc.getMobilGeral().getUltimaMovimentacao(ExTipoDeMovimentacao.RESTRINGIR_ACESSO).getCadastrante());
+				
+				//Adiciona as pessoas objetos da restrição na lista de acesso
+				if (!acessos.contains(exMovimentacao.getSubscritor()))
+					add(exMovimentacao.getSubscritor());
 			}
 		}
 		return acessos;

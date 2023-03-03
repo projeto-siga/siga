@@ -212,6 +212,9 @@ public class ExMarcadorBL {
 		// Só produzir marcas no último volume de processos administrativos
 		if (mob.doc().isProcesso() && !mob.isUltimoVolume())
 			return;
+			
+		if(mob.isJuntado())
+			return;
 
 		// Conteplar movimentações gerais e também as da via específica
 		List<ExMovimentacao> marcacoes = new ArrayList<>();

@@ -158,6 +158,8 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 
 						new ExEstaResponsavel(mob, titular, lotaTitular)),
 
+				Not.of(new ExEstaArquivadoCorrente(mobRef)),
+				
 				NAnd.of(
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.ATUALIZACAO),

@@ -26,31 +26,29 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
     @Override
     public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
         DpPessoa cadastrante = ctx.getCadastrante();
-        DpPessoa titular = cadastrante;
         DpLotacao lotaCadastrante = cadastrante.getLotacao();
-        DpLotacao lotaTitular = ctx.getLotaTitular();
 
         ExMobil mob = ctx.buscarEValidarMobil(req.sigla, req, resp, "Documento a Reclassificar");
 
-        ctx.assertAcesso(mob, titular, lotaTitular);
+        ctx.assertAcesso(mob, cadastrante, lotaCadastrante);
 
         Ex.getInstance().getComp().afirmar("O documento " + mob.getSigla() + " não pode ser reclassificado por " 
-                + titular.getSiglaCompleta() + "/" + lotaTitular.getSiglaCompleta(), 
-                ExPodeReclassificar.class, titular, lotaTitular, mob);
+                + cadastrante.getSiglaCompleta() + "/" + lotaCadastrante.getSiglaCompleta(), 
+                ExPodeReclassificar.class, cadastrante, lotaCadastrante, mob);
 
         final ExClassificacaoSelecao classificacaoSelecao =
                 validarEBuscarClassificacao(mob.doc().getExClassificacaoAtual().getSigla(), req.novaClassificacao);
         
         final String motivo = req.motivo;
-        final Date dataReclassificacao = getDataMovimentacao(req.dataMovimentacao);
-        final DpPessoaSelecao responsavel = validarEBuscarResponsavel(req.matriculaResponsavel);
+        final Date dataReclassificacao = getDataMovimentacao(req.data);
+        final DpPessoaSelecao responsavel = validarEBuscarPessoaPorMatricula(req.responsavel);
+        final DpPessoaSelecao titular = validarEBuscarPessoaPorMatricula(req.titular);
 
         final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
                 .setDescrMov(motivo)
                 .setCadastrante(cadastrante)
-                .setTitularSel(responsavel)
-                .setLotaTitular(lotaTitular)
-                .setResponsavelSel(responsavel)
+                .setSubscritorSel(responsavel)
+                .setTitularSel(titular)
                 .setClassificacaoSel(classificacaoSelecao)
                 .construir(dao());
         mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
@@ -94,12 +92,12 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
         return exClassificacaoSelecao;
     }
 
-    private DpPessoaSelecao validarEBuscarResponsavel(final String matricula){
+    private DpPessoaSelecao validarEBuscarPessoaPorMatricula(final String matricula){
 
         final DpPessoaSelecao dpPessoaSelecao = getPessoaSelecaoPorSigla(matricula);
         if (StringUtils.isNotEmpty(matricula) && 
                 ( Objects.isNull(dpPessoaSelecao) || Objects.isNull(dpPessoaSelecao.getId()) )) {
-            throw new AplicacaoException("Matrícula do responsável " + matricula + " inválida");
+            throw new AplicacaoException("Matrícula " + matricula + " inválida");
         }
 
         return dpPessoaSelecao;

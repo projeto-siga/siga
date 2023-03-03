@@ -1772,8 +1772,9 @@ public interface IExApiV1 {
         public static class Request implements ISwaggerRequest {
             public String sigla;
             public String novaClassificacao;
-            public String dataMovimentacao;
-            public String matriculaResponsavel;
+            public String data;
+            public String responsavel;
+            public String titular;
             public String motivo;
             
         }

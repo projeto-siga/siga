@@ -279,7 +279,7 @@ parameters:
   motivo:
     name: motivo
     in: formData
-    description: Motivo. Tamanho Máximo = 500.
+    description: Motivo. Tamanho M&aacute;ximo = 500.
     required: true
     maxLength: 500
     type: string
@@ -595,19 +595,6 @@ parameters:
     required: true
     type: string
   
-  novaClassificacao:
-    name: novaClassificacao
-    in: formData
-    description: Nova classificação do documento
-    type: string
-    required: true
-    
-  matriculaResponsavel:
-    name: matriculaResponsavel
-    in: formData
-    description: Matrícula do responsável pela reclassificação
-    type: string
-    required: false
     
 ################################################################################
 #                                           Paths                              #
@@ -2828,16 +2815,38 @@ paths:
   
   /documentos/{sigla}/reclassificar:
     post:
-      description: "Utilize este método para reclassificar o documento."
+      description: "Utilize este m&eacute;todo para reclassificar o documento."
       consumes: ["application/x-www-form-urlencoded"]
       tags: [ acao ]
       security:
         - Bearer: []
       parameters:
         - $ref: "#/parameters/sigla"
-        - $ref: "#/parameters/novaClassificacao"  
-        - $ref: "#/parameters/data1"
-        - $ref: "#/parameters/matriculaResponsavel"
+        - novaClassificacao:
+          name: novaClassificacao
+          in: formData
+          description: Nova classifica&ccedil;&atilde;o do documento
+          type: string
+          required: true
+        - responsavel:
+          name: responsavel
+          in: formData
+          description: Matr&iacute;cula do respons&aacute;vel pela reclassifica&ccedil;&atilde;o
+          type: string
+          required: false
+        - titular:
+          name: titular
+          in: formData
+          description: Matr&iacute;cula do titular ou substituto do respons&aacute;vel pela reclassifica&ccedil;&atilde;o
+          type: string
+          required: false  
+        - data:
+          name: data
+          in: formData
+          description: Data retroativa da reclassifica&ccedil;&atilde;o (por exemplo, `2020-12-02`).
+          required: false
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])  
         - $ref: "#/parameters/motivo"  
       summary: Reclassificar documento
       responses:

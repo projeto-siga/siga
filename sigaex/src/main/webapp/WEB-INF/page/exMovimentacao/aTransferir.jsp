@@ -73,11 +73,11 @@ function popitup_movimentacao() {
 	return false;
 }	
 
-function submeter(adicionarRestricaoAcessoAntesTramite) {
+function submeter(adicionarRestricaoAcessoAntes) {
 	sigaSpinner.mostrar();
 	
-	if (adicionarRestricaoAcessoAntesTramite === true) {
-		document.getElementById("adicionarRestricaoAcessoAntesTramite").value = true;
+	if (adicionarRestricaoAcessoAntes === true) {
+		document.getElementById("adicionarRestricaoAcessoAntes").value = true;
 	}
 	document.getElementById("button_ok").onclick = function(){console.log("Aguarde requisição")};	
 	document.getElementById('frm').submit();
@@ -103,7 +103,7 @@ $(function(){
 				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
 				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
 				<input type="hidden" name="tipoTramite" value="3"/>
-				<input type="hidden" id="adicionarRestricaoAcessoAntesTramite" name="adicionarRestricaoAcessoAntesTramite" value="false"/>
+				<input type="hidden" id="adicionarRestricaoAcessoAntes" name="adicionarRestricaoAcessoAntes" value="false"/>
 
 				<c:if test="${not doc.eletronico}">
 				<div class="row">

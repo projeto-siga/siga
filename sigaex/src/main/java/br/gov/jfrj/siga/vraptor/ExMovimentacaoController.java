@@ -1398,12 +1398,13 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/expediente/mov/incluir_cosignatario")
-	public void incluirCosignatario(final String sigla) {
+	public void incluirCosignatario(final String sigla, final DpPessoaSelecao subscritorSel) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
 		final ExMobil mob = builder.getMob();
+		final DpPessoaSelecao subscritorSelFinal = Optional.fromNullable(subscritorSel).or(new DpPessoaSelecao());
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
@@ -1414,7 +1415,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("documento", doc);
-		result.include("cosignatarioSel", movimentacaoBuilder.getSubscritorSel());
+		result.include("cosignatarioSel", subscritorSelFinal);
 		result.include("mob", builder.getMob());
 		result.include("listaCossignatarios", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE));
 
@@ -1450,7 +1451,7 @@ public class ExMovimentacaoController extends ExController {
 				
 			}
 		}
-		result.forwardTo(this).incluirCosignatario(sigla);
+		result.forwardTo(this).incluirCosignatario(sigla,null);
 		return;
 	}
 
@@ -1458,7 +1459,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback, final boolean podeIncluirCossigArvoreDocs) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback, final boolean podeIncluirCossigArvoreDocs, final boolean adicionarRestricaoAcessoAntes) {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -1480,6 +1481,30 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
 		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, getTitular(), getLotaTitular(), documentoBuilder.getMob());
+		
+		if(doc.getMobilGeral().isAcessoRestrito()) {
+			if (!doc.getMobilGeral()
+					.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+					.contains(cosignatarioSel.getObjeto())) {
+				if (adicionarRestricaoAcessoAntes) {
+					restringirAcessoAntes(doc,cosignatarioSel.getObjeto());	
+				} else {
+					result.include(SigaModal.CONFIRMACAO, 
+							SigaModal
+								.mensagem("Documento Restrito. Usuário não está na lista de restrição de acesso. Deseja incluir?")
+								.titulo("Confirmação")
+								.inverterBotoes()
+								.classBotaoDeAcao("btn-success")
+								.classBotaoDeFechar("btn-danger")
+								.linkBotaoDeAcao("javascript:incluirRestricaoECossignatario(true);"));
+					
+					result.forwardTo(this).incluirCosignatario(sigla,cosignatarioSel);
+		    		return;
+	
+				}
+			}
+		}
+
 
 		try {
 			Ex.getInstance()
@@ -1490,7 +1515,7 @@ public class ExMovimentacaoController extends ExController {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
 	
 		}			
-		result.forwardTo(this).incluirCosignatario(sigla);
+		result.redirectTo(this).incluirCosignatario(sigla,null);
 		
 		return;
 	}
@@ -2004,7 +2029,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final DpPessoaSelecao responsavelSel, final CpGrupoDeEmailSelecao grupoSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
-			final String obsOrgao, final String protocolo, final Integer tipoTramite, final boolean adicionarRestricaoAcessoAntesTramite) throws Exception {
+			final String obsOrgao, final String protocolo, final Integer tipoTramite, final boolean adicionarRestricaoAcessoAntes) throws Exception {
 		this.setPostback(postback);
 			
 		if ((responsavelSel.getObjeto() != null || lotaResponsavelSel.getObjeto() != null) && !new ExPodeRestringirTramitacao(getTitular(), getLotaTitular(), 
@@ -2056,8 +2081,8 @@ public class ExMovimentacaoController extends ExController {
 				if (!builder.getMob().getDoc().getMobilGeral()
 						.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 						.contains(responsavelSel.getObjeto())) {
-					if (adicionarRestricaoAcessoAntesTramite) {
-						restringirAcessoAntesDeTramitar(builder.getMob().getDoc(),responsavelSel.getObjeto());	
+					if (adicionarRestricaoAcessoAntes) {
+						restringirAcessoAntes(builder.getMob().getDoc(),responsavelSel.getObjeto());	
 					} else {
 						result.include(SigaModal.CONFIRMACAO, 
 								SigaModal
@@ -2231,7 +2256,7 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}
 	
-	private void restringirAcessoAntesDeTramitar(final ExDocumento documento , final DpPessoa pessoaASerAdicionada) {
+	private void restringirAcessoAntes(final ExDocumento documento , final DpPessoa pessoaASerAdicionada) {
 		Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), documento.getMobilGeral());
 		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
@@ -5922,21 +5947,15 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Não existe a Restrição de Acesso a ser cancelada.");
 		}
 		
-		try {
-			Ex.getInstance()
+		
+		Ex.getInstance()
 			.getBL()
-			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),
-					mov, null, null, null,
-					"Restrição: " + mov.getDescrMov());
-		} catch (final Exception e) {
-			throw e;
-		}
-
+			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),mov, null, null, null,"Restrição: " + mov.getDescrMov());
+			
 		if (redirectURL != null) {
 			result.redirectTo(redirectURL);
 		} else {
-			ExDocumentoController
-			.redirecionarParaExibir(result, mob.getSigla());
+			ExDocumentoController.redirecionarParaExibir(result, mob.getSigla());
 		}
 	}
 	

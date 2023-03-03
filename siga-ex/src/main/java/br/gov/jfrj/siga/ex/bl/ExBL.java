@@ -3060,6 +3060,13 @@ public class ExBL extends CpBL {
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.CIENCIA) {
 			getComp().afirmar("não é permitido cancelar esta movimentação.", ExPodeCancelar.class, titular, lotaTitular, mob, movCancelar);
 		}
+		
+		if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.RESTRINGIR_ACESSO && mob.getDoc().isPendenteDeAssinatura()) {
+			if (mob.getDoc().getSubscritorECosignatarios().contains(movCancelar.getSubscritor()) 
+					&& !mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(movCancelar.getSubscritor())) {
+				throw new AplicacaoException("Não é permitida a exclusão do Subscritor/Cossignatário da Restrição de Acesso enquanto estiver com a assinatura pendente.");
+			}
+		}
 
 		try {
 			iniciarAlteracao();
@@ -3089,7 +3096,8 @@ public class ExBL extends CpBL {
 			}
 
 			gravarMovimentacaoCancelamento(mov, movCancelar);
-			if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL)
+			if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL 
+					|| movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.RESTRINGIR_ACESSO)
 				concluirAlteracaoComRecalculoAcesso(mov);
 			else {
 				// concluindo só com o documento para forçar o recálculo das marcas de todos os mobiles
@@ -3256,6 +3264,7 @@ public class ExBL extends CpBL {
 			
 			if(mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO)) {
 				this.excluirRegistroDaOrdenacaoAssinatura(mob, mov, cadastrante, lotaCadastrante);
+				this.excluirRestricaoAcessoCossignatario(mob, mov, cadastrante, lotaCadastrante);
 			}
 			
 			concluirAlteracao(mov);
@@ -4279,7 +4288,7 @@ public class ExBL extends CpBL {
 					.getUltimaMovimentacao(new ITipoDeMovimentacao[] {}, 
 							new ITipoDeMovimentacao[] {}, mov.getExMobil(), false, null, false);
 			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(movUlt);
-			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(movUlt.getDtIniMov());
+			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(movUlt != null ? movUlt.getDtIniMov() : null);
 			dao().gravar(mov.getExMobil());
 		}
 		
@@ -4533,6 +4542,26 @@ public class ExBL extends CpBL {
 			}
 			desc = desc.substring(0, desc.length()-1);
 			reordenarAss(mob, cadastrante, lotacao, desc);
+		}
+	}
+	
+
+	
+	/**
+	 *Se Documento com Acesso Restrito, verifica se há restrição para cossignatário na exclusão de cossignatário e remove restrição
+	 */
+	private void excluirRestricaoAcessoCossignatario(ExMobil mob, ExMovimentacao mov, DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+		if (mob.isAcessoRestrito()) {
+			mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+				.stream()
+				.filter(movRestricao -> movRestricao.getSubscritor().equals(mov.getSubscritor()))
+				.forEach(movRestricaoAcessoDeCossignatario -> {
+					try {
+						cancelar(cadastrante, lotaCadastrante, mob, movRestricaoAcessoDeCossignatario, null, null, null, "Restrição: " + movRestricaoAcessoDeCossignatario.getDescrMov());
+					} catch (Exception e) {
+						throw new RuntimeException("Erro ao excluir a Restrição de Acesso para o Cossignatário. ", e);
+					}
+				});
 		}
 	}
 
@@ -5936,28 +5965,32 @@ public class ExBL extends CpBL {
 				}
 				
 				
-				for (DpPessoa subscritor : listaPessoasSubscritoresRestricaoAcesso) {				
-
-					final ExMovimentacao mov = criarNovaMovimentacao(
-							ExTipoDeMovimentacao.RESTRINGIR_ACESSO, cadastrante, lotaCadastrante,
-							exDocumento.getMobilGeral(), dtMov, subscritor, null, titular, null, dtMov);
-
-					mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
-					mov.setDescrMov("Nível de acesso do documento alterado de "
-							+ exDocumento.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
-							+ nivelAcesso.getNmNivelAcesso() + ". Restrição de acesso adicionada para "
-							+ subscritor.getDescricaoIniciaisMaiusculas());
-
-					mov.setExNivelAcesso(nivelAcesso);
-					exDocumento.setExNivelAcesso(nivelAcesso);
-					
-					if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
-						listaMov.add(mov);
-						mov.getExMobil().doc().setListaMovimentacaoPorRestricaoAcesso(listaMov);
-					}
+				for (DpPessoa subscritor : listaPessoasSubscritoresRestricaoAcesso) {		
+					//Se já estiver na lista, não adiciona
+					if (!doc.getMobilGeral()
+							.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+							.contains(subscritor) ) {
+						final ExMovimentacao mov = criarNovaMovimentacao(
+								ExTipoDeMovimentacao.RESTRINGIR_ACESSO, cadastrante, lotaCadastrante,
+								exDocumento.getMobilGeral(), dtMov, subscritor, null, titular, null, dtMov);
+	
+						mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
+						mov.setDescrMov("Nível de acesso do documento alterado de "
+								+ exDocumento.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
+								+ nivelAcesso.getNmNivelAcesso() + ". Restrição de acesso adicionada para "
+								+ subscritor.getDescricaoIniciaisMaiusculas());
+	
+						mov.setExNivelAcesso(nivelAcesso);
+						exDocumento.setExNivelAcesso(nivelAcesso);
 						
-					gravarMovimentacao(mov);
-					concluirAlteracaoComRecalculoAcesso(mov);
+						if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
+							listaMov.add(mov);
+							mov.getExMobil().doc().setListaMovimentacaoPorRestricaoAcesso(listaMov);
+						}
+							
+						gravarMovimentacao(mov);
+						concluirAlteracaoComRecalculoAcesso(mov);
+					}
 				}
 			}
 

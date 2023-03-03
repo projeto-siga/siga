@@ -424,9 +424,9 @@
 				success: function(result){	
 					location.reload();
 		        },
-		        error: function(err){
-		            console.log(err);
-		         },
+		        error: function(xhr){
+		        	document.write(xhr.responseText); 
+		        },
 		        complete: function(result){	
 		        	sigaSpinner.ocultar();
 		        }

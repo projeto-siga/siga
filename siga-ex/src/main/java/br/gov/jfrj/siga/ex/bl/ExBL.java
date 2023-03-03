@@ -39,21 +39,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1433,8 +1420,14 @@ public class ExBL extends CpBL {
 	}
 
 	public void avaliarReclassificar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov, final DpPessoa subscritor, final ExClassificacao novaClassif, final String motivo,
-			boolean fAvaliacao) throws AplicacaoException {
+									 final Date dtMov, final DpPessoa subscritor, final ExClassificacao novaClassif, 
+									 final String motivo, boolean fAvaliacao) {
+		
+		avaliarReclassificar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, novaClassif, motivo, fAvaliacao);
+	}
+	public void avaliarReclassificar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular, final ExClassificacao novaClassif, 
+									 final String motivo, boolean fAvaliacao) throws AplicacaoException {
 
 		boolean fReclassif = (novaClassif != null);
 
@@ -1464,9 +1457,12 @@ public class ExBL extends CpBL {
 					tpMov = ExTipoDeMovimentacao.AVALIACAO;
 			else
 				tpMov = ExTipoDeMovimentacao.RECLASSIFICACAO;
-
+			
+			DpLotacao lotaSubscritor = Objects.nonNull(subscritor) ? subscritor.getLotacao() : null;
+			DpLotacao lotaTitular = Objects.nonNull(titular) ? titular.getLotacao() : null;
+			
 			final ExMovimentacao mov = criarNovaMovimentacao(tpMov, cadastrante, lotaCadastrante, mob, dtMov,
-					subscritor, null, null, null, dtMov);
+					subscritor, lotaSubscritor, titular, lotaTitular, dtMov);
 
 			if (fReclassif) {
 				mov.setExClassificacao(novaClassif);

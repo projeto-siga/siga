@@ -8932,7 +8932,7 @@ public class ExBL extends CpBL {
 	
 	/*
 	 * 
-	 * Transfere Documentos Arquivados (Corrente, Intermediário e Permanente) entre Arquivos sem mudar
+	 * Transfere Documentos Arquivados (Corrente, Permanente e Intermediário) entre Arquivos sem mudar
 	 * sua data de temporalidade.
 	 * 
 	 * @param mob
@@ -8976,7 +8976,7 @@ public class ExBL extends CpBL {
 						
 				concluirAlteracaoDocComRecalculoAcesso(movArquivamentoNova);			
 			} else {
-				throw new AplicacaoException("Não foi encontrado nenhuma movimentação do tipo (" + 
+				throw new AplicacaoException("NÃO foi encontrado nenhuma movimentação do tipo (" + 
 						ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE.getDescr() + ", " +
 						ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO.getDescr() + " ou " +
 						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE.getDescr() + ") para o documento " + mob.doc().getSigla() + "."

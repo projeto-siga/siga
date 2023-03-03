@@ -8936,12 +8936,19 @@ public class ExBL extends CpBL {
 	
 	/*
 	 * 
-	 * Cancela um documento de ORIGEM que esteja arquivado e arquiva novamente na Lotação de DESTINO sem mudar
+	 * Transfere Documentos Arquivados (Corrente, Intermediário e Permanente) entre Arquivos sem mudar
 	 * sua data de temporalidade.
 	 * 
+	 * @param mob
+	 * @param cadastrante
+	 * @param lotaCadastrante
+	 * @param lotaDestinoFinal
+	 * @param descrMov
+	 * @throws AplicacaoException
+	 * @throws Exception
 	 * */
 	public void transferirEntreArquivos(ExMobil mob, DpPessoa cadastrante, final DpLotacao lotaCadastrante,
-			final DpLotacao lotaDestinoFinal, String descrMov) throws Exception {
+			final DpLotacao lotaDestinoFinal, String descrMov) {
 		
 		try {
 			iniciarAlteracao();
@@ -8953,25 +8960,34 @@ public class ExBL extends CpBL {
 			if (movArquivadaACancelar == null)
 				movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
 
-			movArquivadaACancelar.setDescrMov(descrMov);
-			
-			movArquivamentoNova = criarNovaMovimentacao(movArquivadaACancelar.getExTipoMovimentacao(), cadastrante,
-					lotaCadastrante, mob, null, null, lotaDestinoFinal, null, null, null);
-			
-			movArquivamentoNova.setExMovimentacaoRef(movArquivadaACancelar);
-			movArquivamentoNova.setLotaResp(lotaDestinoFinal);
-			movArquivamentoNova.setResp(null);
-			movArquivamentoNova.setSubscritor(null);
-			movArquivamentoNova.setLotaSubscritor(null);
-			
-			//movArquivamentoNova.setDtIniMov(movArquivadaACancelar.getDtIniMov());
-			movArquivamentoNova.setLotaDestinoFinal(lotaDestinoFinal);
-			movArquivamentoNova.setLotaTitular(lotaDestinoFinal);
-			
-			gravarMovimentacaoCancelamento(movArquivamentoNova, movArquivadaACancelar);
-					
-			concluirAlteracaoDocComRecalculoAcesso(movArquivamentoNova);			
-			
+			if (movArquivadaACancelar != null) {
+				movArquivadaACancelar.setDescrMov(descrMov);
+				
+				movArquivamentoNova = criarNovaMovimentacao(movArquivadaACancelar.getExTipoMovimentacao(), cadastrante,
+						lotaCadastrante, mob, null, null, lotaDestinoFinal, null, null, null);
+				
+				movArquivamentoNova.setExMovimentacaoRef(movArquivadaACancelar);
+				movArquivamentoNova.setLotaResp(lotaDestinoFinal);
+				movArquivamentoNova.setResp(null);
+				movArquivamentoNova.setSubscritor(null);
+				movArquivamentoNova.setLotaSubscritor(null);
+				
+				//movArquivamentoNova.setDtIniMov(movArquivadaACancelar.getDtIniMov());
+				movArquivamentoNova.setLotaDestinoFinal(lotaDestinoFinal);
+				movArquivamentoNova.setLotaTitular(lotaDestinoFinal);
+				
+				gravarMovimentacaoCancelamento(movArquivamentoNova, movArquivadaACancelar);
+						
+				concluirAlteracaoDocComRecalculoAcesso(movArquivamentoNova);			
+			} else {
+				throw new AplicacaoException("Não foi encontrado nenhuma movimentação do tipo (" + 
+						ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE.getDescr() + ", " +
+						ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO.getDescr() + " ou " +
+						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE.getDescr() + ") para o documento " + mob.doc().getSigla() + "."
+				);
+			}
+		} catch (final AplicacaoException e) {
+			throw new AplicacaoException(e.getMessage(), 400, e);
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao arquivar documento em DESTINO.", e);

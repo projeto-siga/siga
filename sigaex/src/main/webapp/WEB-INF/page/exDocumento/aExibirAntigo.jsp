@@ -156,7 +156,7 @@
 						<c:set var="evenorodd" value="odd" />
 						<c:forEach var="mov" items="${m.movs}">
 							<c:if test="${ (exibirCompleto == true) or (mov.exTipoMovimentacao != 'CANCELAMENTO_DE_MOVIMENTACAO' and not mov.cancelada)}">
-								<tr class="${mov.classe} ${mov.disabled}">
+								<tr class="${mov.classe}">
 									<c:if test="${ (exibirCompleto == 'true')}">
 										<c:set var="dt" value="${mov.dtRegMovDDMMYYHHMMSS}" />
 									</c:if>
@@ -171,46 +171,53 @@
 											<c:set var="dtUlt" value="${dt}" />
 										</c:otherwise>
 									</c:choose>
-									<td class="text-center">
+									<td class="text-center ${mov.disabled}">
 										${dt}
 									</td>
-									<td>
+									<td class="${mov.disabled}">
 										${mov.descrTipoMovimentacao}
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}"
 											descricao="${mov.parte.lotaCadastrante.descricaoAmpliada}"
 											lotacaoParam="${mov.parte.lotaCadastrante.siglaOrgao}${mov.parte.lotaCadastrante.sigla}" />
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.cadastrante.nomeAbreviado}"
 											descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}"
 											pessoaParam="${mov.parte.cadastrante.sigla}" />
 									</td>
 									<c:if test="${ (exibirCompleto == 'true')}">
-										<td class="text-left">
+										<td class="text-left ${mov.disabled}">
 											<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaSubscritor.siglaOrgao}${mov.parte.lotaSubscritor.sigla}" 
 												descricao="${mov.parte.lotaSubscritor.descricaoAmpliada}" 
 												lotacaoParam="${mov.parte.lotaSubscritor.siglaOrgao}${mov.parte.lotaSubscritor.sigla}" />
 										</td>
-										<td class="text-left">
+										<td class="text-left ${mov.disabled}">
 											<siga:selecionado isVraptor="true"
 												sigla="${mov.parte.subscritor.nomeAbreviado}"
 												descricao="${mov.parte.subscritor.descricao} - ${mov.parte.subscritor.sigla}" 
 												pessoaParam="${mov.parte.subscritor.sigla}" />
 										</td>
 									</c:if>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}"
 											descricao="${mov.parte.lotaResp.descricaoAmpliada}" 
 											lotacaoParam="${mov.parte.lotaResp.siglaOrgao}${mov.parte.lotaResp.sigla}" />
 									</td>
-									<td class="text-left">
+									<td class="text-left ${mov.disabled}">
 										<siga:selecionado isVraptor="true" sigla="${mov.parte.resp.nomeAbreviado}"
 											descricao="${mov.parte.resp.descricao} - ${mov.parte.resp.sigla}" 
 											pessoaParam="${mov.parte.resp.sigla}"/>
 									</td>
-									<td>
+									<c:choose>
+										<c:when test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
+										<td class="">
+										</c:when>
+										<c:otherwise>
+										<td class="${mov.disabled}">
+										</c:otherwise>
+									</c:choose> 
 										${mov.descricao}
 										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
@@ -219,8 +226,12 @@
 										<siga:links buttons="${false}" inline="${true}"
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
+												<c:set var="acaourl" value="${pageContext.request.contextPath}${acao.url}"/>
+												<c:if test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
+													<c:set var="acaourl" value="${acao.url}"/>
+												</c:if>												
 												<siga:link title="${acao.nomeNbsp}" pre="${acao.pre}" pos="${acao.pos}" 
-													url="${pageContext.request.contextPath}${acao.url}" popup="${acao.popup}" 
+													url="${acaourl}" popup="${acao.popup}" 
 													confirm="${acao.msgConfirmacao}" ajax="${acao.ajax}" 
 													idAjax="${mov.idMov}" classe="${acao.classe}" post="${acao.post}" 
 													explicacao="${acao.explicacao}"	test="${acao.pode}" />
@@ -232,12 +243,12 @@
 										</siga:links>
 									</td>
 									<c:if test="${exibirCompleto != 'true' and mov.duracaoSpan > 0}">
-										<td class="duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpan}">
+										<td class="${mov.disabled} duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpan}">
 											${mov.duracao}
 										</td>
 									</c:if>
 									<c:if test="${exibirCompleto == 'true' and mov.duracaoSpanExibirCompleto > 0}">
-										<td class="duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpanExibirCompleto}">
+										<td class="${mov.disabled} duracaoborderbottom text-center bg-white" rowspan="${mov.duracaoSpanExibirCompleto}">
 											${mov.duracao}
 										</td>
 									</c:if>

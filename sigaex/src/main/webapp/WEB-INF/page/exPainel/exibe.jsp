@@ -397,7 +397,7 @@ function sbmtDoc() {
 									
 									
 									<c:choose>
-										<c:when test="${mov.tipoMovimentacaoArquivamento}">
+										<c:when test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
 										<td class="">
 										</c:when>
 										<c:otherwise>
@@ -414,7 +414,7 @@ function sbmtDoc() {
 											<c:forEach var="acao" items="${mov.acoes}">
 												<c:set var="acaourl" value="${pageContext.request.contextPath}${fn:replace(acao.url, '/doc/exibir?sigla=', 
 														'/painel/exibir?documentoRefSel.sigla=')}"/>
-												<c:if test="${mov.tipoMovimentacaoArquivamento}">
+												<c:if test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
 													<c:set var="acaourl" value="${acao.url}"/>
 												</c:if>
 												<c:if test='${not(fn:contains(acao.nomeNbsp, "Cancelar") 

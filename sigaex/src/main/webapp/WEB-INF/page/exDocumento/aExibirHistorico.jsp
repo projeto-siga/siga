@@ -122,7 +122,7 @@
 									<td class="text-center ${mov.disabled}">
 										${dt}
 									</td>
-									<td>
+									<td class="${mov.disabled}">
 										${mov.descrTipoMovimentacao}
 									</td>
 									<td class="text-left ${mov.disabled}">
@@ -135,7 +135,14 @@
  											descricao="${mov.parte.cadastrante.descricao} - ${mov.parte.cadastrante.sigla}" 
  											pessoaParam="${mov.parte.cadastrante.sigla}" /> 
 									</td>
-									<td class="${mov.disabled}"> 
+									<c:choose>
+										<c:when test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
+										<td class="">
+										</c:when>
+										<c:otherwise>
+										<td class="${mov.disabled}">
+										</c:otherwise>
+									</c:choose> 
 										${mov.descricao}
 										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
@@ -145,7 +152,7 @@
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
 												<c:set var="acaourl" value="${pageContext.request.contextPath}${acao.url}"/>
-												<c:if test="${mov.tipoMovimentacaoArquivamento}">
+												<c:if test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
 													<c:set var="acaourl" value="${acao.url}"/>
 												</c:if>
 												<c:if test="${mov.exTipoMovimentacao == 'PUBLICACAO_PORTAL_TRANSPARENCIA' 

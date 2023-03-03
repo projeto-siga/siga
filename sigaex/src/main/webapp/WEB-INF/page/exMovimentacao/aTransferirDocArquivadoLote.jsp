@@ -19,7 +19,7 @@
 			<div class="card-body">
 				<c:choose>
 					<c:when test="${not empty itens}">
-						<form name="frm">
+						<form name="frm" id="listar">
 					</c:when>
 					<c:otherwise>	
 						<form name="frm" action="pesquisa_documentos_arquivados_transferencia" method="get">
@@ -113,6 +113,12 @@
 								</div>
 								<div class="col-sm-1 ml-3 my-2 my-sm-0">
 		                    		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
+								</div>
+								<div class="col-sm-1">
+									<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" 
+										onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/exportarDocsArquivadosTransferidoCsv');">
+										<i class="fa fa-file-csv"></i> Exportar Docs Transf.
+									</button>
 								</div>
 							</div>
 						</c:when>
@@ -425,6 +431,26 @@
 		        	sigaSpinner.ocultar();
 		        }
 			});
+		}
+		
+		function csv(id, action) {
+			var frm = document.getElementById(id);
+			console.log(frm);
+			frm.method = "POST";
+			console.log(action);
+			sbmtAction(id, action);
+			
+			$('.mensagem-pesquisa').alert('close');
+			
+			frm.action = 'listar';
+			frm.method = "GET";
+		}
+		
+		function sbmtAction(id, action) {
+			var frm = document.getElementById(id);
+			frm.action = action;
+			frm.submit();
+			return;
 		}
 	</script>
 	

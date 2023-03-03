@@ -62,6 +62,10 @@ public class ExPodeCancelarJuntada extends CompositeExpressionSupport {
 				
 				new ExEstaJuntado(mob),
 				
+				Not.of(new ExEstaArquivado(mob)),
+				
+				Not.of(new ExEstaArquivado(mobPai)),  
+				
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 				
 				Not.of(new ExEMobilCancelado(mob)),

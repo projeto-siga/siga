@@ -157,8 +157,6 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 						new ExMovimentacaoELotaTitular(exUltMovNaoCanc, lotaTitular),
 
 						new ExEstaResponsavel(mob, titular, lotaTitular)),
-
-				Not.of(new ExEstaArquivadoCorrente(mobRef)),
 				
 				NAnd.of(
 
@@ -166,7 +164,7 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 
 						NOr.of(
 
-								new ExEstaArquivado(mobRef),
+								new ExEstaArquivado(mobRef), 
 
 								And.of(
 

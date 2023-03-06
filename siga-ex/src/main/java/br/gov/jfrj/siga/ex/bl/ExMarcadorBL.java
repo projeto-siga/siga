@@ -196,8 +196,6 @@ public class ExMarcadorBL {
 			}
 		}
 
-		acrescentarMarcadorEmAndamentoParaDesentranhamento();
-
 		return;
 	}
 
@@ -878,25 +876,4 @@ public class ExMarcadorBL {
 		return movRetorno;
 	}
 	
-	public void acrescentarMarcadorEmAndamentoParaDesentranhamento(){
-		
-		ExMovimentacao ultimaMovimentacaoDesentranhamento = null;
-		ExMovimentacao ultMovNaoCancelada = mob.getUltimaMovimentacaoNaoCancelada();
-		
-		if (ultMovNaoCancelada.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
-			ultimaMovimentacaoDesentranhamento = ultMovNaoCancelada;			
-		}
-		
-		if (Objects.isNull(ultimaMovimentacaoDesentranhamento) 
-				|| Objects.isNull(ultimaMovimentacaoDesentranhamento.getExMovimentacaoRef())) {
-
-			return;
-		}
-			
-		acrescentarMarca(CpMarcadorEnum.EM_ANDAMENTO.getId(), 
-				ultimaMovimentacaoDesentranhamento.getDtIniMov(),
-				ultimaMovimentacaoDesentranhamento.getCadastrante(),
-				ultimaMovimentacaoDesentranhamento.getLotaCadastrante());
-	}
-
 }

@@ -186,6 +186,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMovimentacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarOuAlterarPrazoDeAssinatura;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarRestringirAcesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVia;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacaoPapel;
@@ -3053,7 +3054,7 @@ public class ExBL extends CpBL {
 		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.REFERENCIA) {
 			getComp().afirmar("não é possível cancelar vinculação de documento", ExPodeCancelarVinculacao.class, titular, lotaTitular, movCancelar);
 		} else if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.RESTRINGIR_ACESSO) {
-			getComp().afirmar("não é possível cancelar Restrição de Acesso de documento", ExPodeRestringirAcesso.class, titular, lotaTitular, mob);
+			getComp().afirmar("não é possível cancelar Restrição de Acesso de documento", ExPodeCancelarRestringirAcesso.class, titular, lotaTitular, movCancelar);
 		} else if (!forcar && movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO_BOLETIM
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO
 				&& movCancelar.getExTipoMovimentacao() != ExTipoDeMovimentacao.SOLICITACAO_DE_ASSINATURA
@@ -4564,7 +4565,7 @@ public class ExBL extends CpBL {
 				});
 		}
 	}
-
+	
 	public void juntarDocumento(final DpPessoa cadastrante, final DpPessoa docTitular, final DpLotacao lotaCadastrante,
 			final String idDocExterno, final ExMobil mob, ExMobil mobPai, final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final String idDocEscolha) {

@@ -526,6 +526,7 @@
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
 	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
 	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&iframe=true';
+	var tamanhoArquivosDocs = new Array();
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			
@@ -729,14 +730,30 @@
 		let paramoffsetRet = paramoffset;
 		//Para exbicao PDFs Grandes Volumes
 		if(await arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
-			if(paramoffset == null){
-				sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
+			if(paramoffset == null) {
 				//Primeiro Carregamento Link
 				paramoffsetRet = '&paramoffset=1';
+				if (exibirMsgPaginacaoPdf(paramoffsetRet))
+					sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
 			}
 			criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffsetRet);
 		}
 		return paramoffsetRet != null ? paramoffsetRet : "";
+	}
+	
+	function exibirMsgPaginacaoPdf (paramoffset){
+		var data = tamanhoArquivosDocs;
+		if (data != null){
+			var quantTotalArquivos = data['quantTotalArquivos'];
+			var qtdPorLink = data['quantDocsPagina'];
+			//Limite de botoes por pagina
+			var qtdLimiteBtLinkPage = 4;
+			let numOffsetAtual = paramoffset.match(/\d+/)[0];
+			let pag = calcularPaginacaoBotoesPdf(quantTotalArquivos, qtdPorLink, numOffsetAtual);
+			
+			return pag.length > 1 ? true : false;
+		}
+		return false;
 	}
 		
 	async function verificarTamanhoDocComplMB(refPDF){
@@ -745,8 +762,7 @@
 			type: 'GET',
 			success: function(data) {
 				try {
-					var tamanhoArquivos = JSON.parse(data);
-				  	localStorage.setItem('tamanhoArquivosDocs', JSON.stringify(tamanhoArquivos))
+					tamanhoArquivosDocs = JSON.parse(data);
 				} catch(err){
 				  	sigaSpinner.ocultar();
 				}
@@ -755,27 +771,18 @@
 	}
 	
 	async function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
-		var data = JSON.parse(localStorage.getItem('tamanhoArquivosDocs'));
+		var data = tamanhoArquivosDocs;
 		if (data == null || data ==''){
 			sigaSpinner.mostrar();
 			await verificarTamanhoDocComplMB(refPDF);
-			data = JSON.parse(localStorage.getItem('tamanhoArquivosDocs'));
+			data = tamanhoArquivosDocs;
 			sigaSpinner.ocultar();
 		}
 		return data != null ? data['excedeuMB'] : false;
 	}
 	
-	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
-		var data = JSON.parse(localStorage.getItem('tamanhoArquivosDocs'));
-
-		if (data != null){
-			var quantTotalArquivos = data['quantTotalArquivos'];
-			var qtdPorLink = 2;
-			//Limite de botoes por pagina
-			var qtdLimiteBtLinkPage = 4;
-			
-			let numOffsetAtual = paramoffset.match(/\d+/)[0];
-			
+	function calcularPaginacaoBotoesPdf(quantTotalArquivos, qtdPorLink, numOffsetAtual) {
+		if (numOffsetAtual != null) {
 			//Caculo para criacao de botoes
 			const paginate = (items, per, numOffsetAtual) =>
 			  Array .from ({length: Math .ceil (items / per)}, (_, i) => ({
@@ -785,42 +792,61 @@
 			    total: Math .min ((i + 1) * per, items) - (i * per),
 			    atual: numOffsetAtual == i * per + 1
 			 }));
-			  
-			let strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
-			let strLinks = ''; 
-			let pag = paginate(quantTotalArquivos, qtdPorLink, numOffsetAtual);
+		  
+		 	let pag = paginate(quantTotalArquivos, qtdPorLink, numOffsetAtual);
+		 	return pag;
+		}
+		return null;
+	}
+	
+	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
+		var data = tamanhoArquivosDocs;
+		if (data != null){
+			var quantTotalArquivos = data['quantTotalArquivos'];
+			var qtdPorLink = data['quantDocsPagina'];
+			//Limite de botoes por pagina
+			var qtdLimiteBtLinkPage = 4;
+			let numOffsetAtual = paramoffset.match(/\d+/)[0];
+			let pag = calcularPaginacaoBotoesPdf(quantTotalArquivos, qtdPorLink, numOffsetAtual);
 			
-			let i = 0;
-			let printLink = false;
-			let BreakException = {};
-			try {
-				pag.forEach(item => {
-					//Botoes anterior e primeiro
-					if(pag.length > qtdLimiteBtLinkPage && item.page > 1 && item.atual){
-						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", 1, "`);'>", " &laquo;&laquo; ","</a> ");
-						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset - qtdPorLink, "`);'>", " &laquo; ","</a> ");
-					}
-					//Botoes Links PDFs
-					if(item.atual)
-						printLink = true;
-					if(item.atual || printLink){
-						i++;
-						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == item.offset ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", item.range[0], " a ", item.range[1],"</a> ");
-					}
-					//Botoes proximo e ultimo
-					if(pag.length > qtdLimiteBtLinkPage && (pag.length > item.page && qtdLimiteBtLinkPage == i)){
-						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", " &raquo; ","</a> ");
-						strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", pag[pag.length - 1].offset, "`);'>", " &raquo;&raquo; ","</a> ");
-						throw BreakException;
-					}
-					if(pag.length == item.page)
-						throw BreakException;
-				});
-			} catch (e) {
-				if (e !== BreakException) 
-					throw e;
+			//caso a quant de botoes seja maior que 1, entao criar paginacao
+			if (pag.length > 1) {
+				let strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
+				let strLinks = ''; 
+				
+				let i = 0;
+				let printLink = false;
+				let BreakException = {};
+				try {
+					pag.forEach(item => {
+						//Botoes anterior e primeiro
+						if(item.page > 1 && item.atual){
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", 1, "`);'>", " &laquo;&laquo; ","</a> ");
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset - qtdPorLink, "`);'>", " &laquo; ","</a> ");
+						}
+						//Botoes Links PDFs
+						if(item.atual)
+							printLink = true;
+						if(item.atual || printLink){
+							i++;
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == item.offset ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", item.range[0], " a ", item.range[1],"</a> ");
+						}
+						//Botoes proximo e ultimo
+						if(pag.length > qtdLimiteBtLinkPage && (pag.length > item.page && qtdLimiteBtLinkPage == i)){
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", " &raquo; ","</a> ");
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", pag[pag.length - 1].offset, "`);'>", " &raquo;&raquo; ","</a> ");
+							throw BreakException;
+						}
+						if(pag.length == item.page)
+							throw BreakException;
+					});
+				} catch (e) {
+					if (e !== BreakException) 
+						throw e;
+				}
+				
+				document.getElementById('panelPagPdfs').innerHTML = strInnerHtml.concat(strLinks);
 			}
-			document.getElementById('panelPagPdfs').innerHTML = strInnerHtml.concat(strLinks);
 		}
 	}
 	
@@ -834,10 +860,6 @@
 	    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	});
-	
-	window.onload = function () { 
-		localStorage.removeItem('tamanhoArquivosDocs');
-	} 
 </script>
 <c:if test="${mob.doc.podeReordenar()}"> 
 	<script src="/siga/javascript/documento.reordenar-doc.js"></script>

@@ -95,6 +95,8 @@ public class Documento {
 
 	private static final Pattern pattern = Pattern
 		.compile("^([0-9A-Z\\-\\/]+(?:\\.[0-9]+)?(?:V[0-9]+)?)(:[0-9]+)?(?:\\.pdf|\\.html|\\.zip|\\.rtf)?$");
+	
+	private static final int EXIBICAO_PAG_PDF_COMPL_QTD_DOCS_PAGINAS = Prop.getInt("/siga.exibicao.paginada.pdf.completo.quantidade.pagina");
 
 	private static Log log = LogFactory.getLog(Documento.class);
 
@@ -442,10 +444,10 @@ public class Documento {
 		long bytes = 0;
 		long garbage = 0;
 		
-		Integer paramoffsetFim =  Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 + 2 : null;
+		Integer paramoffsetFim =  Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 + EXIBICAO_PAG_PDF_COMPL_QTD_DOCS_PAGINAS : null;
 		paramoffset = Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 : 0;
 		if(Objects.nonNull(paramoffsetFim))
-			ans = ans.subList(paramoffset, paramoffsetFim);
+			ans = ans.subList(paramoffset, paramoffsetFim > ans.size() ? ans.size() : paramoffsetFim);
 		
 		int ansSize = ans.size();
 		try {
@@ -613,7 +615,7 @@ public class Documento {
 				byte[] ab = obterBytesDocumento(mob, estampar, an);
 				bytes += ab.length;
 				//Conversao MB para Bytes
-				if(bytes >= 44*1024*1024) {
+				if(bytes >= Prop.getLong("/siga.exibicao.paginada.pdf.completo.tamanhomax")) {
 					excedeuMB = Boolean.TRUE;
 					break;
 				}
@@ -623,6 +625,7 @@ public class Documento {
 		map.put("somaArqBytes", bytes);
 		map.put("quantTotalArquivos", ans.size());
 		map.put("excedeuMB", excedeuMB);
+		map.put("quantDocsPagina", EXIBICAO_PAG_PDF_COMPL_QTD_DOCS_PAGINAS);
 		String json = new Gson().toJson(map); 
 		return json;
 	}

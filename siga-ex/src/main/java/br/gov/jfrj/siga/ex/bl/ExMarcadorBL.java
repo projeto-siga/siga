@@ -165,8 +165,9 @@ public class ExMarcadorBL {
 		}
 
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
-				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado())
+				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado()) {
 			calcularMarcadoresDeTramite();
+		}
 		calcularMarcadoresDeNotificacao();
 
 		if (!mob.isArquivado())
@@ -207,6 +208,9 @@ public class ExMarcadorBL {
 
 		// Só produzir marcas no último volume de processos administrativos
 		if (mob.doc().isProcesso() && !mob.isUltimoVolume())
+			return;
+		
+		if(mob.isJuntado())
 			return;
 
 		// Conteplar movimentações gerais e também as da via específica
@@ -763,7 +767,9 @@ public class ExMarcadorBL {
 		}
 
 		if (nivelMDest > 0) {
-			acrescentarMarca(mDest[nivelMDest], movDest[nivelMDest].getDtIniMov(), movDest[nivelMDest].getResp(),
+			acrescentarMarca(mDest[nivelMDest], 
+					(movDest[nivelMDest].getExMovimentacaoRef() != null && ExTipoDeMovimentacao.hasArquivado(movDest[nivelMDest].getExMovimentacaoRef().getExTipoMovimentacao())) ?
+					movDest[nivelMDest].getExMovimentacaoRef().getDtIniMov() : movDest[nivelMDest].getDtIniMov(), movDest[nivelMDest].getResp(),
 					movDest[nivelMDest].getLotaResp());
 			calcularMarcadoresFuturosTemporalidade(movDest[nivelMDest], mDest[nivelMDest]);
 		}
@@ -781,7 +787,12 @@ public class ExMarcadorBL {
 		ExTemporalidade tmpIntermed = mob.getTemporalidadeIntermediarioEfetiva();
 		ExTipoDestinacao destinacao = mob.getExDestinacaoFinalEfetiva();
 
-		Date dtIniMarca = mov.getDtIniMov();
+		Date dtIniMarca = null;
+		if (mov.getExMovimentacaoRef() != null && ExTipoDeMovimentacao.hasArquivado(mov.getExMovimentacaoRef().getExTipoMovimentacao()))
+			dtIniMarca = mov.getExMovimentacaoRef().getDtIniMov();
+		else
+			dtIniMarca = mov.getDtIniMov();
+		
 		Long marcadorFuturo = 0L;
 
 		if (marcador == CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()) {
@@ -876,8 +887,14 @@ public class ExMarcadorBL {
 	}
 	
 	public void acrescentarMarcadorEmAndamentoParaDesentranhamento(){
-		ExMovimentacao ultimaMovimentacaoDesentranhamento = mob.getUltimaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
-
+		
+		ExMovimentacao ultimaMovimentacaoDesentranhamento = null;
+		ExMovimentacao ultMovNaoCancelada = mob.getUltimaMovimentacaoNaoCancelada();
+		
+		if (ultMovNaoCancelada.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
+			ultimaMovimentacaoDesentranhamento = ultMovNaoCancelada;			
+		}
+		
 		if (Objects.isNull(ultimaMovimentacaoDesentranhamento) 
 				|| Objects.isNull(ultimaMovimentacaoDesentranhamento.getExMovimentacaoRef())) {
 

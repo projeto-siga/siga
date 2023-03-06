@@ -13,82 +13,92 @@
 </c:if>
 
 <script type="text/javascript" language="Javascript1.1">
-function sbmt() {
-	frm.action='${pageContext.request.contextPath}/app/expediente/mov/vincularPapel';
-	frm.submit();
-}
-
-function tamanho() {
-	var i = tamanho2();
-	if (i<0) {i=0};
-	document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
-}
-
-function tamanho2() {
-	nota= new String();
-	nota = this.frm.descrMov.value;
-	var i = 255 - nota.length;
-	return i;
-}
-function corrige() {
-	if (tamanho2()<0) {
-		alert('Descrição com mais de 255 caracteres');
-		nota = new String();
-		nota = document.getElementById("descrMov").value;
-		document.getElementById("descrMov").value = nota.substring(0,255);
-	}
-}
-
-var newwindow = '';
-function popitup_movimentacao() {
-	if (!newwindow.closed && newwindow.location) {
-	} else {
-		var popW = 600;
-		var popH = 400;
-		var winleft = (screen.width - popW) / 2;
-		var winUp = (screen.height - popH) / 2;
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow=window.open('','${propriedade}',winProp);
-		newwindow.name='mov';
+	function sbmt() {
+		frm.action='${pageContext.request.contextPath}/app/expediente/mov/vincularPapel';
+		frm.submit();
 	}
 	
-	newwindow.opener = self;
-	t = frm.target; 
-	a = frm.action;
-	frm.target = newwindow.name;
-	frm.action='${pageContext.request.contextPath}/app/expediente/mov/prever?id=${mov.idMov}';
-	frm.submit();
-	frm.target = t; 
-	frm.action = a;
-	
-	if (window.focus) {
-		newwindow.focus()
+	function tamanho() {
+		var i = tamanho2();
+		if (i<0) {i=0};
+		document.getElementById("Qtd").innerText = 'Restam ' + i + ' Caracteres';
 	}
-	return false;
-}	
-
-function alteraResponsavel()
-{
-	var objSelecionado = document.getElementById('tipoResponsavel');
 	
-	switch (parseInt(objSelecionado.value))
+	function tamanho2() {
+		nota= new String();
+		nota = this.frm.descrMov.value;
+		var i = 255 - nota.length;
+		return i;
+	}
+	function corrige() {
+		if (tamanho2()<0) {
+			alert('Descrição com mais de 255 caracteres');
+			nota = new String();
+			nota = document.getElementById("descrMov").value;
+			document.getElementById("descrMov").value = nota.substring(0,255);
+		}
+	}
+	
+	var newwindow = '';
+	function popitup_movimentacao() {
+		if (!newwindow.closed && newwindow.location) {
+		} else {
+			var popW = 600;
+			var popH = 400;
+			var winleft = (screen.width - popW) / 2;
+			var winUp = (screen.height - popH) / 2;
+			winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
+			newwindow=window.open('','${propriedade}',winProp);
+			newwindow.name='mov';
+		}
+		
+		newwindow.opener = self;
+		t = frm.target; 
+		a = frm.action;
+		frm.target = newwindow.name;
+		frm.action='${pageContext.request.contextPath}/app/expediente/mov/prever?id=${mov.idMov}';
+		frm.submit();
+		frm.target = t; 
+		frm.action = a;
+		
+		if (window.focus) {
+			newwindow.focus()
+		}
+		return false;
+	}	
+	
+	function alteraResponsavel()
 	{
-		case 1:
-			document.getElementById('selecaoResponsavel').style.display = '';
-			document.getElementById('selecaoLotaResponsavel').style.display = 'none';
-			document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
-			document.getElementById('lotaResponsavelSelSpan').textContent = '';
-			document.getElementById('formulario_lotaResponsavelSel_id').value = '';	
-			break;
-		case 2:
-			document.getElementById('selecaoResponsavel').style.display = 'none';
-			document.getElementById('selecaoLotaResponsavel').style.display = '';
-			document.getElementById('formulario_responsavelSel_sigla').value = '';
-			document.getElementById('responsavelSelSpan').textContent = '';
-			document.getElementById('formulario_responsavelSel_id').value = '';
-			break;
+		var objSelecionado = document.getElementById('tipoResponsavel');
+		
+		switch (parseInt(objSelecionado.value))
+		{
+			case 1:
+				document.getElementById('selecaoResponsavel').style.display = '';
+				document.getElementById('selecaoLotaResponsavel').style.display = 'none';
+				document.getElementById('formulario_lotaResponsavelSel_sigla').value = '';
+				document.getElementById('lotaResponsavelSelSpan').textContent = '';
+				document.getElementById('formulario_lotaResponsavelSel_id').value = '';	
+				break;
+			case 2:
+				document.getElementById('selecaoResponsavel').style.display = 'none';
+				document.getElementById('selecaoLotaResponsavel').style.display = '';
+				document.getElementById('formulario_responsavelSel_sigla').value = '';
+				document.getElementById('responsavelSelSpan').textContent = '';
+				document.getElementById('formulario_responsavelSel_id').value = '';
+				break;
+		}
 	}
-}
+	
+	function incluirRestricao(adicionarRestricaoAcessoAntes) {
+		sigaSpinner.mostrar();
+		
+		if (adicionarRestricaoAcessoAntes === true) {
+			document.getElementById("adicionarRestricaoAcessoAntes").value = true;
+		}
+
+		document.getElementById('frm').submit();
+	}
 
 </script>
 
@@ -102,9 +112,10 @@ function alteraResponsavel()
 				<h5><fmt:message key="documento.vinculacao"/></h5>
 			</div>
 			<div class="card-body">
-				<form name="frm" action="vincularPapel_gravar" method="post">
+				<form id="frm" name="frm" action="vincularPapel_gravar" method="post">
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}"/>
+					<input type="hidden" id="adicionarRestricaoAcessoAntes" name="adicionarRestricaoAcessoAntes" value="false"/>
 					<div class="row">
 						<c:if test="${siga_cliente != 'GOVSP'}">
 						<div class="col-md-2 col-sm-3">

@@ -6,7 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript" language="Javascript1.1">
-	function incluirRestricaoECossignatario(adicionarRestricaoAcessoAntes) {
+	function incluirRestricao(adicionarRestricaoAcessoAntes) {
 		sigaSpinner.mostrar();
 		
 		if (adicionarRestricaoAcessoAntes === true) {

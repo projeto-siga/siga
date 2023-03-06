@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -82,6 +81,7 @@ import br.gov.jfrj.siga.cp.model.CpGrupoDeEmailSelecao;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorTipoInteressadoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
@@ -191,6 +191,7 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
+import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
 import org.json.JSONObject;
@@ -198,12 +199,15 @@ import org.json.JSONObject;
 @Controller
 public class ExMovimentacaoController extends ExController {
 
+	public static final String ACESSO_FORM_TRANSF_ARQ = "TRARQ: Transferência de Documentos Arquivados";
+	
 	private static final String OPCAO_MOSTRAR = "mostrar";
 	private static final int DEFAULT_TIPO_RESPONSAVEL = 1;
 	private static final int DEFAULT_POSTBACK = 1;
 	private static final Logger LOGGER = Logger
 			.getLogger(ExMovimentacaoController.class);
-	
+
+	protected List<String> erros = new ArrayList<String>();
 	
 	private static final int MAX_ITENS_PAGINA_TRINTA = 30;
 	private static final int MAX_ITENS_PAGINA_DUZENTOS = 200;
@@ -1176,7 +1180,7 @@ public class ExMovimentacaoController extends ExController {
 						+ "&id=" + mov.getIdMov());
 			}
 	}
-
+	
 	@Get("app/expediente/mov/juntar")
 	public void juntar(final String sigla) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
@@ -2793,7 +2797,135 @@ public class ExMovimentacaoController extends ExController {
 				cpOrgaoSel);
 
 	}
+	
+	@Get("app/expediente/mov/transferir_doc_arquivado_lote")
+	public void aTransferirDocArquivadoLote(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
+			Long tamanho, int offsetTransferencia, List<ExDocumento> docArquivadosParaTransferir, int tipoResponsavel) {
 
+		assertAcesso(ACESSO_FORM_TRANSF_ARQ);
+		
+		result.include("listaTipoRespOrigem", this.getListaTipoLotacaoOuMatricula());
+		result.include("listaTipoRespDestino", this.getListaTipoLotacao());
+		result.include("itens", docArquivadosParaTransferir);
+		result.include("lotaResponsavelSel", Objects.isNull(lotaResponsavelSel) ? new DpLotacaoSelecao() : lotaResponsavelSel);
+		result.include("responsavelSel", Objects.isNull(responsavelSel) ? new DpPessoaSelecao() : responsavelSel);
+		result.include("lotacaoDestinatarioSel", Objects.isNull(lotacaoDestinatarioSel) ? new DpPessoaSelecao() : lotacaoDestinatarioSel);
+		result.include("tipoResponsavel", tipoResponsavel == 0 ? 1 : tipoResponsavel);
+		result.include("maxItems", MAX_ITENS_PAGINA_DUZENTOS);
+		result.include("tamanho", tamanho);
+		result.include("currentPageNumber", (offsetTransferencia / MAX_ITENS_PAGINA_DUZENTOS + 1));
+		
+		docArquivadosParaTransferir = new ArrayList<ExDocumento>();
+	}
+	
+	@Get("app/expediente/mov/pesquisa_documentos_arquivados_transferencia")   
+	public void pesquisaDocArquivadosParaTransferir(Integer paramoffset, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotaResponsavelSel,
+			final DpLotacaoSelecao lotacaoDestinatarioSel, int tipoResponsavel) {
+		
+		assertAcesso(ACESSO_FORM_TRANSF_ARQ);
+		List<ExDocumento> docArquivadosParaTransferir = null;
+		DpPessoa pessoa = new DpPessoa();
+		DpLotacao lotacao = new DpLotacao();
+		List<Long> marcadores = new ArrayList<Long>();
+		marcadores.add(CpMarcadorEnum.ARQUIVADO_CORRENTE.getId());
+		marcadores.add(CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());
+		marcadores.add(CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId());
+		
+		Long tamanho = 0L;
+		int offsetTransferencia = 0;
+		if(responsavelSel.getId() != null) {
+			pessoa = CpDao.getInstance().consultar(responsavelSel.getId(), DpPessoa.class, false).getPessoaAtual();
+			tamanho = CpDao.getInstance().quantidadeMarcasPorPessoaMarcadores(pessoa, marcadores, true);
+		} else if (lotaResponsavelSel.getId() != null) {
+			lotacao = CpDao.getInstance().consultar(lotaResponsavelSel.getId(), DpLotacao.class, false).getLotacaoAtual();
+			tamanho = CpDao.getInstance().quantidadeMarcasPorLotacaoMarcadores(lotacao, marcadores, true);
+		} else {
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "Necessário selecionar um usuário/" +SigaMessages.getMessage("usuario.lotacao") + " de origem.");
+			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+					tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
+			return;
+		}
+		
+		offsetTransferencia = Objects.nonNull(paramoffset)
+				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_DUZENTOS - 1) * MAX_ITENS_PAGINA_DUZENTOS)
+						: paramoffset)
+				: 0;
+
+		docArquivadosParaTransferir = (tamanho <= MAX_ITENS_PAGINA_DUZENTOS)
+				? dao().consultarParaTransferirEntreArquivos(pessoa.getIdInicial(), lotacao.getIdInicial(), null, null, marcadores)
+				: dao().consultarParaTransferirEntreArquivos(pessoa.getIdInicial(), lotacao.getIdInicial(), offsetTransferencia, MAX_ITENS_PAGINA_DUZENTOS, marcadores);
+		
+		if (docArquivadosParaTransferir	== null || docArquivadosParaTransferir.isEmpty()) {
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "Nenhum documento encontrado para o usuário " + responsavelSel.getDescricao());
+			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+					tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
+			return;
+		}
+			
+		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+				tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
+	}
+	
+	@Transacional
+	@Post("app/expediente/mov/transferirLoteDocumentosArquivados")
+	public void aTransferirLoteDocArquivado(
+			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
+			final List<Long> documentosSelecionados, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
+			throws Exception {
+		
+		assertAcesso(ACESSO_FORM_TRANSF_ARQ);
+		
+		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder.novaInstancia();
+		builder.setCadastrante(getCadastrante())
+				.setLotaResponsavelSel(lotaResponsavelSel)
+				.setResponsavelSel(responsavelSel)
+				.setLotaDestinoFinalSel(lotacaoDestinatarioSel);
+
+		final ExMovimentacao mov = builder.construir(dao());
+
+		final Date dt = dao().dt();
+		mov.setDtIniMov(dt);
+		ExMobil nmobil = new ExMobil();
+		final HashMap<ExMobil, AplicacaoException> MapMensagens = new HashMap<ExMobil, AplicacaoException>();
+		
+		AplicacaoException msgErroNivelAcessoso = null;
+
+		for (Long idDocumento : documentosSelecionados) {
+			try {
+			
+				final ExMobil mobil = dao().consultar(idDocumento, ExMobil.class, false);
+				if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mobil)) {
+					if (msgErroNivelAcessoso == null) {
+						msgErroNivelAcessoso = new AplicacaoException(
+								"O documento não pode ser transferido por estar inacessível ao usuário.");
+					}
+					if (!(msgErroNivelAcessoso == null)) {
+						MapMensagens.put(mobil, msgErroNivelAcessoso);
+					}
+				} else {
+					
+					Ex.getInstance()
+					.getBL()
+					.transferirEntreArquivos(mobil, getCadastrante(), getLotaCadastrante(), 
+							mov.getLotaDestinoFinal(), motivoTransferencia);
+
+				}
+			} catch (AplicacaoException e) {
+				MapMensagens.put(nmobil, e);
+			}
+
+		}
+
+		result.include("mov", mov);
+		result.include("itens", null);
+		result.include("lotaTitular", getLotaTitular());
+		
+		result.redirectTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+				0L, 0, null, tipoResponsavel);
+	}
+	
 	@Get("app/expediente/mov/arquivar_intermediario_lote")
 	public void aArquivarIntermediarioLote(final String paramOffset) {
 		int offset;
@@ -4759,7 +4891,20 @@ public class ExMovimentacaoController extends ExController {
 		map.put(3, "Grupo de Distribuição");
 		return map;
 	}
+	
+	protected Map<Integer, String> getListaTipoLotacaoOuMatricula() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, TipoResponsavelEnum.LOTACAO.getDescricao());
+		map.put(2, TipoResponsavelEnum.MATRICULA.getDescricao());
+		return map;
+	}
 
+	protected Map<Integer, String> getListaTipoLotacao() {
+		final Map<Integer, String> map = new TreeMap<Integer, String>();
+		map.put(1, TipoResponsavelEnum.LOTACAO.getDescricao());
+		return map;
+	}
+	
 	private Map<Integer, String> getListaTipoRespPerfil() {
 		return TipoResponsavelEnum.getListaMatriculaLotacao();
 	}

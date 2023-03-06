@@ -4,6 +4,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
@@ -41,21 +42,11 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
         
         final String motivo = req.motivo;
         final Date dataReclassificacao = getDataMovimentacao(req.data);
-        final DpPessoaSelecao responsavel = validarEBuscarPessoaPorMatricula(req.responsavel);
-        final DpPessoaSelecao titular = validarEBuscarPessoaPorMatricula(req.titular);
+        final DpPessoa responsavel = validarEBuscarPessoaPorMatricula(req.responsavel);
+        final DpPessoa titular = validarEBuscarPessoaPorMatricula(req.titular);
 
-        final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
-                .setDescrMov(motivo)
-                .setCadastrante(cadastrante)
-                .setSubscritorSel(responsavel)
-                .setTitularSel(titular)
-                .setClassificacaoSel(classificacaoSelecao)
-                .construir(dao());
-        mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
-        mov.setDtMov(dataReclassificacao);
-        
-        Ex.getInstance().getBL().avaliarReclassificar(cadastrante, lotaCadastrante, mob, mov.getDtMov(),
-                mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);
+        Ex.getInstance().getBL().avaliarReclassificar(cadastrante, lotaCadastrante, mob, dataReclassificacao,
+                responsavel, titular, classificacaoSelecao.buscarObjeto(), motivo, false);
 
         resp.sigla = mob.doc().getCodigo();
         resp.classificacao = mob.doc().getExClassificacaoAtual().getDescricaoCompleta();
@@ -92,25 +83,18 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
         return exClassificacaoSelecao;
     }
 
-    private DpPessoaSelecao validarEBuscarPessoaPorMatricula(final String matricula){
+    private DpPessoa validarEBuscarPessoaPorMatricula(final String matricula){
 
-        final DpPessoaSelecao dpPessoaSelecao = getPessoaSelecaoPorSigla(matricula);
+        final DpPessoa dpPessoaFlt = new DpPessoa();
+        dpPessoaFlt.setSigla(matricula);
+        
+        final DpPessoa dpPessoa = CpDao.getInstance().consultarPorSigla(dpPessoaFlt);
         if (StringUtils.isNotEmpty(matricula) && 
-                ( Objects.isNull(dpPessoaSelecao) || Objects.isNull(dpPessoaSelecao.getId()) )) {
+                ( Objects.isNull(dpPessoa) || Objects.isNull(dpPessoa.getId()) )) {
             throw new AplicacaoException("Matrícula " + matricula + " inválida");
         }
 
-        return dpPessoaSelecao;
-    }
-    
-    private DpPessoaSelecao getPessoaSelecaoPorSigla(String sigla) {
-        DpPessoaSelecao dpPessoaSelecao = null;
-        if (StringUtils.isNotEmpty(sigla)) {
-            dpPessoaSelecao = new DpPessoaSelecao();
-            dpPessoaSelecao.setSigla(sigla);
-            dpPessoaSelecao.buscarPorSigla();
-        }
-        return dpPessoaSelecao;
+        return dpPessoa;
     }
 
     private Date getDataMovimentacao(final String dataMovimentacaoString) throws AplicacaoException {

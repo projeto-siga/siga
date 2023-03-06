@@ -82,6 +82,7 @@ public class ExMovimentacaoVO extends ExVO {
 	String tempoRelativo;
 	boolean podeExibirNoSigale;
 	private String subscritor;
+	boolean tipoMovimentacaoArquivamento;
 
 	public ExMobilVO getMobVO() {
 		return mobVO;
@@ -131,11 +132,14 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov,false);
 		}
 
+		if(mov.getExMovimentacaoCanceladora() != null && ExTipoDeMovimentacao.hasArquivado(mov.getExTipoMovimentacao()))
+			descricao = "";
+		
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 
 		calcularClasse(mov);
 
-		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.MARCACAO) && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.RECEBIMENTO))
+		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.MARCACAO) && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.RECEBIMENTO) && !ExTipoDeMovimentacao.hasArquivado(mov.getExTipoMovimentacao()))
 				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getExTipoMovimentacao() == (ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO);
 		
@@ -506,6 +510,11 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
 						.params("dtIni", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false")
 						.exp(new CpPodeSempre()).build());
+			if (mov.isCancelada() && mov.getDescrMov() != null) {
+				addAcao(AcaoVO.builder().nome("Motivo").nameSpace(null)
+						.acao(String.format("javascript:sigaModal.alerta('%s')", mov.getDescrMov()))
+						.exp(new CpPodeSempre()).build());
+			}
 		}
 
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
@@ -903,5 +912,9 @@ public class ExMovimentacaoVO extends ExVO {
 
 	public void setSubscritor(String subscritor) {
 		this.subscritor = subscritor;
+	}
+	
+	public boolean isTipoMovimentacaoArquivamento() {
+		return ExTipoDeMovimentacao.hasArquivado(exTipoMovimentacao);
 	}
 }

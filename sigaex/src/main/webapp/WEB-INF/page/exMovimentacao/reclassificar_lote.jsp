@@ -18,7 +18,8 @@
                 <h5>Reclassifica&ccedil;&atilde;o em Lote</h5>
             </div>
             <div class="card-body">
-                <form name="frm" id="frm" class="form" method="post" action="listar_docs_reclassificados" theme="simple">
+                <form name="frm" id="frm" class="form" method="post" action="listar_docs_reclassificados"
+                      theme="simple">
                     <input type="hidden" name="siglasDocumentosReclassificados" value=""/>
                     <input type="hidden" name="errosDocumentosNaoReclassificadosJson" value=""/>
                     <div class="row">
@@ -212,16 +213,21 @@
         }
 
         function confirmar() {
-            sigaSpinner.mostrar();
             document.getElementById("btnOk").disabled = true;
             sigaModal.fechar('confirmacaoModal');
-            document.frm.submit();
+            enviarParaReclassificarLote();
         }
 
         let siglasDocumentosReclassificados = [];
         let errosDocumentosNaoReclassificadosMap = new Map();
 
         function enviarParaReclassificarLote() {
+
+            let novaClassificacao = document.getElementById('formulario_classificacaoNovaSel_sigla').value;
+            let motivo = document.getElementById('motivo').value;
+            let dtMovString = document.getElementById('dtMovString').value;
+            let responsavel = document.getElementById('formulario_subscritorSel_sigla').value;
+            let titular = document.getElementById('formulario_titularSel_sigla').value;
 
             process.push(function () {
                 $('#progressModal').modal({
@@ -230,10 +236,12 @@
                 });
             });
 
-            Array.from($(".chkMobil:checkbox").filter(":checked")).forEach(
+            Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
                 chk => {
                     process.push(function () {
-                        return reclassificarPost(chk.value);
+                        let siglaCodigoCompacto = chk.value.replaceAll('-', '').replaceAll('/', '');
+                        return reclassificarPost(siglaCodigoCompacto, novaClassificacao, motivo, dtMovString,
+                            responsavel, titular);
                     });
                     process.push(function () {
                         chk.checked = false;
@@ -250,12 +258,19 @@
             process.run();
         }
 
-        function reclassificarPost(documentoSelSigla) {
+        function reclassificarPost(documentoSelSigla, novaClassificacao, motivo, dtMovString, responsavel, titular) {
             $.ajax({
                 url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/reclassificar',
                 type: 'POST',
                 async: false,
-                data: { sigla: documentoSelSigla },
+                data: {
+                    sigla: documentoSelSigla,
+                    novaClassificacao: novaClassificacao,
+                    motivo: motivo,
+                    data: dtMovString,
+                    responsavel: responsavel,
+                    titular: titular
+                },
                 dataType: 'json',
                 success: function () {
                     siglasDocumentosReclassificados.push(documentoSelSigla);
@@ -278,7 +293,7 @@
         let process = {
             steps: [],
             index: 0,
-            title: "Executando o arquivar em lote dos documentos selecionados",
+            title: "Executando a reclassificação em lote dos documentos selecionados",
             errormsg: "Não foi possível completar a operação",
             urlRedirect: null,
             reset: function () {

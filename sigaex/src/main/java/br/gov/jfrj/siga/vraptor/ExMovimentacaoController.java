@@ -5777,7 +5777,7 @@ public class ExMovimentacaoController extends ExController {
 				&& (listaMovimentacaoDocumentosNaoReclassificados == null
 				|| listaMovimentacaoDocumentosNaoReclassificados.isEmpty())) {
 
-			throw new AplicacaoException("Não foi possível tramitar em lote");
+			throw new AplicacaoException("Não foi possível reclassificar em lote");
 		}
 
 		ExMobil mobIni = mobisDocumentosReclassificados.isEmpty() ? null : mobisDocumentosReclassificados.get(0);

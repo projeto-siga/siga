@@ -3,11 +3,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/customtag" prefix="tags" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <siga:pagina desabilitarbusca="sim" desabilitarmenu="sim" desabilitarComplementoHEAD="sim" iframe="sim">
     
     <c:if test="${not empty itens}">
-        <p>Atenção: Na Reclassificação em Lote – Permitido até 200 documentos por operação.</p>
+        <p>Atenção: Na Reclassifica&ccedil;&atilde;o em Lote – Permitido até 200 documentos por opera&ccedil;&atilde;o.</p>
         <div class="gt-content-box gt-for-table">
             <table class="table table-hover table-striped">
                 <thead class="${thead_color} align-middle text-center">
@@ -17,7 +18,7 @@
                     </th>
                     <th width="13%" align="right">N&uacute;mero</th>
                     <th width="5%" align="center">Classifica&ccedil;&atilde;o Atual</th>
-                    <th width="15%" align="center">Unidade</th>
+                    <th width="15%" align="center"><fmt:message key="usuario.lotacao"/></th>
                     <th width="15%" align="center">Matr&iacute;cula</th>
                     <th width="49%" align="center">Descri&ccedil;&atilde;o</th>
                 </tr>
@@ -29,7 +30,7 @@
                     <tr class="even">
                         <td width="3%" align="center">
                             <input type="checkbox" name="documentosSelecionados"
-                                   value="${documento.idDoc}" id="${x}" class="chkDocumento" onclick="displaySel()"/>
+                                   value="${documento.sigla}" id="${documento.idDoc}" class="chkDocumento"/>
                         </td>
                         <td width="13%" align="right">${documento.sigla}</td>
                         <td width="5%" align="center">${documento.classificacaoSigla}</td>

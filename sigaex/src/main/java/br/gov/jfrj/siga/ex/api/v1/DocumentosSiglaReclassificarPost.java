@@ -21,7 +21,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Objects;
 
-@Transacional
 public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSiglaReclassificarPost {
 
     @Override
@@ -60,6 +59,10 @@ public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSig
 
     private ExClassificacaoSelecao validarEBuscarClassificacao(final String classificacaoAtual, 
                                                                final String novaClassificacao){
+        if (StringUtils.isEmpty(novaClassificacao)) {
+            throw new AplicacaoException("É necessário informar a nova classificação");
+        }
+        
         if (classificacaoAtual.equals(novaClassificacao)) {
             throw new AplicacaoException("Classificação " + novaClassificacao + " é a mesma da atual. " 
                     + "Selecione valores diferentes para a reclassificação");

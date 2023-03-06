@@ -2068,6 +2068,8 @@ public class ExRelatorioController extends ExController {
 	public Download exportarDocsArquivadosTransferidoCsv(Long idOrgaoUsu, final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, 
 			final DpLotacaoSelecao lotacaoDestinatarioSel) throws UnsupportedEncodingException {
 
+		super.assertAcesso(ExMovimentacaoController.ACESSO_FORM_TRANSF_ARQ);
+		
 		List<Long> marcadores = new ArrayList<Long>();
 		marcadores.add(CpMarcadorEnum.ARQUIVADO_CORRENTE.getId());
 		marcadores.add(CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId());

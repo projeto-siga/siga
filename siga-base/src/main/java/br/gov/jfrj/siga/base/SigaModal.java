@@ -11,6 +11,11 @@ public class SigaModal {
 	private String linkBotaoDeAcao;
 	private String classBotaoDeAcao = "btn-primary";
 	private String classBotaoDeFechar = "btn-secondary";
+	
+	private String  descricaoBotaoFechaModalDoRodape = "Não";
+	private String  descricaoBotaoDeAcao = "Sim";
+	
+	
 	private boolean inverterBotoes;
 	
 
@@ -79,6 +84,26 @@ public class SigaModal {
 	
 	public boolean isInverterBotoes() {
 		return inverterBotoes;
+	}
+	
+	
+	public String getDescricaoBotaoFechaModalDoRodape() {
+		return descricaoBotaoFechaModalDoRodape;
+	}
+
+	public SigaModal descricaoBotaoFechaModalDoRodape(String descricaoBotaoFechaModalDoRodape) {
+		this.descricaoBotaoFechaModalDoRodape = descricaoBotaoFechaModalDoRodape;
+		return this;
+	}
+	
+	
+	public String getDescricaoBotaoDeAcao() {
+		return descricaoBotaoDeAcao;
+	}
+
+	public SigaModal descricaoBotaoDeAcao(String descricaoBotaoDeAcao) {
+		this.descricaoBotaoDeAcao = descricaoBotaoDeAcao;
+		return this;
 	}
 
 }

@@ -21,6 +21,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Objects;
 
+@Transacional
 public class DocumentosSiglaReclassificarPost implements IExApiV1.IDocumentosSiglaReclassificarPost {
 
     @Override

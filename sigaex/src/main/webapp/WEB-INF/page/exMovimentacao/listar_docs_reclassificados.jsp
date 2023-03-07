@@ -66,7 +66,7 @@
                                 <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mov.exMobil.sigla}">
                                         ${mov.exMobil.codigo}
                                 </a>
-                            <td align="center">${mov.exMobil.exDocumento.exClassificacaoAtual}</td>
+                            <td align="center">${mov.exMobil.exDocumento.exClassificacaoAtual.sigla}</td>
                             </td>
                             <td align="center">
                                 <siga:selecionado sigla="${mov.exMobil.exDocumento.lotaSubscritor.sigla}"
@@ -100,12 +100,12 @@
                     <tbody class="table-bordered">
                     <c:forEach var="mobil" items="${mobisDocumentosReclassificados}">
                         <tr>
-                            <td class="text-right">
+                            <td align="center">
                                 <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${mobil.sigla}">
                                         ${mobil.codigo}
                                 </a>
                             </td>
-                            <td class="text-center">${mobil.doc.exClassificacaoAtual}</td>
+                            <td class="text-center">${mobil.doc.exClassificacaoAtual.sigla}</td>
                             <td class="text-center">
                                 <siga:selecionado sigla="${mobil.doc.lotaSubscritor.sigla}"
                                                   descricao="${mobil.doc.lotaSubscritor.descricao}"/>

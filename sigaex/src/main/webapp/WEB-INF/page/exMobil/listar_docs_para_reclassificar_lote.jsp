@@ -32,7 +32,11 @@
                             <input type="checkbox" name="documentosSelecionados"
                                    value="${documento.sigla}" id="${documento.idDoc}" class="chkDocumento"/>
                         </td>
-                        <td width="13%" align="right">${documento.sigla}</td>
+                        <td width="13%" align="center">
+                            <a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
+                                ${documento.sigla}
+                            </a>
+                        </td>
                         <td width="5%" align="center">${documento.classificacaoSigla}</td>
                         <td width="15%" align="center">${documento.lotaCadastranteString}</td>
                         <td width="15%" align="center">${documento.cadastranteString}</td>

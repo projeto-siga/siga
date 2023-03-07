@@ -5791,8 +5791,8 @@ public class ExMovimentacaoController extends ExController {
 		result.include("mobisDocumentosReclassificados", mobisDocumentosReclassificados);
 		result.include("movsDocumentosNaoReclassificados", listaMovimentacaoDocumentosNaoReclassificados);
 
-		result.include("classificacaoAtual", classificacaoAtualSel.getSigla());
-		result.include("classificacaoNova", classificacaoNovaSel.getSigla());
+		result.include("classificacaoAtual", classificacaoAtualSel.getObjeto().getDescricaoCompleta());
+		result.include("classificacaoNova", classificacaoNovaSel.getObjeto().getDescricaoCompleta());
 		result.include("movIni", movIni);
 
 	}

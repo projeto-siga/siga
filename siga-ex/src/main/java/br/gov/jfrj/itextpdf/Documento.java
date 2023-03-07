@@ -623,7 +623,7 @@ public class Documento {
 		}
 		Map<String,Object> map = new HashMap<>();
 		map.put("somaArqBytes", bytes);
-		map.put("quantTotalArquivos", ans.size());
+		map.put("quantTotalDocs", ans.size());
 		map.put("excedeuMB", excedeuMB);
 		map.put("quantDocsPagina", EXIBICAO_PAG_PDF_COMPL_QTD_DOCS_PAGINAS);
 		String json = new Gson().toJson(map); 

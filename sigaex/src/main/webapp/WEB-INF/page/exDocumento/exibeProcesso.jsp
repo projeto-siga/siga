@@ -744,12 +744,12 @@
 	function exibirMsgPaginacaoPdf (paramoffset){
 		var data = tamanhoArquivosDocs;
 		if (data != null){
-			var quantTotalArquivos = data['quantTotalArquivos'];
+			var quantTotalDocs = data['quantTotalDocs'];
 			var qtdPorLink = data['quantDocsPagina'];
 			//Limite de botoes por pagina
 			var qtdLimiteBtLinkPage = 4;
 			let numOffsetAtual = paramoffset.match(/\d+/)[0];
-			let pag = calcularPaginacaoBotoesPdf(quantTotalArquivos, qtdPorLink, numOffsetAtual);
+			let pag = calcularPaginacaoBotoesPdf(quantTotalDocs, qtdPorLink, numOffsetAtual);
 			
 			return pag.length > 1 ? true : false;
 		}
@@ -781,7 +781,7 @@
 		return data != null ? data['excedeuMB'] : false;
 	}
 	
-	function calcularPaginacaoBotoesPdf(quantTotalArquivos, qtdPorLink, numOffsetAtual) {
+	function calcularPaginacaoBotoesPdf(quantTotalDocs, qtdPorLink, numOffsetAtual) {
 		if (numOffsetAtual != null) {
 			//Caculo para criacao de botoes
 			const paginate = (items, per, numOffsetAtual) =>
@@ -793,7 +793,7 @@
 			    atual: numOffsetAtual == i * per + 1
 			 }));
 		  
-		 	let pag = paginate(quantTotalArquivos, qtdPorLink, numOffsetAtual);
+		 	let pag = paginate(quantTotalDocs, qtdPorLink, numOffsetAtual);
 		 	return pag;
 		}
 		return null;
@@ -802,12 +802,12 @@
 	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
 		var data = tamanhoArquivosDocs;
 		if (data != null){
-			var quantTotalArquivos = data['quantTotalArquivos'];
+			var quantTotalDocs = data['quantTotalDocs'];
 			var qtdPorLink = data['quantDocsPagina'];
 			//Limite de botoes por pagina
 			var qtdLimiteBtLinkPage = 4;
 			let numOffsetAtual = paramoffset.match(/\d+/)[0];
-			let pag = calcularPaginacaoBotoesPdf(quantTotalArquivos, qtdPorLink, numOffsetAtual);
+			let pag = calcularPaginacaoBotoesPdf(quantTotalDocs, qtdPorLink, numOffsetAtual);
 			
 			//caso a quant de botoes seja maior que 1, entao criar paginacao
 			if (pag.length > 1) {

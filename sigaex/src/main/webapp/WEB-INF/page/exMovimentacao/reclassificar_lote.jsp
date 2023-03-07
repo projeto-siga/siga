@@ -225,9 +225,13 @@
 
             let novaClassificacao = document.getElementById('formulario_classificacaoNovaSel_sigla').value;
             let motivo = document.getElementById('motivo').value;
-            let dtMovString = document.getElementById('dtMovString').value;
             let responsavel = document.getElementById('formulario_subscritorSel_sigla').value;
             let titular = document.getElementById('formulario_titularSel_sigla').value;
+
+            let dtMovString = document.getElementsByName('dtMovString')[0].value;
+            if(dtMovString.trim() !== ""){
+                dtMovString = formataDataString(dtMovString);
+            }
 
             process.push(function () {
                 $('#progressModal').modal({
@@ -333,6 +337,18 @@
                 }
             }
         };
+
+        function formataDataString(data) {
+            data = data.replaceAll('/', '');
+
+            let dia = data.substring(0, 2);
+            let mes = data.substring(2, 4);
+            let ano = data.substring(4, data.length);
+
+            const dataFormatada = new Date(ano, mes-1, dia).toISOString().split('T')[0];
+
+            return dataFormatada;
+        }
 
     </script>
     <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>

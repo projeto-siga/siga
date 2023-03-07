@@ -5746,8 +5746,8 @@ public class ExMovimentacaoController extends ExController {
 
 	@Post("/app/expediente/mov/listar_docs_reclassificados")
 	public void listar_docs_reclassificados(final String siglasDocumentosReclassificados,
-									   final ExClassificacaoSelecao classificacaoAtual,
-									   final ExClassificacaoSelecao classificacaoNova,
+									   final ExClassificacaoSelecao classificacaoAtualSel,
+									   final ExClassificacaoSelecao classificacaoNovaSel,
 									   final String errosDocumentosNaoReclassificadosJson) throws Exception {
 
 		String[] arraySiglasDocumentosReclassificados = { };
@@ -5788,24 +5788,13 @@ public class ExMovimentacaoController extends ExController {
 			movIni = listaMovimentacaoDocumentosNaoReclassificados.get(0);
 		}
 
-		ExMobil mobFim = mobisDocumentosReclassificados.isEmpty() ? null :
-				mobisDocumentosReclassificados.get(mobisDocumentosReclassificados.size() - 1);
-		ExMovimentacao movFim = null;
-		if (mobFim != null) {
-			movFim = mobFim.getUltimaMovimentacao();
-		}
-
 		result.include("mobisDocumentosReclassificados", mobisDocumentosReclassificados);
 		result.include("movsDocumentosNaoReclassificados", listaMovimentacaoDocumentosNaoReclassificados);
 
-		result.include("lotaTitular", getLotaTitular());
+		result.include("classificacaoAtual", classificacaoAtualSel.getSigla());
+		result.include("classificacaoNova", classificacaoNovaSel.getSigla());
 		result.include("movIni", movIni);
 
-		String dtIni = movIni != null ? movIni.getDtRegMovDDMMYYYYHHMMSS() : null;
-		String dtFim = movFim != null ? movFim.getDtRegMovDDMMYYYYHHMMSS() : null;
-
-		result.include("dtIni", dtIni);
-		result.include("dtFim", dtFim);
 	}
 
 	@Post("/app/expediente/mov/listar_docs_tramitados")

@@ -24,19 +24,12 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 	private ExDocumento doc;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
-	private List<ExMovimentacao> listMovJuntada;
 
 	public ExPodeRestringirAcesso(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		this.mob = mob;
 		this.doc = mob.doc();
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
-
-		listMovJuntada = new ArrayList<ExMovimentacao>();
-		if (mob.getDoc().getMobilDefaultParaReceberJuntada() != null) {
-			listMovJuntada.addAll(mob.getDoc().getMobilDefaultParaReceberJuntada()
-					.getMovsNaoCanceladas(ExTipoDeMovimentacao.JUNTADA));
-		}
 	}
 
 	@Override
@@ -62,8 +55,8 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 						Not.of(new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 								.withIdTpConf(ExTipoDeConfiguracao.INCLUIR_DOCUMENTO)),
 
-						Not.of(new ExTemMobilPai(mob.doc()))),
-
-				new CpIgual(listMovJuntada.size(), "juntadas", 0, "zero"));
+						Not.of(new ExTemMobilPai(mob.doc()))), 
+				
+				Not.of(new ExTemJuntados(mob))); // ExTemJuntada
 	}
 }

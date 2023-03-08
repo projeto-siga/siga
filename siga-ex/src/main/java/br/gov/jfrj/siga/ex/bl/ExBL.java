@@ -3265,7 +3265,7 @@ public class ExBL extends CpBL {
 			
 			if(mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO)) {
 				this.excluirRegistroDaOrdenacaoAssinatura(mob, mov, cadastrante, lotaCadastrante);
-				this.excluirRestricaoAcessoCossignatario(mob, mov, cadastrante, lotaCadastrante);
+				this.excluirRestricaoAcessoPessoa(mob, mov.getSubscritor(), cadastrante, lotaCadastrante);
 			}
 			
 			concluirAlteracao(mov);
@@ -4551,16 +4551,16 @@ public class ExBL extends CpBL {
 	/**
 	 *Se Documento com Acesso Restrito, verifica se há restrição para cossignatário na exclusão de cossignatário e remove restrição
 	 */
-	private void excluirRestricaoAcessoCossignatario(ExMobil mob, ExMovimentacao mov, DpPessoa cadastrante, DpLotacao lotaCadastrante) {
+	public void excluirRestricaoAcessoPessoa(ExMobil mob, DpPessoa pessoa, DpPessoa cadastrante, DpLotacao lotaCadastrante) {
 		if (mob.isAcessoRestrito()) {
 			mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 				.stream()
-				.filter(movRestricao -> movRestricao.getSubscritor().equals(mov.getSubscritor()))
-				.forEach(movRestricaoAcessoDeCossignatario -> {
+				.filter(movRestricao -> movRestricao.getSubscritor().equals(pessoa))
+				.forEach(movRestricaoAcessoParaPessoa-> {
 					try {
-						cancelar(cadastrante, lotaCadastrante, mob, movRestricaoAcessoDeCossignatario, null, null, null, "Restrição: " + movRestricaoAcessoDeCossignatario.getDescrMov());
+						cancelar(cadastrante, lotaCadastrante, mob, movRestricaoAcessoParaPessoa, null, null, null, "Restrição: " + movRestricaoAcessoParaPessoa.getDescrMov());
 					} catch (Exception e) {
-						throw new RuntimeException("Erro ao excluir a Restrição de Acesso para o Cossignatário. ", e);
+						throw new RuntimeException(String.format("Erro ao excluir a Restrição de Acesso para %s. ", pessoa.getSigla() + "-" + pessoa.getNomePessoa()) , e);
 					}
 				});
 		}

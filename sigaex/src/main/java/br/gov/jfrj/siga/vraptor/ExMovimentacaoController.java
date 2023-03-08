@@ -3694,10 +3694,7 @@ public class ExMovimentacaoController extends ExController {
 				} 
 			}
 		}
-		
-
-		
-		
+			
 		if(doc.getMobilGeral().isAcessoRestrito()) {
 			DpPessoa pessoa = CpDao.getInstance().consultar(idPessoa, DpPessoa.class, false).getPessoaAtual();
 			
@@ -3713,7 +3710,8 @@ public class ExMovimentacaoController extends ExController {
 								.classBotaoDeFechar("btn-success")
 								.descricaoBotaoFechaModalDoRodape("Sim")
 								.descricaoBotaoDeAcao("Não")
-								.linkBotaoDeAcao(String.format("javascript:sigaSpinner.mostrar();location.href='/sigaex/app/expediente/mov/cancelar_restricao_acesso?id=%s'", movRestricaoAcessoDePerfil.getIdMov())));
+								.linkBotaoDeAcao(String.format("javascript:sigaSpinner.mostrar();location.href='/sigaex/app/expediente/mov/cancelar_restricao_acesso?idMobil=%s&idPessoa=%s'", doc.getMobilGeral().getId(), pessoa.getId())));
+				break;
 				}
 			}
 		}
@@ -5957,37 +5955,46 @@ public class ExMovimentacaoController extends ExController {
         result.include("dtIni", dtIni);
         result.include("dtFim", dtFim);
     }
-    
-	
-	
 	
 	@Transacional
 	@Get("/app/expediente/mov/cancelar_restricao_acesso")
-	public void aCancelarRestricaoAcesso(final Long id, String redirectURL)
+	public void aCancelarRestricaoAcesso(final Long idMovRestricao, final Long idMobil, final Long idPessoa, String redirectURL)
 			throws Exception {
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
-				.novaInstancia().setId(id);
-		buscarDocumento(builder);
-		final ExMobil mob = builder.getMob();
-
-		final ExMovimentacao mov = dao().consultar(id, ExMovimentacao.class,
-				false);
-
-		if (mov == null 
-				|| !mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.RESTRINGIR_ACESSO) 
-				|| mov.isCancelada()) {
-			throw new AplicacaoException("Não existe a Restrição de Acesso a ser cancelada.");
-		}
 		
-		
-		Ex.getInstance()
-			.getBL()
-			.cancelar(getTitular(), getLotaTitular(), builder.getMob(),mov, null, null, null,"Restrição: " + mov.getDescrMov());
+		ExMovimentacao mov = null;
+		ExMobil mobil = null;
+		if (idMovRestricao != null)  {
+			 mov = dao().consultar(idMovRestricao, ExMovimentacao.class,false);
+			 
+			//Caso seja para movimentação de restrição de acesso, verifica se movimentação existe e não está cancelada
+			 if (mov == null || !mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.RESTRINGIR_ACESSO) ||  mov.isCancelada()) {
+					throw new AplicacaoException("Não existe a Restrição de Acesso a ser cancelada.");
+			 } else {
+				 mobil = mov.getExMobil();
+				//Cancela movimentação de restrição especificada
+				Ex.getInstance().getBL()
+					.cancelar(getTitular(), getLotaTitular(), mobil ,mov, null, null, null,"Restrição: " + mov.getDescrMov());			
+			 }
+			 
+		}  else if (idMobil != null && idPessoa != null)  {
+			//Tenta cancelar restrições de acesso para a pessoa nesse móbil
+
+			DpPessoa pessoa = dao().consultar(idPessoa, DpPessoa.class,false); 
+			mobil = dao().consultar(idMobil, ExMobil.class,false); 
+			
+			if (pessoa == null || mobil == null) {
+				throw new AplicacaoException("Não localizada pessoa ou documento de referência para cancelamento da Restrição de Acesso.");
+			} else {
+				Ex.getInstance().getBL()
+					.excluirRestricaoAcessoPessoa(mobil, pessoa,getTitular(),getLotaTitular());
+			}
+		} 
+
 			
 		if (redirectURL != null) {
 			result.redirectTo(redirectURL);
 		} else {
-			ExDocumentoController.redirecionarParaExibir(result, mob.getSigla());
+			ExDocumentoController.redirecionarParaExibir(result, mobil.getSigla());
 		}
 	}
 	

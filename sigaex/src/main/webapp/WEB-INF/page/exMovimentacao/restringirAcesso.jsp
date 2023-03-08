@@ -151,7 +151,7 @@
 								<td>${mov.lotaTitular.nomeLotacao }</td>
 								<td>${mov.titular.funcaoString }</td>
 								<td><input type="button" value="Excluir" 
-									onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/cancelar_restricao_acesso?id=${mov.idMov}&redirectURL=/app/expediente/mov/restringir_acesso?sigla=${sigla}'" class="btn btn-danger"/>					
+									onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/cancelar_restricao_acesso?idMovRestricao=${mov.idMov}&redirectURL=/app/expediente/mov/restringir_acesso?sigla=${sigla}'" class="btn btn-danger"/>					
 								</td>
 							</tr>
 						</c:forEach>

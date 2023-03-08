@@ -930,7 +930,7 @@ public class ExMovimentacaoController extends ExController {
 					.getBL()
 					.restringirAcesso(getCadastrante(), getLotaTitular(), doc,
 							null, mov.getLotaResp(), mov.getResp(),
-							listaPessoasRestricaoAcesso, mov.getTitular(),
+							listaPessoasRestricaoAcesso, getTitular(),
 							mov.getNmFuncaoSubscritor(), exTipoSig);
 			
 			removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();
@@ -2256,7 +2256,7 @@ public class ExMovimentacaoController extends ExController {
 				.getBL()
 				.restringirAcesso(getCadastrante(), getLotaTitular(), documento,
 						null, mov.getLotaResp(), mov.getResp(),
-						listaPessoasRestricaoAcesso, mov.getTitular(),
+						listaPessoasRestricaoAcesso, getTitular(),
 						mov.getNmFuncaoSubscritor(), nivelAcesso);
 	}
 

@@ -2800,7 +2800,7 @@ public class ExDao extends CpDao {
 	
 
 	public List<ExDocumentoVO> consultarParaReclassificarEmLote(final Long idOrgaoTitular, final Long idLotacaoTitular,
-																final String classificacaoSigla, 
+																final Long idClassificacao, 
 																final int offset, final int itemPagina) {
 		
 		/* Query para obter Documentos e Movimentações com determinada Classificação
@@ -2839,7 +2839,7 @@ public class ExDao extends CpDao {
 				+ "    and cm.id_marcador not in (:notInCpMarcadorEnumList)"
 				+ "    and doc.id_orgao_usu = :idOrgaoTitular"
 				+ "    and (:idLotacaoTitular is null or :idLotacaoTitular = 0 or doc.id_lota_cadastrante = :idLotacaoTitular)"
-				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
+				+ "    and ((classific_mov.id_classificacao is null and classific_doc.id_classificacao = :idClassificacao)"
 				+ "        or (classific_mov.codificacao is not null"
 				+ "            and mov.id_mov = ("
 				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
@@ -2848,7 +2848,7 @@ public class ExDao extends CpDao {
 				+ "                and ultmovtipo.id_tp_mov in (:tipoMovEnumlist)" //movimentação do tipo 51,53 Reclassificação
 				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
 				+ "            )"
-				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "            and (classific_mov.id_classificacao = :idClassificacao)"
 				+ "        )"
 				+ "    )"
 				+ " order by mob.dnm_sigla";
@@ -2857,7 +2857,7 @@ public class ExDao extends CpDao {
 
 		query.setParameter("idOrgaoTitular", idOrgaoTitular);
 		query.setParameter("idLotacaoTitular", idLotacaoTitular);
-		query.setParameter("mascara", classificacaoSigla);
+		query.setParameter("idClassificacao", idClassificacao);
 		query.setParameter("tipoMobilGeral", ExTipoMobil.TIPO_MOBIL_GERAL);
 		query.setParameter("notInCpMarcadorEnumList", Arrays.asList(
 				CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(),
@@ -2873,7 +2873,7 @@ public class ExDao extends CpDao {
 	}
 
 	public int consultarQuantidadeParaReclassificarEmLote(final Long idOrgaoTitular, final Long idLotacaoTitular,
-														   final String classificacaoSigla) {
+														   final Long idClassificacao) {
 
 		/* Query para obter a quantidade Documentos e Movimentações com Classificação
 		 * */
@@ -2886,12 +2886,8 @@ public class ExDao extends CpDao {
 				+ "    cm.id_ref = mob.id_mobil"
 				+ " join siga.ex_documento doc on"
 				+ "    doc.id_doc = mob.id_doc"
-				+ " join siga.ex_classificacao classific_doc on"
-				+ "    classific_doc.id_classificacao = doc.id_classificacao"
 				+ " full join siga.ex_movimentacao mov on"
 				+ "    mov.id_mobil = mob.id_mobil and mov.id_tp_mov in (:tipoMovEnumlist) and mov.id_mov_canceladora is null "
-				+ " left join siga.ex_classificacao classific_mov on"
-				+ "    classific_mov.id_classificacao = mov.id_classificacao"
 				+ " join corporativo.dp_lotacao lotacao on"
 				+ "    lotacao.id_lotacao = doc.id_lota_titular"
 				+ " join corporativo.dp_pessoa pessoa on"
@@ -2904,8 +2900,8 @@ public class ExDao extends CpDao {
 				+ "    and cm.id_marcador not in (:notInCpMarcadorEnumList)"
 				+ "    and doc.id_orgao_usu = :idOrgaoTitular"
 				+ "    and (:idLotacaoTitular is null or :idLotacaoTitular = 0 or doc.id_lota_cadastrante = :idLotacaoTitular)"
-				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
-				+ "        or (classific_mov.codificacao is not null"
+				+ "    and ((mov.id_classificacao is null and doc.id_classificacao = :idClassificacao)"
+				+ "        or (mov.id_classificacao is not null"
 				+ "            and mov.id_mov = ("
 				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
 				+ "                from siga.ex_movimentacao ultmovtipo"
@@ -2913,7 +2909,7 @@ public class ExDao extends CpDao {
 				+ "                and ultmovtipo.id_tp_mov in (:tipoMovEnumlist)" //movimentação do tipo 51,53 Reclassificação
 				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
 				+ "            )"
-				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "            and (mov.id_classificacao = :idClassificacao)"
 				+ "        )"
 				+ "    )"
 				+ " )";
@@ -2922,7 +2918,7 @@ public class ExDao extends CpDao {
 
 		query.setParameter("idOrgaoTitular", idOrgaoTitular);
 		query.setParameter("idLotacaoTitular", idLotacaoTitular);
-		query.setParameter("mascara", classificacaoSigla);
+		query.setParameter("idClassificacao", idClassificacao);
 		query.setParameter("tipoMobilGeral", ExTipoMobil.TIPO_MOBIL_GERAL);
 		query.setParameter("notInCpMarcadorEnumList", Arrays.asList(
 				CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(),

@@ -146,11 +146,11 @@
             sigaSpinner.mostrar();
 
             let selectIdLotacao = document.getElementById('selectLotacao').value;
-            let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
+            let selectIdClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_id').value;
             offset = offset == null ? 0 : offset;
 
-            let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?siglaClassificacao='
-                + siglaClassificacaoAtual + '&dpLotacaoSelecao=' + selectIdLotacao + '&offset=' + offset;
+            let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?classificacaoSelecao='
+                + selectIdClassificacaoAtual + '&dpLotacaoSelecao=' + selectIdLotacao + '&offset=' + offset;
 
             $.ajax({
                 url: url,

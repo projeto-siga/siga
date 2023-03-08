@@ -1071,7 +1071,7 @@ public class ExMobilController extends
 	}
 
 	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
-	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao,
+	public void listar_docs_para_reclassificar_lote(final String classificacaoSelecao,
 													final String dpLotacaoSelecao, 
 													final int offset) {
 
@@ -1083,17 +1083,19 @@ public class ExMobilController extends
 		}
 		
         Integer tamanho = null;
-		if (Objects.nonNull(siglaClassificacao) && !siglaClassificacao.isEmpty()) {
+		Long idClassificacaoSelecao = 0L;
+		if (Objects.nonNull(classificacaoSelecao) && !classificacaoSelecao.isEmpty()) {
+			idClassificacaoSelecao = Long.valueOf(classificacaoSelecao);
 			tamanho = ExDao.getInstance()
 					.consultarQuantidadeParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
-                            idDpLotacaoSelecao, siglaClassificacao);
+                            idDpLotacaoSelecao, idClassificacaoSelecao);
 
 		}
 		
 		if (Objects.nonNull(tamanho)) {
 			List<ExDocumentoVO> documentosPorCodificacaoClassificacao = ExDao.getInstance()
 					.consultarParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(), 
-							idDpLotacaoSelecao, siglaClassificacao, offset, MAX_ITENS_PAGINA_DUZENTOS);
+							idDpLotacaoSelecao, idClassificacaoSelecao, offset, MAX_ITENS_PAGINA_DUZENTOS);
 
 			getP().setOffset(offset);
 			setItemPagina(MAX_ITENS_PAGINA_DUZENTOS);

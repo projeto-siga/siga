@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import org.jsoup.parser.Parser;
 
+import com.crivano.jmodel.Utils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -57,6 +58,10 @@ import freemarker.template.TemplateExceptionHandler;
 
 public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		TemplateLoader {
+    
+    final static Pattern patternFreemarkerMarkdown = Pattern.compile(
+            "\\[@markdown\\](?<markdown>.+)\\[/@markdown\\]\\s*",
+            Pattern.MULTILINE | Pattern.DOTALL);
 
 	private Configuration cfg;
 
@@ -118,9 +123,17 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		String template = (String) attrs.get("template");
 		
 		// Se o template não contem entrevista nem documento, processar com JModel
-		if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@dadosComplementares")) {
-		    template = com.crivano.jmodel.Template.markdownToFreemarker(null, template);
-		    System.out.println(template);
+        if (template.contains("[@markdown")) {
+            Matcher matcher = patternFreemarkerMarkdown.matcher(template);
+            StringBuffer sb = new StringBuffer();
+            while (matcher.find()) {
+                String rep = matcher.group("markdown");
+                matcher.appendReplacement(sb, com.crivano.jmodel.Template.markdownToFreemarker(null, rep, null));
+            }
+            matcher.appendTail(sb);
+            template = sb.toString();
+        } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@markdown") && !template.contains("[@dadosComplementares")) {
+		    template = com.crivano.jmodel.Template.markdownToFreemarker(null, template, null);
 		}
 
 		String templateFinal = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";

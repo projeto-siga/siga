@@ -1130,40 +1130,67 @@ public class FuncoesEL {
 	
 	// Rotina de cálculo específica para diárias da Justiça Federal
 	//
-	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final double valorUnitatioDaDiaria,
+	public static DiariasDaJusticaFederalResultado calcularDiariasDaJusticaFederal(final String dataInicio, final String dataTermino, 
+	        final double valorUnitatioDaDiaria,
 			final double valorUnitarioDaDiariaParaCalculoDoDeslocamento,
 			final String faixa, final String deslocamentoConjunto, 
 			final boolean internacional, final double cotacaoDoDolar, final String tipoDeDiaria, 
 			final boolean prorrogacao, final double valorJaRecebido,
 			final double valorUnitarioDoAuxilioAlimentacao,
 			final double valorUnitarioDoAuxilioTransporte, final double tetoDiaria, final double tetoMeiaDiaria, final String form) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
 		Map<String, Object> map = new TreeMap<String, Object>();
 		Utils.mapFromUrlEncodedForm(map, form.getBytes());
 
-		List<DiariasDaJusticaFederalParametroTrecho> l = new ArrayList<>();
-		List<LocalDate> feriados = new ArrayList<>();
+		List<DiariasDaJusticaFederalParametroTrecho> trechos = new ArrayList<>();
+        List<LocalDate> feriados = new ArrayList<>();
+        List<LocalDate> diasSemDiaria = new ArrayList<>();
 
 		if (map != null) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
 			for (int i = 1; map.containsKey("data_de_embarque" + i); i++) {
 				DiariasDaJusticaFederalParametroTrecho t = new DiariasDaJusticaFederalParametroTrecho();
-				t.data = LocalDate.parse((String) map.get("data_de_embarque" + i), formatter);
+				t.dataInicio = LocalDate.parse((String) map.get("data_de_embarque" + i), formatter);
 				t.trecho = (String) map.get("trecho" + i);
 				t.carroOficialAteOEmbarque = "Sim".equals((String) map.get("veiculo_oficial_embarque" + i));
 				t.carroOficialAteODestino = "Sim".equals((String) map.get("veiculo_oficial_desembarque" + i));
 				t.semDespesasDeHospedagem = "Sim".equals((String) map.get("sem_despesas_de_hospedagem" + i));
-				l.add(t);
+				trechos.add(t);
 			}
-			for (int i = 1; map.containsKey("feriado" + i); i++) {
-				feriados.add(LocalDate.parse((String) map.get("feriado" + i), formatter));
-			}
+            for (int i = 1; map.containsKey("feriado" + i); i++) {
+                feriados.add(LocalDate.parse((String) map.get("feriado" + i), formatter));
+            }
+            for (int i = 1; map.containsKey("dia_sem_diaria" + i); i++) {
+                diasSemDiaria.add(LocalDate.parse((String) map.get("dia_sem_diaria" + i), formatter));
+            }
 		}
+		
+        // Atualizar as datas de término de todos os trechos
+        //
+        for (int i = 0; i < trechos.size(); i++) {
+            boolean fUltimo = i == trechos.size() - 1;
+            DiariasDaJusticaFederalParametroTrecho trecho = trechos.get(i);
+            DiariasDaJusticaFederalParametroTrecho proximoTrecho = fUltimo ? null : trechos.get(i + 1);
+            
+            if (fUltimo) {
+                trecho.dataTermino = LocalDate.parse(dataTermino, formatter);
+            } else {
+                // Se a data de início deste trecho for igual a data de início do trecho seguinte, então se trata uma ida e volta no mesmo dia, 
+                // ou uma parada em uma cidade de um dia só. 
+                if (trecho.dataInicio.equals(proximoTrecho.dataInicio))
+                    // Neste caso, o dia de término do trecho será igual ao dia de início do trecho seguinte.
+                    trecho.dataTermino = trecho.dataInicio;
+                else
+                    // Preenche com a véspera do próximo trecho
+                    trecho.dataTermino = proximoTrecho.dataInicio.minusDays(1);
+            }
+        }
+
 		
 		try {
 			return new DiariasDaJusticaFederal().calcular(valorUnitatioDaDiaria, valorUnitarioDaDiariaParaCalculoDoDeslocamento,
 					FaixaEnum.find(faixa), DeslocamentoConjuntoEnum.find(deslocamentoConjunto), 
 					internacional, cotacaoDoDolar, TipoDeDiariaEnum.find(tipoDeDiaria), prorrogacao, valorJaRecebido,
-					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, tetoDiaria, tetoMeiaDiaria, l, feriados);
+					valorUnitarioDoAuxilioAlimentacao, valorUnitarioDoAuxilioTransporte, tetoDiaria, tetoMeiaDiaria, trechos, feriados, diasSemDiaria);
 		} catch (Exception ex) {
 			log.error(ex);
 			return null;

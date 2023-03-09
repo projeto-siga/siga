@@ -395,7 +395,15 @@ function sbmtDoc() {
 											pessoaParam="${mov.parte.resp.sigla}"/>
 									</td>
 									
-									<td class="${mov.disabled}">
+									
+									<c:choose>
+										<c:when test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
+										<td class="">
+										</c:when>
+										<c:otherwise>
+										<td class="${mov.disabled}">
+										</c:otherwise>
+									</c:choose>
 										${mov.descricao}
 										<c:if test="${mov.exTipoMovimentacao != 'ANEXACAO'}">
 											${mov.complemento}
@@ -404,14 +412,18 @@ function sbmtDoc() {
 										<siga:links buttons="${false}" inline="${true}"
 											separator="${not empty mov.descricao and mov.descricao != null}">
 											<c:forEach var="acao" items="${mov.acoes}">
+												<c:set var="acaourl" value="${pageContext.request.contextPath}${fn:replace(acao.url, '/doc/exibir?sigla=', 
+														'/painel/exibir?documentoRefSel.sigla=')}"/>
+												<c:if test="${mov.cancelada && mov.tipoMovimentacaoArquivamento}">
+													<c:set var="acaourl" value="${acao.url}"/>
+												</c:if>
 												<c:if test='${not(fn:contains(acao.nomeNbsp, "Cancelar") 
 													or fn:contains(acao.nomeNbsp, "Excluir")
 													or fn:contains(acao.nomeNbsp, "Ver")
 													or fn:contains(acao.nomeNbsp, "Ver/Assinar"))}'>
 													<siga:link classe="text-size-8" title="${acao.nomeNbsp}"
 														pre="${acao.pre}" pos="${acao.pos}"
-														url="${pageContext.request.contextPath}${fn:replace(acao.url, '/doc/exibir?sigla=', 
-														'/painel/exibir?documentoRefSel.sigla=')}" />
+														url="${acaourl}" />
 													<c:if test="${assinadopor and mov.exTipoMovimentacao == 'ANEXACAO'}">
 														${mov.complemento}
 														<c:set var="assinadopor" value="${false}" />

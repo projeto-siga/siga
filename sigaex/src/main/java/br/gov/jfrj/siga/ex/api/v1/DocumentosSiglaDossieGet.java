@@ -26,7 +26,7 @@ public class DocumentosSiglaDossieGet implements IDocumentosSiglaDossieGet {
 				di.paginaFinal = an.getPaginaFinal().toString();
 			di.mobil = an.getReferencia();
 			di.descr = an.getNomeOuDescricao();
-			di.origem = an.getArquivo().getLotacao().getSigla();
+			di.origem = an.getArquivo().getLotacao() != null ? an.getArquivo().getLotacao().getSigla() : null;
 			di.data = an.getData();
 			di.nivel = Integer.toString(an.getNivel());
 			di.copia = an.isCopia();

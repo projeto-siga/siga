@@ -44,6 +44,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -3059,7 +3060,13 @@ public class ExBL extends CpBL {
 		}
 		
 		if (movCancelar.getExTipoMovimentacao() == ExTipoDeMovimentacao.RESTRINGIR_ACESSO && mob.getDoc().isPendenteDeAssinatura()) {
-			if (mob.getDoc().getSubscritorECosignatarios().contains(movCancelar.getSubscritor()) 
+			
+			boolean subscritorOuCossignatario = mob.getDoc().getSubscritorECosignatarios()
+													.stream()
+													.anyMatch(subscritor -> movCancelar.getSubscritor().equivale(subscritor));
+			
+			
+			if (subscritorOuCossignatario
 					&& !mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(movCancelar.getSubscritor())) {
 				throw new AplicacaoException("Não é permitida a exclusão do Subscritor/Cossignatário da Restrição de Acesso enquanto estiver com a assinatura pendente.");
 			}
@@ -5932,12 +5939,16 @@ public class ExBL extends CpBL {
 					listaPessoasSubscritoresRestricaoAcesso.addAll(exDocumento.getSubscritorECosignatarios());
 				}
 				
-				
+				boolean pessoaEstaRestricaoAcesso = false;
 				for (DpPessoa subscritor : listaPessoasSubscritoresRestricaoAcesso) {		
+					
+					pessoaEstaRestricaoAcesso = doc.getMobilGeral().getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+													.stream()
+													.anyMatch(pessoaRestrita -> subscritor.equivale(pessoaRestrita));
+					
+					
 					//Se já estiver na lista, não adiciona
-					if (!doc.getMobilGeral()
-							.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
-							.contains(subscritor) ) {
+					if (!pessoaEstaRestricaoAcesso) {
 						final ExMovimentacao mov = criarNovaMovimentacao(
 								ExTipoDeMovimentacao.RESTRINGIR_ACESSO, cadastrante, lotaCadastrante,
 								exDocumento.getMobilGeral(), dtMov, subscritor, null, titular, null, dtMov);

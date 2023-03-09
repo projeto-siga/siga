@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -362,14 +363,19 @@ public class ExAcesso {
 				}
 			}
 		} else {
+			boolean adicionaAcesso = false;
 			for (ExMovimentacao exMovimentacao : doc.getMobilGeral().getMovsNaoCanceladas (ExTipoDeMovimentacao.RESTRINGIR_ACESSO)) {
 				//Mantém último cadastrante de Restrição de Acesso na lista de Acesso para que não perca acesso imediato após ação
 				//Não usado a Cancelada, para na exclusão o cadastrante da última restrição não perder o acesso
 				//Então no mínimo, se houver a exclusão de todas as restrições, o operador não perde o acesso
 				add(doc.getMobilGeral().getUltimaMovimentacao(ExTipoDeMovimentacao.RESTRINGIR_ACESSO).getCadastrante());
 				
-				//Adiciona as pessoas objetos da restrição na lista de acesso
-				if (!acessos.contains(exMovimentacao.getSubscritor()))
+				//Adiciona as pessoas objetos da restrição na lista de acesso caso não esteja
+				adicionaAcesso = !acessos
+									.stream()
+									.anyMatch(acesso -> exMovimentacao.getSubscritor().equivale(acesso));
+				
+				if (adicionaAcesso)
 					add(exMovimentacao.getSubscritor());
 			}
 		}

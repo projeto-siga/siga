@@ -1689,9 +1689,15 @@ public class ExDocumentoController extends ExController {
 			}
 			
 			if(exDocumentoDTO.getDoc().getMobilGeral().isAcessoRestrito()) {
-				if (!exDocumentoDTO.getDoc().getMobilGeral()
-						.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
-						.contains(subscritor)) {
+				boolean pessoaEstaRestricaoAcesso = false;
+				//Verifica se Subscritor está na lista de restrição
+				for (DpPessoa pessoaRestrita : exDocumentoDTO.getDoc().getMobilGeral().getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)) {
+					pessoaEstaRestricaoAcesso = pessoaRestrita.equivale(subscritor);
+					if (pessoaEstaRestricaoAcesso) 
+						break;
+				}
+				
+				if (!pessoaEstaRestricaoAcesso) {
 					if (adicionarRestricaoAcessoAntes) {
 						Ex.getInstance()
 							.getBL()

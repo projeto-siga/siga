@@ -4559,7 +4559,7 @@ public class ExBL extends CpBL {
 		if (mob.isAcessoRestrito()) {
 			mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 				.stream()
-				.filter(movRestricao -> movRestricao.getSubscritor().equals(pessoa))
+				.filter(movRestricao -> pessoa.equivale(movRestricao.getSubscritor()))
 				.forEach(movRestricaoAcessoParaPessoa-> {
 					try {
 						cancelar(cadastrante, lotaCadastrante, mob, movRestricaoAcessoParaPessoa, null, null, null, "Restrição: " + movRestricaoAcessoParaPessoa.getDescrMov());

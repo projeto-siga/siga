@@ -4689,8 +4689,8 @@ public class ExBL extends CpBL {
 			if (!movs.isEmpty())
 				removerPendenciaDeDevolucao(movs, mob);
 				
-			if (podeRestringir) {// precisa rever se trata em caso que será juntado em documento sem restricao
-				this.copiarRestringir(mob, mobPai, cadastrante, titular, dtMov);
+			if (podeRestringir) {
+				herdaRestricaoAcessoDocumentoPai(mob, mobPai, cadastrante, titular, dtMov);
 			}
 			
 			concluirAlteracaoComRecalculoAcesso(mov);
@@ -4702,54 +4702,22 @@ public class ExBL extends CpBL {
 
 	}
 	
-	public void copiarRestringir(ExMobil mobFilho, ExMobil mobPai, DpPessoa cadastrante, DpPessoa titular, Date dtMov)
+	public void herdaRestricaoAcessoDocumentoPai(ExMobil mobFilho, ExMobil mobPai, DpPessoa cadastrante, DpPessoa titular, Date dtMov)
 			throws AplicacaoException, SQLException {
-		
-		List<ExMovimentacao> listFilho = new ArrayList<ExMovimentacao>();
-		listFilho.addAll(mobFilho.getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
-		
-		List<ExMovimentacao> listPai = new ArrayList<ExMovimentacao>();
-		listPai.addAll(mobPai.getDoc().getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
-		
-		ExNivelAcesso exTipoSig = mobPai.getDoc().getExNivelAcesso();
-		
-		if (!listFilho.isEmpty() || !listPai.isEmpty()) {
 
-			if (mobPai.getDoc().getMobilGeral().isAcessoRestrito()) {
-				desfazerRestringirAcesso(cadastrante, cadastrante.getLotacao(), mobFilho.getDoc(), null, exTipoSig);
-			} else {
-				if (!listFilho.isEmpty()) {
-					for (ExMovimentacao exMov : listFilho) {
-						// remover cancelamento
-						final ExMovimentacao mov1 = criarNovaMovimentacao(
-								ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, cadastrante,
-								cadastrante.getLotacao(), mobFilho.getDoc().getMobilGeral(), dtMov,
-								exMov.getSubscritor(), null, null, null, dtMov);
-
-						// add do pai se nao tiver no filho
-						mov1.setDescrMov("Nível de acesso do documento alterado de "
-								+ mobFilho.getDoc().getMobilGeral().getDoc().getExNivelAcessoAtual().getNmNivelAcesso()
-								+ " para " + exTipoSig.getNmNivelAcesso() + ". Restrição de acesso retirada para "
-								+ exMov.getSubscritor().getDescricaoIniciaisMaiusculas());
-
-						exMov.setExMovimentacaoCanceladora(mov1);
-						mov1.setExNivelAcesso(exTipoSig);
-
-						gravarMovimentacao(mov1);
-						gravarMovimentacao(exMov);
-					}
-				}
-				List<DpPessoa> listaSubscritor = new ArrayList<DpPessoa>();
-				for (ExMovimentacao exMovimentacao : listPai) {
-					listaSubscritor.add(exMovimentacao.getSubscritor());
-				}
-
-				restringirAcesso(cadastrante, titular.getLotacao(), mobFilho.getDoc(), null, null, null,
-						listaSubscritor, titular, null, exTipoSig);
-
+		if (!mobPai.getDoc().getMobilGeral().isAcessoRestrito()) {
+			if (mobFilho.getDoc().getMobilGeral().isAcessoRestrito()) {
+				//Se Filho tem acesso restrito e Pai não tem, cancela movimentações de restrição e herda nível de acesso
+				desfazerRestringirAcesso(cadastrante, cadastrante.getLotacao(), mobFilho.getDoc(), null, mobPai.getDoc().getExNivelAcesso());
 			}
+		} else {
+			//Se tem Restrição de Acesso no Pai, herda movimentações e nível de acesso do Pai
+			restringirAcesso(cadastrante, titular.getLotacao(), mobFilho.getDoc(), null, null, null, 
+					mobPai.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, false), 
+					titular, null, mobPai.getDoc().getExNivelAcesso());
 
 		}
+
 	}
 
 	public ExDocumento refazer(DpPessoa cadastrante,

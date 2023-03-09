@@ -1391,6 +1391,16 @@ public class ExDao extends CpDao {
 		final Query query = em().createNamedQuery("consultarParaArquivarCorrenteEmLote")
 				.setParameter("idPessoaIni", idPessoaIni)
 				.setParameter("idLotacaoIni", idLotacaoIni)
+				.setParameter("tipoMobilVia", ExTipoMobil.TIPO_MOBIL_VIA)
+				.setParameter("tipoMobilGeral", ExTipoMobil.TIPO_MOBIL_GERAL)
+				.setParameter("tipoFormaDocExpediente", ExTipoFormaDoc.TIPO_FORMA_DOC_EXPEDIENTE)
+				.setParameter("notInCpMarcadorEnumList", Arrays.asList(CpMarcadorEnum.SEM_EFEITO.getId(),
+						CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(),
+						CpMarcadorEnum.ARQUIVADO_CORRENTE.getId(),
+						CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+						CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId(),
+						CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()))
+				.setParameter("cpMarcadorEnumList", CpMarcadorEnum.EM_ANDAMENTO.getId())
 				.setFirstResult(offset)
 				.setMaxResults(tamPagina);
 		
@@ -1401,6 +1411,16 @@ public class ExDao extends CpDao {
 		return ( (Long) em().createNamedQuery("consultarQuantidadeParaArquivarCorrenteEmLote", Long.class)
 				.setParameter("idPessoaIni", idPessoaIni)
 				.setParameter("idLotacaoIni", idLotacaoIni)
+				.setParameter("tipoMobilVia", ExTipoMobil.TIPO_MOBIL_VIA)
+				.setParameter("tipoMobilGeral", ExTipoMobil.TIPO_MOBIL_GERAL)
+				.setParameter("tipoFormaDocExpediente", ExTipoFormaDoc.TIPO_FORMA_DOC_EXPEDIENTE)
+				.setParameter("notInCpMarcadorEnumList", Arrays.asList(CpMarcadorEnum.SEM_EFEITO.getId(),
+						CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(),
+						CpMarcadorEnum.ARQUIVADO_CORRENTE.getId(),
+						CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+						CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId(),
+						CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()))
+				.setParameter("cpMarcadorEnumList", CpMarcadorEnum.EM_ANDAMENTO.getId())
 				.getSingleResult() ).intValue();
 	}
 
@@ -1468,6 +1488,33 @@ public class ExDao extends CpDao {
 			query.setMaxResults(tamPagina);
 		}
 
+		return query.getResultList();
+	}
+	
+	public List<ExDocumento> consultarParaTransferirEntreArquivos(Long idPessoa, Long idLotacao, Integer offset, Integer tamPagina, List<Long> marcadores) {
+		final Query query = em().createNamedQuery("consultarDocumentosArquivados");
+					query.setParameter("pessoaIni", idPessoa != null ? idPessoa : 0);
+					query.setParameter("lotaIni", idLotacao != null ? idLotacao : 0);
+					query.setParameter("enumList", marcadores);
+
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+
+		return query.getResultList();
+	}
+	
+	public List<Object[]> consultarDocsArquivadosJaTransferidos(Long idPessoa, Long idLotacao, Long idLotacaoDestino, List<Long> marcadores){
+		
+		final Query query;
+
+		query = em().createNamedQuery("consultarDocumentosArquivadosJaTransferido");
+		query.setParameter("lotaDestinoIni", idLotacaoDestino != null ? idLotacaoDestino : 0);
+		query.setParameter("enumList", marcadores);
+		
 		return query.getResultList();
 	}
 

@@ -31,7 +31,8 @@ public class DocumentosSiglaArquivoProduzirGet implements IDocumentosSiglaArquiv
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		req.completo = req.completo != null ? req.completo : false;
 		req.estampa = req.estampa != null ? req.estampa : false;
-		req.volumes = req.volumes != null ? req.volumes : false;
+        req.volumes = req.volumes != null ? req.volumes : false;
+        req.tamanhoOriginal = req.tamanhoOriginal != null ? req.tamanhoOriginal : false;
 
 		String usuario = ContextoPersistencia.getUserPrincipal();
 

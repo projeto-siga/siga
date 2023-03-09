@@ -72,7 +72,7 @@
 							<c:set var="titulo2" value="" />
 							<c:set var="titulo3" value="" />
 							<c:set var="ordem" value="0" />
-							<c:set var="visualizacao" value="0" />
+							<c:set var="visualizacao" value="1" />
 							<c:choose>
 								<c:when test="${listEstado[0]==1}">
 									<c:set var="titulo1"

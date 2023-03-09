@@ -39,21 +39,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1434,8 +1421,14 @@ public class ExBL extends CpBL {
 	}
 
 	public void avaliarReclassificar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
-			final Date dtMov, final DpPessoa subscritor, final ExClassificacao novaClassif, final String motivo,
-			boolean fAvaliacao) throws AplicacaoException {
+									 final Date dtMov, final DpPessoa subscritor, final ExClassificacao novaClassif, 
+									 final String motivo, boolean fAvaliacao) {
+		
+		avaliarReclassificar(cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, novaClassif, motivo, fAvaliacao);
+	}
+	public void avaliarReclassificar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
+			final Date dtMov, final DpPessoa subscritor, final DpPessoa titular, final ExClassificacao novaClassif, 
+									 final String motivo, boolean fAvaliacao) throws AplicacaoException {
 
 		boolean fReclassif = (novaClassif != null);
 
@@ -1465,9 +1458,12 @@ public class ExBL extends CpBL {
 					tpMov = ExTipoDeMovimentacao.AVALIACAO;
 			else
 				tpMov = ExTipoDeMovimentacao.RECLASSIFICACAO;
-
+			
+			DpLotacao lotaSubscritor = Objects.nonNull(subscritor) ? subscritor.getLotacao() : null;
+			DpLotacao lotaTitular = Objects.nonNull(titular) ? titular.getLotacao() : null;
+			
 			final ExMovimentacao mov = criarNovaMovimentacao(tpMov, cadastrante, lotaCadastrante, mob, dtMov,
-					subscritor, null, null, null, dtMov);
+					subscritor, lotaSubscritor, titular, lotaTitular, dtMov);
 
 			if (fReclassif) {
 				mov.setExClassificacao(novaClassif);
@@ -4283,6 +4279,7 @@ public class ExBL extends CpBL {
 		if (mov.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
 			mov.getExMobil().setUltimaMovimentacaoNaoCancelada(mov);
 			mov.getExMobil().setDnmDataUltimaMovimentacaoNaoCancelada(mov.getDtIniMov());
+			
 			dao().gravar(mov.getExMobil());
 		} else {
 			ExMovimentacao movUlt = mov.getExMobil()
@@ -5476,6 +5473,7 @@ public class ExBL extends CpBL {
 								getComp().afirmar("Trâmite não permitido (" + m.getSigla() + " ID_MOBIL: " + m.getId() + ")", 
 										ExPodeTransferir.class, cadastrante, lotaCadastrante, m);
 						}
+					
 						if (m.getExDocumento().isPendenteDeAssinatura()
 								&& !lotaResponsavel.equivale(m.getExDocumento().getLotaTitular()))
 							getComp().afirmar("não é permitido tramitar documento que ainda não foi assinado", ExPodeReceberDocumentoSemAssinatura.class, responsavel, lotaResponsavel, m);
@@ -8950,6 +8948,67 @@ public class ExBL extends CpBL {
 		}
 	}
 	
+	/*
+	 * 
+	 * Transfere Documentos Arquivados (Corrente, Permanente e Intermediário) entre Arquivos sem mudar
+	 * sua data de temporalidade.
+	 * 
+	 * @param mob
+	 * @param cadastrante
+	 * @param lotaCadastrante
+	 * @param lotaDestinoFinal
+	 * @param descrMov
+	 * @throws AplicacaoException
+	 * @throws Exception
+	 * */
+	public void transferirEntreArquivos(ExMobil mob, DpPessoa cadastrante, final DpLotacao lotaCadastrante,
+			final DpLotacao lotaDestinoFinal, String descrMov) {
+		
+		try {
+			iniciarAlteracao();
+			ExMovimentacao movArquivamentoNova = null;
+			ExMovimentacao movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE);
+			if (movArquivadaACancelar == null)
+				movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO);
+			
+			if (movArquivadaACancelar == null)
+				movArquivadaACancelar = mob.getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE);
+
+			if (movArquivadaACancelar != null) {
+				movArquivadaACancelar.setDescrMov(descrMov);
+				
+				movArquivamentoNova = criarNovaMovimentacao(movArquivadaACancelar.getExTipoMovimentacao(), cadastrante,
+						lotaCadastrante, mob, null, null, lotaDestinoFinal, null, null, null);
+				
+				movArquivamentoNova.setExMovimentacaoRef(movArquivadaACancelar);
+				movArquivamentoNova.setLotaResp(lotaDestinoFinal);
+				movArquivamentoNova.setResp(null);
+				movArquivamentoNova.setSubscritor(null);
+				movArquivamentoNova.setLotaSubscritor(null);
+				
+				//movArquivamentoNova.setDtIniMov(movArquivadaACancelar.getDtIniMov());
+				movArquivamentoNova.setLotaDestinoFinal(lotaDestinoFinal);
+				movArquivamentoNova.setLotaTitular(lotaDestinoFinal);
+				
+				gravarMovimentacaoCancelamento(movArquivamentoNova, movArquivadaACancelar);
+						
+				concluirAlteracaoDocComRecalculoAcesso(movArquivamentoNova);			
+			} else {
+				throw new AplicacaoException("NÃO foi encontrado nenhuma movimentação do tipo (" + 
+						ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE.getDescr() + ", " +
+						ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO.getDescr() + " ou " +
+						ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE.getDescr() + ") para o documento " + mob.doc().getSigla() + "."
+				);
+			}
+		} catch (final AplicacaoException e) {
+			throw new AplicacaoException(e.getMessage(), 400, e);
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao arquivar documento em DESTINO.", e);
+		}
+		
+	}
+	
 	
 	public void restringirAcessoAntes(final ExDocumento documento , final DpPessoa pessoaASerAdicionada, DpPessoa cadastrante, final DpLotacao lotaCadastrante) {
 		Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, documento.getMobilGeral());
@@ -8963,6 +9022,5 @@ public class ExBL extends CpBL {
 				.getBL()
 				.restringirAcesso(cadastrante, lotaCadastrante, documento, null, null, null, listaPessoasRestricaoAcesso, null, null, nivelAcesso);
 	}
-
 }
 

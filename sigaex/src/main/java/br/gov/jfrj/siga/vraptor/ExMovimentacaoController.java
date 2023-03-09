@@ -1487,7 +1487,9 @@ public class ExMovimentacaoController extends ExController {
 					.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 					.contains(cosignatarioSel.getObjeto())) {
 				if (adicionarRestricaoAcessoAntes) {
-					restringirAcessoAntes(doc,cosignatarioSel.getObjeto());	
+					Ex.getInstance()
+						.getBL()
+						.restringirAcessoAntes(doc,cosignatarioSel.getObjeto(),getCadastrante(),getLotaCadastrante());	
 				} else {
 					gerarModalConfirmacaoInclusaoRestricaoAcesso();
 					result.forwardTo(this).incluirCosignatario(sigla,cosignatarioSel);
@@ -2074,7 +2076,9 @@ public class ExMovimentacaoController extends ExController {
 						.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 						.contains(responsavelSel.getObjeto())) {
 					if (adicionarRestricaoAcessoAntes) {
-						restringirAcessoAntes(builder.getMob().getDoc(),responsavelSel.getObjeto());	
+						Ex.getInstance()
+							.getBL()
+							.restringirAcessoAntes(builder.getMob().getDoc(),responsavelSel.getObjeto(),getCadastrante(),getLotaCadastrante());	
 					} else {
 						gerarModalConfirmacaoInclusaoRestricaoAcesso();
 			    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
@@ -2238,26 +2242,6 @@ public class ExMovimentacaoController extends ExController {
 			result.include("origemRedirectTransferirGravar", true);
 			ExDocumentoController.redirecionarParaExibir(result, builder.getMob().getSigla()); 
 		}
-	}
-	
-	private void restringirAcessoAntes(final ExDocumento documento , final DpPessoa pessoaASerAdicionada) {
-		Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), documento.getMobilGeral());
-		
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder.novaInstancia();
-		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());	
-		
-		List<DpPessoa> listaPessoasRestricaoAcesso = new ArrayList<DpPessoa>();
-		listaPessoasRestricaoAcesso.add(pessoaASerAdicionada);
-		
-		ExNivelAcesso nivelAcesso = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_PESSOAS, ExNivelAcesso.class, false);
-		
-		
-		Ex.getInstance()
-				.getBL()
-				.restringirAcesso(getCadastrante(), getLotaTitular(), documento,
-						null, mov.getLotaResp(), mov.getResp(),
-						listaPessoasRestricaoAcesso, getTitular(),
-						mov.getNmFuncaoSubscritor(), nivelAcesso);
 	}
 
 	private void forwardToTransferir(final String sigla, final int tipoResponsavel,
@@ -2666,7 +2650,9 @@ public class ExMovimentacaoController extends ExController {
 						.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 						.contains(responsavelSel.getObjeto())) {
 					if (adicionarRestricaoAcessoAntes) {
-						restringirAcessoAntes(builder.getMob().getDoc(),responsavelSel.getObjeto());	
+						Ex.getInstance()
+							.getBL()
+							.restringirAcessoAntes(builder.getMob().getDoc(),responsavelSel.getObjeto(),getCadastrante(),getLotaCadastrante());	
 					} else {
 						gerarModalConfirmacaoInclusaoRestricaoAcesso();
 						result.forwardTo(this).aVincularPapel(sigla, responsavelSel, lotaResponsavelSel, tipoResponsavel, idPapel);

@@ -96,7 +96,8 @@
 		if (adicionarRestricaoAcessoAntes === true) {
 			document.getElementById("adicionarRestricaoAcessoAntes").value = true;
 		}
-
+		
+		sigaModal.fechar('sigaModalConfirmacao');
 		document.getElementById('frm').submit();
 	}
 

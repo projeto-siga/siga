@@ -88,6 +88,8 @@
 		if (adicionarRestricaoAcessoAntes === true) {
 			document.getElementById("adicionarRestricaoAcessoAntes").value = true;
 		}
+		
+		sigaModal.fechar('sigaModalConfirmacao');
 		submeter();
 	}
 

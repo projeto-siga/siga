@@ -8981,6 +8981,20 @@ public class ExBL extends CpBL {
 			}
 		}
 	}
+	
+	
+	public void restringirAcessoAntes(final ExDocumento documento , final DpPessoa pessoaASerAdicionada, DpPessoa cadastrante, final DpLotacao lotaCadastrante) {
+		Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, documento.getMobilGeral());
+
+		List<DpPessoa> listaPessoasRestricaoAcesso = new ArrayList<DpPessoa>();
+		listaPessoasRestricaoAcesso.add(pessoaASerAdicionada);
+		
+		ExNivelAcesso nivelAcesso = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_PESSOAS, ExNivelAcesso.class, false);
+
+		Ex.getInstance()
+				.getBL()
+				.restringirAcesso(cadastrante, lotaCadastrante, documento, null, null, null, listaPessoasRestricaoAcesso, null, null, nivelAcesso);
+	}
 
 }
 

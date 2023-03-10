@@ -2434,13 +2434,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			else
 				return criacao.getCadastrante();
 		else 
-			if (doc().getTitular() != null)
-				return doc().getTitular();
-			else 
-				if (doc().getCadastrante() != null)
-					return doc().getCadastrante();
-				else
-					return doc().getSubscritor();
+			return doc().getSubscritor();
 	}
 	
 	public DpLotacao getLotaTitular() {
@@ -2451,13 +2445,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			else
 				return criacao.getLotaCadastrante();
 		else
-			if (doc().getLotaTitular() != null)
-				return doc().getLotaTitular();
-			else 
-				if (doc().getLotaCadastrante() != null)
-					return doc().getLotaCadastrante();
-				else
-				    return doc().getLotaSubscritor();
+			return doc().getLotaSubscritor();
 	}
 	
 	public boolean isEmTramiteParalelo() {

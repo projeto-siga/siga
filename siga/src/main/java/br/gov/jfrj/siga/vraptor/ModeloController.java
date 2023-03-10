@@ -102,7 +102,8 @@ public class ModeloController extends SigaController {
 		result.redirectTo(this).lista();
 	}
 
-	@Post("/public/app/modelo/indentar")
+	@RequestParamsNotCheck
+    @Post("/public/app/modelo/indentar")
 	public void indentar(String conteudo) throws Exception {
 		String r = FreemarkerIndent.indent(conteudo);
 		result.use(Results.http()).body(r);

@@ -292,8 +292,7 @@ public class ExArquivoController extends ExController {
 	
 	@Get("/app/arquivo/obterTamanhoArquivosDocs")
 	public void obterTamanhoArquivosDocs(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
-		boolean semmarcas = Boolean.TRUE;
-		String json = Documento.obterTamanhoArquivosDocs(getCadastrante(), getLotaCadastrante(), arquivo, completo, volumes, semmarcas);
+		String json = Documento.obterTamanhoArquivosDocs(getCadastrante(), getLotaCadastrante(), arquivo, completo, volumes);
 		setMensagem(json);
 		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 	}

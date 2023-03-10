@@ -463,7 +463,26 @@ public class Documento {
 				// an
 				// .getPaginaInicial(), an.getPaginaFinal(), request);
 
-				byte[] ab = obterBytesDocumento(mob, estampar, an);
+				String sigla = mob.getSigla();
+				if (an.getArquivo() instanceof ExMovimentacao) {
+					ExMovimentacao m = (ExMovimentacao) an.getArquivo();
+					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+						sigla = m.getExMobil().getSigla();
+				} else {
+					sigla = an.getMobil().getSigla();
+				}
+
+				byte[] ab = !estampar ? an.getArquivo().getPdf() : Stamp.stamp(an
+						.getArquivo().getPdf(), sigla, an.getArquivo()
+						.isRascunho(), an.isCopia(), an.getArquivo().isCancelado(), an
+						.getArquivo().isSemEfeito(), an.getArquivo()
+						.isInternoProduzido(), an.getArquivo().getQRCode(), an
+						.getArquivo().getMensagem(), an.getPaginaInicial(),
+						an.getPaginaFinal(), an.getOmitirNumeracao(),
+						Prop.get("carimbo.texto.superior"), 
+						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
+						mob.getExDocumento().getMarcaDagua(), 
+						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal);
 
 				bytes += ab.length;
 
@@ -570,36 +589,8 @@ public class Documento {
 		return true;
 	}
 	
-
-	private static byte[] obterBytesDocumento(ExMobil mob, boolean estampar, ExArquivoNumerado an) 
-			throws DocumentException, IOException {
-		
-		String sigla = mob.getSigla();
-		if (an.getArquivo() instanceof ExMovimentacao) {
-			ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-			if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-				sigla = m.getExMobil().getSigla();
-		} else {
-			sigla = an.getMobil().getSigla();
-		}
-		
-		byte[] ab = !estampar ? an.getArquivo().getPdf() : Stamp.stamp(an
-				.getArquivo().getPdf(), sigla, an.getArquivo()
-				.isRascunho(), an.isCopia(), an.getArquivo().isCancelado(), an
-				.getArquivo().isSemEfeito(), an.getArquivo()
-				.isInternoProduzido(), an.getArquivo().getQRCode(), an
-				.getArquivo().getMensagem(), an.getPaginaInicial(),
-				an.getPaginaFinal(), an.getOmitirNumeracao(),
-				Prop.get("carimbo.texto.superior"), 
-				mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
-				mob.getExDocumento().getMarcaDagua(), 
-				an.getMobil().getDoc().getIdsDeAssinantes());
-		
-		return ab;
-	}
-	
-	public static String obterTamanhoArquivosDocs(final DpPessoa dpPessoa, final DpLotacao dpLotacao,
-			final String arquivo, boolean completo, final boolean volumes, final boolean semmarcas)  throws Exception {
+	public static String obterTamanhoArquivosDocs(final DpPessoa dpPessoa, 
+			final DpLotacao dpLotacao, final String arquivo, boolean completo, final boolean volumes)  throws Exception {
 		long bytes = 0;
 		boolean excedeuMB = Boolean.FALSE;
 		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();
@@ -608,12 +599,10 @@ public class Documento {
 			final ExMobil mob = Documento.getMobil(arquivo);
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
 			
-			boolean estampar = !semmarcas;
 			ans = Documento.getArquivosNumerados(mob, mov, null, completo, volumes);
-			
 			for (ExArquivoNumerado an : ans) {
-				byte[] ab = obterBytesDocumento(mob, estampar, an);
-				bytes += ab.length;
+				bytes += an.getMobil().getExDocumento().getCpArquivo().getTamanho();
+				//System.out.println("-----------------> Sigla: " + an.getMobil().getDnmSigla());
 				//Conversao MB para Bytes
 				if(bytes >= Prop.getLong("/siga.exibicao.paginada.pdf.completo.tamanhomax")) {
 					excedeuMB = Boolean.TRUE;

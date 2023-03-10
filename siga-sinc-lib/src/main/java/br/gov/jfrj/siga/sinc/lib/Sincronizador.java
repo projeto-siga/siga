@@ -206,7 +206,10 @@ public class Sincronizador {
 		if (i.getOperacao() == Operacao.incluir) {
 			if (religar)
 				religar(i.getNovo());
-			i.setNovo(opr.incluir(i.getNovo()));
+			Sincronizavel inserido = opr.incluir(i.getNovo());
+			if (inserido == null)
+			    return;
+            i.setNovo(inserido);
 			i.getNovo().setIdInicial(i.getNovo().getId());
 			this.map.put(getSicronizavelKey(i.getNovo()), i.getNovo());
 		}

@@ -2737,7 +2737,10 @@ Pede deferimento.</span><br/><br/><br/>
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
 	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
-	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if]   
+	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if] 
+	      [#if (OrgaoArea!"") != ""]<br /><br />${OrgaoArea!}<br />[/#if] 
+	      [#if (Endereco!"") != ""]${Endereco!}<br />[/#if]
+	      [#if (Telefone!"") != ""]Telefone: ${Telefone!}[/#if]  [#if (Email!"") != ""]Email: ${Email!}[/#if]
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]

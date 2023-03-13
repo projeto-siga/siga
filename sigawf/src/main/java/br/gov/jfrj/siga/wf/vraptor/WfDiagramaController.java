@@ -86,9 +86,10 @@ public class WfDiagramaController extends WfSelecionavelController<WfDefinicaoDe
 
 		@Override
 		public boolean shouldSkipField(FieldAttributes f) {
-			System.out.println(f.getName());
 			if (f.getName().startsWith("hisIdc"))
 				return true;
+            if (f.getName().startsWith("orgaoUsuarioInicial"))
+                return true;
 			return f.getAnnotation(NaoSerializar.class) != null;
 		}
 

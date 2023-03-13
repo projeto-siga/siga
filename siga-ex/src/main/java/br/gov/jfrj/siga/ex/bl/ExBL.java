@@ -6179,9 +6179,9 @@ public class ExBL extends CpBL {
 			if (doc.getExModelo() != null) {
 				final byte[] form;
 				if (mov == null)
-					form = doc.getConteudoBlob("doc.form");
+					form = doc.getConteudoBlobForm();
 				else
-					form = mov.getConteudoBlob("doc.form");
+					form = mov.getConteudoBlobForm();
 				Utils.mapFromUrlEncodedForm(attrs, form);
 			}
 		}

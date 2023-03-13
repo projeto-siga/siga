@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,7 +75,6 @@ import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
-import static br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao.*;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -96,8 +96,9 @@ public class Documento {
 	private static final Pattern pattern = Pattern
 		.compile("^([0-9A-Z\\-\\/]+(?:\\.[0-9]+)?(?:V[0-9]+)?)(:[0-9]+)?(?:\\.pdf|\\.html|\\.zip|\\.rtf)?$");
 	
-	private static final int EXIBICAO_PAG_PDF_COMPL_QTD_DOCS_PAGINAS = Prop.getInt("/siga.exibicao.paginada.pdf.completo.quantidade.pagina");
-
+	private static final Integer EXIBICAO_PAG_PDF_COMPL_QTD_DOCS = Prop.getInt("/siga.exibicao.paginada.pdf.completo.quantidade.documentos");
+	private static final Long EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX = Prop.getLong("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax");
+	
 	private static Log log = LogFactory.getLog(Documento.class);
 
 	public static ExMobil getMobil(String requestURI) throws SecurityException,
@@ -444,10 +445,12 @@ public class Documento {
 		long bytes = 0;
 		long garbage = 0;
 		
-		Integer paramoffsetFim =  Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 + EXIBICAO_PAG_PDF_COMPL_QTD_DOCS_PAGINAS : null;
-		paramoffset = Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 : 0;
-		if(Objects.nonNull(paramoffsetFim))
-			ans = ans.subList(paramoffset, paramoffsetFim > ans.size() ? ans.size() : paramoffsetFim);
+		if(exibirPaginacaoPdfDocCompleto()) {
+			Integer paramoffsetFim =  Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 + EXIBICAO_PAG_PDF_COMPL_QTD_DOCS : null;
+			paramoffset = Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 : 0;
+			if(Objects.nonNull(paramoffsetFim))
+				ans = ans.subList(paramoffset, paramoffsetFim > ans.size() ? ans.size() : paramoffsetFim);
+		}
 		
 		int ansSize = ans.size();
 		try {
@@ -595,16 +598,15 @@ public class Documento {
 		boolean excedeuMB = Boolean.FALSE;
 		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();
 		
-		if(Ex.getInstance().getConf().podePorConfiguracao(dpPessoa, dpLotacao, HABILITAR_PAGINACAO_PDF_DOC_COMPLETO)){
+		if (exibirPaginacaoPdfDocCompleto()) {
 			final ExMobil mob = Documento.getMobil(arquivo);
 			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
 			
 			ans = Documento.getArquivosNumerados(mob, mov, null, completo, volumes);
 			for (ExArquivoNumerado an : ans) {
 				bytes += an.getMobil().getExDocumento().getCpArquivo().getTamanho();
-				//System.out.println("-----------------> Sigla: " + an.getMobil().getDnmSigla());
 				//Conversao MB para Bytes
-				if(bytes >= Prop.getLong("/siga.exibicao.paginada.pdf.completo.tamanhomax")) {
+				if(bytes >= obterTamanhoMaxBytesPaginacaoPdfCompl()) {
 					excedeuMB = Boolean.TRUE;
 					break;
 				}
@@ -614,9 +616,18 @@ public class Documento {
 		map.put("somaArqBytes", bytes);
 		map.put("quantTotalDocs", ans.size());
 		map.put("excedeuMB", excedeuMB);
-		map.put("quantDocsPagina", EXIBICAO_PAG_PDF_COMPL_QTD_DOCS_PAGINAS);
+		map.put("quantDocsPagina", EXIBICAO_PAG_PDF_COMPL_QTD_DOCS);
 		String json = new Gson().toJson(map); 
 		return json;
+	}
+	
+	public static boolean exibirPaginacaoPdfDocCompleto() {
+		return (EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX != null && EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX > NumberUtils.LONG_ZERO) 
+						&& (EXIBICAO_PAG_PDF_COMPL_QTD_DOCS != null && EXIBICAO_PAG_PDF_COMPL_QTD_DOCS > NumberUtils.INTEGER_ZERO);
+	}
+	
+	private static long obterTamanhoMaxBytesPaginacaoPdfCompl() {
+		return EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX > NumberUtils.LONG_ZERO ? EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX * 1024 * 1024 : NumberUtils.LONG_ZERO;
 	}
 
 	private static List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob, ExMovimentacao mov, String uuid, boolean completo, boolean volumes) throws Exception {

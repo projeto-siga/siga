@@ -22,8 +22,6 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
-import static br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao.HABILITAR_PAGINACAO_PDF_DOC_COMPLETO;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
@@ -184,8 +182,7 @@ public class ExArquivoController extends ExController {
 				req.exibirReordenacao = exibirReordenacao;
 				req.tamanhoOriginal = tamanhoOriginal;
 				
-				if(	Ex.getInstance().getConf().podePorConfiguracao(
-						getCadastrante(), getLotaCadastrante(), HABILITAR_PAGINACAO_PDF_DOC_COMPLETO))
+				if (Documento.exibirPaginacaoPdfDocCompleto()) 
 					req.paramoffset = paramoffset;
 				
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())

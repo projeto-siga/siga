@@ -228,11 +228,18 @@ public class ItemConfiguracaoController extends SrController {
 	}
 
 	@Path("/selecionar")
-	public void selecionar(String sigla, SrSolicitacao sol) throws Exception {
-		boolean possuiItensDisponiveis = sol != null && sol.getItensDisponiveis() != null && sol.getItensDisponiveis().size() > 0;
-		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla,
-				possuiItensDisponiveis ? sol.getItensDisponiveis() : null);
-
+	public void selecionar(String sigla, SrSolicitacao sol, boolean especifico) throws Exception {
+		List<SrItemConfiguracao> itensDisponiveis = sol != null ? sol.getItensDisponiveis() : null;
+		if (itensDisponiveis != null && especifico) {
+		    List<SrItemConfiguracao> itensParaRemover = new ArrayList<>();
+		    for (SrItemConfiguracao ic : itensDisponiveis)
+		        if (!ic.isEspecifico())
+		            itensParaRemover.add(ic);
+		    itensDisponiveis.removeAll(itensParaRemover);
+		}
+		if (itensDisponiveis != null && itensDisponiveis.size() == 0)
+		    itensDisponiveis = null;
+		SrItemConfiguracao sel = new SrItemConfiguracao().selecionar(sigla, itensDisponiveis);
 		result.forwardTo(SelecaoController.class).ajaxRetorno(sel);
 	}
 }

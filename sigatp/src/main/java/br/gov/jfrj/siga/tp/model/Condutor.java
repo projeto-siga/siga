@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -48,6 +49,8 @@ import br.gov.jfrj.siga.validation.Email;
 @Audited
 @Table(name = "condutor", schema = "sigatp")
 @Unique(message="{condutor.dppessoa.unique}" ,field = "dpPessoa", uniqueColumn="DPPESSOA_ID_PESSOA")
+@NamedNativeQuery(name = "condutorCadastrado", query = "" + "SELECT * FROM sigatp.condutor c"
+		+ " WHERE c.dppessoa_id_pessoa IN (SELECT dp1.id_pessoa FROM corporativo.dp_pessoa dp1 WHERE dp1.id_pessoa_inicial = :param)")
 public class Condutor extends TpModel implements ConvertableEntity, Comparable<Condutor> {
 
 	public static final ActiveRecord<Condutor> AR = new ActiveRecord<>(Condutor.class);
@@ -300,11 +303,25 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 		Collections.sort(condutores);
 		return condutores;
 	}
-	
+
 	public static List<Condutor> listarTodos() throws Exception {
 		List<Condutor> condutores = Condutor.AR.findAll();
 		Collections.sort(condutores);
 		return condutores;
+	}
+
+	public static Boolean condutorCadastrado(String param) throws Exception {
+		List<Condutor> condutores;
+		StringBuffer query = new StringBuffer();
+		query.append(
+				"SELECT c FROM Condutor c WHERE c.dpPessoa.idPessoa IN (SELECT d.idPessoa FROM DpPessoa d WHERE  d.idPessoaIni = " + param + ")");
+		Query qry = AR.em().createQuery(query.toString());
+		try {
+			condutores = ((List<Condutor>) qry.getResultList());
+		} catch (NoResultException ex) {
+			condutores = null;
+		}
+		return (condutores == null || condutores.isEmpty()) ? false : true;
 	}
 
 	@Override

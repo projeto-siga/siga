@@ -5866,66 +5866,57 @@ public class ExMovimentacaoController extends ExController {
 				classificacaoNovaSel);
 	}
 
-	@Transacional
-	@Post("/app/expediente/mov/reclassificar_lote_gravar")
-	public void reclassificar_lote_gravar(final String motivo, final String dtMovString, final String obsOrgao, 
-										  final boolean substituicao, final DpPessoaSelecao titularSel, 
-										  final DpPessoaSelecao subscritorSel, 
-										  final ExClassificacaoSelecao classificacaoAtualSel, 
-										  final ExClassificacaoSelecao classificacaoNovaSel, 
-										  final List<Long> documentosSelecionados, 
-										  final int offset) throws Exception {
-		
-		assertAcesso("RECLALOTE:Reclassificar em Lote");
+	@Post("/app/expediente/mov/listar_docs_reclassificados")
+	public void listar_docs_reclassificados(final String siglasDocumentosReclassificados,
+									   final ExClassificacaoSelecao classificacaoAtualSel,
+									   final ExClassificacaoSelecao classificacaoNovaSel,
+									   final String errosDocumentosNaoReclassificadosJson) throws Exception {
 
-		if (classificacaoAtualSel == null || classificacaoAtualSel.getId() == null || 
-				classificacaoNovaSel == null || classificacaoNovaSel.getId() == null || 
-				motivo == null || motivo.trim().equals("")) {
-			
-			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Não foram informados dados para a reclassificação");
-			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
-					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
-			return;
+		String[] arraySiglasDocumentosReclassificados = { };
+		if (siglasDocumentosReclassificados != null) {
+			arraySiglasDocumentosReclassificados = siglasDocumentosReclassificados.split(",");
 		}
 
-		if(classificacaoAtualSel.getSigla().equals(classificacaoNovaSel.getSigla())){
-			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Classificação selecionada para reclassificar é a mesma da atual");
-			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
-					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
-			return;
+		final List<ExMobil> mobisDocumentosReclassificados = new ArrayList<ExMobil>();
+
+		BuscaDocumentoBuilder documentoBuilder;
+
+		for(String sigla : arraySiglasDocumentosReclassificados){
+			documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+			buscarDocumento(documentoBuilder, false);
+			ExMobil mob = documentoBuilder.getMob();
+			mobisDocumentosReclassificados.add(mob);
 		}
 
-		if(documentosSelecionados.isEmpty()){
-			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Não foram selecionados documentos para a reclassificação");
-			result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
-					subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
-			return;
+		List<ExMovimentacao> listaMovimentacaoDocumentosNaoReclassificados =
+				montarListaResultadosMovimentacaoEmLote(null,
+						null,
+						null,
+						errosDocumentosNaoReclassificadosJson);
+
+		if (( mobisDocumentosReclassificados == null
+				|| mobisDocumentosReclassificados.isEmpty() )
+				&& (listaMovimentacaoDocumentosNaoReclassificados == null
+				|| listaMovimentacaoDocumentosNaoReclassificados.isEmpty())) {
+
+			throw new AplicacaoException("Não foi possível reclassificar em lote");
 		}
 
-		final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
-				.setDescrMov(motivo).setDtMovString(dtMovString).setObsOrgao(obsOrgao).setCadastrante(getCadastrante())
-				.setSubstituicao(substituicao).setTitularSel(titularSel).setSubscritorSel(subscritorSel)
-				.setClassificacaoSel(classificacaoNovaSel).construir(dao());
-		mov.setDtIniMov(dao().consultarDataEHoraDoServidor());
-		
-		try {
-			for (Long idDocumento : documentosSelecionados) {
-				final ExMobil mob = dao().consultar(idDocumento, ExDocumento.class, false).getMobilGeral();
-
-				if (Ex.getInstance().getComp().pode(ExPodeReclassificar.class, getTitular(), getLotaTitular(), mob)) {
-
-					Ex.getInstance().getBL().avaliarReclassificar(mov.getCadastrante(), mov.getLotaCadastrante(), mob,
-							mov.getDtMov(), mov.getSubscritor(), mov.getExClassificacao(), mov.getDescrMov(), false);
-				}
-			}
-		} catch (Exception e) {
-
+		ExMobil mobIni = mobisDocumentosReclassificados.isEmpty() ? null : mobisDocumentosReclassificados.get(0);
+		ExMovimentacao movIni = null;
+		if (mobIni != null) {
+			movIni = mobIni.getUltimaMovimentacao();
+		} else {
+			movIni = listaMovimentacaoDocumentosNaoReclassificados.get(0);
 		}
-		result.redirectTo(this).reclassificar_lote(motivo, dtMovString, obsOrgao, substituicao, titularSel,
-				subscritorSel, classificacaoAtualSel, classificacaoNovaSel, offset);
+
+		result.include("mobisDocumentosReclassificados", mobisDocumentosReclassificados);
+		result.include("movsDocumentosNaoReclassificados", listaMovimentacaoDocumentosNaoReclassificados);
+
+		result.include("classificacaoAtual", classificacaoAtualSel.getObjeto().getDescricaoCompleta());
+		result.include("classificacaoNova", classificacaoNovaSel.getObjeto().getDescricaoCompleta());
+		result.include("movIni", movIni);
+
 	}
 
 	@Post("/app/expediente/mov/listar_docs_tramitados")

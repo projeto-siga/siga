@@ -14,7 +14,8 @@
 			if (offset == null) {
 				offset = 0;
 			}
-			frm.elements['offset'].value = offset;
+			frm.elements["paramoffset"].value = offset;
+			frm.elements["p.offset"].value = offset;
 			frm.submit();
 		}
 	</script>
@@ -32,10 +33,12 @@
 
 	<div class="container-fluid">
 		<form name="frm" action="${request.contextPath}/app/orgao/buscar"
-			cssClass="form" method="POST">
+			cssClass="form100" method="POST">
 			<input type="hidden" name="propriedade" value="${param.propriedade}" />
-			<input type="hidden" name="postback" value="1" /> <input
-				type="hidden" name="offset" value="0" />
+			<input type="hidden" name="postback" value="1" /> 
+			<input type="hidden" name="paramoffset" value="0" />
+			<input type="hidden" name="p.offset" value="0" />
+			<input type="hidden" name="modal" value="${param['modal']}" />
 
 			<div class="card bg-light mb-3">
 				<div class="card-header">
@@ -67,8 +70,7 @@
 				<th align="center">Sigla</th>
 				<th align="left">Nome</th>
 			</thead>
-			<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}"
-				itens="${itens}" var="item">
+			<siga:paginador maxItens="10" maxIndices="10" totalItens="${tamanho}" itens="${itens}" var="item">
 				<tr class="${evenorodd}">
 					<td width="10%" align="center"><a
 						href="javascript: ${parteFuncao}.retorna_${propriedadeClean}('${item.id}','${item.sigla}','${item.descricao}');">${item.sigla}</a></td>
@@ -77,4 +79,8 @@
 			</siga:paginador>
 		</table>
 	</div>
+	<script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
+<script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
+<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	
+<script type="text/javascript" src="/siga/javascript/select2/select2-dropdownPosition.js"></script>
 </siga:pagina>

@@ -151,7 +151,7 @@
 								<td>${mov.subscritor.lotacao.nomeLotacao }</td>
 								<td>${mov.subscritor.funcaoString }</td>
 								<td><input type="button" value="Excluir" 
-									onclick="javascript:sigaSpinner.mostrar();location.href='${pageContext.request.contextPath}/app/expediente/mov/cancelar_restricao_acesso?idMovRestricao=${mov.idMov}&redirectURL=/app/expediente/mov/restringir_acesso?sigla=${sigla}'" class="btn btn-danger"/>					
+									onclick="javascript:excluirRestricao(${mov.idMov});" class="btn btn-danger"/>					
 								</td>
 							</tr>
 						</c:forEach>
@@ -160,6 +160,16 @@
 			</div>
 		</c:if>
 	</div>
+	
+	<siga:siga-modal id="confirmacaoModal" exibirRodape="false" tituloADireita="Confirmação">
+		<div id="msg" class="modal-body">
+       		Deseja concluir a operação realizada? 
+     	</div>
+     	<div class="modal-footer">
+     	    <a href="#" class="btn btn-success siga-modal__btn-acao" role="button" aria-pressed="true" onclick="">Sim</a>
+       		<button type="button" class="btn btn-danger" data-dismiss="modal" onclick="cancelar();">Não</button>		        
+		</div>
+	</siga:siga-modal>
 </siga:pagina>
 
 
@@ -188,20 +198,38 @@
 	});
 
 	$("#ok").click(function(){
-		
-		//reset restrição acesso
-		if (document.getElementById("chkResetDefault") !== null && document.getElementById("chkResetDefault").checked) {
-			document.getElementById("resetarRestricaoAcesso").value = true;
-			frm.submit();
+		var usuarios = document.getElementById("usu").value;
+		if ((usuarios.length > 1) || (document.getElementById("chkResetDefault") !== null && document.getElementById("chkResetDefault").checked) ) {
+			mostrarModalConfirmacao('javascript:confirmarAlteracao();');
 		} else {
-			var usuarios = document.getElementById("usu").value;
-			if(usuarios.length > 1) {
-				frm.submit();
-			} else {
-				alert("Selecione pelo menos uma pessoa.");
-			}
-		}
+			alert("Selecione pelo menos uma pessoa.");
+		}	
 	});
+	
+	function mostrarModalConfirmacao(acaoBotaoConfirmacao) {
+		sigaModal.alterarLinkBotaoDeAcao('confirmacaoModal',acaoBotaoConfirmacao);
+		sigaModal.abrir('confirmacaoModal'); 
+		sigaModal.reabilitarBotaoAposFecharModal('confirmacaoModal','ok');
+	}
+	
+    function confirmarAlteracao() {
+    	sigaSpinner.mostrar();
+    	//reset restrição acesso
+    	if (document.getElementById("chkResetDefault") !== null && document.getElementById("chkResetDefault").checked) {
+	        document.getElementById("resetarRestricaoAcesso").value = true;
+    	} 
+        sigaModal.fechar('confirmacaoModal');
+        frm.submit();
+    }
+    
+    function excluirRestricao(idMov) {
+    	mostrarModalConfirmacao('${pageContext.request.contextPath}/app/expediente/mov/cancelar_restricao_acesso?idMovRestricao='+ idMov +'&redirectURL=/app/expediente/mov/restringir_acesso?sigla=${sigla}');
+    }
+    
+    function cancelar() {
+    	document.getElementById("ok").disabled = false;
+        sigaModal.fechar('confirmacaoModal');
+    }
 
 	function remover(id) {
 		$('#div' + id).remove();

@@ -193,6 +193,10 @@
 			
 	    	temUsuarioSelecionado = true;
 	    	document.getElementById("usu").value = usu + id + ";";
+	    	
+	    	//Limpa usuário adicionado
+			document.getElementById('formulario_pessoaObjeto_pessoaSel_sigla').value = "";
+			ajax_pessoaObjeto_pessoa();
 		}
 		
 	});
@@ -207,6 +211,7 @@
 	});
 	
 	function mostrarModalConfirmacao(acaoBotaoConfirmacao) {
+		document.getElementById("ok").disabled = true;
 		sigaModal.alterarLinkBotaoDeAcao('confirmacaoModal',acaoBotaoConfirmacao);
 		sigaModal.abrir('confirmacaoModal'); 
 		sigaModal.reabilitarBotaoAposFecharModal('confirmacaoModal','ok');
@@ -219,6 +224,7 @@
 	        document.getElementById("resetarRestricaoAcesso").value = true;
     	} 
         sigaModal.fechar('confirmacaoModal');
+        document.getElementById("ok").disabled = false;
         frm.submit();
     }
     

@@ -881,7 +881,8 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
-	
+		
+		//Deveria ser o nível de acesso do documento, porém resetado para Limitado entre Lotações conforme Requisito Solicitado
 		ExNivelAcesso exTipoSig = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_LOTACOES, ExNivelAcesso.class, false);
 
 		Ex.getInstance().getComp().afirmar("Não é possível desfazer restrição de acesso", ExPodeDesfazerRestricaoDeAcesso.class, getCadastrante(), getLotaCadastrante(), builder.getMob());

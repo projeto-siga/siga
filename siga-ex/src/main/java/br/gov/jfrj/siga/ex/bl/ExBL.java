@@ -2721,9 +2721,6 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(textoMotivo);
 
-			if (mov.getExNivelAcesso() == null)
-				mov.setExNivelAcesso(ultMov.getExNivelAcesso());
-
 			if (!mob.sofreuMov(ExTipoDeMovimentacao.JUNTADA_EXTERNO,
 					ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)) {
 				mov.setExMovimentacaoRef(
@@ -2930,14 +2927,12 @@ public class ExBL extends CpBL {
 				gravarMovimentacao(mov);
 
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
-				if (ultMovNaoCancelada.getExTipoMovimentacao()
-						 == ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO) {
-					if (penultMovNaoCancelada != null)
-						mov.setExNivelAcesso(penultMovNaoCancelada.getExNivelAcesso());
+				if ( (ultMovNaoCancelada.getExTipoMovimentacao() == ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO) 
+						|| (ultMovNaoCancelada.getExTipoMovimentacao() == ExTipoDeMovimentacao.RESTRINGIR_ACESSO) ) {
+					if (m.getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() != null)
+						mov.setExNivelAcesso(m.getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada().getExNivelAcesso());
 					else
 						mov.setExNivelAcesso(m.doc().getExNivelAcesso());
-				} else {
-					mov.setExNivelAcesso(ultMovNaoCancelada.getExNivelAcesso());
 				}
 
 				if (ultMovNaoCancelada.getExTipoMovimentacao()
@@ -5885,6 +5880,9 @@ public class ExBL extends CpBL {
 		}
 
 		try {
+			//Não previsto no requisito, mas
+			//Deveria ter uma verificação aqui se o documento tem restrição de acesso para desfazer a restrição se for diferente de Limitado entre Pessoas 
+			// ou impedir a redefinição
 			iniciarAlteracao();
 
 			final ExMovimentacao mov = criarNovaMovimentacao(
@@ -6405,11 +6403,10 @@ public class ExBL extends CpBL {
 		mov.setExTipoMovimentacao(tpmov);
 
 		final ExMovimentacao ultMov = mob.getUltimaMovimentacao();
+		
 		if (ultMov != null) {
 			// if (mov.getExMobilPai() == null)
 			// mov.setExMobilPai(ultMov.getExMobilPai());
-			if (mov.getExNivelAcesso() == null)
-				mov.setExNivelAcesso(ultMov.getExNivelAcesso());
 			if (mov.getExClassificacao() == null)
 				mov.setExClassificacao(ultMov.getExClassificacao());
 			if (mov.getLotaResp() == null)
@@ -6620,8 +6617,6 @@ public class ExBL extends CpBL {
 		if (ultMov != null) {
 			// if (mov.getExMobilPai() == null)
 			// mov.setExMobilPai(ultMov.getExMobilPai());
-			if (mov.getExNivelAcesso() == null)
-				mov.setExNivelAcesso(ultMov.getExNivelAcesso());
 			if (mov.getExClassificacao() == null)
 				mov.setExClassificacao(ultMov.getExClassificacao());
 			if (mov.getLotaResp() == null)

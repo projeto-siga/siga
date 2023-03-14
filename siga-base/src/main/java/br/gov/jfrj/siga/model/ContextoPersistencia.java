@@ -9,10 +9,27 @@ import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 
 public class ContextoPersistencia {
 
+	public interface ControleTransacional {
+		 void upgradeParaTransacional();
+		
+	}
+	
+	public static ControleTransacional controleTransacional = null;
+	
 	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
 	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<String>();
 	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<Date>();
 	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<UsuarioDeSistemaEnum>();
+	
+	
+	static public void upgradeToTransactional() {
+		if (controleTransacional == null) {
+			throw new RuntimeException("Não é possivel mudar o contexto para transacional");
+		} 
+		
+		controleTransacional.upgradeParaTransacional();
+	}
+	
 	
 	static public void setEntityManager(EntityManager em) {
 		emByThread.set(em);

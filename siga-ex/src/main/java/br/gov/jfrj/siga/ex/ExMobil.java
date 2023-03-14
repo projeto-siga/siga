@@ -809,6 +809,19 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public ExMovimentacao getUltimaMovimentacao(ITipoDeMovimentacao tpMov) {
 		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { tpMov }, new ITipoDeMovimentacao[] {}, this, true, null, false);
 	}
+	
+	
+	/**
+	 * Retorna a última movimentação não cancelada que o móbil recebeu que altera
+	 * o nível de acesso ao documento
+	 * 
+	 * @return ExMovimentacao
+	 */
+	public ExMovimentacao getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() {
+		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO, 
+				ExTipoDeMovimentacao.RESTRINGIR_ACESSO},  new ITipoDeMovimentacao[] {}, this, false, null, false);
+	}	
+
 
 	/**
 	 * Retorna a última movimentação (cancelada ou não, conforme o parâmetro

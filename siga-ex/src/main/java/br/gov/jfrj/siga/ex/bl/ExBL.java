@@ -4196,8 +4196,8 @@ public class ExBL extends CpBL {
 	public ExNivelAcesso atualizarDnmNivelAcesso(ExDocumento doc) {
 		log.debug("[getExNivelAcesso] - Obtendo nível de acesso atual do documento...");
 		ExNivelAcesso nivel = null;
-		if (doc.getMobilGeral() != null && doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada() != null)
-			nivel = doc.getMobilGeral().getUltimaMovimentacaoNaoCancelada().getExNivelAcesso();
+		if (doc.getMobilGeral() != null && doc.getMobilGeral().getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() != null)
+			nivel = doc.getMobilGeral().getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada().getExNivelAcesso();
 		if (nivel == null)
 			nivel = doc.getExNivelAcesso();
 		doc.setDnmExNivelAcesso(nivel);
@@ -5960,7 +5960,6 @@ public class ExBL extends CpBL {
 								+ subscritor.getDescricaoIniciaisMaiusculas());
 	
 						mov.setExNivelAcesso(nivelAcesso);
-						exDocumento.setExNivelAcesso(nivelAcesso);
 						
 						if (isMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso()) {
 							listaMov.add(mov);
@@ -6013,8 +6012,7 @@ public class ExBL extends CpBL {
 						movPrincipal = mov;
 
 				}
-				exDocumento.setExNivelAcesso(nivelAcesso);
-				dao().gravar(exDocumento);
+
 				concluirAlteracaoComRecalculoAcesso(movPrincipal);
 			}
 		} catch (final Exception e) {

@@ -29,7 +29,7 @@
 			tamanho="grande"
 			onchange="dispararFuncoesOnBlurItem();"
 			checarInput="true"			
-			paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao}" />
+			paramList="sol.id=${solicitacao.id};sol.solicitante.id=${solicitante.idPessoa};sol.local.id=${local.idComplexo};sol.titular.id=${titular.idPessoa};sol.lotaTitular.id=${lotaTitular.idLotacao};especifico=true" />
 		<span id="itemNaoInformado" class="error" style="color: red; display: none;">Item não informado</span>
 	</div>
 	

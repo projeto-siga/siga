@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import br.gov.jfrj.siga.base.GZip;
 import br.gov.jfrj.siga.model.Historico;
 
@@ -27,7 +29,7 @@ public class Utils {
 				final String param[] = s.split("=");
 				try {
 					if (param.length == 2) {
-						map.put(param[0], URLDecoder.decode(param[1], "iso-8859-1"));
+						map.put(param[0], StringEscapeUtils.unescapeHtml4(URLDecoder.decode(param[1], "iso-8859-1")));
 					}
 				} catch (final UnsupportedEncodingException e) {
 				}

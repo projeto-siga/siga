@@ -302,11 +302,17 @@ public class ExMarcadorBL {
 
 				if (lotacoesComMarcaDePasta.contains(lot))
 					continue;
-
+				
 				if (lot != null) {
 					CpMarcador mpp = ExDao.getInstance().obterPastaPadraoDaLotacao(lot);
-					if (mpp != null)
+					if (mpp != null) {
+		                // Se a finalidade especificar que não é para incluir a marca quando está
+		                // arquivado
+		                if (mpp.getIdFinalidade().isArquivarOcultaAMarca() && mob.isArquivado())
+		                    continue;
+
 						acrescentarMarcaTransferencia(mpp.getId(), null, null, null, lot, null);
+					}
 				}
 			}
 

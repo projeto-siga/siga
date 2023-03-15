@@ -2929,8 +2929,8 @@ public class ExBL extends CpBL {
 				mov.setExMovimentacaoRef(ultMovNaoCancelada);
 				if ( (ultMovNaoCancelada.getExTipoMovimentacao() == ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO) 
 						|| (ultMovNaoCancelada.getExTipoMovimentacao() == ExTipoDeMovimentacao.RESTRINGIR_ACESSO) ) {
-					if (m.getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() != null)
-						mov.setExNivelAcesso(m.getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada().getExNivelAcesso());
+					if (m.getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() != null)
+						mov.setExNivelAcesso(m.getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada().getExNivelAcesso());
 					else
 						mov.setExNivelAcesso(m.doc().getExNivelAcesso());
 				}
@@ -4707,7 +4707,7 @@ public class ExBL extends CpBL {
 		if (!mobPai.getDoc().getMobilGeral().isAcessoRestrito()) {
 			if (mobFilho.getDoc().getMobilGeral().isAcessoRestrito()) {
 				//Se Filho tem acesso restrito e Pai não tem, cancela movimentações de restrição e herda nível de acesso
-				desfazerRestringirAcesso(cadastrante, cadastrante.getLotacao(), mobFilho.getDoc(), null, mobPai.getDoc().getExNivelAcesso());
+				desfazerRestringirAcesso(cadastrante, cadastrante.getLotacao(), mobFilho.getDoc(), null);
 			}
 		} else {
 			//Se tem Restrição de Acesso no Pai, herda movimentações e nível de acesso do Pai
@@ -5977,11 +5977,13 @@ public class ExBL extends CpBL {
 	}
 
 	public void desfazerRestringirAcesso(final DpPessoa cadastrante, final DpLotacao lotaCadastrante,
-			final ExDocumento doc, final Date dtMov, ExNivelAcesso nivelAcesso) throws AplicacaoException {
+			final ExDocumento doc, final Date dtMov) throws AplicacaoException {
 		try {
 			iniciarAlteracao();
 			List<ExMovimentacao> listaMov = new ArrayList<ExMovimentacao>();
 			List<ExDocumento> documentos = new ArrayList<>();
+			
+			ExNivelAcesso nivelAcesso = null;
 			documentos.add(doc);
 			documentos.addAll(doc.getExDocumentoFilhoSet());
 			ExMovimentacao movPrincipal = null;
@@ -5989,25 +5991,29 @@ public class ExBL extends CpBL {
 				listaMov = new ArrayList<>();
 				listaMov.addAll(exDocumento.getMobilGeral()
 						.getMovsNaoCanceladas(ExTipoDeMovimentacao.RESTRINGIR_ACESSO));
-				for (ExMovimentacao exMov : listaMov) {
-					final ExMovimentacao mov = criarNovaMovimentacao(
+				for (ExMovimentacao movimentacaoRestricao : listaMov) {
+					final ExMovimentacao movimentacaoCanceladora = criarNovaMovimentacao(
 							ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO, cadastrante,
-							lotaCadastrante, exDocumento.getMobilGeral(), dtMov, exMov.getSubscritor(), null, null,
+							lotaCadastrante, exDocumento.getMobilGeral(), dtMov, movimentacaoRestricao.getSubscritor(), null, null,
 							null, dtMov);
+					
+					//Ao desfazer, set na Movimentacao o Nível de Acesso Anterior ao da movimentação em questão
+					//Nível retorna até o nível definido na inclusão do documento
+					nivelAcesso = doc.getExNivelAcessoAnterior();
 
-					mov.setDescrMov("Nível de acesso do documento alterado de "
+					movimentacaoCanceladora.setDescrMov("Nível de acesso do documento alterado de "
 							+ exDocumento.getExNivelAcessoAtual().getNmNivelAcesso() + " para "
 							+ nivelAcesso.getNmNivelAcesso() + ". Restrição de acesso retirada para "
-							+ exMov.getSubscritor().getDescricaoIniciaisMaiusculas());
+							+ movimentacaoRestricao.getSubscritor().getDescricaoIniciaisMaiusculas());
 
-					exMov.setExMovimentacaoCanceladora(mov);
-					mov.setExNivelAcesso(nivelAcesso);
+					movimentacaoRestricao.setExMovimentacaoCanceladora(movimentacaoCanceladora);
+					movimentacaoCanceladora.setExNivelAcesso(nivelAcesso);
 
-					gravarMovimentacao(mov);
-					gravarMovimentacao(exMov);
+					gravarMovimentacao(movimentacaoCanceladora);
+					gravarMovimentacao(movimentacaoRestricao);
 					
 					if (doc == exDocumento)
-						movPrincipal = mov;
+						movPrincipal = movimentacaoCanceladora;
 
 				}
 

@@ -101,6 +101,34 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return penMov;
 	}
 
+	
+	/**
+	 * Retorna A penúltima movimentação não cancelada e não canceladora de um Mobil dentre os tipos informados
+	 * 
+	 * @return Penúltima movimentação não cancelada de um Mobil dentre os tipos informados
+	 * 
+	 */
+	public ExMovimentacao getPenultimaMovimentacaoPorTipoNaoCancelada(ITipoDeMovimentacao[] tpMovs) {
+		final Set<ExMovimentacao> movs = getMovsNaoCanceladas(tpMovs);
+				
+		ExMovimentacao mov = null;
+		ExMovimentacao penMov = null;
+		for (final Object element : movs) {
+			final ExMovimentacao movIterate = (ExMovimentacao) element;
+
+			if (movIterate.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
+				if (mov == null && penMov == null) {
+					mov = movIterate;
+				} else {
+					penMov = mov;
+					mov = movIterate;
+				}
+			}
+		}
+		return penMov;
+	}
+	
+	
 	/**
 	 * Retorna as movimentações de um Mobil de acordo com um tipo específico de
 	 * movimentação.
@@ -821,6 +849,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO, 
 				ExTipoDeMovimentacao.RESTRINGIR_ACESSO},  new ITipoDeMovimentacao[] {}, this, false, null, false);
 	}	
+	
+	/**
+	 * Retorna a Penúltima movimentação não cancelada que o móbil recebeu que altera
+	 * o nível de acesso ao documento.
+	 * 
+	 * @return ExMovimentacao
+	 */
+	public ExMovimentacao getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() {
+		return getPenultimaMovimentacaoPorTipoNaoCancelada(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO, 
+				ExTipoDeMovimentacao.RESTRINGIR_ACESSO});
+	}
 
 
 	/**

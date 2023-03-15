@@ -152,6 +152,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	/**
 	 * Retorna o nível de acesso (não a descrição) atual do documento.
+	 * COM Atualização da DnmNivelAcesso
 	 */
 	public ExNivelAcesso getExNivelAcessoAtual() {
 		ExNivelAcesso nivel = getDnmExNivelAcesso();
@@ -159,6 +160,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return Ex.getInstance().getBL().atualizarDnmNivelAcesso(this);
 		return nivel;
 	}
+	
+	
+	/**
+	 * Retorna o nível de acesso (não a descrição) atual do documento.
+	 * SEM Atualização da DnmNivelAcesso
+	 */
+	public ExNivelAcesso getExNivelAcessoAnterior() {
+		ExNivelAcesso nivel = null;
+		if (this.getMobilGeral() != null && this.getMobilGeral().getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() != null)
+			nivel = this.getMobilGeral().getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada().getExNivelAcesso();
+		if (nivel == null)
+			nivel = this.getExNivelAcesso();
+		return nivel;
+	}
+	
+	
 
 	/**
 	 * Retorna o nível de acesso (não a descrição) atual do documento.

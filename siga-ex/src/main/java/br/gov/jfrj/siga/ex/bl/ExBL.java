@@ -4713,7 +4713,7 @@ public class ExBL extends CpBL {
 			//Se tem Restrição de Acesso no Pai, herda movimentações e nível de acesso do Pai
 			restringirAcesso(cadastrante, titular.getLotacao(), mobFilho.getDoc(), null, null, null, 
 					mobPai.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, false), 
-					titular, null, mobPai.getDoc().getExNivelAcesso());
+					titular, null, mobPai.getDoc().getExNivelAcessoAtual());
 
 		}
 

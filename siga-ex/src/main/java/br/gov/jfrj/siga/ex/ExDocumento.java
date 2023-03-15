@@ -1401,7 +1401,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public Map<String, String> getForm() {
 		Hashtable<String, String> m = new Hashtable<String, String>();
-		final byte[] form = getConteudoBlob("doc.form");
+		final byte[] form = getConteudoBlobForm();
 		if (form != null) {
 			final String as[] = new String(form).split("&");
 			for (final String s : as) {

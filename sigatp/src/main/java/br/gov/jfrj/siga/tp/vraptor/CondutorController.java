@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
@@ -93,6 +92,47 @@ public class CondutorController extends TpController {
 	@RoleAdminMissaoComplexo
 	@Path("/salvar")
 	public void salvar(@Valid Condutor condutor, final UploadedFile arquivo) throws Exception {
+		if (arquivo != null) {
+			byte[] arquivoConteudo = ArquivoUploadUtil.toByteArray(arquivo);
+			error(!Imagem.tamanhoImagemAceito(arquivoConteudo.length), "imagem", "condutor.tamanhoImagemAceito.validation");
+			
+			error(!arquivo.getContentType().startsWith("image"), "imagem", "condutores.arquivoImagem.validation");
+			condutor.setConteudoimagemblob(arquivoConteudo);
+		} else 
+			if (condutor.getSituacaoImagem() != null && "semimagem".equals(condutor.getSituacaoImagem())) 
+				condutor.setConteudoimagemblob(null);
+		
+		error(condutor.getDpPessoa().getId() == null, "dpPessoa", "condutor.dppessoa.validation");
+
+		if(condutor.getId() == 0) {
+			error(Condutor.condutorCadastrado(condutor.getDpPessoa().getIdPessoaIni().toString()), "dpPessoa", "condutor.ja.cadastrado");
+		}
+    
+		if (validator.hasErrors()) {
+			if (condutor.getDpPessoa().getId() != null) 
+				condutor.setDpPessoa(recuperaPessoa(condutor.getDpPessoa()));
+			else 
+				condutor.setDpPessoa(new DpPessoa());
+			
+			result.include(CONDUTOR, condutor);
+			result.include("listCategorias", CategoriaCNH.values());
+			if(condutor.getId() > 0) 
+				validator.onErrorUse(Results.page()).of(CondutorController.class).editar(condutor.getId());
+			else
+				validator.onErrorUse(Results.page()).of(CondutorController.class).editar(0L);
+		}
+
+		condutor.setCpOrgaoUsuario(getTitular().getOrgaoUsuario());
+		condutor.save();
+		result.redirectTo(CondutorController.class).listar();
+	}
+    
+    @Transactional
+	@RoleAdmin
+	@RoleAdminMissao
+	@RoleAdminMissaoComplexo
+	@Path("/salvarEdicao")
+	public void salvarEdicao(@Valid Condutor condutor, final UploadedFile arquivo) throws Exception {
 		if (arquivo != null) {
 			byte[] arquivoConteudo = ArquivoUploadUtil.toByteArray(arquivo);
 			error(!Imagem.tamanhoImagemAceito(arquivoConteudo.length), "imagem", "condutor.tamanhoImagemAceito.validation");

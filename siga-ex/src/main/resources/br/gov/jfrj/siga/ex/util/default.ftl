@@ -23,10 +23,10 @@ tipo: 			indica o tipo do campo, conforme padrão HTML. Vide tabela abaixo:
 				editor					Campo de edição de HTML
 				selecao					Campo do tipo "select" do HTML
 				memo		memo		Campo do tipo "textarea" do HTML
-				data		data		Campo de texto para entrada de data
-				hora		hora		Campo de texto para entrada de hora
-				numero		numero		Campo de texto para entrada de número inteiro
-				valor		valor		Campo de texto para entrada de valor monetário
+				data		dt			Campo de texto para entrada de data
+				hora		hm 			Campo de texto para entrada de hora
+				numero		num			Campo de texto para entrada de número inteiro
+				valor		val			Campo de texto para entrada de valor monetário
 				checkbox	chk			Campo do tipo "checkbox" do HTML
 				radio		rad			Campo do tipo "radio" do HTML
 				pessoa		pessoa		Campo de seleção de pessoa
@@ -101,7 +101,7 @@ Exemplos de utilização:
 [@grupo depende="rad"]${radNumeral!}[/@grupo]
 
 --]
-[#macro campo var titulo=var tipo="" largura="" colunas=80 linhas=3 maxcaracteres="" reler=false obrigatorio=false valor="" default="" opcoes="" buscarFechadas=false atts={} alterado="" id="" ]
+[#macro campo var titulo=var tipo="" largura="" colunas=80 linhas=3 maxcaracteres="" reler=false obrigatorio=false valor="" default="" opcoes="" buscarFechadas=false atts={} alterado="" id="" col=""]
    	[#local idAjax = "" /]
    	[#local relerString = "" /]
 	[#if reler?is_string]
@@ -120,13 +120,13 @@ Exemplos de utilização:
 	    	[#local tipo = "cnpj" /]
     	[#elseif var?matches("^memo([A-Z0-9_][A-Za-z0-9_]*)*$")]
 	    	[#local tipo = "memo" /]
-    	[#elseif var?matches("^data([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#elseif var?matches("^(?:dt|data)([A-Z0-9_][A-Za-z0-9_]*)*$")]
 	    	[#local tipo = "data" /]
-    	[#elseif var?matches("^hora([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#elseif var?matches("^(?:hm|hora)([A-Z0-9_][A-Za-z0-9_]*)*$")]
 	    	[#local tipo = "hora" /]
-    	[#elseif var?matches("^numero([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#elseif var?matches("^(?:num|numero)([A-Z0-9_][A-Za-z0-9_]*)*$")]
 	    	[#local tipo = "numero" /]
-    	[#elseif var?matches("^valor([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#elseif var?matches("^(?:val|valor)([A-Z0-9_][A-Za-z0-9_]*)*$")]
 	    	[#local tipo = "valor" /]
     	[#elseif var?matches("^chk([A-Z0-9_][A-Za-z0-9_]*)*$")]
 	    	[#local tipo = "checkbox" /]
@@ -146,41 +146,41 @@ Exemplos de utilização:
     [/#if]
 
 	[#if tipo == "texto"]
-		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=false /]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=false col=col /]
     [#elseif tipo == "cpf"]
-		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=true isCnpj=false /]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=true isCnpj=false col=col /]
     [#elseif tipo == "cnpj"]
-		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=true /]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=true col=col /]
     [#elseif tipo == "oculto"]
 		[@oculto var=var valor=valor default=default /]
     [#elseif tipo == "checkbox"]
-        [@checkbox var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id /]
+        [@checkbox var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id col=col /]
     [#elseif tipo == "radio"]
-        [@radio var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id /]
+        [@radio var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id col=col /]
     [#elseif tipo == "editor"]
-        [@editor var=var titulo=titulo default=default /]
+        [@editor var=var titulo=titulo default=default col=col /]
     [#elseif tipo == "selecao"]
-		[@selecao var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio atts=atts opcoes=opcoes /]
+		[@selecao var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio atts=atts opcoes=opcoes col=col /]
     [#elseif tipo == "memo"]
-		[@memo var=var titulo=titulo reler=reler colunas=colunas linhas=linhas obrigatorio=obrigatorio default=default /]
+		[@memo var=var titulo=titulo reler=reler colunas=colunas linhas=linhas obrigatorio=obrigatorio default=default col=col /]
     [#elseif tipo == "data"]
-		[@data var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default atts=atts /]
+		[@data var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default atts=atts col=col /]
     [#elseif tipo == "hora"]
-		[@horaMinuto var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default /]
+		[@horaMinuto var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default col=col /]
     [#elseif tipo == "numero"]
-		[@numero var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default /]
+		[@numero var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default col=col /]
     [#elseif tipo == "valor"]
-		[@moeda var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default /]
+		[@moeda var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default col=col /]
     [#elseif tipo == "pessoaOuLotacao"]
-	    [@pessoaLotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+	    [@pessoaLotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col /]
     [#elseif tipo == "pessoa"]
-      	[@pessoa var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+      	[@pessoa var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col /]
     [#elseif tipo == "lotacao"]
-      	[@lotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+      	[@lotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col /]
     [#elseif tipo == "cossignatario"]
-      	[@cosignatario var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+      	[@cosignatario var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col /]
     [#elseif tipo == "funcao"]
-      	[@funcao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
+      	[@funcao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col /]
 	[/#if]
 [/#macro]
 
@@ -1224,7 +1224,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" isCpf=false isCnpj=false ]
+[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" isCpf=false isCnpj=false col=""]
     [#if reler == 'ajax']
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -1250,7 +1250,7 @@ LINHA  VARIÁVEL / CONTEÚDO
         [#local v = default/]
     [/#if]
     
-	<div class="form-group" style="margin-bottom:0">
+	<div class="form-group ${col}" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
 	
 	    [#if (alerta!"Não") = 'Sim' && v = ""]
@@ -1326,7 +1326,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro checkbox var titulo="" valor="Sim" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
+[#macro checkbox var titulo="" valor="Sim" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id="" col=""]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
@@ -1341,7 +1341,7 @@ LINHA  VARIÁVEL / CONTEÚDO
         [@inlineTemplate/]
     [/#if]
 
-	<div class="form-group" style="margin-bottom:0">
+	<div class="form-group ${col}" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
 	    <input type="hidden" id="${var}" name="${var}" value="${v}" />
 	
@@ -1374,7 +1374,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 	</div>	    
 [/#macro]
 
-[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique="" atts={} obrigatorio=false id=""]	
+[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique="" atts={} obrigatorio=false id="" col=""]	
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
@@ -1383,7 +1383,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 
     [#local v = .vars[var]!(default == "Sim")?string(valor, "") /]
 
-	<div class="form-group" style="margin-bottom:0">
+	<div class="form-group ${col}" style="margin-bottom:0">
 	    [#if !.vars["temRadio_"+var]??]
 	        <input type="hidden" name="vars" value="${var}" />
 	        <input type="hidden" id="${var}" name="${var}" value="${v}" />
@@ -1521,7 +1521,7 @@ CKEDITOR.replace( '${var}',
     </div>
 [/#macro]
 
-[#macro editor var titulo="" default=""]
+[#macro editor var titulo="" default="" col=""]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
     [#else]
@@ -1775,7 +1775,7 @@ CKEDITOR.replace( '${var}',
 [/#macro]
 
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false col=""]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -1791,7 +1791,7 @@ CKEDITOR.replace( '${var}',
 	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 
     [#if !gerar_formulario!false]    
-    	<div class="form-group" style="margin-bottom:0">
+    	<div class="form-group ${col}" style="margin-bottom:0">
     		[#if titulo?? && titulo != ""]<label title="campo: ${var}" for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
     		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
     			[#if opcaoNeutra?? && opcaoNeutra != "" && obrigatorio]
@@ -1857,14 +1857,14 @@ CKEDITOR.replace( '${var}',
     [/#if]
 [/#macro]
 
-[#macro memo var titulo colunas linhas reler=false obrigatorio=false default=""]
+[#macro memo var titulo colunas linhas reler=false obrigatorio=false default="" col=""]
         [#if reler == true]
                 [#local jreler = " onchange=\"javascript: sbmt();\""]
         [/#if]
 
         [#local v = .vars[var]!default]
 
-	<div class="form-group" style="margin-bottom:0">
+	<div class="form-group ${col}" style="margin-bottom:0">
         <input type="hidden" name="vars" value="${var}" />
 
         [#if (alerta!"Não") = 'Sim' && v = ""]
@@ -2152,7 +2152,7 @@ Pede deferimento.</span><br/><br/><br/>
     <hr color="#FFFFFF"/>
 [/#macro]
 
-[#macro caixaSelecao titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" grande=false]
+[#macro caixaSelecao titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" grande=false col=""]
     [#local larguraPopup = 600 /]
     [#local alturaPopup =400 /]
     [#local tipoSel = "_" + tipo /]
@@ -2251,7 +2251,7 @@ Pede deferimento.</span><br/><br/><br/>
     <input type="hidden" name="req${var}${tipoSel}Sel" />
     <input type="hidden" name="alterouSel" value="" id="alterouSel" />
     <div class="input-group">
-    <input type="text" class="form-control" name="${var}${tipoSel}Sel.sigla" value="${.vars[var+tipoSel+"Sel.sigla"]!}" onkeypress="return handleEnter(this, event)"
+    <input type="text" class="form-control ${col}" name="${var}${tipoSel}Sel.sigla" value="${.vars[var+tipoSel+"Sel.sigla"]!}" onkeypress="return handleEnter(this, event)"
 	        onblur="javascript: ajax_${var}${tipoSel}();" size="25" ${desativar?string('disabled="true"','')} />
 	    [#if buscar]
 	    	<div class="input-group-append">
@@ -2276,7 +2276,7 @@ Pede deferimento.</span><br/><br/><br/>
     </script>
 [/#macro]
 
-[#macro selecionavel titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo=""]
+[#macro selecionavel titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo="" col=""]
     [#assign tipoSel = "_" + tipo /]
 
     [#assign varName = var + tipoSel + "Sel.id" /]    
@@ -2310,36 +2310,36 @@ Pede deferimento.</span><br/><br/><br/>
 	    [/#if]
 	
 	    [#if !gerar_formulario!false]
-	        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo /]	        
+	        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo col=col /]	        
 	    [#else]
 	    <span class="valor">[#if vSigla??]${vSigla} - [/#if]${vDescricao}</span>
 	    [/#if]
     </div>
 [/#macro]
 
-[#macro pessoa titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
+[#macro pessoa titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col=""]
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]
-    [@selecionavel tipo="pessoa" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+    [@selecionavel tipo="pessoa" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col /]
 [/#macro]
 
-[#macro cosignatario titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
+[#macro cosignatario titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col=""]
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]
-    [@selecionavel tipo="cosignatario" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+    [@selecionavel tipo="cosignatario" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col/]
 [/#macro]
 
-[#macro funcao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
-    [@selecionavel tipo="funcao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+[#macro funcao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col=""]
+    [@selecionavel tipo="funcao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col /]
 [/#macro]
 
-[#macro lotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
-    [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+[#macro lotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col=""]
+    [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col/]
 [/#macro]
 
-[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} ]
+[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} col=""]
     [#if reler == true && idAjax != ""]
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -2364,7 +2364,7 @@ Pede deferimento.</span><br/><br/><br/>
         [/#list]
     [/#if]
 
-	<div class="form-group" style="margin-bottom:0">  
+	<div class="form-group ${col}" style="margin-bottom:0">  
 	    [#if obrigatorio]
 	    [#local negrito = "font-weight:bold"]
 	    <input type="hidden" name="obrigatorios" value="${var}" />
@@ -2737,7 +2737,10 @@ Pede deferimento.</span><br/><br/><br/>
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
 	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
-	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if]   
+	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if] 
+	      [#if (OrgaoArea!"") != ""]<br /><br />${OrgaoArea!}<br />[/#if] 
+	      [#if (Endereco!"") != ""]${Endereco!}<br />[/#if]
+	      [#if (Telefone!"") != ""]Telefone: ${Telefone!}[/#if]  [#if (Email!"") != ""]Email: ${Email!}[/#if]
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]
@@ -3629,7 +3632,7 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
+[#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" col=""]
     [#if reler == 'ajax']
         [#local jreler = " onblur=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -3655,7 +3658,7 @@ Pede deferimento.</span><br/><br/><br/>
         [#local v = default/]
     [/#if]
 
-	<div class="form-group" style="margin-bottom:0">
+	<div class="form-group ${col}" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
 	
 	    [#if (alerta!"Não") = 'Sim' && v = ""]
@@ -4401,7 +4404,7 @@ Pede deferimento.</span><br/><br/><br/>
    [/@rodape]
 [/#macro]
 
-[#macro numero var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
+[#macro numero var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" col=""]
     [#if reler == 'ajax']
         [#local jreler = " onblur=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -4427,7 +4430,7 @@ Pede deferimento.</span><br/><br/><br/>
         [#local v = default/]
     [/#if]
 
-	<div class="form-group" style="margin-bottom:0">
+	<div class="form-group ${col}" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
 	
 	    [#if (alerta!"Não") = 'Sim' && v = ""]
@@ -4454,7 +4457,7 @@ Pede deferimento.</span><br/><br/><br/>
     </div>
 [/#macro]
 
-[#macro horaMinuto titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false]
+[#macro horaMinuto titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false col=""]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -4463,7 +4466,7 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#local v = .vars[var]!default]
 
-	<div class="form-group" style="margin-bottom:0">
+	<div class="form-group ${col}" style="margin-bottom:0">
 	    [#if obrigatorio]
 			[#local negrito = "font-weight:bold"]
 			<input type="hidden" name="obrigatorios" value="${var}" />
@@ -4535,16 +4538,16 @@ Pede deferimento.</span><br/><br/><br/>
      [/@estiloBrasaoCentralizado]
 [/#macro]
 
-[#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
+[#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col=""]
 [@selecaoX2 titulo=titulo var=var opcoes="Matrícula;Orgão Integrado" reler=true idAjax=idAjax/]   
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]
 [@grupoX2 depende=idAjax]
   [#if .vars[var] == "Orgão Integrado"]  
-[@selecionavel tipo="lotacao" titulo="" var=var reler=reler idAjax=idAjax+"1" relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+[@selecionavel tipo="lotacao" titulo="" var=var reler=reler idAjax=idAjax+"1" relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col /]
   [#else]
-[@selecionavel tipo="pessoa" titulo="" var=var reler=reler idAjax=idAjax+"2" relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
+[@selecionavel tipo="pessoa" titulo="" var=var reler=reler idAjax=idAjax+"2" relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col /]
   [/#if]
 [/@grupoX2]
 [/#macro]
@@ -4919,3 +4922,130 @@ ${texto}
 [#assign _heightBrasao = "65" /]
 [#assign _tituloGeral = "PODER JUDICIÁRIO" /]
 [#assign _subtituloGeral = "JUSTIÇA FEDERAL" /]
+
+
+[#macro interview]
+	[@entrevista]
+		<div class="row">
+		[#nested/]
+		</div>
+	[/@entrevista]
+[/#macro]
+
+[#macro field var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col=""]
+	[#if col?is_number]
+		[#local colr=('col-' + col) /]
+	[#elseif col?is_string]
+		[#if col != '']
+			[#local colr=col/]
+		[#else]
+			[#local colr='col-12'/]
+		[/#if]
+	[/#if]
+	[@campo var=var+index titulo=title tipo=kind largura=width colunas=columns linhas=lines maxcaracteres=maxchars reler=refresh obrigatorio=required valor=value default=default opcoes=options buscarFechadas=searchClosed atts=atts alterado=altered id=id col=colr /]
+[/#macro]
+
+[#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col=""]${(.vars[var+index])!}[/#macro]
+
+[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={}]
+    [#if !hidden]
+    	</div>
+	    [#local id = (depend=="")?string("", "div" + depend)] 
+	    [@div id=id depende=depend suprimirIndependente=true atts={'class': 'row'}]
+	    	[#if title?? && title != '']<h5 class="col-12">${title}</h5>[/#if]
+	    	[#if info?? && info != '']<div class="col-12"><p class="alert alert-info mb-1">${info}</p></div>[/#if]
+	    	[#if warning?? && warning != '']<div class="col-12"><p class="alert alert-warning mb-1">${warning}</p></div>[/#if]
+	    	[#if danger?? && danger != '']<div class="col-12"><p class="alert alert-danger mb-1">${danger}</p></div>[/#if]
+			[#nested]
+	    [/@div]
+	    <div class="row">
+    [/#if]
+[/#macro]
+
+[#macro document]
+    [#assign document_content][#nested/][/#assign]
+	[@documento formato=(PAGE_SIZE!"A4") orientacao=(PAGE_ORIENTATION!"portrait") margemEsquerda=(MARGIN_LEFT!"3cm") margemDireita=(MARGIN_RIGHT!"2cm") margemSuperior=(MARGIN_TOP!"1cm") margemInferior=(MARGIN_BOTTOM!"2cm")]
+		[#switch STYLE!]
+  			[#case "memorando"]
+				[@memorando texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"MEMORANDO")/]
+      			[#break]
+  			[#case "assentamentoFuncional"]
+				[@assentamento_funcional texto=(document_content!) fecho=(_fecho!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"ASSENTAMENTO FUNCIONAL")/]
+      			[#break]
+  			[#case "requerimento"]
+				[@requerimento texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"") formatarOrgao=(_formatarOrgao!false)/]
+      			[#break]
+  			[#case "processo"]
+				[@processo /]
+      			[#break]
+  			[#case "provimento"]
+				[@provimento texto=(document_content!) abertura=(_abertura!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"PROVIMENTO") ementa=(_ementa!"") titulo=(_titulo!"") subtitulo=(_subtitulo!"")/]
+      			[#break]
+  			[#case "portaria"]
+				[@portaria texto=(document_content!) abertura=(_abertura!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"PORTARIA") dispoe_sobre=(_dispoeSobre!"")/]
+      			[#break]
+  			[#case "oficio"]
+				[@oficio _texto=(document_content!) _tipo_autoridade=(_tipoAutoridade!"") _genero=(_genero!"") _vocativo=(_vocativo!"") _enderecamento_dest=(_enderecamentoDest!"") _nome_dest=(_nomeDest!"") _cargo_dest=(_cargoDest!"") _orgao_dest=(_orgaoDest!"") _enderecoDest=(_enderecoDest!"") _fecho=(_fecho!"") _tamanho_letra=(_tamanhoLetra!"Normal") _autoridade={} _tipo=(_tipo!"OFÍCIO")/]
+      			[#break]
+  			[#case "solicitacao"]
+				[@solicitacao tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"FORMULÁRIO") assunto=(_assunto!"")/]
+      			[#break]
+  			[#default]
+                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!false) incluirMioloDJE=(_incluirMioloDJE!false) omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
+				    ${document_content!}
+                [/@estiloBrasaoCentralizado]
+  		[/#switch]
+	[/@documento]
+[/#macro]
+
+[#macro if expr depend='']
+	[#if depend??]
+		[@group depend=depend]
+			[#if expr][#nested][/#if]
+		[/@group]
+	[#else]
+		[#if expr][#nested][/#if]
+	[/#if]
+[/#macro]
+
+[#macro for expr depend='']
+	[#local max = 0 /]
+	[#if expr?is_number]
+		[#local max = expr?round /]
+	[#elseif expr?is_string && expr?matches("^\\d+$")]
+	    [#local max = expr?number /]
+	[/#if]
+
+	[#if depend??]
+		[@group depend=depend]
+			[#if max?? && max > 0]
+				[#list 1..max as index][#assign _index = index/][#nested _index][/#list]
+			[/#if]
+		[/@group]
+	[#else]
+		[#if max?? && max > 0]
+			[#list 1..max as index][#assign _index = index/][#nested _index][/#list]
+		[/#if]
+	[/#if]
+	[#assign _index = _inexistentVariable!/]
+[/#macro]
+
+[#macro hook expr]
+	[#if expr == 'AFTER_DRAFT']
+		[@finalizacao]
+			[#nested]
+		[/@finalizacao]
+	[#elseif expr == 'BEFORE_SAVE']
+		[@gravacao]
+			[#nested]
+		[/@gravacao]
+	[#elseif expr == 'BEFORE_SIGN']
+		[@pre_assinatura]
+			[#nested]
+		[/@pre_assinatura]
+	[#elseif expr == 'AFTER_SIGN']
+		[@assinatura]
+			[#nested]
+		[/@assinatura]
+	[/#if]
+[/#macro]

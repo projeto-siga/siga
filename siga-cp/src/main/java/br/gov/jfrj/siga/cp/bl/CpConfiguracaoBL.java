@@ -783,9 +783,8 @@ public class CpConfiguracaoBL {
 						srv.setDscServico(sDesc);
 						srv.setCpServicoPai(srvPai);
 						srv.setCpTipoServico(tpsrv);
-						ContextoPersistencia.begin();
+						ContextoPersistencia.upgradeToTransactional();
 						dao().acrescentarServico(srv);
-						ContextoPersistencia.commit();
 					}
 					srvPai = srvRecuperado;
 				}

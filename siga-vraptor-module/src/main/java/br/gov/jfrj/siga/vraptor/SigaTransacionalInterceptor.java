@@ -43,6 +43,18 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 	private final static ThreadLocal<SigaTransacionalInterceptor> current = new ThreadLocal<SigaTransacionalInterceptor>();
 
+	
+	static { 
+		
+		ContextoPersistencia.controleTransacional = new ContextoPersistencia.ControleTransacional() {
+			
+			@Override
+			public void upgradeParaTransacional() {
+				SigaTransacionalInterceptor.upgradeParaTransacional();
+			}
+		};
+	} 
+	
 	/**
 	 * @deprecated CDI eyes only.
 	 */

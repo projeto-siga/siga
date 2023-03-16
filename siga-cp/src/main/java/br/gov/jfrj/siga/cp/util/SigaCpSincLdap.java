@@ -32,6 +32,7 @@ import com.google.gson.JsonObject;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.log.RequestExceptionLogger;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -117,10 +118,12 @@ public class SigaCpSincLdap extends SigaCpSinc {
 					if (modoLog) {
 						simularInclusao(novo);
 						return novo;
-
 					}
 
 					Sincronizavel o = bl.incluir((AdObjeto) novo);
+					
+					if (o == null)
+					    log("Erro inserindo o objeto " + novo.toString() + " no AD");
 
 					bl.limparSenhaSinc(novo);
 
@@ -384,8 +387,10 @@ public class SigaCpSincLdap extends SigaCpSinc {
 		if (e.getCause() != null) {
 			log(e.getCause().getMessage() + "\n");
 		}
+		
+		String st = RequestExceptionLogger.simplificarStackTrace(e);
 
-		for (StackTraceElement s : e.getStackTrace()) {
+		for (String s : st.split("\n")) {
 			log(s.toString());
 		}
 		log("\n");

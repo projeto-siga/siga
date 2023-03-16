@@ -61,11 +61,9 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.api.v1.DocumentosSiglaArquivoGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
-import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadRTF;
 import br.gov.jfrj.siga.vraptor.builder.ExDownloadZip;
 import br.gov.jfrj.siga.vraptor.builder.ExInputStreamDownload;
@@ -289,7 +287,7 @@ public class ExArquivoController extends ExController {
 	
 	@Get("/app/arquivo/obterTamanhoArquivosDocs")
 	public void obterTamanhoArquivosDocs(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
-		String json = Documento.obterTamanhoArquivosDocs(getCadastrante(), getLotaCadastrante(), arquivo, completo, volumes);
+		String json = Documento.obterTamanhoArquivosDocs(arquivo, completo, volumes);
 		setMensagem(json);
 		result.use(Results.page()).forwardTo("/WEB-INF/page/textoAjax.jsp");
 	}

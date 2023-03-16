@@ -48,7 +48,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gson.Gson;
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PRAcroForm;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -67,8 +66,6 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.dp.DpLotacao;
-import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -592,8 +589,7 @@ public class Documento {
 		return true;
 	}
 	
-	public static String obterTamanhoArquivosDocs(final DpPessoa dpPessoa, 
-			final DpLotacao dpLotacao, final String arquivo, boolean completo, final boolean volumes)  throws Exception {
+	public static String obterTamanhoArquivosDocs(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
 		long bytes = 0;
 		boolean excedeuMB = Boolean.FALSE;
 		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();

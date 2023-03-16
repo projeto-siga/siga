@@ -1486,7 +1486,7 @@ public class ExMovimentacaoController extends ExController {
 		
 		if(doc.getMobilGeral().isAcessoRestrito()) {
 			if (!doc.getMobilGeral()
-					.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+					.getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 					.contains(cosignatarioSel.getObjeto())) {
 				if (adicionarRestricaoAcessoAntes) {
 					Ex.getInstance()
@@ -2075,7 +2075,7 @@ public class ExMovimentacaoController extends ExController {
 				return;
 			} else if (tipoResponsavel == 2 ) {
 				if (!builder.getMob().getDoc().getMobilGeral()
-						.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+						.getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 						.contains(responsavelSel.getObjeto())) {
 					if (adicionarRestricaoAcessoAntes) {
 						Ex.getInstance()
@@ -2649,7 +2649,7 @@ public class ExMovimentacaoController extends ExController {
 				
 			} else if (tipoResponsavel == 1 ) {
 				if (!builder.getMob().getDoc().getMobilGeral()
-						.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+						.getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 						.contains(responsavelSel.getObjeto())) {
 					if (adicionarRestricaoAcessoAntes) {
 						Ex.getInstance()

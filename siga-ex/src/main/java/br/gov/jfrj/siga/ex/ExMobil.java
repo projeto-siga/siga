@@ -154,7 +154,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return movsTp;
 	}
 	
-	public List<DpPessoa> getSubscitoresMovimentacoesPorTipo(ITipoDeMovimentacao tpMov, boolean somenteAtivas) {
+	public List<DpPessoa> getSubscritoresMovimentacoesPorTipo(ITipoDeMovimentacao tpMov, boolean somenteAtivas) {
 		List<ExMovimentacao> movimentacoes = getMovimentacoesPorTipo(tpMov, somenteAtivas);
 		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
 		

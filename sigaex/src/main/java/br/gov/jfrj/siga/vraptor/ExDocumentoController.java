@@ -1691,7 +1691,7 @@ public class ExDocumentoController extends ExController {
 			if(exDocumentoDTO.getDoc().getMobilGeral().isAcessoRestrito()) {
 				boolean pessoaEstaRestricaoAcesso = false;
 				//Verifica se Subscritor está na lista de restrição
-				for (DpPessoa pessoaRestrita : exDocumentoDTO.getDoc().getMobilGeral().getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)) {
+				for (DpPessoa pessoaRestrita : exDocumentoDTO.getDoc().getMobilGeral().getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)) {
 					pessoaEstaRestricaoAcesso = pessoaRestrita.equivale(subscritor);
 					if (pessoaEstaRestricaoAcesso) 
 						break;

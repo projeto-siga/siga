@@ -4712,7 +4712,7 @@ public class ExBL extends CpBL {
 		} else {
 			//Se tem Restrição de Acesso no Pai, herda movimentações e nível de acesso do Pai
 			restringirAcesso(cadastrante, titular.getLotacao(), mobFilho.getDoc(), null, null, null, 
-					mobPai.getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, false), 
+					mobPai.getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, false), 
 					titular, null, mobPai.getDoc().getExNivelAcessoAtual());
 
 		}
@@ -5940,7 +5940,7 @@ public class ExBL extends CpBL {
 				boolean pessoaEstaRestricaoAcesso = false;
 				for (DpPessoa subscritor : listaPessoasSubscritoresRestricaoAcesso) {		
 					
-					pessoaEstaRestricaoAcesso = doc.getMobilGeral().getSubscitoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+					pessoaEstaRestricaoAcesso = doc.getMobilGeral().getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
 													.stream()
 													.anyMatch(pessoaRestrita -> subscritor.equivale(pessoaRestrita));
 					

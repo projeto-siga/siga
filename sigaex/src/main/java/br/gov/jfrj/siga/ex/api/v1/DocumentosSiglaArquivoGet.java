@@ -69,9 +69,10 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 		boolean volumes = req.volumes == null ? false : req.volumes;
 		boolean exibirReordenacao = req.exibirReordenacao == null ? false : req.exibirReordenacao;
 		boolean tamanhoOriginal = req.tamanhoOriginal == null ? false : req.tamanhoOriginal;
+		Integer paramoffset = req.paramoffset;
 		
 		DownloadAssincrono task = new DownloadAssincrono(uuid, contenttype, sigla, estampar, volumes, contextpath,
-				servernameport, exibirReordenacao, tamanhoOriginal);
+				servernameport, exibirReordenacao, tamanhoOriginal, paramoffset);
 
 		ExApiV1Servlet.submitToExecutor(task);
 	}

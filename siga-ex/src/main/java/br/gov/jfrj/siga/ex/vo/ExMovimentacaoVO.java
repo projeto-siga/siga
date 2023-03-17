@@ -393,7 +393,7 @@ public class ExMovimentacaoVO extends ExVO {
 								.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, mov.getExDocumento())) {
 						addAcao(AcaoVO.builder().nome("Disponibilizar no Acompanhamento do Protocolo").nameSpace("/app/expediente/mov").acao("exibir_no_acompanhamento_do_protocolo")
 								.params("sigla",mov.getExMobil().getSigla())
-								.exp(new CpPodeSempre()).msgConfirmacao("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "
+								.exp(new CpPodeSempre()).msgConfirmacao(mov.getExMobil().isAcessoRestrito() ? "Atenção: Documento com Restrição de Acesso. \\n" : "" + "YYYYAo clicar em OK o conteúdo deste documento ficará disponível através do número do "
 										+ "protocolo de acompanhamento. Deseja continuar?").build());
 					}
 				}

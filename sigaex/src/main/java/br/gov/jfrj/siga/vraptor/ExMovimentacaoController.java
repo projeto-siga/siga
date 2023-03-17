@@ -16,6 +16,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,6 +34,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.print.Doc;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -869,6 +871,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("nivelAcesso", doc.getExNivelAcessoAtual().getIdNivelAcesso());
 		result.include("subscritorSel", subscritorSel);
 		result.include("titularSel", titularSel);
+		result.include("listaAcessoRestrito", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, Boolean.TRUE));
 	}
 	
 	@Transacional
@@ -878,61 +881,67 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
-	
-		ExNivelAcesso exTipoSig = dao().consultar(ExNivelAcesso.ID_LIMITADO_ENTRE_LOTACOES, ExNivelAcesso.class, false);
-
+		
 		Ex.getInstance().getComp().afirmar("Não é possível desfazer restrição de acesso", ExPodeDesfazerRestricaoDeAcesso.class, getCadastrante(), getLotaCadastrante(), builder.getMob());
 		
 		Ex.getInstance()
 			.getBL()
-			.desfazerRestringirAcesso(getCadastrante(), getLotaCadastrante(), doc, null,  exTipoSig);
+			.desfazerRestringirAcesso(getCadastrante(), getLotaCadastrante(), doc, null);
 		
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 	
 	@Transacional
 	@Post("app/expediente/mov/restringir_acesso_gravar")
-	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso) throws Exception {
-		String usuarios[] = usu.split(";");
+	public void restringirAcessoGravar(final String sigla, final String usu, final Long nivelAcesso, final boolean resetarRestricaoAcesso) throws Exception {
 		
-		List<DpPessoa> listaSubscritor = new ArrayList<DpPessoa>();
-		for (int i = 1; i < usuarios.length; i++) {
-			listaSubscritor.add(dao().consultar(Long.valueOf(usuarios[i]), DpPessoa.class, false));
-		}
-		
-		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
-				.novaInstancia().setSigla(sigla);
-		
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder);
 		
-		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
-				.novaInstancia();
+		if (resetarRestricaoAcesso) {
+			if (doc != null && doc.getMobilGeral().isAcessoRestrito()) {
+				desfazerRestringirAcesso(sigla);
+			} else {
+				throw new AplicacaoException("Não é possíver retornar ao Nível de Acesso Padrão. Não há restrição de acesso definida para ser desfeita.");
+			}
+		} else {
+			String usuarios[] = usu.split(";");
+			
+			List<DpPessoa> listaPessoasRestricaoAcesso = new ArrayList<DpPessoa>();
+			for (int i = 1; i < usuarios.length; i++) {
+				listaPessoasRestricaoAcesso.add(dao().consultar(Long.valueOf(usuarios[i]), DpPessoa.class, false));
+			}
+							
+			final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+					.novaInstancia();
 
-		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
+			final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
-		ExNivelAcesso exTipoSig = null;
+			ExNivelAcesso exTipoSig = null;
 
-		if (nivelAcesso != null) {
-			exTipoSig = dao()
-					.consultar(nivelAcesso, ExNivelAcesso.class, false);
+			if (nivelAcesso != null) {
+				exTipoSig = dao()
+						.consultar(nivelAcesso, ExNivelAcesso.class, false);
+			}
+			
+			Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), builder.getMob());
+						
+			adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();			
+			
+			Ex.getInstance()
+					.getBL()
+					.restringirAcesso(getCadastrante(), getLotaTitular(), doc,
+							null, mov.getLotaResp(), mov.getResp(),
+							listaPessoasRestricaoAcesso, getTitular(),
+							mov.getNmFuncaoSubscritor(), exTipoSig);
+			
+			removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();
+
+			result.include("msgCabecClass", "alert-warning");
+			result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");
+			ExDocumentoController.redirecionarParaExibir(result, sigla);
 		}
-		
-		Ex.getInstance().getComp().afirmar("Não é possível restringir acesso", ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), builder.getMob());
-					
-		adicionarIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();			
-		
-		Ex.getInstance()
-				.getBL()
-				.restringirAcesso(getCadastrante(), getLotaTitular(), doc,
-						null, mov.getLotaResp(), mov.getResp(),
-						listaSubscritor, mov.getTitular(),
-						mov.getNmFuncaoSubscritor(), exTipoSig);
-		
-		removerIndicativoDeMovimentacaoComOrigemPeloBotaoDeRestricaoDeAcesso();
 
-		result.include("msgCabecClass", "alert-warning");
-		result.include("mensagemCabec", "Somente os usuários definidos, terão acesso aos documentos. Os usuários que já tiveram acesso ao documento, por tramitações anteriores ou por definição de acompanhamento deixam de ter acesso/visualização ao documento. Inclusive o cadastrante dos documentos, responsáveis pela assinatura e cossignatário");
-		result.forwardTo(ExDocumentoController.class).exibe(false, sigla, null, null, null, false, null);
 	}
 
 	@Transacional
@@ -1391,12 +1400,13 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Get("/app/expediente/mov/incluir_cosignatario")
-	public void incluirCosignatario(final String sigla) {
+	public void incluirCosignatario(final String sigla, final DpPessoaSelecao subscritorSel) {
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 
 		final ExDocumento doc = buscarDocumento(builder);
 		final ExMobil mob = builder.getMob();
+		final DpPessoaSelecao subscritorSelFinal = Optional.fromNullable(subscritorSel).or(new DpPessoaSelecao());
 
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia().setMob(mob);
@@ -1407,7 +1417,7 @@ public class ExMovimentacaoController extends ExController {
 
 		result.include("sigla", sigla);
 		result.include("documento", doc);
-		result.include("cosignatarioSel", movimentacaoBuilder.getSubscritorSel());
+		result.include("cosignatarioSel", subscritorSelFinal);
 		result.include("mob", builder.getMob());
 		result.include("listaCossignatarios", builder.getMob().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, Boolean.TRUE));
 
@@ -1443,7 +1453,7 @@ public class ExMovimentacaoController extends ExController {
 				
 			}
 		}
-		result.forwardTo(this).incluirCosignatario(sigla);
+		result.forwardTo(this).incluirCosignatario(sigla,null);
 		return;
 	}
 
@@ -1451,7 +1461,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("/app/expediente/mov/incluir_cosignatario_gravar")
 	public void aIncluirCosignatarioGravar(final String sigla,
 			final DpPessoaSelecao cosignatarioSel,
-			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback, final boolean podeIncluirCossigArvoreDocs) {
+			final String funcaoCosignatario, final String  unidadeCosignatario, final Integer postback, final boolean podeIncluirCossigArvoreDocs, final boolean adicionarRestricaoAcessoAntes) {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
@@ -1473,6 +1483,24 @@ public class ExMovimentacaoController extends ExController {
 		final ExMovimentacao mov = movimentacaoBuilder.construir(dao());
 
 		Ex.getInstance().getComp().afirmar("Não é possível incluir cossignatário", ExPodeIncluirCossignatario.class, getTitular(), getLotaTitular(), documentoBuilder.getMob());
+		
+		if(doc.getMobilGeral().isAcessoRestrito()) {
+			if (!doc.getMobilGeral()
+					.getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+					.contains(cosignatarioSel.getObjeto())) {
+				if (adicionarRestricaoAcessoAntes) {
+					Ex.getInstance()
+						.getBL()
+						.restringirAcessoAntes(doc,cosignatarioSel.getObjeto(),getCadastrante(),getLotaCadastrante());	
+				} else {
+					gerarModalConfirmacaoInclusaoRestricaoAcesso();
+					result.forwardTo(this).incluirCosignatario(sigla,cosignatarioSel);
+		    		return;
+	
+				}
+			}
+		}
+
 
 		try {
 			Ex.getInstance()
@@ -1483,7 +1511,7 @@ public class ExMovimentacaoController extends ExController {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
 	
 		}			
-		result.forwardTo(this).incluirCosignatario(sigla);
+		result.redirectTo(this).incluirCosignatario(sigla,null);
 		
 		return;
 	}
@@ -1983,7 +2011,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("podeTramitarEmParalelo", podeTramitarEmParalelo);
 		result.include("podeNotificar", podeNotificar);
 	}
-
+	
 	@Transacional
 	@Post("/app/expediente/mov/transferir_gravar")
 	public void transferirGravar(final int postback, final String sigla,
@@ -1997,7 +2025,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpLotacaoSelecao lotaResponsavelSel,
 			final DpPessoaSelecao responsavelSel, final CpGrupoDeEmailSelecao grupoSel,
 			final CpOrgaoSelecao cpOrgaoSel, final String dtDevolucaoMovString,
-			final String obsOrgao, final String protocolo, final Integer tipoTramite) throws Exception {
+			final String obsOrgao, final String protocolo, final Integer tipoTramite, final boolean adicionarRestricaoAcessoAntes) throws Exception {
 		this.setPostback(postback);
 			
 		if ((responsavelSel.getObjeto() != null || lotaResponsavelSel.getObjeto() != null) && !new ExPodeRestringirTramitacao(getTitular(), getLotaTitular(), 
@@ -2012,6 +2040,7 @@ public class ExMovimentacaoController extends ExController {
 			
 			return;
 		}
+		
 
 		if(dtDevolucaoMovString != null && !"".equals(dtDevolucaoMovString.trim())) {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -2028,11 +2057,45 @@ public class ExMovimentacaoController extends ExController {
         			return;
 	        	}
 	        }
-		}
+		}		
 			
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
+		
+		
+		if(builder.getMob().getDoc().getMobilGeral().isAcessoRestrito()) {
+			if (tipoResponsavel == 1) {
+	    		result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", String.format("Documento com restrição de acesso. Não permitido tramitação para %s.",SigaMessages.getMessage("usuario.lotacao")));
+	    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
+						subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp,
+						tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo,
+						tipoTramite);
+				return;
+			} else if (tipoResponsavel == 2 ) {
+				if (!builder.getMob().getDoc().getMobilGeral()
+						.getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+						.contains(responsavelSel.getObjeto())) {
+					if (adicionarRestricaoAcessoAntes) {
+						Ex.getInstance()
+							.getBL()
+							.restringirAcessoAntes(builder.getMob().getDoc(),responsavelSel.getObjeto(),getCadastrante(),getLotaCadastrante());	
+					} else {
+						gerarModalConfirmacaoInclusaoRestricaoAcesso();
+			    		forwardToTransferir(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel, postback, dtMovString,
+								subscritorSel, substituicao, titularSel, nmFuncaoSubscritor, idTpDespacho, idResp,
+								tiposDespacho, descrMov, cpOrgaoSel, dtDevolucaoMovString, obsOrgao, protocolo,
+								tipoTramite);
+			    		return;
+					}
+
+					
+				}
+			}	
+		}
+		
+		
 		
 		if(responsavelSel != null) {
 			Boolean podeTramitar = Boolean.FALSE;
@@ -2556,9 +2619,9 @@ public class ExMovimentacaoController extends ExController {
 	public void vincularPapelGravarAjax(final int postback, final String sigla,
 			final String dtMovString, final int tipoResponsavel,
 			final DpPessoaSelecao responsavelSel,
-			final DpLotacaoSelecao lotaResponsavelSel, final Long idPapel) {
+			final DpLotacaoSelecao lotaResponsavelSel, final Long idPapel, final boolean adicionarRestricaoAcessoAntes) {
 		try {
-			vincularPapel_gravar(postback, sigla, dtMovString, tipoResponsavel, responsavelSel, lotaResponsavelSel, idPapel);
+			vincularPapel_gravar(postback, sigla, dtMovString, tipoResponsavel, responsavelSel, lotaResponsavelSel, idPapel, adicionarRestricaoAcessoAntes);
 		} catch (final Exception e) {
 			result.use(Results.status()).forbidden(e.getMessage());
 		} 		
@@ -2569,13 +2632,43 @@ public class ExMovimentacaoController extends ExController {
 	public void vincularPapel_gravar(final int postback, final String sigla,
 			final String dtMovString, final int tipoResponsavel,
 			final DpPessoaSelecao responsavelSel,
-			final DpLotacaoSelecao lotaResponsavelSel, final Long idPapel) {
+			final DpLotacaoSelecao lotaResponsavelSel, final Long idPapel, final boolean adicionarRestricaoAcessoAntes) {
 		this.setPostback(postback);
 
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder);
 
+		if(builder.getMob().getDoc().getMobilGeral().isAcessoRestrito()) {
+			if (tipoResponsavel == 2) {
+	    		result.include("msgCabecClass", "alert-danger");
+	    		result.include("mensagemCabec", String.format("Documento com restrição de acesso. Não permitido Definição de Acompanhamento para %s.",SigaMessages.getMessage("usuario.lotacao")));
+	    		result.forwardTo(this).aVincularPapel(sigla, responsavelSel, lotaResponsavelSel, tipoResponsavel, idPapel);
+				return;
+			
+				
+			} else if (tipoResponsavel == 1 ) {
+				if (!builder.getMob().getDoc().getMobilGeral()
+						.getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)
+						.contains(responsavelSel.getObjeto())) {
+					if (adicionarRestricaoAcessoAntes) {
+						Ex.getInstance()
+							.getBL()
+							.restringirAcessoAntes(builder.getMob().getDoc(),responsavelSel.getObjeto(),getCadastrante(),getLotaCadastrante());	
+					} else {
+						gerarModalConfirmacaoInclusaoRestricaoAcesso();
+						result.forwardTo(this).aVincularPapel(sigla, responsavelSel, lotaResponsavelSel, tipoResponsavel, idPapel);
+			    		return;
+					}
+	
+					
+				}
+			}	
+			
+		}
+				
+				
+		
 		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
 				.novaInstancia();
 		movimentacaoBuilder.setDtMovString(dtMovString)
@@ -2646,6 +2739,8 @@ public class ExMovimentacaoController extends ExController {
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);
 	}
+
+
 
 	@Get("/app/expediente/mov/marcar")
 	public void aMarcar(final String sigla) {
@@ -3715,6 +3810,31 @@ public class ExMovimentacaoController extends ExController {
 				} 
 			}
 		}
+			
+		if(doc.getMobilGeral().isAcessoRestrito()) {
+			DpPessoa pessoa = CpDao.getInstance().consultar(idPessoa, DpPessoa.class, false).getPessoaAtual();
+			
+			List<ExMovimentacao> movRestricao = doc.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true);
+			
+			for (ExMovimentacao movRestricaoAcessoDePerfil : movRestricao) {
+				if (movRestricaoAcessoDePerfil.getSubscritor().equivale(pessoa)) {
+					result.include(SigaModal.CONFIRMACAO, 
+							SigaModal
+								.mensagem("Deseja manter usuário na restrição de acesso?")
+								.titulo("Confirmação")
+								.classBotaoDeAcao("btn-danger")
+								.classBotaoDeFechar("btn-success")
+								.descricaoBotaoFechaModalDoRodape("Sim")
+								.descricaoBotaoDeAcao("Não")
+								.linkBotaoDeAcao(String.format("javascript:sigaSpinner.mostrar();location.href='/sigaex/app/expediente/mov/cancelar_restricao_acesso?idMobil=%s&idPessoa=%s'", doc.getMobilGeral().getId(), pessoa.getId())));
+				break;
+				}
+			}
+		}
+		
+	
+		
+
 		
 		result.include("mob", builder.getMob());
 		result.include("sigla", doc.getSigla());
@@ -5955,6 +6075,59 @@ public class ExMovimentacaoController extends ExController {
         result.include("dtIni", dtIni);
         result.include("dtFim", dtFim);
     }
-    
+	
+	@Transacional
+	@Get("/app/expediente/mov/cancelar_restricao_acesso")
+	public void aCancelarRestricaoAcesso(final Long idMovRestricao, final Long idMobil, final Long idPessoa, String redirectURL)
+			throws Exception {
+		
+		ExMovimentacao mov = null;
+		ExMobil mobil = null;
+		if (idMovRestricao != null)  {
+			 mov = dao().consultar(idMovRestricao, ExMovimentacao.class,false);
+			 
+			//Caso seja para movimentação de restrição de acesso, verifica se movimentação existe e não está cancelada
+			 if (mov == null || !mov.getExTipoMovimentacao().equals(ExTipoDeMovimentacao.RESTRINGIR_ACESSO) ||  mov.isCancelada()) {
+					throw new AplicacaoException("Não existe a Restrição de Acesso a ser cancelada.");
+			 } else {
+				 mobil = mov.getExMobil();
+				//Cancela movimentação de restrição especificada
+				Ex.getInstance().getBL()
+					.cancelar(getTitular(), getLotaTitular(), mobil ,mov, null, null, null,"Restrição: " + mov.getDescrMov());			
+			 }
+			 
+		}  else if (idMobil != null && idPessoa != null)  {
+			//Tenta cancelar restrições de acesso para a pessoa nesse móbil
+
+			DpPessoa pessoa = dao().consultar(idPessoa, DpPessoa.class,false); 
+			mobil = dao().consultar(idMobil, ExMobil.class,false); 
+			
+			if (pessoa == null || mobil == null) {
+				throw new AplicacaoException("Não localizada pessoa ou documento de referência para cancelamento da Restrição de Acesso.");
+			} else {
+				Ex.getInstance().getBL()
+					.excluirRestricaoAcessoPessoa(mobil, pessoa,getTitular(),getLotaTitular());
+			}
+		} 
+
+			
+		if (redirectURL != null) {
+			result.redirectTo(redirectURL);
+		} else {
+			ExDocumentoController.redirecionarParaExibir(result, mobil.getSigla());
+		}
+	}
+	
+	private void gerarModalConfirmacaoInclusaoRestricaoAcesso() {
+		result.include(SigaModal.CONFIRMACAO, 
+				SigaModal
+					.mensagem("Documento Restrito. Usuário não está na lista de restrição de acesso. Deseja incluir?")
+					.titulo("Confirmação")
+					.inverterBotoes()
+					.classBotaoDeAcao("btn-success")
+					.classBotaoDeFechar("btn-danger")
+					.linkBotaoDeAcao("javascript:incluirRestricao(true);"));
+		
+	}
 	
 }

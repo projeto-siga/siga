@@ -1646,7 +1646,8 @@ public class ExDocumentoController extends ExController {
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo, final String tokenArquivo) {
+			final UploadedFile arquivo, final String tokenArquivo, 
+			final boolean adicionarRestricaoAcessoAntes) {
 		
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
@@ -1685,6 +1686,42 @@ public class ExDocumentoController extends ExController {
 						null, null, null, null);
 
 				return;
+			}
+			
+			if(exDocumentoDTO.getDoc().getMobilGeral().isAcessoRestrito()) {
+				boolean pessoaEstaRestricaoAcesso = false;
+				//Verifica se Subscritor está na lista de restrição
+				for (DpPessoa pessoaRestrita : exDocumentoDTO.getDoc().getMobilGeral().getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)) {
+					pessoaEstaRestricaoAcesso = pessoaRestrita.equivale(subscritor);
+					if (pessoaEstaRestricaoAcesso) 
+						break;
+				}
+				
+				if (!pessoaEstaRestricaoAcesso) {
+					if (adicionarRestricaoAcessoAntes) {
+						Ex.getInstance()
+							.getBL()
+							.restringirAcessoAntes(exDocumentoDTO.getDoc(),subscritor,getCadastrante(),getLotaCadastrante());	
+					} else {
+						result.include(SigaModal.CONFIRMACAO, 
+								SigaModal
+									.mensagem("Documento Restrito. Usuário não está na lista de restrição de acesso. Deseja incluir?")
+									.titulo("Confirmação")
+									.inverterBotoes()
+									.classBotaoDeAcao("btn-success")
+									.classBotaoDeFechar("btn-danger")
+									.linkBotaoDeAcao("javascript:incluirRestricao(true);"));
+						result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+								exDocumentoDTO.getMobilPaiSel(),
+								exDocumentoDTO.isCriandoAnexo(),
+								exDocumentoDTO.getAutuando(),
+								exDocumentoDTO.getIdMobilAutuado(),
+								exDocumentoDTO.getCriandoSubprocesso(),
+								null, null, null, null);
+
+						return;
+					}
+				}
 			}
 
 			long tempoIni = System.currentTimeMillis();
@@ -1896,7 +1933,7 @@ public class ExDocumentoController extends ExController {
 			}
 			
 			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
-				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
+				exBL.herdaRestricaoAcessoDocumentoPai(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
 			}
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()

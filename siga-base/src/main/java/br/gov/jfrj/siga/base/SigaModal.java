@@ -3,11 +3,22 @@ package br.gov.jfrj.siga.base;
 public class SigaModal {
 	
 	public static final String ALERTA = "sigaModalAlerta";
+	public static final String CONFIRMACAO = "sigaModalConfirmacao";
 		
 	private String titulo;
 	private String mensagem;	
 	private boolean centralizar;
+	private String linkBotaoDeAcao;
+	private String classBotaoDeAcao = "btn-primary";
+	private String classBotaoDeFechar = "btn-secondary";
 	
+	private String  descricaoBotaoFechaModalDoRodape = "Não";
+	private String  descricaoBotaoDeAcao = "Sim";
+	
+	
+	private boolean inverterBotoes;
+	
+
 	public SigaModal(String mensagem) {		
 		this.mensagem = mensagem;
 	}
@@ -36,6 +47,63 @@ public class SigaModal {
 	
 	public boolean isCentralizar() {
 		return centralizar;
+	}
+	
+	public String getLinkBotaoDeAcao() {
+		return linkBotaoDeAcao;
+	}
+
+	public SigaModal linkBotaoDeAcao(String linkBotaoDeAcao) {
+		this.linkBotaoDeAcao = linkBotaoDeAcao;
+		return this;
+	}
+	
+	public String getClassBotaoDeAcao() {
+		return classBotaoDeAcao;
+	}
+
+	public SigaModal classBotaoDeAcao(String classBotaoDeAcao) {
+		this.classBotaoDeAcao = classBotaoDeAcao;
+		return this;
+	}
+
+	public String getClassBotaoDeFechar() {
+		return classBotaoDeFechar;
+	}
+
+	public SigaModal classBotaoDeFechar(String classBotaoDeFechar) {
+		this.classBotaoDeFechar = classBotaoDeFechar;
+		return this;
+	}
+	
+	
+	public SigaModal inverterBotoes() {
+		this.inverterBotoes = true;
+		return this;
+	}
+	
+	public boolean isInverterBotoes() {
+		return inverterBotoes;
+	}
+	
+	
+	public String getDescricaoBotaoFechaModalDoRodape() {
+		return descricaoBotaoFechaModalDoRodape;
+	}
+
+	public SigaModal descricaoBotaoFechaModalDoRodape(String descricaoBotaoFechaModalDoRodape) {
+		this.descricaoBotaoFechaModalDoRodape = descricaoBotaoFechaModalDoRodape;
+		return this;
+	}
+	
+	
+	public String getDescricaoBotaoDeAcao() {
+		return descricaoBotaoDeAcao;
+	}
+
+	public SigaModal descricaoBotaoDeAcao(String descricaoBotaoDeAcao) {
+		this.descricaoBotaoDeAcao = descricaoBotaoDeAcao;
+		return this;
 	}
 
 }

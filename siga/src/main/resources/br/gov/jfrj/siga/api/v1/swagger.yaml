@@ -1030,6 +1030,23 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 
+  /selecionar/{sigla}:
+    get:
+      tags: [utils]
+      security:
+        - Bearer: []      
+      parameters: 
+        - $ref: "#/parameters/sigla"
+        - $ref: "#/parameters/matriculaQuery"
+      description: Selecionar uma entidade pela sigla
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              entidade:
+                $ref: "#/definitions/EntidadeItem"  
 
   /acessos:
     get:
@@ -1547,3 +1564,22 @@ definitions:
         type: string
       ativa:
         type: boolean
+        
+  EntidadeItem:
+    description: Contem dados de uma entidade que foi localizada pela sigla
+    type: object
+    properties:
+      modulo:
+        type: string
+      tipo:
+        type: string
+      refId:
+        type: string
+      movId:
+        type: string
+      codigo:
+        type: string
+      sigla:
+        type: string
+      descricao:
+        type: string

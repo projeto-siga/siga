@@ -80,7 +80,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	}
 	
 	public void upgradeParaTransacional() {
-		if (this.transacional) 
+	    if (em.getTransaction().isActive()) 
 			return;
 		this.transacional = true;
 		em.getTransaction().begin();
@@ -184,7 +184,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	@Override
 	public void close() throws IOException {
 		try {
-			if (this.transacional)
+		    if (em.getTransaction().isActive())
 				em.getTransaction().commit();
 		} catch (Exception e) {
 			if (em.getTransaction().isActive())

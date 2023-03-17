@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
 import java.util.Date;
 
-import br.gov.jfrj.siga.vraptor.TrackRequest;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -27,9 +27,7 @@ import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDocumentosSiglaGet;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.logic.ExDeveReceberEletronico;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
-import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
-import br.gov.jfrj.siga.vraptor.SigaTransacionalInterceptor;
+import br.gov.jfrj.siga.vraptor.TrackRequest;
 
 @TrackRequest
 public class DocumentosSiglaGet implements IDocumentosSiglaGet {
@@ -79,6 +77,7 @@ public class DocumentosSiglaGet implements IDocumentosSiglaGet {
 		// serialVersionUID
 		// Usado o Expose temporariamente
 		Gson gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+		        .setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
 				.excludeFieldsWithModifiers(Modifier.TRANSIENT).create();
 
 		String json = gson.toJson(docVO);

@@ -7,6 +7,7 @@ import java.util.Base64;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +65,15 @@ public abstract class SoapContext implements Closeable {
 
 	abstract public void initDao();
 
+	public void upgradeToTransactional() {
+	    EntityTransaction transaction = em.getTransaction();
+	    if (!transaction.isActive()) {
+	        // System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
+	        transaction.begin();
+	        this.transacional = true;
+	    }
+	}
+
 	public void rollback(Exception e) {
 		if (em.getTransaction().isActive())
 			em.getTransaction().rollback();
@@ -75,7 +85,7 @@ public abstract class SoapContext implements Closeable {
 	@Override
 	public void close() throws IOException {
 		try {
-			if (this.transacional)
+		    if (em.getTransaction().isActive())
 				em.getTransaction().commit();
 		} catch (Exception e) {
 			if (em.getTransaction().isActive())

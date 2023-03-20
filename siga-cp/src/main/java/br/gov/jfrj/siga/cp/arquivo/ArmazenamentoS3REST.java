@@ -29,7 +29,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpArquivo;
 
-public class ArmazenamentoS3REST {
+public class ArmazenamentoS3REST implements Armazenamento {
 
     private final static Logger log = Logger.getLogger(ArmazenamentoS3REST.class);
 
@@ -147,6 +147,7 @@ public class ArmazenamentoS3REST {
         }
     }
 
+    @Override
     public void salvar(Long id, String caminho, String tipoDeConteudo, byte[] conteudo) {
         try {
             fetch("PUT", bucket, caminho, tipoDeConteudo, conteudo);
@@ -156,6 +157,7 @@ public class ArmazenamentoS3REST {
         }
     }
 
+    @Override
     public void apagar(Long id, String caminho) {
         try {
             fetch("DELETE", bucket, caminho, null, null);
@@ -165,6 +167,7 @@ public class ArmazenamentoS3REST {
         }
     }
 
+    @Override
     public byte[] recuperar(Long id, String caminho) {
         if (id == null || caminho == null)
             return null;

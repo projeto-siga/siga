@@ -55,6 +55,8 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoS3REST;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -143,6 +145,8 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		
 		long ini = System.currentTimeMillis();
 		switch (getTipoArmazenamento()) {
+        case BLOB:
+            throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
 		case TABELA:
 //			EntityTransaction transaction = CpDao.getInstance().em().getTransaction();
 //			 System.out.println("* " + (CpDao.getInstance().em().getTransaction() ==
@@ -154,17 +158,10 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 				this.arquivoBlob.setConteudoBlobArq(this.getConteudo());
 			}
 			break;
-		case HCP:
-			gerarCaminho();
-			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
-			a.salvar(this, this.getConteudo());
-			break;
-		case S3:
-			gerarCaminho();
-			ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
-			s3.salvar(getIdArq(), getCaminho(), getConteudoTpArq(), this.getConteudo());
-			break;
 		default:
+			gerarCaminho();
+            Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+			a.salvar(getIdArq(), getCaminho(), getConteudoTpArq(), this.getConteudo());
 			break;
 		}
 		long fim = System.currentTimeMillis();
@@ -182,25 +179,17 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	@PreRemove
 	private void removerArquivo() {
 		switch (getTipoArmazenamento()) {
-		case HCP:
-		    if (getCaminho() != null) {
-		        CpArquivoExcluir excluir = new CpArquivoExcluir();
-		        excluir.setIdArqExc(getIdArq());
-		        excluir.setCaminho(getCaminho());
-		        ContextoPersistencia.em().persist(excluir);
-		    }
-		    break;
-		case S3:
+        case BLOB:
+            throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
+		default:
             ContextoPersistencia.addAfterCommit(new AfterCommit() {
                 @Override
                 public void run() {
-                    ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
-                    s3.apagar(getIdArq(), getCaminho());
+                    Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+                    a.apagar(getIdArq(), getCaminho());
                 }
             });
             break;
-		default:
-			break;
 		}
 	}
 	public static CpArquivo forUpdate(CpArquivo old) {
@@ -231,18 +220,14 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		if (cacheArquivo != null)
 			return cacheArquivo;
 		switch (getTipoArmazenamento()) {
+	    case BLOB:
+	        throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
 		case TABELA:
 			cacheArquivo = getArquivoBlob() != null ? getArquivoBlob().getConteudoBlobArq() : null;
 			break;
-		case HCP:
-			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
-			cacheArquivo = a.recuperar(this);
-			break;
-		case S3:
-		    ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
-			cacheArquivo = s3.recuperar(getIdArq(), getCaminho());
-			break;
 		default:
+		    Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+			cacheArquivo = a.recuperar(getIdArq(), getCaminho());
 			break;
 		}
 		return cacheArquivo;

@@ -159,7 +159,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			break;
 		case S3:
 			gerarCaminho();
-			ArmazenamentoS3 s3 = ArmazenamentoS3.getInstance();
+			ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
 			s3.salvar(this, this.getConteudo());
 			break;
 		default:
@@ -229,7 +229,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			cacheArquivo = a.recuperar(this);
 			break;
 		case S3:
-			ArmazenamentoS3 s3 = ArmazenamentoS3.getInstance();
+		    ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
 			cacheArquivo = s3.recuperar(this);
 			break;
 		default:

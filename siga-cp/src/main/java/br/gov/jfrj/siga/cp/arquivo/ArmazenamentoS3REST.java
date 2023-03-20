@@ -1,0 +1,165 @@
+package br.gov.jfrj.siga.cp.arquivo;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.http.Header;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
+import org.jboss.logging.Logger;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.SigaHTTP;
+import br.gov.jfrj.siga.cp.CpArquivo;
+
+public class ArmazenamentoS3REST {
+
+    private final static Logger log = Logger.getLogger(ArmazenamentoS3REST.class);
+
+    private static ArmazenamentoS3REST instance;
+
+    private static final String ERRO_AO_INSTANCIAR_ARMAZENAMENTO_S3 = "Erro ao instanciar ArmazenamentoS3";
+    private static final String ERRO_RECUPERAR_ARQUIVO = "Erro ao recuperar o arquivo";
+    private static final String ERRO_GRAVAR_ARQUIVO = "Erro ao gravar o arquivo";
+    private static final String ERRO_EXCLUIR_ARQUIVO = "Erro ao excluir o arquivo";
+    private static final String ERRO_BUCKET_INEXISTENTE_S3 = "Bucket %s não existe";
+
+    // private CloseableHttpClient client;
+    private String uri = Prop.get("/siga.armazenamento.arquivo.url");
+    private String usuario = Prop.get("/siga.armazenamento.arquivo.usuario");
+    private String senha = Prop.get("/siga.armazenamento.arquivo.senha");
+    private String bucket = Prop.get("/siga.armazenamento.arquivo.bucket");
+    private String awsRegion = "br";
+    private String awsService = "s3";
+
+    private ArmazenamentoS3REST() {
+    }
+
+    public static ArmazenamentoS3REST getInstance() {
+        try {
+//            if (instance == null) {
+//                synchronized (ArmazenamentoS3.class) {
+            instance = new ArmazenamentoS3REST();
+//                }
+//            }
+            return instance;
+        } catch (Exception e) {
+            log.error(ERRO_AO_INSTANCIAR_ARMAZENAMENTO_S3, e);
+            throw new AplicacaoException(e.getMessage());
+        }
+    }
+
+    public byte[] fetch(String method, String bucket, String path, String contentType, byte[] body)
+            throws RuntimeException {
+        String bucketAndPath = "/" + bucket + "/" + path;
+        String url = uri + bucketAndPath;
+        String query = null;
+        String awsIdentity = usuario;
+        String awsSecret = senha;
+
+        // optional headers
+        Map<String, String> headers = new HashMap<>();
+
+        try {
+            ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+            String dateHeader = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'UTC'").format(zonedDateTime);
+            headers.put("Date", dateHeader);
+            String isoDateTime = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").format(zonedDateTime);
+
+            // this is a linked hashmap and the headers must be in a specific order
+            Map<String, String> requestHeaders = AmazonRequestSignatureV4Utils.calculateAuthorizationHeaders(method,
+                    uri.replace("http://", "").replace("https://", ""),
+                    bucketAndPath, query, headers,
+                    body, isoDateTime, awsIdentity, awsSecret, awsRegion, awsService);
+
+            UnsafeSSLHelper unsafeSSLHelper = new UnsafeSSLHelper();
+
+            try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .setSslcontext(unsafeSSLHelper.createUnsecureSSLContext())
+                    .setHostnameVerifier(unsafeSSLHelper.getPassiveX509HostnameVerifier()).build();) {
+                HttpRequestBase request;
+                switch (method) {
+                    case "GET":
+                        request = new HttpGet(url);
+                        break;
+                    case "POST":
+                        request = new HttpPost(url);
+                        if (body != null)
+                            ((HttpPost) request).setEntity(new ByteArrayEntity(body));
+                        break;
+                    case "PUT":
+                        request = new HttpPut(url);
+                        if (body != null)
+                            ((HttpPut) request).setEntity(new ByteArrayEntity(body));
+                        break;
+                    case "DELETE":
+                        request = new HttpDelete(url);
+                        break;
+                    default:
+                        throw new RuntimeException("Método desconhecido: " + method);
+                }
+                if (contentType != null)
+                    request.addHeader("Content-Type", contentType);
+                
+                List<Header> finalHeaders = new ArrayList<>(requestHeaders.size());
+                // these must be in a specific order
+                for (Entry<String, String> entry : requestHeaders.entrySet()) {
+                    finalHeaders.add(new BasicHeader(entry.getKey(), entry.getValue()));
+                }
+                // this overrides any previous headers specified
+                request.setHeaders(finalHeaders.toArray(new Header[requestHeaders.size()]));
+
+                try (CloseableHttpResponse response = httpClient.execute(request);) {
+                    if (response.getStatusLine().getStatusCode() >= 200
+                            && response.getStatusLine().getStatusCode() < 300)
+                        return SigaHTTP.convertStreamToByteArray(response.getEntity().getContent(), 8192);
+                    throw new RuntimeException("Erro de storage " + response.getStatusLine().getReasonPhrase());
+                }
+            }
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
+        try {
+            fetch("PUT", bucket, cpArquivo.getCaminho(), cpArquivo.getConteudoTpArq(), conteudo);
+        } catch (Exception e) {
+            log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
+            throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO, 0, e);
+        }
+    }
+
+    public void apagar(CpArquivo cpArquivo) {
+        try {
+            fetch("DELETE", bucket, cpArquivo.getCaminho(), null, null);
+        } catch (Exception e) {
+            log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
+            throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
+        }
+    }
+
+    public byte[] recuperar(CpArquivo cpArquivo) {
+        if (cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
+            return null;
+        return fetch("GET", bucket, cpArquivo.getCaminho(), null, null);
+    }
+
+}

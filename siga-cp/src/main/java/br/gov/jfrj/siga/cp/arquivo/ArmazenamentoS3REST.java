@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.cp.arquivo;
 
+import java.io.InputStream;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -115,7 +117,7 @@ public class ArmazenamentoS3REST {
                 }
                 if (contentType != null)
                     request.addHeader("Content-Type", contentType);
-                
+
                 List<Header> finalHeaders = new ArrayList<>(requestHeaders.size());
                 // these must be in a specific order
                 for (Entry<String, String> entry : requestHeaders.entrySet()) {
@@ -126,8 +128,15 @@ public class ArmazenamentoS3REST {
 
                 try (CloseableHttpResponse response = httpClient.execute(request);) {
                     if (response.getStatusLine().getStatusCode() >= 200
-                            && response.getStatusLine().getStatusCode() < 300)
-                        return SigaHTTP.convertStreamToByteArray(response.getEntity().getContent(), 8192);
+                            && response.getStatusLine().getStatusCode() < 300) {
+                        HttpEntity entity = response.getEntity();
+                        if (entity == null)
+                            return null;
+                        InputStream content = entity.getContent();
+                        if (content == null)
+                            return null;
+                        return SigaHTTP.convertStreamToByteArray(content, 8192);
+                    }
                     throw new RuntimeException("Erro de storage " + response.getStatusLine().getReasonPhrase());
                 }
             }
@@ -138,28 +147,28 @@ public class ArmazenamentoS3REST {
         }
     }
 
-    public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
+    public void salvar(Long id, String caminho, String tipoDeConteudo, byte[] conteudo) {
         try {
-            fetch("PUT", bucket, cpArquivo.getCaminho(), cpArquivo.getConteudoTpArq(), conteudo);
+            fetch("PUT", bucket, caminho, tipoDeConteudo, conteudo);
         } catch (Exception e) {
-            log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
+            log.error(ERRO_GRAVAR_ARQUIVO, id, e);
             throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO, 0, e);
         }
     }
 
-    public void apagar(CpArquivo cpArquivo) {
+    public void apagar(Long id, String caminho) {
         try {
-            fetch("DELETE", bucket, cpArquivo.getCaminho(), null, null);
+            fetch("DELETE", bucket, caminho, null, null);
         } catch (Exception e) {
-            log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
-            throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
+            log.error(ERRO_EXCLUIR_ARQUIVO, id, e);
+            throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO, 0, e);
         }
     }
 
-    public byte[] recuperar(CpArquivo cpArquivo) {
-        if (cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
+    public byte[] recuperar(Long id, String caminho) {
+        if (id == null || caminho == null)
             return null;
-        return fetch("GET", bucket, cpArquivo.getCaminho(), null, null);
+        return fetch("GET", bucket, caminho, null, null);
     }
 
 }

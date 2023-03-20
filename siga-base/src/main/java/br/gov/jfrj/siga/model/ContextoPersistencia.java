@@ -1,6 +1,8 @@
 package br.gov.jfrj.siga.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -12,7 +14,29 @@ public class ContextoPersistencia {
     private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<>();
 	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<>();
 	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<>();
-	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<>();
+    private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<>();
+    private final static ThreadLocal<List<AfterCommit>> afterCommit = new ThreadLocal<>();
+	
+	public interface AfterCommit {
+	    void run();
+	}
+	
+	public static void addAfterCommit(AfterCommit ac) {
+	    List<AfterCommit> acs = afterCommit.get();
+	    if (acs == null) {
+	        acs = new ArrayList<>();
+	        afterCommit.set(acs);
+	    }
+	    acs.add(ac);
+	}
+	
+	public static void runAfterCommit() {
+        List<AfterCommit> acs = afterCommit.get();
+        if (acs == null) 
+            return;
+        for (AfterCommit ac : acs)
+            ac.run();
+	}
 	
 	
    public static void upgradeToTransactional() {
@@ -105,6 +129,7 @@ public class ContextoPersistencia {
 		removeUsuarioDeSistema();
 		removeUserPrincipal();
 		setDt(null);
+		afterCommit.remove();
 	}
 
 }

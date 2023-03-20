@@ -55,10 +55,12 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.arquivo.*;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoS3REST;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.ContextoPersistencia.AfterCommit;
 import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
 
 
@@ -160,7 +162,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 		case S3:
 			gerarCaminho();
 			ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
-			s3.salvar(this, this.getConteudo());
+			s3.salvar(getIdArq(), getCaminho(), getConteudoTpArq(), this.getConteudo());
 			break;
 		default:
 			break;
@@ -181,14 +183,22 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 	private void removerArquivo() {
 		switch (getTipoArmazenamento()) {
 		case HCP:
+		    if (getCaminho() != null) {
+		        CpArquivoExcluir excluir = new CpArquivoExcluir();
+		        excluir.setIdArqExc(getIdArq());
+		        excluir.setCaminho(getCaminho());
+		        ContextoPersistencia.em().persist(excluir);
+		    }
+		    break;
 		case S3:
-			if (getCaminho() != null) {
-				CpArquivoExcluir excluir = new CpArquivoExcluir();
-				excluir.setIdArqExc(getIdArq());
-				excluir.setCaminho(getCaminho());
-				ContextoPersistencia.em().persist(excluir);
-			}
-			break;
+            ContextoPersistencia.addAfterCommit(new AfterCommit() {
+                @Override
+                public void run() {
+                    ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
+                    s3.apagar(getIdArq(), getCaminho());
+                }
+            });
+            break;
 		default:
 			break;
 		}
@@ -230,7 +240,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 			break;
 		case S3:
 		    ArmazenamentoS3REST s3 = ArmazenamentoS3REST.getInstance();
-			cacheArquivo = s3.recuperar(this);
+			cacheArquivo = s3.recuperar(getIdArq(), getCaminho());
 			break;
 		default:
 			break;

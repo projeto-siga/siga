@@ -6,10 +6,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <script type="text/javascript" language="Javascript1.1">
-	function sbmt() {
-		ExMovimentacaoForm.page.value = '';
-		ExMovimentacaoForm.acao.value = 'aJuntar';
-		ExMovimentacaoForm.submit();
+	function incluirRestricao(adicionarRestricaoAcessoAntes) {
+		sigaSpinner.mostrar();
+		
+		if (adicionarRestricaoAcessoAntes === true) {
+			document.getElementById("adicionarRestricaoAcessoAntes").value = true;
+		}
+		
+		sigaModal.fechar('sigaModalConfirmacao');
+		document.getElementById('frm').submit();
 	}
 
 	function displayPersonalizar(thisElement) {
@@ -77,10 +82,12 @@
 				</h5>
 			</div>
 			<div class="card-body">
-				<form action="incluir_cosignatario_gravar" namespace="/expediente/mov" cssClass="form" method="post" onsubmit="return validate();" >
+				<form id="frm" action="incluir_cosignatario_gravar" namespace="/expediente/mov" cssClass="form" method="post" onsubmit="return validate();" >
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
 					<input type="hidden" id="podeIncluirCossigArvoreDocs" name="podeIncluirCossigArvoreDocs" value="${podeIncluirCossigArvoreDocs}"/>
+					<input type="hidden" id="adicionarRestricaoAcessoAntes" name="adicionarRestricaoAcessoAntes" value="false"/>
+					
 					<c:if test="${siga_cliente == 'GOVSP'}">
 					<div class="row">
 						<div class="col-sm-6">

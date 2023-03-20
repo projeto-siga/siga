@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,9 +43,11 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.gson.Gson;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PRAcroForm;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -88,7 +92,10 @@ public class Documento {
 
 	private static final Pattern pattern = Pattern
 		.compile("^([0-9A-Z\\-\\/]+(?:\\.[0-9]+)?(?:V[0-9]+)?)(:[0-9]+)?(?:\\.pdf|\\.html|\\.zip|\\.rtf)?$");
-
+	
+	private static final Integer EXIBICAO_PAG_PDF_COMPL_QTD_DOCS = Prop.getInt("/siga.exibicao.paginada.pdf.completo.quantidade.documentos");
+	private static final Long EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX = Prop.getLong("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax");
+	
 	private static Log log = LogFactory.getLog(Documento.class);
 
 	public static ExMobil getMobil(String requestURI) throws SecurityException,
@@ -390,12 +397,12 @@ public class Documento {
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov, boolean tamanhoOriginal)
 			throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		getDocumento(baos, null, mob, mov, false, true, false, null, null,tamanhoOriginal);
+		getDocumento(baos, null, mob, mov, false, true, false, null, null, tamanhoOriginal, null);
 		return baos.toByteArray();
 	}
 
 	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado,boolean tamanhoOriginal)
+			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado, boolean tamanhoOriginal, Integer paramoffset)
 			throws Exception {
 		PdfReader reader;
 		int n;
@@ -434,6 +441,14 @@ public class Documento {
 		int f = 0;
 		long bytes = 0;
 		long garbage = 0;
+		
+		if(exibirPaginacaoPdfDocCompleto()) {
+			Integer paramoffsetFim =  Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 + EXIBICAO_PAG_PDF_COMPL_QTD_DOCS : null;
+			paramoffset = Objects.nonNull(paramoffset) && paramoffset > 0 ? paramoffset - 1 : 0;
+			if(Objects.nonNull(paramoffsetFim))
+				ans = ans.subList(paramoffset, paramoffsetFim > ans.size() ? ans.size() : paramoffsetFim);
+		}
+		
 		int ansSize = ans.size();
 		try {
 			while (ans.size() > 0) {
@@ -467,8 +482,7 @@ public class Documento {
 						Prop.get("carimbo.texto.superior"), 
 						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
 						mob.getExDocumento().getMarcaDagua(), 
-						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal);	
-				
+						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal);
 
 				bytes += ab.length;
 
@@ -573,6 +587,43 @@ public class Documento {
 			throw new RuntimeException(ex);
 		}
 		return true;
+	}
+	
+	public static String obterTamanhoArquivosDocs(final String arquivo, boolean completo, final boolean volumes)  throws Exception {
+		long bytes = 0;
+		boolean excedeuMB = Boolean.FALSE;
+		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();
+		
+		if (exibirPaginacaoPdfDocCompleto()) {
+			final ExMobil mob = Documento.getMobil(arquivo);
+			final ExMovimentacao mov = Documento.getMov(mob, arquivo);
+			
+			ans = Documento.getArquivosNumerados(mob, mov, null, completo, volumes);
+			for (ExArquivoNumerado an : ans) {
+				bytes += an.getMobil().getExDocumento().getCpArquivo().getTamanho();
+				//Conversao MB para Bytes
+				if(bytes >= obterTamanhoMaxBytesPaginacaoPdfCompl()) {
+					excedeuMB = Boolean.TRUE;
+					break;
+				}
+			}
+		}
+		Map<String,Object> map = new HashMap<>();
+		map.put("somaArqBytes", bytes);
+		map.put("quantTotalDocs", ans.size());
+		map.put("excedeuMB", excedeuMB);
+		map.put("quantDocsPagina", EXIBICAO_PAG_PDF_COMPL_QTD_DOCS);
+		String json = new Gson().toJson(map); 
+		return json;
+	}
+	
+	public static boolean exibirPaginacaoPdfDocCompleto() {
+		return (EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX != null && EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX > NumberUtils.LONG_ZERO) 
+						&& (EXIBICAO_PAG_PDF_COMPL_QTD_DOCS != null && EXIBICAO_PAG_PDF_COMPL_QTD_DOCS > NumberUtils.INTEGER_ZERO);
+	}
+	
+	private static long obterTamanhoMaxBytesPaginacaoPdfCompl() {
+		return EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX > NumberUtils.LONG_ZERO ? EXIBICAO_PAG_PDF_COMPL_MB_TAMANHOMAX * 1024 * 1024 : NumberUtils.LONG_ZERO;
 	}
 
 	private static List<ExArquivoNumerado> getArquivosNumerados(ExMobil mob, ExMovimentacao mov, String uuid, boolean completo, boolean volumes) throws Exception {

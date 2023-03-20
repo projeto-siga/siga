@@ -17,6 +17,15 @@
 			<div class="modal-body">${sigaModalAlerta.mensagem}</div>
 		</siga:siga-modal>	
 	</c:when>
+	<c:when test="${not empty sigaModalConfirmacao}">
+		<siga:siga-modal id="sigaModalConfirmacao" centralizar="${sigaModalConfirmacao.centralizar}" abrirAoCarregarPagina="true" exibirRodape="true"  
+			tituloADireita="${empty sigaModalConfirmacao.titulo ? 'Confirmação' : sigaModalConfirmacao.titulo}" 
+			descricaoBotaoFechaModalDoRodape="${sigaModalConfirmacao.descricaoBotaoFechaModalDoRodape}" descricaoBotaoDeAcao="${sigaModalConfirmacao.descricaoBotaoDeAcao}" 
+			linkBotaoDeAcao="${sigaModalConfirmacao.linkBotaoDeAcao}"
+			inverterOrdemBotoes="${sigaModalConfirmacao.inverterBotoes}" classBotaoDeAcao="${sigaModalConfirmacao.classBotaoDeAcao}" classBotaoDeFechar="${sigaModalConfirmacao.classBotaoDeFechar}" >
+				<div class="modal-body">${sigaModalConfirmacao.mensagem}</div>     	
+		</siga:siga-modal>	
+	</c:when>		
 	<c:otherwise>
 		<siga:siga-modal id="sigaModalAlerta" exibirRodape="true" tituloADireita="Alerta">
 			<div class="modal-body">Mensagem de alerta</div>

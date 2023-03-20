@@ -149,7 +149,7 @@
 					<script type="text/javascript">
 						function confirmaExibirNoProtocolo(checkbox) {
 						  if (checkbox.checked) {
-						    if (!confirm("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do protocolo de acompanhamento. Deseja continuar? ")) {
+						    if (!confirm(<c:if test="${doc.mobilGeral.acessoRestrito}">"Atenção: Documento com Restrição de Acesso. \n" + </c:if>"Ao clicar em OK o conteúdo deste documento ficará disponível através do número do protocolo de acompanhamento. Deseja continuar? ")) {
 							  checkbox.checked = false;
 						    }
 						  }

@@ -107,7 +107,7 @@ public class SigaDocPdfUtils {
 					ab = mov.getConteudoBlobpdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					Documento.getDocumento(baos, null, mob, null, completo, semmarcas, false, null, null, tamanhoOriginal);
+					Documento.getDocumento(baos, null, mob, null, completo, semmarcas, false, null, null, tamanhoOriginal, null);
 					ab = baos.toByteArray();
 				}
 				if (ab == null) {

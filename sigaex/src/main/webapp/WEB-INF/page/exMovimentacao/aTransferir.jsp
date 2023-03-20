@@ -16,72 +16,83 @@
 
 <script type="text/javascript" language="Javascript1.1">
 	
-function tamanho() {
-	var i = tamanho2();
-	if (i<0) {i=0};
-	$("#Qtd").html('Restam ' + i + ' Caracteres');
-}
-
-function tamanho2() {
-	nota= new String();
-	nota = this.frm.descrMov.value;
-	var i = 400 - nota.length;
-	return i;
-}
-function corrige() {
-	if (tamanho2()<0) {
-		alert('Descrição com mais de 400 caracteres');
-		nota = new String();
-		nota = document.getElementById("descrMov").value;
-		document.getElementById("descrMov").value = nota.substring(0,400);
-	}
-}
-
-function sbmt() {
-	document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';
-	document.getElementById('transferir_gravar_pai').value= '';
-	frm.action='transferir?sigla=VALOR_SIGLA&popup=true'
-			.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value);
-	frm.submit();
-}
-
-var newwindow = '';
-function popitup_movimentacao() {
-	if (!newwindow.closed && newwindow.location) {
-	} else {
-		var popW = 600;
-		var popH = 400;
-		var winleft = (screen.width - popW) / 2;
-		var winUp = (screen.height - popH) / 2;
-		winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
-		newwindow=window.open('','${propriedade}',winProp);
-		newwindow.name='mov';
+	function tamanho() {
+		var i = tamanho2();
+		if (i<0) {i=0};
+		$("#Qtd").html('Restam ' + i + ' Caracteres');
 	}
 	
-	newwindow.opener = self;
-	t = frm.target; 
-	a = frm.action;
-	frm.target = newwindow.name;
-	frm.action='${pageContext.request.contextPath}/app/expediente/mov/prever?id=${mov.idMov}';
-	frm.submit();
-	frm.target = t; 
-	frm.action = a;
-	
-	if (window.focus) {
-		newwindow.focus()
+	function tamanho2() {
+		nota= new String();
+		nota = this.frm.descrMov.value;
+		var i = 400 - nota.length;
+		return i;
 	}
-	return false;
-}	
+	function corrige() {
+		if (tamanho2()<0) {
+			alert('Descrição com mais de 400 caracteres');
+			nota = new String();
+			nota = document.getElementById("descrMov").value;
+			document.getElementById("descrMov").value = nota.substring(0,400);
+		}
+	}
+	
+	function sbmt() {
+		document.getElementById('transferir_gravar_sigla').value= '${mob.sigla}';
+		document.getElementById('transferir_gravar_pai').value= '';
+		frm.action='transferir?sigla=VALOR_SIGLA&popup=true'
+				.replace('VALOR_SIGLA', document.getElementById('transferir_gravar_sigla').value);
+		frm.submit();
+	}
+	
+	var newwindow = '';
+	function popitup_movimentacao() {
+		if (!newwindow.closed && newwindow.location) {
+		} else {
+			var popW = 600;
+			var popH = 400;
+			var winleft = (screen.width - popW) / 2;
+			var winUp = (screen.height - popH) / 2;
+			winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
+			newwindow=window.open('','${propriedade}',winProp);
+			newwindow.name='mov';
+		}
+		
+		newwindow.opener = self;
+		t = frm.target; 
+		a = frm.action;
+		frm.target = newwindow.name;
+		frm.action='${pageContext.request.contextPath}/app/expediente/mov/prever?id=${mov.idMov}';
+		frm.submit();
+		frm.target = t; 
+		frm.action = a;
+		
+		if (window.focus) {
+			newwindow.focus()
+		}
+		return false;
+	}	
+	
+	function submeter() {
+		sigaSpinner.mostrar();
+		document.getElementById("button_ok").onclick = function(){console.log("Aguarde requisição")};	
+		document.getElementById('frm').submit();
+	}
+	
+	$(function(){
+	    $("#formulario_lotaResponsavelSel_sigla").focus();
+	});
+	
+	
+	function incluirRestricao(adicionarRestricaoAcessoAntes) {
+		if (adicionarRestricaoAcessoAntes === true) {
+			document.getElementById("adicionarRestricaoAcessoAntes").value = true;
+		}
+		
+		sigaModal.fechar('sigaModalConfirmacao');
+		submeter();
+	}
 
-function submeter() {
-	sigaSpinner.mostrar();
-	document.getElementById("button_ok").onclick = function(){console.log("Aguarde requisição")};	
-	document.getElementById('frm').submit();
-}
-
-$(function(){
-    $("#formulario_lotaResponsavelSel_sigla").focus();
-});
 
 </script>
 	<!-- main content -->
@@ -99,6 +110,7 @@ $(function(){
 				<input type="hidden" name="mobilPaiSel.sigla" value="" id="transferir_gravar_pai" />
 				<input type="hidden" name="despachando" value="" id="transferir_gravar_despachando" />
 				<input type="hidden" name="tipoTramite" value="3"/>
+				<input type="hidden" id="adicionarRestricaoAcessoAntes" name="adicionarRestricaoAcessoAntes" value="false"/>
 
 				<c:if test="${not doc.eletronico}">
 				<div class="row">

@@ -87,6 +87,7 @@
 						name="cliente" id="cliente" value="${siga_cliente}"> <input
 						type="hidden" id="visualizador"
 						value="${f:resource('/sigaex.pdf.visualizador') }" />
+						<input type="hidden" id="adicionarRestricaoAcessoAntes" name="adicionarRestricaoAcessoAntes" value="false"/>
 					<c:choose>
 						<c:when
 							test="${(exDocumentoDTO.doc.eletronico) && (exDocumentoDTO.doc.numExpediente != null)}">
@@ -972,6 +973,17 @@
 		placement : 'bottom',
 		trigger : 'click'
 	});
+	
+	function incluirRestricao(adicionarRestricaoAcessoAntes) {
+		sigaSpinner.mostrar();
+		
+		if (adicionarRestricaoAcessoAntes === true) {
+			document.getElementById("adicionarRestricaoAcessoAntes").value = true;
+		}
+		sigaModal.fechar('sigaModalConfirmacao');
+		gravarDoc(); 
+	}
+
 </script>
 
 <script type="text/javascript"

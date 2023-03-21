@@ -202,7 +202,7 @@ public class ExProcessoConsultaPublicaController extends ExController {
 			exDocumentoDto.setDoc(exDocumentoDto.getMob().doc());
 		}
 		if (exDocumentoDto.getDoc() == null) {
-			final String id = param("exDocumentoDto.id");
+			final String id = param("exDocumentoDTO.id");
 			if (id != null && id.length() != 0) {
 				exDocumentoDto.setDoc(daoDoc(Long.parseLong(id)));
 			}

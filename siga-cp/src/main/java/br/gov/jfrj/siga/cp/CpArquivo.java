@@ -33,6 +33,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PostPersist;
 import javax.persistence.PrePersist;
@@ -57,10 +59,10 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoHCP;
-import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoS3REST;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.ContextoPersistencia.AfterCommit;
 import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
@@ -71,12 +73,17 @@ import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
  * behavior of this class by editing the class, {@link CpArquivo()}.
  */
 @SuppressWarnings("serial")
+@NamedQueries({
+    @NamedQuery(name = "consultarEstatisticasParaMigracaoDeArmazenamento", query = "select count(*), sum(arq.tamanho) from CpArquivo arq where arq.tipoArmazenamento = :origem")
+})
 @Entity
 @Immutable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "corporativo.cp_arquivo")
 public class CpArquivo implements Serializable, PersistentAttributeInterceptable {
-	
+    public static final ActiveRecord<DpPessoa> AR = new ActiveRecord<>(
+            DpPessoa.class);
+    
 	private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
 
 	@Id

@@ -216,11 +216,11 @@ public interface ISigaApiV1 {
         public String descricao;
     }
 
-    public static class Ref implements ISwaggerModel {
+    public static class ArmazenamentoRef implements ISwaggerModel {
         public String id;
     }
 
-    public static class RefId implements ISwaggerModel {
+    public static class ArmazenamentoRefId implements ISwaggerModel {
     }
 
     public interface IAutenticarPost extends ISwaggerMethod {
@@ -623,7 +623,7 @@ public interface ISigaApiV1 {
         }
 
         public static class Response implements ISwaggerResponse {
-            public List<Ref> list = new ArrayList<>();
+            public List<ArmazenamentoRef> list = new ArrayList<>();
         }
 
         public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;

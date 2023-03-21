@@ -52,6 +52,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpAcesso;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
@@ -3273,5 +3274,16 @@ public class CpDao extends ModeloDao {
             return null;
         }
     }
-
+    public List<CpArquivo> consultarReferenciasParaMigracaoDeArmazenamento(CpArquivoTipoArmazenamentoEnum origem, CpArquivoTipoArmazenamentoEnum destino, int quantidade) {
+        try {
+            final Query query = em().createNamedQuery("consultarReferenciasParaMigracaoDeArmazenamento");
+            query.setParameter("origem", origem);
+            query.setMaxResults(quantidade);
+            final List<CpArquivo> l = query.getResultList();
+            return l;
+        } catch (final NullPointerException e) {
+            return null;
+        }
+    }
+    
 }

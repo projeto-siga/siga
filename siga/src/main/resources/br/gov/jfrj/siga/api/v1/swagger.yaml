@@ -1195,7 +1195,7 @@ paths:
               list:
                 type: array
                 items:
-                  $ref: "#/definitions/Ref"
+                  $ref: "#/definitions/ArmazenamentoRef"
 
   /armazenamento/{id}/migrar:
     post:
@@ -1675,15 +1675,15 @@ definitions:
       descricao:
         type: string
 
-  Ref:
+  ArmazenamentoRef:
     type: object
     properties:
       id:
-        $ref: "#/definitions/RefId"
+        $ref: "#/definitions/ArmazenamentoRefId"
     example:
       id: documento:000000000123
 
-  RefId:
+  ArmazenamentoRefId:
     type: string
     description: String que identifica um item
     example: documento:000000000123

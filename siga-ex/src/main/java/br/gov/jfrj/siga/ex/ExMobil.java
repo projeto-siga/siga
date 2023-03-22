@@ -1462,6 +1462,105 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 
 	}
+	
+	public ExMobil getProcessoJuntadoFilho() {
+		ExMobil mob = new ExMobil();
+		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
+			if (!mov.isCancelada() && mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA
+					&& mov.getExMobil().getDoc().isProcesso()) {
+				mob =  mov.getExMobil();
+				break;
+			}
+		}
+		return mob;
+	}
+	
+	public ExMobil getProcessoJuntadoPai() {
+		ExMobil mob = new ExMobil();
+		for (ExMovimentacao mov : this.getDoc().getMobilGeral().getExMovimentacaoSet()) {
+			if (!mov.isCancelada() && mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA
+					&& mov.getExMobil().getDoc().isProcesso()) {
+				mob =  mov.getExMobilRef();
+				break;
+			}
+		}
+		return mob;
+	}
+	
+	public java.lang.String getNumSequenciaProcessoJuntado() {
+		if(isProcessoJuntado()) {
+			Integer v = null;
+			v = getProcessoJuntadoPai().getNumSequencia() + getNumSequencia();
+			return "V" + (getNumSequencia() < 10 ? "0" + v  : v);
+		} else {
+			return "V" + (getNumSequencia() < 10 ? "0" + getNumSequencia()  : getNumSequencia());
+		}
+	}
+	
+	public boolean possuiProcessoJuntado() {
+		if(getExMovimentacaoReferenciaSet() != null) {
+			for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
+				if (!mov.isCancelada() && mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA
+						&& mov.getExMobil().getDoc().isProcesso()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean isProcessoJuntado() {
+		for (ExMovimentacao mov : this.getDoc().getMobilGeral().getExMovimentacaoSet()) {
+			if (!mov.isCancelada() && mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA
+					&& mov.getExMobil().getDoc().isProcesso()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public ExMobil getMobilAnterior() {
+		int i = 1;
+		while (this.doc().getVolume(this.getNumSequencia() - i) == null) {
+			i++;
+		}
+		return this.doc().getVolume(this.getNumSequencia() - i);
+	}
+	
+	public ExMobil getMobilAnteriorProcComProc() {
+		if(this.getNumSequencia().equals(1)) {
+			return null;
+		}
+		if(this.getDoc().getVolume(this.getNumSequencia() - 1) == null) {
+			if (this.possuiProcessoJuntado()) {
+				return this.getMobilAnterior().getProcessoJuntadoFilho().getDoc().getUltimoVolume();
+			} else {
+				if(this.isProcessoJuntado()) {
+					return this.getProcessoJuntadoPai();
+				} else {
+					return this.getMobilAnterior().getProcessoJuntadoFilho().getDoc().getUltimoVolume();
+				}
+			}
+		} else {
+			return this.getDoc().getVolume(this.getNumSequencia()-1);
+		}
+	}
+	
+	public ExMobil getMobilProxProcComProc() {
+		if(this.isUltimoVolume() && !this.isProcessoJuntado()) {
+			return null;
+		}
+		if(this.getDoc().getVolume(this.getNumSequencia() + 1) == null) {
+			if(this.isProcessoJuntado()) {
+				return this.getProcessoJuntadoPai().getDoc().getVolume(this.getNumSequencia() + 1);
+			} else {
+				return this.getProcessoJuntadoFilho().getDoc().getPrimeiroVolume();
+			}
+		} else {
+			return this.getDoc().getVolume(this.getNumSequencia() + 1);
+		}
+	}
+
 
 	/**
 	 * Retorna, num Set, os móbiles que tenham sido referenciados a este móbil

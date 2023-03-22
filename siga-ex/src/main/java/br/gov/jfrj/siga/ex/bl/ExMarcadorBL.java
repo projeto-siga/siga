@@ -91,6 +91,7 @@ public class ExMarcadorBL {
 		}
 
 		boolean apensadoAVolumeDoMesmoProcesso = mob.isApensadoAVolumeDoMesmoProcesso();
+		ExMovimentacao ultMovJuntada = null;
 
 		// converter as linhas abaixo em um único método que identifica a
 		// movimentação principal, o marcador e a data.
@@ -119,8 +120,12 @@ public class ExMarcadorBL {
 				m = CpMarcadorEnum.JUNTADO.getId();
 			if (t == ExTipoDeMovimentacao.JUNTADA_EXTERNO)
 				m = CpMarcadorEnum.JUNTADO_EXTERNO.getId();
-			if (t == ExTipoDeMovimentacao.APENSACAO && apensadoAVolumeDoMesmoProcesso)
+			if (t == ExTipoDeMovimentacao.APENSACAO ) {
+				ultMovJuntada = mov.getExMobil().getDoc().getMobilGeral().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.JUNTADA);	
+				if (apensadoAVolumeDoMesmoProcesso || mov.getExMobil().possuiProcessoJuntado() || mov.getExMobilRef().getDoc().getMobilGeral().isProcessoJuntado() ||
+						(ultMovJuntada != null && mov.getExMobil().getDoc().getMobilGeral().isProcessoJuntado() && mov.getExMobil().getDoc().getIdDoc().equals(ultMovJuntada.getExMobil().getDoc().getIdDoc())))
 				m = CpMarcadorEnum.APENSADO.getId();
+			}
 			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
 				m = CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId();
 				// Quando é transferido para um órgão externo, a marca deve ficar
@@ -163,9 +168,10 @@ public class ExMarcadorBL {
 				mAnterior = m;
 			}
 		}
-
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
-				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado()) {
+				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado() 
+				&& !mob.possuiProcessoJuntado() && !mob.getDoc().getMobilGeral().isProcessoJuntado()
+				) {
 			calcularMarcadoresDeTramite();
 		}
 		calcularMarcadoresDeNotificacao();
@@ -347,6 +353,7 @@ public class ExMarcadorBL {
 		acrescentarMarcadoresDoCossignatario();
 		acrescentarMarcadoresAssinaturaComSenha();
 		acrescentarMarcadorPublicacaoPortalTransparencia();
+		acrescentarMarcadorJuntada();
 		acrescentarMarcadoresManuais();
 	}
 
@@ -603,6 +610,13 @@ public class ExMarcadorBL {
 		}
 	}
 
+	public void acrescentarMarcadorJuntada() {
+		for (ExMovimentacao mov : movs(ExTipoDeMovimentacao.JUNTADA)) {
+			acrescentarMarca(CpMarcadorEnum.JUNTADO.getId(), mov.getDtIniMov(), mov.getCadastrante(),
+					mov.getLotaCadastrante());
+		}
+	}
+	
 	public void calcularMarcadoresDeTramite() {
 		Pendencias p = mob.calcularTramitesPendentes();
 		

@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.loader.plan.build.internal.returns.AbstractAnyReference;
 
 import com.google.gson.Gson;
 import com.lowagie.text.Document;
@@ -400,6 +401,19 @@ public class Documento {
 		getDocumento(baos, null, mob, mov, false, true, false, null, null, tamanhoOriginal, null);
 		return baos.toByteArray();
 	}
+	
+	public static ExArquivoNumerado docAnteriorNumeradoDeProcessoComProcesso(ExMobil mob) {
+		ExMobil mobPai = mob.getProcessoJuntadoPai();
+		
+		ExArquivoNumerado an = new ExArquivoNumerado();
+		List<ExArquivoNumerado> ans = new ArrayList<ExArquivoNumerado>();
+		
+		ans.addAll(mobPai.getArquivosNumerados());
+		an.setPaginaFinal(ans.get(ans.size()-1).getPaginaFinal());
+		an.setPaginaInicial(ans.get(ans.size()-1).getPaginaInicial());
+		
+		return an;
+	}
 
 	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
 			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado, boolean tamanhoOriginal, Integer paramoffset)
@@ -450,7 +464,17 @@ public class Documento {
 		}
 		
 		int ansSize = ans.size();
+		Integer pagInicial = 0;
+		Integer pagFinal = 0;
+		Integer pagMobilAnterior = 0;
+		Integer pagInicialOrig = 0;
+		Integer pagFinalOrig = 0;
+		ExArquivoNumerado docAnt = new ExArquivoNumerado();
+		
 		try {
+			if(!volumes && mob.getDoc().getMobilGeral().isProcessoJuntado()) {
+				docAnt = docAnteriorNumeradoDeProcessoComProcesso(mob);
+			}
 			while (ans.size() > 0) {
 				ExArquivoNumerado an = ans.get(0);
 				ans.remove(0);
@@ -471,14 +495,44 @@ public class Documento {
 				} else {
 					sigla = an.getMobil().getSigla();
 				}
+				
+				if(volumes) {
+					if(an.getPaginaInicial().equals(1)) {
+						pagMobilAnterior = pagInicial;
+					}
+					
+					if(an.getMobil().getMobilPrincipal().getDoc().getMobilGeral().isProcessoJuntado() && 
+							pagInicial > an.getPaginaInicial()) {
+						pagInicial = an.getPaginaInicial() + pagMobilAnterior;
+						pagFinal = an.getPaginaFinal() + pagMobilAnterior;
+						pagInicialOrig = an.getPaginaInicial();
+						pagFinalOrig = an.getPaginaFinal();
+					} else {
+						pagInicial = an.getPaginaInicial();
+						pagFinal = an.getPaginaFinal();
+						pagInicialOrig = 0;
+						pagFinalOrig = 0;
+					}
+				} else {
+					pagInicial = an.getPaginaInicial();
+					pagFinal = an.getPaginaFinal();
+				}
+				
 
+				if(!volumes && mob.getDoc().getMobilGeral().isProcessoJuntado()) {
+					pagInicial = docAnt.getPaginaInicial() + an.getPaginaInicial();
+					pagFinal = docAnt.getPaginaFinal() + an.getPaginaFinal();
+					pagInicialOrig = an.getPaginaInicial();
+					pagFinalOrig = an.getPaginaFinal();
+				}
+				
 				byte[] ab = !estampar ? an.getArquivo().getPdf() : Stamp.stamp(an
 						.getArquivo().getPdf(), sigla, an.getArquivo()
 						.isRascunho(), an.isCopia(), an.getArquivo().isCancelado(), an
 						.getArquivo().isSemEfeito(), an.getArquivo()
 						.isInternoProduzido(), an.getArquivo().getQRCode(), an
-						.getArquivo().getMensagem(), an.getPaginaInicial(),
-						an.getPaginaFinal(), an.getOmitirNumeracao(),
+						.getArquivo().getMensagem(), pagInicial,
+						pagFinal, pagInicialOrig, pagFinalOrig, an.getOmitirNumeracao(),
 						Prop.get("carimbo.texto.superior"), 
 						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
 						mob.getExDocumento().getMarcaDagua(), 

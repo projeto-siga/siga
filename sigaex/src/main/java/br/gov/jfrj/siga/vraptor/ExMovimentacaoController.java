@@ -1279,11 +1279,27 @@ public class ExMovimentacaoController extends ExController {
 						mov.getDtMov(), mov.getSubscritor(), mov.getTitular(),
 						idDocumentoEscolha);
 			
-			ExDocumentoController.redirecionarParaExibir(result, sigla);
+			if(movimentacaoBuilder.getMob().getDoc().isProcesso()) {
+				result.redirectTo("/app/expediente/doc/atualizar_marcas?sigla=" + mov.getExMobilRef());
+			} else {
+				ExDocumentoController.redirecionarParaExibir(result, sigla);
+			}
 		} catch (RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));			
 			result.forwardTo(this).juntar(sigla);
 		}						
+	}
+	
+	@Transacional
+	@Get("/app/expediente/mov/desfazerJuntadaProcProc")
+	public void desfazerJuntadaProcProc(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+		final ExDocumento doc = buscarDocumento(builder);
+		
+		ExMobil mobPai = doc.getUltimoVolume().getProcessoJuntadoPai();
+
+		
 	}
 
 	@Get("app/expediente/mov/apensar")

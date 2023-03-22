@@ -132,12 +132,6 @@
 																href="${anexo}" target="_blank"> ${mov.nmArqMov} </a></td>
 														</c:if>
 
-														<c:if test="${exibemov == 'juntada'}">
-															<td><b>Documento filho:</b> <a
-																href="${pageContext.request.contextPath}/app/expediente/doc/exibir?id=${mov.exDocumento.idDoc}&via=${mov.numVia}">
-																	${mov.exDocumento.codigo}-${mov.numViaToChar} </a></td>
-														</c:if>
-
 														<c:if test="${exibemov == 'copia'}">
 															<td><b>Documento filho:</b> <a
 																href="${pageContext.request.contextPath}/app/expediente/doc/exibir?id=${mov.exDocumentoRef.idDoc}">
@@ -185,7 +179,7 @@
 														</c:if>
 														</div>
 														<c:if
-															test="${exibemov == 'despacho' or exibemov == 'desentranhamento' or exibemov == 'encerramento' or exibemov == 'cancelamento'}">
+															test="${exibemov == 'despacho' or exibemov == 'desentranhamento' or exibemov == 'encerramento' or exibemov == 'cancelamento' or exibemov == 'juntada'}">
 															<td></td>
 															<tr>
 																<c:choose>

@@ -70,17 +70,17 @@ public class Stamp {
 	//Default Com Redimensionamento para folha A4
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
-			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
+			Integer paginaFinal, Integer paginaInicialOrig, Integer paginaFinalOrig, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
 			List<Long> idsAssinantes) throws DocumentException, IOException {
 
 		return stamp(abPdf, sigla, rascunho, copia, cancelado, semEfeito, internoProduzido, qrCode, mensagem,
-				paginaInicial, paginaFinal, cOmitirNumeracao, instancia, orgaoUsu, marcaDaguaDoModelo, idsAssinantes,
+				paginaInicial, paginaFinal, paginaInicialOrig, paginaFinalOrig, cOmitirNumeracao, instancia, orgaoUsu, marcaDaguaDoModelo, idsAssinantes,
 				false);
 	}
 
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
-			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
+			Integer paginaFinal, Integer paginaInicialOrig, Integer paginaFinalOrig, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
 			List<Long> idsAssinantes, boolean tamanhoOriginal) throws DocumentException, IOException {
 			
 		if (idsAssinantes != null && idsAssinantes.size() > 0 && Prop.getBool("assinatura.estampar"))
@@ -163,6 +163,7 @@ public class Stamp {
 
 			// adding content to each page
 			int i = 0;
+			int j = 0;
 			PdfContentByte under;
 			PdfContentByte over;
 			final BaseFont helv = BaseFont.createFont("Helvetica", BaseFont.WINANSI, false);
@@ -177,6 +178,7 @@ public class Stamp {
 
 			while (i < n) {
 				i++;
+				j++;
 				// watermark under the existing page
 				under = stamp.getUnderContent(i);
 				over = stamp.getOverContent(i);
@@ -322,6 +324,15 @@ public class Stamp {
 							sFl = sFl + "-" + String.valueOf(paginaFinal);
 						}
 					}
+					
+					String sFlOrig = String.valueOf(paginaInicialOrig + j- 1);
+					// Se for a ultima pagina e o numero nao casar, acrescenta "-" e
+					// pagina final
+					if (n == j) {
+						if (paginaFinalOrig != paginaInicialOrig + n - 1) {
+							sFlOrig = sFlOrig + "-" + String.valueOf(paginaFinalOrig);
+						}
+					}
 					if (i > cOmitirNumeracao) {
 						// tamanho fonte número
 						int textHeight = 23;
@@ -369,6 +380,39 @@ public class Stamp {
 						over.circle(xCenter, yCenter, radius);
 						over.stroke();
 						over.restoreState();
+						
+						if(paginaInicialOrig != null && !paginaInicialOrig.equals(0)) {
+							over.circle(xCenter, yCenter-40, radius+1);
+							over.stroke();
+							
+							over.circle(xCenter, yCenter-40, radius+3-circleInterspace);
+							over.stroke();
+							
+							// Diminui o tamanho do font ate que o texto caiba dentro do
+							// circulo interno
+							textHeight = 8;
+							while (helv.getWidthPoint(sFl, textHeight) > (2 * (radius+3 - TEXT_TO_CIRCLE_INTERSPACE)))
+								textHeight--;
+							float fAscent = helv.getAscentPoint(sFlOrig, textHeight) + helv.getDescentPoint(sFlOrig, textHeight);
+							over.setFontAndSize(helv, textHeight);
+							over.showTextAligned(Element.ALIGN_CENTER, sFlOrig, xCenter, yCenter - 40 - 0.5f * fAscent, 0);
+							
+							over.moveTo(xCenter-13, yCenter-53);
+							over.lineTo(xCenter+13, yCenter-27);
+							over.moveTo(xCenter+13, yCenter-53);
+							over.lineTo(xCenter-13, yCenter-27);
+							over.stroke();
+							
+							// Escreve o texto superior do carimbo
+							over.setFontAndSize(helv, 3);
+
+							// Escreve o texto superior do carimbo
+							float fDescent = helv.getDescentPoint(instancia, TEXT_HEIGHT);
+							showTextOnArc(over, instancia, helv, TEXT_HEIGHT, xCenter, yCenter-40,
+									radius+3-circleInterspace - fDescent + TEXT_TO_CIRCLE_INTERSPACE, true);
+							textHeight = 12;
+						}
+						
 
 						{
 							over.saveState();

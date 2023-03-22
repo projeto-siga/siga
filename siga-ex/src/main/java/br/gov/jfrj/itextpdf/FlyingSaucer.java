@@ -392,7 +392,7 @@ public class FlyingSaucer implements ConversorHtml {
 		ab = Stamp.stamp(ab, "TRF2-MEM-2020/11111", false, false, false, false, true,
 				"https://siga.jfrj.jus.br/sigaex/public/app/autenticar?n=1111111-1111",
 				"Assinado digitalmente por USUARIO TESTE. Documento No: 1111111-1111 - https://siga.jfrj.jus.br/sigaex/public/app/autenticar?n=1111111-1111",
-				1, 1, 1, "Justiça Federal", "TRF2", "", null);
+				1, 1, 1, 1, 1, "Justiça Federal", "TRF2", "", null);
 		try (FileOutputStream fos = new FileOutputStream("/Users/nato/Downloads/testedepdf.pdf")) {
 			fos.write(ab);
 		}

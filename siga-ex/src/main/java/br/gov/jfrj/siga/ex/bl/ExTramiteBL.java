@@ -32,8 +32,8 @@ public class ExTramiteBL {
 
             // Se o volume acabou de ser criado e ainda não tem nenhum tramite,
             // buscar as informações no volume anterior
-            if (mob.isUltimoVolume() && mob.getNumSequencia() > 1 && !mob.contemAlgumTramite())
-                mob = mob.doc().getVolume(mob.getNumSequencia() - 1);
+            if (mob.isUltimoVolume() && mob.getNumSequencia() > mob.getDoc().getNumPrimeiroVolume() && !mob.contemAlgumTramite())
+                mob = mob.getMobilAnterior();// mob.doc().getVolume(mob.getNumSequencia() - 1);
 
             // Primeiro localiza o último volume do apenso
             while (mob.isApensadoAVolumeDoMesmoProcesso())

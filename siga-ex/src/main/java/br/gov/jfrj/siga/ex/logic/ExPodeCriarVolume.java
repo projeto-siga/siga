@@ -69,6 +69,8 @@ public class ExPodeCriarVolume extends CompositeExpressionSupport {
 				new ExEstaFinalizado(mob.doc()),
 
 				new ExEstaEncerrado(ultVolume),
+				
+				Not.of(new ExEstaJuntadoAOutroProcesso(mob)),
 
 				NAnd.of(
 

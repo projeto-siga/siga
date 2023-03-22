@@ -44,6 +44,8 @@ public class ExPodeTransferir extends CompositeExpressionSupport {
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
 				new ExPodeMovimentar(mob, titular, lotaTitular),
+				
+				Not.of(new ExEstaJuntadoAOutroProcesso(mob)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
 						.withExTpMov(ExTipoDeMovimentacao.TRANSFERENCIA));

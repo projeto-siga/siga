@@ -52,6 +52,7 @@ import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExCompetenciaBL;
 import br.gov.jfrj.siga.ex.logic.ExEstaFinalizado;
+import br.gov.jfrj.siga.ex.logic.ExEstaJuntadoAOutroProcesso;
 import br.gov.jfrj.siga.ex.logic.ExEstaOrdenadoAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAgendarPublicacaoDOE;
@@ -63,6 +64,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeCancelarJuntadaProcComProc;
 import br.gov.jfrj.siga.ex.logic.ExPodeCapturarPDF;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarSubprocesso;
 import br.gov.jfrj.siga.ex.logic.ExPodeCriarVia;
@@ -626,12 +628,40 @@ public class ExDocumentoVO extends ExVO {
 			}
 			getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
 			marcasPorMobil.put(cadaMobil, set);
+			
+			adicionarVolumesDeProcessoJuntado(cadaMobil);
+			
 		}
 		// Edson: mostra lista de vias/volumes só se número de
 		// vias/volumes além do geral for > que 1 ou se o móbil
 		// tiver informações que não aparecem no topo da tela
 		//if (doc.getExMobilSet().size() > 2 || mob.temMarcaNaoAtiva())
 		outrosMobsLabel = doc.isProcesso() ? "Volumes" : "Vias";
+	}
+	
+	public void adicionarVolumesDeProcessoJuntado(ExMobil mob) {
+		Date now = dao().consultarDataEHoraDoServidor(); 
+		ExMobil proc = mob.getProcessoJuntadoFilho();
+		if(proc != null && proc.getDnmSigla() != null) {
+			for (ExMobil cadaMobil : proc.getDoc().getVolumes()) {
+				SortedSet<ExMarca> setSistema = new TreeSet<>();
+				SortedSet<ExMarca> set = cadaMobil.getExMarcaSetAtivas();
+				
+				for (ExMarca m : set) {
+					if ((m.getDtIniMarca() == null || !m.getDtIniMarca().after(now))
+							&& (m.getDtFimMarca() == null || m.getDtFimMarca().after(now))) {
+						if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() == CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA)
+							setSistema.add(m);
+						if (m.getCpMarcador().getIdFinalidade().getIdTpMarcador() != CpTipoMarcadorEnum.TIPO_MARCADOR_SISTEMA && (cadaMobil == mob || cadaMobil.isGeral())) 
+							getMarcasDoMobil().add(m);
+					}
+					marcas.add(new ExMarcaVO(m, titular, lotaTitular));
+				}
+//				cadaMobil.setNumSequencia(mob.getNumSequencia() + cadaMobil.getNumSequencia());
+				getMarcasDeSistemaPorMobil().put(cadaMobil, setSistema);
+				marcasPorMobil.put(cadaMobil, set);
+			}
+		}
 	}
 	
 	public void addAcoesVisualizar(ExDocumentoVO docVO, Long idVisualizacao) {
@@ -859,6 +889,10 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(AcaoVO.builder().nome("Download").descr("Faz o download do arquivo de formato livre associado a este documento.").icone("arrow_down").nameSpace("/app/arquivo").acao("downloadFormatoLivre")
 				.params("sigla", doc.getCodigoCompacto()).exp(new ExPodeFazerDownloadFormatoLivre(doc)).classe("once").build());
+		
+		vo.addAcao(AcaoVO.builder().nome("Desfazer Juntada").icone("arrow_undo").nameSpace("/app/expediente/mov").acao("desfazerJuntadaProcProc")
+				.params("sigla", mob.getCodigoCompacto()).exp(And.of(new ExEstaJuntadoAOutroProcesso(mob), And.of(new ExPodeCancelarJuntadaProcComProc(mob)))).classe("once").build());
+
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {

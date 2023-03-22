@@ -577,7 +577,7 @@
 											<tr class="${mov.classe} ${mov.disabled}">
 											<c:if test="${loop.first}">
 											<td rowspan="${entry.value.size()}" style="padding-left: 1.25rem"><c:choose>
-													<c:when test="${(not outroMob.geral) and outroMob.numSequencia == m.mob.numSequencia}">
+													<c:when test="${(not outroMob.geral) and outroMob.terminacaoSigla == m.mob.terminacaoSigla}">
 														<i><b>${mobNome}</b></i>
 													</c:when>
 													<c:otherwise>

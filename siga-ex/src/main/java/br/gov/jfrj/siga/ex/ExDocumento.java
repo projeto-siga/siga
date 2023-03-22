@@ -1600,12 +1600,23 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (isNumeracaoUnicaAutomatica() || (SigaMessages.isSigaSP() && mobilPrincipalPossuiJuntadaOuDesentranhamento(mob, listaFinal))) {				
 			if (mob.getDnmNumPrimeiraPagina() == null) {
 				if (mob.isVolume() && mob.getNumSequencia() > 1) {
-					List<ExArquivoNumerado> listVolumeAnterior = mob.doc()
-							.getArquivosNumerados(
-									mob.doc().getVolume(
-											mob.getNumSequencia() - 1));
-					int i = listVolumeAnterior.get(
-							listVolumeAnterior.size() - 1).getPaginaFinal();
+					int i = 0;
+					if(mob.getMobilAnterior().getNumSequencia().equals(mob.getNumSequencia()-1)) {
+						List<ExArquivoNumerado> listVolumeAnterior = mob.doc()
+								.getArquivosNumerados(
+										mob.doc().getVolume(
+												mob.getMobilAnterior().getNumSequencia()));
+						i = listVolumeAnterior.get(
+								listVolumeAnterior.size() - 1).getPaginaFinal();
+					} else {
+						ExMobil mobAux = mob.getMobilAnteriorProcComProc();
+						while(mobAux != null) {
+							
+							i += mobAux.getTotalDePaginas();
+							mobAux = mobAux.getMobilAnteriorProcComProc();
+						}
+					}
+					
 					mob.setDnmNumPrimeiraPagina(i + 1);
 					ExDao.getInstance().gravar(mob);
 				} else {
@@ -1772,7 +1783,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		for (ExMovimentacao m : set) {
 			ExArquivoNumerado an = new ExArquivoNumerado();
 			an.setNivel(nivel);
-			if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA) {
+			
+			if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA && !m.getExDocumento().getExFormaDocumento().getExTipoFormaDoc().isProcesso()) {
 				an.setArquivo(m.getExDocumento());
 				an.setMobil(m.getExMobil());
 				an.setData(m.getData());
@@ -1787,7 +1799,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 				list.add(an);
 //				m.getExDocumento().getAnexosNumerados(m.getExMobilRef(), list,
 //						nivel + 1, true);
-			} else if (isDesentranhamentoSP(mob, m)) {				
+			} else if (isDesentranhamentoSP(mob, m) ||
+					(m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA && m.getExDocumento().getMobilGeral().isProcessoJuntado() && !mob.equals(m.getExMobilRef()))) {		
 				continue;				
 			} else {			
 				an.setArquivo(m);
@@ -2285,6 +2298,16 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return maxNumVolume;
 	}
+	
+	public int getNumPrimeiroVolume() {
+		int minNumVolume = 0;
+		for (final ExMobil mob : getExMobilSet()) {
+			if (mob.isVolume() && (mob.getNumSequencia() < minNumVolume || minNumVolume == 0)) {
+				minNumVolume = mob.getNumSequencia();
+			}
+		}
+		return minNumVolume;
+	}
 
 	/**
 	 * Retorna o número do último volume (funciona apenas para processo
@@ -2330,9 +2353,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (!isProcesso())
 			return new LinkedHashSet<ExMobil>();
 		Set<ExMobil> volumes = new LinkedHashSet<ExMobil>();
-		for (final ExMobil mobil : getExMobilSet())
+		for (final ExMobil mobil : getExMobilSet()) {
 			if (mobil.isVolume())
 				volumes.add(mobil);
+			if(mobil.possuiProcessoJuntado())
+				volumes.addAll(mobil.getProcessoJuntadoFilho().getDoc().getVolumes());
+		}
 		return volumes;
 	}
 
@@ -2385,6 +2411,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public ExMobil getUltimoVolume() {
 		return getVolume(getNumUltimoVolume());
+	}
+	
+	public ExMobil getPrimeiroVolume() {
+		return getVolume(getNumPrimeiroVolume());
 	}
 
 	public ExMobil getUltimoVolumeOuGeral() {

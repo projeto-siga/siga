@@ -3548,11 +3548,14 @@ public class ExBL extends CpBL {
 			ExDocumento doc) throws AplicacaoException {
 		try {
 			iniciarAlteracao();
-
+			ExMobil mobPai = doc.getMobilGeral().getProcessoJuntadoPai();
+			ExMobil ultVolume = doc.getUltimoVolume();
 			ExMobil mob = new ExMobil();
 			mob.setExTipoMobil(dao().consultar(ExTipoMobil.TIPO_MOBIL_VOLUME, ExTipoMobil.class, false));
 			mob.setNumSequencia((int) dao().obterProximoNumeroVolume(doc));
-			mob.setExDocumento(doc);
+			mob.setExDocumento(mobPai.getId() == null ? doc : mobPai.getDoc());
+
+			
 			mob.setDnmSigla(mob.getSigla());
 			if (doc.getMobilGeral().getDnmSigla() != doc.getSigla())
 				doc.getMobilGeral().setDnmSigla(doc.getSigla());			
@@ -3567,17 +3570,23 @@ public class ExBL extends CpBL {
 
 			if (mob.getNumSequencia() > 1) {
 				ExMobil mobApenso = mob.doc().getVolume(mob.getNumSequencia() - 1);
-				for (ExMobil apensoAoApenso : mobApenso.getApensosExcetoVolumeApensadoAoProximo()) {
-					desapensarDocumento(cadastrante, lotaCadastrante, apensoAoApenso, null, null, null);
-					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, apensoAoApenso, mob, null, null, null);
+				if(mobApenso != null) {
+					for (ExMobil apensoAoApenso : mobApenso.getApensosExcetoVolumeApensadoAoProximo()) {
+						if(!apensoAoApenso.isProcessoJuntado()) {
+							desapensarDocumento(cadastrante, lotaCadastrante, apensoAoApenso, null, null, null);
+							apensarDocumento(cadastrante, cadastrante, lotaCadastrante, apensoAoApenso, mob, null, null, null);
+						}
+					}
+					if (mobApenso.isApensado()) {
+						ExMobil outroMestreDoApenso = mobApenso.getMestre();
+						desapensarDocumento(cadastrante, lotaCadastrante, mobApenso, null, null, null);
+						apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mob, outroMestreDoApenso, null, null,
+								null);
+					}
+					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mobApenso, mob, null, null, null);
+				} else {
+					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, ultVolume, mob, null, null, null);
 				}
-				if (mobApenso.isApensado()) {
-					ExMobil outroMestreDoApenso = mobApenso.getMestre();
-					desapensarDocumento(cadastrante, lotaCadastrante, mobApenso, null, null, null);
-					apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mob, outroMestreDoApenso, null, null,
-							null);
-				}
-				apensarDocumento(cadastrante, cadastrante, lotaCadastrante, mobApenso, mob, null, null, null);
 			}
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -4659,8 +4668,13 @@ public class ExBL extends CpBL {
 					null, null);
 
 			mov.setExMobilRef(mobPai);
-
-
+			
+			if(mob.getDoc().getExFormaDocumento().getExTipoFormaDoc().isProcesso() &&
+					mobPai.getDoc().getExFormaDocumento().getExTipoFormaDoc().isProcesso()) {
+				gerarTermoIncorporacao(mov);
+//				renumerarMobilsProcessoFilho(mob, mobPai);
+			}
+			
 			if (idDocEscolha.equals("1")) {
 				mov.setDescrMov("Juntado ao documento " + mov.getExMobilRef().getCodigo().toString());
 			} else if (idDocEscolha.equals("2")) {
@@ -4692,7 +4706,26 @@ public class ExBL extends CpBL {
 				herdaRestricaoAcessoDocumentoPai(mob, mobPai, cadastrante, titular, dtMov);
 			}
 			
+			//se juntada de processo administrativo com processo administrativo (incorporaçao)
+			if(mob.getDoc().getExFormaDocumento().getExTipoFormaDoc().isProcesso() &&
+					mobPai.getDoc().getExFormaDocumento().getExTipoFormaDoc().isProcesso()) {
+				//criarVolume(cadastrante, lotaCadastrante, mobPai.getDoc());
+				encerrarVolume(cadastrante, lotaCadastrante, mobPai, dtMov, null, null, null, true);
+				apensarDocumento(cadastrante, titular,
+						titular.getLotacao(),
+						mobPai, mob.getDoc().getPrimeiroVolume(), mov.getDtMov(),
+						mov.getSubscritor(), mov.getTitular());
+				encerrarVolume(cadastrante, lotaCadastrante, mob.getDoc().getUltimoVolume(), dtMov, null, null, null, true);
+				renumerarMobilsProcessoFilho(mob, mobPai);
+				criarVolume(cadastrante, lotaCadastrante, mob.getDoc());
+
+			}
+			
+			
 			concluirAlteracaoComRecalculoAcesso(mov);
+//			ContextoPersistencia.flushTransaction();
+//			ExDocumento d = ExDao.getInstance().consultar(mobPai.getExDocumento().getIdDoc(), ExDocumento.class, false);
+//			atualizarMarcas(d);
 
 		} catch (final Exception e) {
 			cancelarAlteracao();
@@ -6281,6 +6314,16 @@ public class ExBL extends CpBL {
 			} else if (mov.getExTipoMovimentacao() != null
 					&& (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CIENCIA)) {
 				attrs.put("nmArqMod", "ciencia.jsp");
+			} else if (mov.getExTipoMovimentacao() != null
+					&& (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+					&& mov.getExMobilRef().getDoc().isProcesso()
+					&& mov.getExMobil().getDoc().isProcesso()) {
+				attrs.put("nmArqMod", "termoIncorporacao.jsp");
+				attrs.put("docPai", mov.getExMobilRef().getDnmSigla());
+				
+				List<ExArquivoNumerado> lista = doc.getArquivosNumerados(mov.getExMobilRef().getDoc().getUltimoVolume());
+				
+				attrs.put("pag", lista.get(lista.size()-1).getPaginaFinal() + 3);
 			} else {
 				if (mov.getExTipoDespacho() != null) {
 					attrs.put("despachoTexto", mov.getExTipoDespacho().getDescTpDespacho());
@@ -7247,6 +7290,28 @@ public class ExBL extends CpBL {
 		} catch (final Exception e) {
 			cancelarAlteracao();
 			throw new RuntimeException("Erro ao encerrar volume.", e);
+		}
+	}
+	
+	public void gerarTermoIncorporacao(ExMovimentacao mov) throws Exception {
+		// Gravar o Html
+		final String strHtml1 = processarModelo(mov, "processar_modelo", null, null);
+		mov.setConteudoBlobHtmlString(strHtml1);
+
+		// Gravar o Pdf
+		final byte pdf1[] = Documento.generatePdf(strHtml1);
+		mov.setConteudoBlobPdf(pdf1);
+		mov.setConteudoTpMov("application/zip");
+	
+	}
+	
+	public void renumerarMobilsProcessoFilho(ExMobil mob, ExMobil mobPai) {
+		Integer ultVol = mobPai.getDoc().getNumUltimoVolume();
+		
+		for(ExMobil mobil : mob.getDoc().getVolumes()) {
+			mobil.setNumSequencia(ultVol + mobil.getNumSequencia());
+//			mobil.setDnmNumPrimeiraPagina(mobPai.getDnmNumPrimeiraPagina() + mobPai.getTotalDePaginas()+mobil.getDnmNumPrimeiraPagina());
+			dao().gravar(mobil);
 		}
 	}
 

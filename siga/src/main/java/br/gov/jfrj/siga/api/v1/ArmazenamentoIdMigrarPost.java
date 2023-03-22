@@ -23,6 +23,9 @@ public class ArmazenamentoIdMigrarPost implements IArmazenamentoIdMigrarPost {
         CpArquivoTipoArmazenamentoEnum destino = CpArquivoTipoArmazenamentoEnum.valueOf(req.destino);
         CpArquivo arq = CpDao.getInstance().consultar(Long.parseLong(req.id), CpArquivo.class, false);
         byte[] conteudo = arq.getConteudo();
+        
+        if (conteudo == null)
+            throw new NullPointerException("Conteúdo nulo para arquivo " + req.id);
 
         String caminho = arq.gerarCaminho();
         Armazenamento a = ArmazenamentoFabrica.getInstance(destino);

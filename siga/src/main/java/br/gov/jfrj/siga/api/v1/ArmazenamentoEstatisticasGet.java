@@ -13,13 +13,18 @@ public class ArmazenamentoEstatisticasGet implements IArmazenamentoEstatisticasG
         CpArquivoTipoArmazenamentoEnum destino = CpArquivoTipoArmazenamentoEnum.valueOf(req.destino);
         ResultadoDeEstatisticasParaMigracaoDeArmazenamento r = CpDao.getInstance()
                 .estatisticasParaMigracaoDeArmazenamento(origem, destino);
-        resp.quantidade = (double) r.quantidade;
-        resp.memoria = (double) r.memoria;
+        if (r != null) {
+            resp.quantidade = (double) r.quantidade;
+            resp.memoria = (double) r.memoria;
+        } else {
+            resp.quantidade = 0d;
+            resp.memoria = 0d;
+        }
     }
 
     @Override
     public String getContext() {
-        return "obter quadro quantitativo";
+        return "obter estatísticas de migração de armazenamento";
     }
 
 }

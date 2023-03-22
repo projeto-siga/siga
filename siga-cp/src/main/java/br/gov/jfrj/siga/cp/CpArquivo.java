@@ -61,7 +61,6 @@ import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.model.ActiveRecord;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.ContextoPersistencia.AfterCommit;
 import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
@@ -72,8 +71,8 @@ import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
  */
 @SuppressWarnings("serial")
 @NamedQueries({
-        @NamedQuery(name = "consultarEstatisticasParaMigracaoDeArmazenamento", query = "select count(arq), sum(arq.tamanho) from CpArquivo arq where arq.tipoArmazenamento = :origem"),
-        @NamedQuery(name = "consultarReferenciasParaMigracaoDeArmazenamento", query = "select arq from CpArquivo arq where arq.tipoArmazenamento = :origem and arq.caminho is null")
+        @NamedQuery(name = "consultarEstatisticasParaMigracaoDeArmazenamento", query = "select count(arq), sum(arq.tamanho) from CpArquivo arq where (arq.tipoArmazenamento = :origem or arq.tipoArmazenamento is null)"),
+        @NamedQuery(name = "consultarReferenciasParaMigracaoDeArmazenamento", query = "select arq from CpArquivo arq where (arq.tipoArmazenamento = :origem or arq.tipoArmazenamento is null) and arq.caminho is null")
 })
 @Entity
 @Immutable
@@ -185,6 +184,8 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         switch (getTipoArmazenamento()) {
             case BLOB:
                 throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
+            case TABELA:
+                break;
             default:
                 ContextoPersistencia.addAfterCommit(new AfterCommit() {
                     @Override
@@ -205,13 +206,13 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         if (old != null) {
             if (old.getIdArq() != null) {
                 CpArquivo arq = new CpArquivo();
-                arq.setTipoArmazenamento(old.getTipoArmazenamento());
-                arq.setConteudoTpArq(old.getConteudoTpArq());
-                arq.setOrgaoUsuario(old.getOrgaoUsuario());
+                arq.tipoArmazenamento = old.getTipoArmazenamento();
+                arq.conteudoTpArq = old.getConteudoTpArq();
+                arq.orgaoUsuario = old.getOrgaoUsuario();
                 if (atualizarConteudo)
-                    arq.setConteudo(old.getConteudo());
-                arq.setHashSha256(old.getHashSha256());
-                arq.setNomeArquivo(old.getNomeArquivo());
+                    arq.cacheArquivo = old.getConteudo();
+                arq.hashSha256 = old.getHashSha256();
+                arq.nomeArquivo = old.getNomeArquivo();
 
                 ContextoPersistencia.em().remove(old);
                 return arq;
@@ -238,14 +239,10 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         return cacheArquivo;
     }
 
-    private void setConteudo(byte[] createBlob) {
-        this.cacheArquivo = createBlob;
-    }
-
     public static CpArquivo updateOrgaoUsuario(CpArquivo old, CpOrgaoUsuario orgaoUsuario) {
         if (old == null || old.getOrgaoUsuario() == null || !old.getOrgaoUsuario().equals(orgaoUsuario)) {
             CpArquivo arq = CpArquivo.forUpdate(old);
-            arq.setOrgaoUsuario(orgaoUsuario);
+            arq.orgaoUsuario = orgaoUsuario;
             return arq;
         }
         return old;
@@ -254,7 +251,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
     public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
         if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
             CpArquivo arq = CpArquivo.forUpdate(old);
-            arq.setConteudoTpArq(conteudoTp);
+            arq.conteudoTpArq = conteudoTp;
             return arq;
         }
         return old;
@@ -263,8 +260,8 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
     public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
         if (old == null || !Arrays.equals(old.getConteudo(), conteudo)) {
             CpArquivo arq = CpArquivo.forUpdate(old);
-            arq.setConteudo(conteudo);
-            arq.setTamanho(Long.valueOf(conteudo.length));
+            arq.cacheArquivo = conteudo;
+            arq.tamanho = Long.valueOf(conteudo.length);
             arq.setFormatoLivre(false);
             return arq;
         }
@@ -278,14 +275,14 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
         if (extensao == null)
             throw new AplicacaoException("Extensão de arquivo inválida: ." + FilenameUtils.getExtension(nomeArquivo));
-        arq.setOrgaoUsuario(orgaoUsuario);
-        arq.setConteudoTpArq(extensao);
-        arq.setNomeArquivo(nomeArquivo);
-        arq.setCaminho(caminho);
-        arq.setTamanho(tamanhoArquivo);
-        arq.setTipoArmazenamento(tipoArmazenamento);
+        arq.orgaoUsuario = orgaoUsuario;
+        arq.conteudoTpArq = extensao;
+        arq.nomeArquivo = nomeArquivo;
+        arq.caminho = caminho;
+        arq.tamanho = tamanhoArquivo;
+        arq.tipoArmazenamento = tipoArmazenamento;
         arq.setFormatoLivre(true);
-        arq.setHashSha256(hashSha256);
+        arq.hashSha256 = hashSha256;
         return arq;
     }
 
@@ -308,24 +305,52 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         return idArq;
     }
 
-    public void setIdArq(java.lang.Long idArq) {
-        this.idArq = idArq;
-    }
-
     public CpOrgaoUsuario getOrgaoUsuario() {
         return orgaoUsuario;
     }
 
-    private void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
-        this.orgaoUsuario = orgaoUsuario;
-    }
+//    public void setIdArq(java.lang.Long idArq) {
+//        this.idArq = idArq;
+//    }
+//    
+//    public void setConteudo(byte[] createBlob) {
+//        this.cacheArquivo = createBlob;
+//    }
+//
+//    public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
+//        this.orgaoUsuario = orgaoUsuario;
+//    }
+//    
+//    public void setConteudoTpArq(java.lang.String conteudoTpArq) {
+//        this.conteudoTpArq = conteudoTpArq;
+//    }
+//
+//    public void setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
+//        this.tipoArmazenamento = tipoArmazenamento;
+//    }
+//
+//    public void setCaminho(String caminho) {
+//        this.caminho = caminho;
+//    }
+//
+//    private void setTamanho(Long tamanho) {
+//        this.tamanho = tamanho;
+//    }
+//
+//    private void setCacheArquivo(byte[] cacheArquivo) {
+//        this.cacheArquivo = cacheArquivo;
+//    }
+//
+//    public void setHashSha256(String hashSha256) {
+//        this.hashSha256 = hashSha256;
+//    }
+//
+//    public void setNomeArquivo(String nomeArquivo) {
+//        this.nomeArquivo = nomeArquivo;
+//    }
 
     public java.lang.String getConteudoTpArq() {
         return conteudoTpArq;
-    }
-
-    private void setConteudoTpArq(java.lang.String conteudoTpArq) {
-        this.conteudoTpArq = conteudoTpArq;
     }
 
     public CpArquivoBlob getArquivoBlob() {
@@ -351,32 +376,16 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         return tipoArmazenamento;
     }
 
-    private void setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
-        this.tipoArmazenamento = tipoArmazenamento;
-    }
-
     public String getCaminho() {
         return caminho;
-    }
-
-    private void setCaminho(String caminho) {
-        this.caminho = caminho;
     }
 
     public Long getTamanho() {
         return tamanho;
     }
 
-    private void setTamanho(Long tamanho) {
-        this.tamanho = tamanho;
-    }
-
     private byte[] getCacheArquivo() {
         return cacheArquivo;
-    }
-
-    private void setCacheArquivo(byte[] cacheArquivo) {
-        this.cacheArquivo = cacheArquivo;
     }
 
     private static boolean isFormatoLivre() {
@@ -391,16 +400,8 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         return hashSha256;
     }
 
-    public void setHashSha256(String hashSha256) {
-        this.hashSha256 = hashSha256;
-    }
-
     public String getNomeArquivo() {
         return nomeArquivo;
-    }
-
-    public void setNomeArquivo(String nomeArquivo) {
-        this.nomeArquivo = nomeArquivo;
     }
 
 }

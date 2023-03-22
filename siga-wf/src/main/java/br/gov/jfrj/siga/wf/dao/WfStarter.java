@@ -16,6 +16,7 @@ import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.converter.ITipoDeConfiguracaoConverter;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
+import br.gov.jfrj.siga.cp.util.SigaVersion;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
 
 @Startup
@@ -29,6 +30,10 @@ public class WfStarter {
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO SIGAWF.WAR");
+		
+		SigaVersion.loadSigaVersion(getClass().getClassLoader());
+		log.info("SIGAWF Versão: v" + SigaVersion.SIGA_VERSION);
+		
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		CpTipoDeConfiguracao.mapear(WfTipoDeConfiguracao.values());
 

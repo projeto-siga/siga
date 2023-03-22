@@ -54,6 +54,7 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.util.SigaVersion;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -99,6 +100,10 @@ public class SigaLibsEL {
 
 	public static Object resource(String name) {
 		return Contexto.resource(name);
+	}
+	
+	public static String sigaVersion() {
+		return SigaVersion.SIGA_VERSION;
 	}
 	
 	public static String formatarDDMMYY(Date dt) {

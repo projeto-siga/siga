@@ -46,7 +46,7 @@
 		<hibernate.version>5.3.7.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
-		<siga.versao>develop</siga.versao>
+		<siga.versao>11.0.3.X</siga.versao>
 		<log4j.version>2.18.0</log4j.version>
 	</properties>
 
@@ -83,6 +83,11 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>3.3.1</version>
 				<configuration>
+					<archive>
+			            <manifestEntries>
+			            	<Siga-Versao>${siga.versao}</Siga-Versao>  
+			            </manifestEntries>
+			        </archive>
 				</configuration>
 			</plugin>
             <plugin>

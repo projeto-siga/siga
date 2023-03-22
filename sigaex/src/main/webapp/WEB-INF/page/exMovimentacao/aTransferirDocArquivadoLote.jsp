@@ -109,7 +109,7 @@
 		                    <div class="row">
 								<div class="col-sm-1">
 									<button type="button" id="btnTransferirArquivadosLote" class="btn btn-primary"
-									onclick="javascript:validaCampos();" role="button">Transfererir</button>
+									onclick="javascript:validaCampos();" role="button">Transferir</button>
 								</div>
 								<div class="col-sm-1 ml-3 my-2 my-sm-0">
 		                    		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
@@ -337,6 +337,9 @@
 		
 		function getOrigemSelecionado(){
 			let responsavelSel = document.getElementById("formulario_responsavelSel_descricao").value;
+			if (responsavelSel == "")
+				responsavelSel = document.getElementById("formulario_lotaResponsavelSel_descricao").value;
+				
 			document.getElementById("origem").textContent = responsavelSel;
 		}
 		

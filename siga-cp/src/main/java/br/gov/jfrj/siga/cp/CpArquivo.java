@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,8 +46,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FilenameUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
@@ -60,7 +59,6 @@ import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.ContextoPersistencia.AfterCommit;
 import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
@@ -76,7 +74,8 @@ import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
 })
 @Entity
 @Immutable
-@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cacheable(false)
+//@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "corporativo.cp_arquivo")
 public class CpArquivo implements Serializable, PersistentAttributeInterceptable {
     private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
@@ -308,46 +307,6 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
     public CpOrgaoUsuario getOrgaoUsuario() {
         return orgaoUsuario;
     }
-
-//    public void setIdArq(java.lang.Long idArq) {
-//        this.idArq = idArq;
-//    }
-//    
-//    public void setConteudo(byte[] createBlob) {
-//        this.cacheArquivo = createBlob;
-//    }
-//
-//    public void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
-//        this.orgaoUsuario = orgaoUsuario;
-//    }
-//    
-//    public void setConteudoTpArq(java.lang.String conteudoTpArq) {
-//        this.conteudoTpArq = conteudoTpArq;
-//    }
-//
-//    public void setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
-//        this.tipoArmazenamento = tipoArmazenamento;
-//    }
-//
-//    public void setCaminho(String caminho) {
-//        this.caminho = caminho;
-//    }
-//
-//    private void setTamanho(Long tamanho) {
-//        this.tamanho = tamanho;
-//    }
-//
-//    private void setCacheArquivo(byte[] cacheArquivo) {
-//        this.cacheArquivo = cacheArquivo;
-//    }
-//
-//    public void setHashSha256(String hashSha256) {
-//        this.hashSha256 = hashSha256;
-//    }
-//
-//    public void setNomeArquivo(String nomeArquivo) {
-//        this.nomeArquivo = nomeArquivo;
-//    }
 
     public java.lang.String getConteudoTpArq() {
         return conteudoTpArq;

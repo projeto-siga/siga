@@ -60,7 +60,7 @@ public class ExRef {
 			mod[i] = Texto.slugify(mod[i], true, true);
 		List<ExArquivoNumerado> res = new ArrayList<>();
 		for (ExArquivoNumerado an : getAns()) {
-			if (an.getMobil() != null) {
+			if (an.getMobil() != null && an.getMobil().isJuntadoInterno() && !an.getMobil().doc().isCancelado() && !an.getMobil().doc().isSemEfeito()) {
 				String descMod = Texto.slugify(an.getMobil().doc().getExModelo().getNmMod(), true, true);
 				for (int i = 0; i < mod.length; i++)
 					if (descMod.contains(mod[i]))

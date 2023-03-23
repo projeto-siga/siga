@@ -13,11 +13,11 @@ import br.gov.jfrj.siga.ex.task.ExTarefas;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
-import br.gov.jfrj.siga.cp.util.SigaVersion;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
@@ -33,8 +33,9 @@ public class ExStarter {
 	public void init() {
 		log.info("INICIANDO SIGAEX.WAR");
 		
-		SigaVersion.loadSigaVersion(getClass().getClassLoader());
+		SigaVersion.loadSigaVersion();
 		log.info("SIGAEX Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATA);
 		
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		CpTipoDeConfiguracao.mapear(ExTipoDeConfiguracao.values());

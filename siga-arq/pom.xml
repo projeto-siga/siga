@@ -16,6 +16,7 @@
 	<description>Upload e Download de Arquivos</description>
 
 	<properties>
+		<siga.version>11.0.3.8</siga.version>
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -72,13 +73,13 @@
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-jwt</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>${siga.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-base</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>${siga.version}</version>
 		</dependency>
 		
 	</dependencies>

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>siga-doc</artifactId>
 		<groupId>siga</groupId>
-		<version>1.2-SNAPSHOT</version>
+		<version>${siga.version}</version>
 	</parent>
 	<artifactId>siga-vraptor-module</artifactId>
 	<name>siga-vraptor-module</name>
@@ -59,6 +59,11 @@
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-jwt</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-base</artifactId>
 		</dependency>
 
 		<dependency>

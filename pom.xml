@@ -5,7 +5,7 @@
 	<groupId>siga</groupId>
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2-SNAPSHOT</version>
+	<version>${siga.version}</version>
 
 	<modules>		
 		<module>siga-base</module>
@@ -41,12 +41,14 @@
 
 
 	<properties>
+		<!-- Registro Centralizado da Versão do SIGA -->
+	 	<siga.version>11.0.3.XXXXXXX</siga.version>
+	 	<maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
+	 		
  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
- 		<siga.version>${project.version}</siga.version>
 		<hibernate.version>5.3.7.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
-		<siga.versao>11.0.3.X</siga.versao>
 		<log4j.version>2.18.0</log4j.version>
 	</properties>
 
@@ -85,7 +87,8 @@
 				<configuration>
 					<archive>
 			            <manifestEntries>
-			            	<Siga-Versao>${siga.versao}</Siga-Versao>  
+							<Build-Time>${maven.build.timestamp}</Build-Time>
+							<Build-Label>${project.version}</Build-Label>
 			            </manifestEntries>
 			        </archive>
 				</configuration>

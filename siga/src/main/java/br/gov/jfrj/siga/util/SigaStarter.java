@@ -13,10 +13,10 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.api.v1.SigaApiV1Servlet;
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
-import br.gov.jfrj.siga.cp.util.SigaVersion;
 
 @Startup
 @Singleton
@@ -30,8 +30,10 @@ public class SigaStarter {
 	public void init() {
 		log.info("INICIANDO SIGA.WAR");
 		
-		SigaVersion.loadSigaVersion(getClass().getClassLoader());
+		SigaVersion.loadSigaVersion();
 		log.info("SIGA Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATA);
+		
 		
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		

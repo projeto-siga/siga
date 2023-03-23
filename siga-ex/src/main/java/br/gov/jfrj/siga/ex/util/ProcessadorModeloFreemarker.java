@@ -132,7 +132,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
             }
             matcher.appendTail(sb);
             template = sb.toString();
-        } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@markdown") && !template.contains("[@dadosComplementares")) {
+        } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
 		    template = com.crivano.jmodel.Template.markdownToFreemarker(null, template, null);
 		}
 

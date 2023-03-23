@@ -360,8 +360,8 @@ public class Prop {
 		
 		/* Configuração do tamanho máximo para exibição paginada de documento completo em pdf
 		 * Quantidade de Documentos presentes por pagina */
-		provider.addPrivateProperty("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax", null);
-		provider.addPrivateProperty("/siga.exibicao.paginada.pdf.completo.quantidade.documentos", null);
+		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax", null);
+		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.quantidade.documentos", null);
 		
 	}
 }

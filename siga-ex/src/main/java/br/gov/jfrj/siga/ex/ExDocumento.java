@@ -1420,9 +1420,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public Map<String, String> getForm() {
 		Hashtable<String, String> m = new Hashtable<String, String>();
 		final byte[] form = getConteudoBlobForm();
-        if (form != null)
-            Utils.mapFromUrlEncodedForm(m, form);
-        return m;
+		if (form != null)
+		    Utils.mapFromUrlEncodedForm(m, form);
+		return m;
 	}
 
 	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {

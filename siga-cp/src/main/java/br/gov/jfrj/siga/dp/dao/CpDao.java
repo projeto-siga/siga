@@ -24,7 +24,6 @@
 package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,9 +50,10 @@ import javax.persistence.criteria.Root;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.DateUtils;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpAcesso;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpConfiguracaoCache;
 import br.gov.jfrj.siga.cp.CpGrupo;
@@ -72,9 +72,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
 import br.gov.jfrj.siga.cp.bl.SituacaoFuncionalEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorFinalidadeEnum;
-import br.gov.jfrj.siga.cp.model.enm.CpMarcadorGrupoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
@@ -3255,4 +3253,37 @@ public class CpDao extends ModeloDao {
 		q.orderBy(cb().desc(c.get("hisDtIni")));
 		return em().createQuery(q).getResultList();
 	}
+
+	public static class ResultadoDeEstatisticasParaMigracaoDeArmazenamento {
+	    public long quantidade;
+	    public long memoria;
+	}
+	
+    @SuppressWarnings("unchecked")
+    public ResultadoDeEstatisticasParaMigracaoDeArmazenamento estatisticasParaMigracaoDeArmazenamento(CpArquivoTipoArmazenamentoEnum origem, CpArquivoTipoArmazenamentoEnum destino) {
+        try {
+            final Query query = em().createNamedQuery("consultarEstatisticasParaMigracaoDeArmazenamento");
+            query.setParameter("origem", origem);
+            final List<Object[]> l = query.getResultList();
+            Object[] o = l.get(0);
+            ResultadoDeEstatisticasParaMigracaoDeArmazenamento r = new ResultadoDeEstatisticasParaMigracaoDeArmazenamento();
+            r.quantidade = (Long) o[0];
+            r.memoria = (Long) o[1];
+            return r;
+        } catch (final NullPointerException e) {
+            return null;
+        }
+    }
+    public List<CpArquivo> consultarReferenciasParaMigracaoDeArmazenamento(CpArquivoTipoArmazenamentoEnum origem, CpArquivoTipoArmazenamentoEnum destino, int quantidade) {
+        try {
+            final Query query = em().createNamedQuery("consultarReferenciasParaMigracaoDeArmazenamento");
+            query.setParameter("origem", origem);
+            query.setMaxResults(quantidade);
+            final List<CpArquivo> l = query.getResultList();
+            return l;
+        } catch (final NullPointerException e) {
+            return null;
+        }
+    }
+    
 }

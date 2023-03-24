@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +34,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PostPersist;
 import javax.persistence.PrePersist;
@@ -43,8 +46,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.io.FilenameUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
@@ -55,351 +56,311 @@ import org.jboss.logging.Logger;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
-import br.gov.jfrj.siga.cp.arquivo.*;
+import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
-import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.ContextoPersistencia.AfterCommit;
 import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
-
 
 /**
  * A class that represents a row in the CP_ARQUIVO table. You can customize the
  * behavior of this class by editing the class, {@link CpArquivo()}.
  */
 @SuppressWarnings("serial")
+@NamedQueries({
+        @NamedQuery(name = "consultarEstatisticasParaMigracaoDeArmazenamento", query = "select count(arq), sum(arq.tamanho) from CpArquivo arq where (arq.tipoArmazenamento = :origem or arq.tipoArmazenamento is null)"),
+        @NamedQuery(name = "consultarReferenciasParaMigracaoDeArmazenamento", query = "select arq from CpArquivo arq where (arq.tipoArmazenamento = :origem or arq.tipoArmazenamento is null) and arq.caminho is null")
+})
 @Entity
 @Immutable
-@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cacheable(false)
+//@Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 @Table(name = "corporativo.cp_arquivo")
 public class CpArquivo implements Serializable, PersistentAttributeInterceptable {
-	
-	private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
+    private final static org.jboss.logging.Logger log = Logger.getLogger(CpArquivo.class);
 
-	@Id
-	@SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")
-	@GeneratedValue(generator = "CP_ARQUIVO_SEQ")
-	@Column(name = "ID_ARQ")
-	private java.lang.Long idArq;
+    @Id
+    @SequenceGenerator(sequenceName = "CORPORATIVO.CP_ARQUIVO_SEQ", name = "CP_ARQUIVO_SEQ")
+    @GeneratedValue(generator = "CP_ARQUIVO_SEQ")
+    @Column(name = "ID_ARQ")
+    private java.lang.Long idArq;
 
-	@LazyToOne(LazyToOneOption.NO_PROXY)
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@PrimaryKeyJoinColumn
-	private CpArquivoBlob arquivoBlob;
+    @LazyToOne(LazyToOneOption.NO_PROXY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
+    private CpArquivoBlob arquivoBlob;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ORGAO_USU")
-	private CpOrgaoUsuario orgaoUsuario;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_ORGAO_USU")
+    private CpOrgaoUsuario orgaoUsuario;
 
-	@Column(name = "CONTEUDO_TP_ARQ", length = 128)
-	private java.lang.String conteudoTpArq;
+    @Column(name = "CONTEUDO_TP_ARQ", length = 128)
+    private java.lang.String conteudoTpArq;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TP_ARMAZENAMENTO")
-	private CpArquivoTipoArmazenamentoEnum tipoArmazenamento;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TP_ARMAZENAMENTO")
+    private CpArquivoTipoArmazenamentoEnum tipoArmazenamento;
 
-	@Column(name = "CAMINHO")
-	private String caminho;
+    @Column(name = "CAMINHO")
+    private String caminho;
 
-	@Column(name = "TAMANHO_ARQ")
-	private Long tamanho = 0L;
+    @Column(name = "TAMANHO_ARQ")
+    private Long tamanho = 0L;
 
-	@Column(name = "HASH_SHA256")
-	private String hashSha256;
+    @Column(name = "HASH_SHA256")
+    private String hashSha256;
 
-	@Column(name = "NOME_ARQ")
-	private String nomeArquivo;
+    @Column(name = "NOME_ARQ")
+    private String nomeArquivo;
 
-	@Transient
-	protected byte[] cacheArquivo;
+    @Transient
+    protected byte[] cacheArquivo;
 
-	@Transient
-	private static boolean isFormatoLivre;
-	
-	@Transient
+    @Transient
+    private static boolean isFormatoLivre;
+
+    @Transient
     private PersistentAttributeInterceptor persistentAttributeInterceptor;
- 
+
     @Override
     public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
         return persistentAttributeInterceptor;
     }
- 
+
     @Override
     public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
         this.persistentAttributeInterceptor = persistentAttributeInterceptor;
     }
 
-	/**
-	 * Simple constructor of AbstractExDocumento instances.
-	 */
-	public CpArquivo() {
-	}
+    /**
+     * Simple constructor of AbstractExDocumento instances.
+     */
+    public CpArquivo() {
+    }
 
-	@PrePersist
-	private void salvarArquivo() {
-		if (isFormatoLivre())
-			return;
-		
-		long ini = System.currentTimeMillis();
-		switch (getTipoArmazenamento()) {
-		case TABELA:
+    @PrePersist
+    private void salvarArquivo() {
+        if (isFormatoLivre())
+            return;
+
+        long ini = System.currentTimeMillis();
+        switch (getTipoArmazenamento()) {
+            case BLOB:
+                throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
+            case TABELA:
 //			EntityTransaction transaction = CpDao.getInstance().em().getTransaction();
 //			 System.out.println("* " + (CpDao.getInstance().em().getTransaction() ==
 //					 null || !CpDao.getInstance().em().getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" );
 //		
-			if (this.arquivoBlob == null) {
-				this.arquivoBlob = new CpArquivoBlob();
-				this.arquivoBlob.setArquivo(this);
-				this.arquivoBlob.setConteudoBlobArq(this.getConteudo());
-			}
-			break;
-		case HCP:
-			gerarCaminho();
-			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
-			a.salvar(this, this.getConteudo());
-			break;
-		case S3:
-			gerarCaminho();
-			ArmazenamentoS3 s3 = ArmazenamentoS3.getInstance();
-			s3.salvar(this, this.getConteudo());
-			break;
-		default:
-			break;
-		}
-		long fim = System.currentTimeMillis();
-		log.debug("Tempo para persistir o arquivo: " + (fim-ini) + " Tamanho: " + (this.getConteudo() != null ? this.getConteudo().length : "nulo"));
-	}
+                if (this.arquivoBlob == null) {
+                    this.arquivoBlob = new CpArquivoBlob();
+                    this.arquivoBlob.setArquivo(this);
+                    this.arquivoBlob.setConteudoBlobArq(this.getConteudo());
+                }
+                break;
+            default:
+                this.caminho = gerarCaminho();
+                Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+                a.salvar(getIdArq(), getCaminho(), getConteudoTpArq(), this.getConteudo());
+                break;
+        }
+        long fim = System.currentTimeMillis();
+        log.debug("Tempo para persistir o arquivo: " + (fim - ini) + " Tamanho: "
+                + (this.getConteudo() != null ? this.getConteudo().length : "nulo"));
+    }
 
-	@PostPersist
-	private void atualizarIdArqBlob() {
-		if (this.arquivoBlob != null) {
-			this.arquivoBlob.setIdArqBlob(this.getIdArq());
-			;
-		}
-	}
+    @PostPersist
+    private void atualizarIdArqBlob() {
+        if (this.arquivoBlob != null) {
+            this.arquivoBlob.setIdArqBlob(this.getIdArq());
+            ;
+        }
+    }
 
-	@PreRemove
-	private void removerArquivo() {
-		switch (getTipoArmazenamento()) {
-		case HCP:
-		case S3:
-			if (getCaminho() != null) {
-				CpArquivoExcluir excluir = new CpArquivoExcluir();
-				excluir.setIdArqExc(getIdArq());
-				excluir.setCaminho(getCaminho());
-				ContextoPersistencia.em().persist(excluir);
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	public static CpArquivo forUpdate(CpArquivo old) {
-		return forUpdate(old, true);
-	}
+    @PreRemove
+    private void removerArquivo() {
+        switch (getTipoArmazenamento()) {
+            case BLOB:
+                throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
+            case TABELA:
+                break;
+            default:
+                ContextoPersistencia.addAfterCommit(new AfterCommit() {
+                    @Override
+                    public void run() {
+                        Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+                        a.apagar(getIdArq(), getCaminho());
+                    }
+                });
+                break;
+        }
+    }
 
-	public static CpArquivo forUpdate(CpArquivo old, boolean atualizarConteudo) {
-		if (old != null) {
-			if (old.getIdArq() != null) {
-				CpArquivo arq = new CpArquivo();
-				arq.setTipoArmazenamento(old.getTipoArmazenamento());
-				arq.setConteudoTpArq(old.getConteudoTpArq());
-				arq.setOrgaoUsuario(old.getOrgaoUsuario());
-				if (atualizarConteudo)
-					arq.setConteudo(old.getConteudo());
-				arq.setHashSha256(old.getHashSha256());
-				arq.setNomeArquivo(old.getNomeArquivo());
+    public static CpArquivo forUpdate(CpArquivo old) {
+        return forUpdate(old, true);
+    }
 
-				ContextoPersistencia.em().remove(old);
-				return arq;
-			} else
-				return old;
-		} else
-			return new CpArquivo();
-	}
+    public static CpArquivo forUpdate(CpArquivo old, boolean atualizarConteudo) {
+        if (old != null) {
+            if (old.getIdArq() != null) {
+                CpArquivo arq = new CpArquivo();
+                arq.tipoArmazenamento = old.getTipoArmazenamento();
+                arq.conteudoTpArq = old.getConteudoTpArq();
+                arq.orgaoUsuario = old.getOrgaoUsuario();
+                if (atualizarConteudo)
+                    arq.cacheArquivo = old.getConteudo();
+                arq.hashSha256 = old.getHashSha256();
+                arq.nomeArquivo = old.getNomeArquivo();
 
-	public byte[] getConteudo() {
-		if (cacheArquivo != null)
-			return cacheArquivo;
-		switch (getTipoArmazenamento()) {
-		case TABELA:
-			cacheArquivo = getArquivoBlob() != null ? getArquivoBlob().getConteudoBlobArq() : null;
-			break;
-		case HCP:
-			ArmazenamentoHCP a = ArmazenamentoHCP.getInstance();
-			cacheArquivo = a.recuperar(this);
-			break;
-		case S3:
-			ArmazenamentoS3 s3 = ArmazenamentoS3.getInstance();
-			cacheArquivo = s3.recuperar(this);
-			break;
-		default:
-			break;
-		}
-		return cacheArquivo;
-	}
+                ContextoPersistencia.em().remove(old);
+                return arq;
+            } else
+                return old;
+        } else
+            return new CpArquivo();
+    }
 
-	private void setConteudo(byte[] createBlob) {
-		this.cacheArquivo = createBlob;
-	}
+    public byte[] getConteudo() {
+        if (cacheArquivo != null)
+            return cacheArquivo;
+        switch (getTipoArmazenamento()) {
+            case BLOB:
+                throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
+            case TABELA:
+                cacheArquivo = getArquivoBlob() != null ? getArquivoBlob().getConteudoBlobArq() : null;
+                break;
+            default:
+                Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+                cacheArquivo = a.recuperar(getIdArq(), getCaminho());
+                break;
+        }
+        return cacheArquivo;
+    }
 
-	public static CpArquivo updateOrgaoUsuario(CpArquivo old, CpOrgaoUsuario orgaoUsuario) {
-		if (old == null || old.getOrgaoUsuario() == null || !old.getOrgaoUsuario().equals(orgaoUsuario)) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
-			arq.setOrgaoUsuario(orgaoUsuario);
-			return arq;
-		}
-		return old;
-	}
+    public static CpArquivo updateOrgaoUsuario(CpArquivo old, CpOrgaoUsuario orgaoUsuario) {
+        if (old == null || old.getOrgaoUsuario() == null || !old.getOrgaoUsuario().equals(orgaoUsuario)) {
+            CpArquivo arq = CpArquivo.forUpdate(old);
+            arq.orgaoUsuario = orgaoUsuario;
+            return arq;
+        }
+        return old;
+    }
 
-	public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
-		if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
-			arq.setConteudoTpArq(conteudoTp);
-			return arq;
-		}
-		return old;
-	}
+    public static CpArquivo updateConteudoTp(CpArquivo old, String conteudoTp) {
+        if (old == null || !Texto.equals(old.getConteudoTpArq(), conteudoTp)) {
+            CpArquivo arq = CpArquivo.forUpdate(old);
+            arq.conteudoTpArq = conteudoTp;
+            return arq;
+        }
+        return old;
+    }
 
-	public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
-		if (old == null || !Arrays.equals(old.getConteudo(), conteudo)) {
-			CpArquivo arq = CpArquivo.forUpdate(old);
-			arq.setConteudo(conteudo);
-			arq.setTamanho(Long.valueOf(conteudo.length));
-			arq.setFormatoLivre(false);
-			return arq;
-		}
-		return old;
-	}
+    public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
+        if (old == null || !Arrays.equals(old.getConteudo(), conteudo)) {
+            CpArquivo arq = CpArquivo.forUpdate(old);
+            arq.cacheArquivo = conteudo;
+            arq.tamanho = Long.valueOf(conteudo.length);
+            arq.setFormatoLivre(false);
+            return arq;
+        }
+        return old;
+    }
 
-	public static CpArquivo updateFormatoLivre(CpArquivo old, CpOrgaoUsuario orgaoUsuario, String caminho, String nomeArquivo, 
-			Long tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
-		CpArquivo arq = CpArquivo.forUpdate(old, false);
-		String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
-		if (extensao == null)
-			throw new AplicacaoException("Extensão de arquivo inválida: ." + FilenameUtils.getExtension(nomeArquivo));
-		arq.setOrgaoUsuario(orgaoUsuario);
-		arq.setConteudoTpArq(extensao);
-		arq.setNomeArquivo(nomeArquivo);
-		arq.setCaminho(caminho);
-		arq.setTamanho(tamanhoArquivo);
-		arq.setTipoArmazenamento(tipoArmazenamento);
-		arq.setFormatoLivre(true);
-		arq.setHashSha256(hashSha256);
-		return arq;
-	}
+    public static CpArquivo updateFormatoLivre(CpArquivo old, CpOrgaoUsuario orgaoUsuario, String caminho,
+            String nomeArquivo,
+            Long tamanhoArquivo, CpArquivoTipoArmazenamentoEnum tipoArmazenamento, String hashSha256) {
+        CpArquivo arq = CpArquivo.forUpdate(old, false);
+        String extensao = CpExtensoesDeArquivoEnum.getTipoConteudo(FilenameUtils.getExtension(nomeArquivo));
+        if (extensao == null)
+            throw new AplicacaoException("Extensão de arquivo inválida: ." + FilenameUtils.getExtension(nomeArquivo));
+        arq.orgaoUsuario = orgaoUsuario;
+        arq.conteudoTpArq = extensao;
+        arq.nomeArquivo = nomeArquivo;
+        arq.caminho = caminho;
+        arq.tamanho = tamanhoArquivo;
+        arq.tipoArmazenamento = tipoArmazenamento;
+        arq.setFormatoLivre(true);
+        arq.hashSha256 = hashSha256;
+        return arq;
+    }
 
-	private void gerarCaminho() {
-		String extensao;
+    public String gerarCaminho() {
+        String extensao;
 
-		TipoConteudo t = TipoConteudo.getByMimeType(getConteudoTpArq());
-		if (t != null)
-			extensao = t.getExtensao();
-		else
-			extensao = TipoConteudo.ZIP.getExtensao();
+        TipoConteudo t = TipoConteudo.getByMimeType(getConteudoTpArq());
+        if (t != null)
+            extensao = t.getExtensao();
+        else
+            extensao = TipoConteudo.ZIP.getExtensao();
 
-		Calendar c = Calendar.getInstance();
-		this.caminho = c.get(Calendar.YEAR) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.DATE) + "/"
-				+ c.get(Calendar.HOUR_OF_DAY) + "/" + c.get(Calendar.MINUTE) + "/" + UUID.randomUUID().toString() + "."
-				+ extensao;
-	}
+        Calendar c = Calendar.getInstance();
+        return c.get(Calendar.YEAR) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.DATE) + "/"
+                + c.get(Calendar.HOUR_OF_DAY) + "/" + c.get(Calendar.MINUTE) + "/" + UUID.randomUUID().toString() + "."
+                + extensao;
+    }
 
-	public java.lang.Long getIdArq() {
-		return idArq;
-	}
+    public java.lang.Long getIdArq() {
+        return idArq;
+    }
 
-	public void setIdArq(java.lang.Long idArq) {
-		this.idArq = idArq;
-	}
+    public CpOrgaoUsuario getOrgaoUsuario() {
+        return orgaoUsuario;
+    }
 
-	public CpOrgaoUsuario getOrgaoUsuario() {
-		return orgaoUsuario;
-	}
+    public java.lang.String getConteudoTpArq() {
+        return conteudoTpArq;
+    }
 
-	private void setOrgaoUsuario(CpOrgaoUsuario orgaoUsuario) {
-		this.orgaoUsuario = orgaoUsuario;
-	}
+    public CpArquivoBlob getArquivoBlob() {
+        if (this.persistentAttributeInterceptor != null) {
+            return (CpArquivoBlob) this.persistentAttributeInterceptor.readObject(
+                    this, "arquivoBlob", this.arquivoBlob);
+        }
+        return this.arquivoBlob;
+    }
 
-	public java.lang.String getConteudoTpArq() {
-		return conteudoTpArq;
-	}
+    public void setArquivoBlob(CpArquivoBlob contaCorrente) {
+        if (this.persistentAttributeInterceptor != null) {
+            this.arquivoBlob = (CpArquivoBlob) persistentAttributeInterceptor.writeObject(
+                    this, "arquivoBlob", this.arquivoBlob, contaCorrente);
+        } else {
+            this.arquivoBlob = contaCorrente;
+        }
+    }
 
-	private void setConteudoTpArq(java.lang.String conteudoTpArq) {
-		this.conteudoTpArq = conteudoTpArq;
-	}
-	
-	public CpArquivoBlob getArquivoBlob() {
-	    if (this.persistentAttributeInterceptor != null) {
-	        return (CpArquivoBlob) this.persistentAttributeInterceptor.readObject(
-	                  this, "arquivoBlob", this.arquivoBlob);
-	    }
-	    return this.arquivoBlob;
-	}
-	 
-	public void setArquivoBlob(CpArquivoBlob contaCorrente) {
-	    if (this.persistentAttributeInterceptor != null) {
-	        this.arquivoBlob = (CpArquivoBlob) persistentAttributeInterceptor.writeObject(
-	                  this, "arquivoBlob", this.arquivoBlob, contaCorrente);
-	    } else {
-	        this.arquivoBlob = contaCorrente;
-	    }
-	}
+    public CpArquivoTipoArmazenamentoEnum getTipoArmazenamento() {
+        if (tipoArmazenamento == null)
+            tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"));
+        return tipoArmazenamento;
+    }
 
-	public CpArquivoTipoArmazenamentoEnum getTipoArmazenamento() {
-		if (tipoArmazenamento == null)
-			tipoArmazenamento = CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"));
-		return tipoArmazenamento;
-	}
+    public String getCaminho() {
+        return caminho;
+    }
 
-	private void setTipoArmazenamento(CpArquivoTipoArmazenamentoEnum tipoArmazenamento) {
-		this.tipoArmazenamento = tipoArmazenamento;
-	}
+    public Long getTamanho() {
+        return tamanho;
+    }
 
-	public String getCaminho() {
-		return caminho;
-	}
+    private byte[] getCacheArquivo() {
+        return cacheArquivo;
+    }
 
-	private void setCaminho(String caminho) {
-		this.caminho = caminho;
-	}
+    private static boolean isFormatoLivre() {
+        return isFormatoLivre;
+    }
 
-	public Long getTamanho() {
-		return tamanho;
-	}
+    private void setFormatoLivre(boolean isFormatoLivre) {
+        this.isFormatoLivre = isFormatoLivre;
+    }
 
-	private void setTamanho(Long tamanho) {
-		this.tamanho = tamanho;
-	}
+    public String getHashSha256() {
+        return hashSha256;
+    }
 
-	private byte[] getCacheArquivo() {
-		return cacheArquivo;
-	}
-
-	private void setCacheArquivo(byte[] cacheArquivo) {
-		this.cacheArquivo = cacheArquivo;
-	}
-
-	private static boolean isFormatoLivre() {
-		return isFormatoLivre;
-	}
-
-	private void setFormatoLivre(boolean isFormatoLivre) {
-		this.isFormatoLivre = isFormatoLivre;
-	}
-
-	public String getHashSha256() {
-		return hashSha256;
-	}
-
-	public void setHashSha256(String hashSha256) {
-		this.hashSha256 = hashSha256;
-	}
-
-	public String getNomeArquivo() {
-		return nomeArquivo;
-	}
-
-	public void setNomeArquivo(String nomeArquivo) {
-		this.nomeArquivo = nomeArquivo;
-	}
+    public String getNomeArquivo() {
+        return nomeArquivo;
+    }
 
 }

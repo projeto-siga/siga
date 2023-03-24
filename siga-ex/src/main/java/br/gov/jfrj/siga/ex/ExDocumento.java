@@ -2614,10 +2614,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public boolean isRecebeuJuntada() {
 		for (ExMobil mob : getExMobilSet()) {
-			for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
-				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-						&& !mov.isCancelada())
-					return true;
+			if (mob.getExMovimentacaoReferenciaSet() != null ) {
+				for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
+					if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+							&& !mov.isCancelada())
+						return true;
+				}
 			}
 		}
 		return false;

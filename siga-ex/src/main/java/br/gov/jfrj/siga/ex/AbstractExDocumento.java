@@ -232,7 +232,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ " 			   								JOIN CpMarca marca_cancelado on (marca_cancelado.idRef = mob_cancelado.idMobil )"
 				+ " 			   								WHERE (mob_cancelado.exDocumento = doc.idDoc)"
 				+ " 			   										AND (marca_cancelado.cpMarcador.idMarcador in (:enumListCancelados)) "
-				+ "														AND (marca.dpPessoaIni.idPessoa=:pessoaIni or marca.dpLotacaoIni.idLotacao=:lotaIni))"
+				+ "														AND (marca_cancelado.dpPessoaIni.idPessoa=:pessoaIni or marca_cancelado.dpLotacaoIni.idLotacao=:lotaIni))"
 				+ "                ) order by marca.dtIniMarca desc"),
 		@NamedQuery(name = "consultarDocumentosArquivadosJaTransferido", query = "select mob, em from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
 				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"

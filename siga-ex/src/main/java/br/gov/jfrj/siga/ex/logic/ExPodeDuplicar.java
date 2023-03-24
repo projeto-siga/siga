@@ -5,6 +5,7 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 
+import br.gov.jfrj.siga.cp.logic.CpELotacaoAtiva;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -42,7 +43,7 @@ public class ExPodeDuplicar extends CompositeExpressionSupport {
 
 				new ExPodeAcessarDocumento(mob, titular, lotaTitular),
 				
-				new ExELotacaoCadastranteAtiva(mob.getDoc()),
+				new CpELotacaoAtiva(lotaTitular),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 						.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.DUPLICAR));

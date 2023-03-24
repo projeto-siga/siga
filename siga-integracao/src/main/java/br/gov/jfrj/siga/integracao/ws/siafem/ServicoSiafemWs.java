@@ -9,8 +9,9 @@ public class ServicoSiafemWs {
 
 		try {
 			String ano = Calendar.getInstance().get(Calendar.YEAR) + "";
-
-			String ret = service.getRecebeMSGSoap().mensagem(usuario, senha, ano, "", doc.getSiafDoc());
+			
+			String ret = service.getRecebeMSGSoap().mensagem(usuario, senha, ano, 
+					doc.getUnidadeGestoraMUDAPAH2(), doc.getSiafDoc());
 
 			return verificarRetorno(ret);
 		} catch (Exception e) {

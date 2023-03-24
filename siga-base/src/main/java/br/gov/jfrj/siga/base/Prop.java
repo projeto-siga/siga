@@ -358,5 +358,10 @@ public class Prop {
 		/* Properties para ativação do Módulo de compra e contratações.*/
 		provider.addPrivateProperty("/secc.ui.url", null);
 		
+		/* Configuração do tamanho máximo para exibição paginada de documento completo em pdf
+		 * Quantidade de Documentos presentes por pagina */
+		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax", null);
+		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.quantidade.documentos", null);
+		
 	}
 }

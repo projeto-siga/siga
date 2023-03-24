@@ -194,7 +194,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null, tamanhoOriginal);
+			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null, tamanhoOriginal, null);
 			bytes = baos.toByteArray();
 		} else {			
 			if (idMov != null && idMov != 0) {
@@ -420,7 +420,7 @@ public class ExProcessoAutenticacaoController extends ExController {
 			exDocumentoDto.setDoc(exDocumentoDto.getMob().doc());
 		}
 		if (exDocumentoDto.getDoc() == null) {
-			final String id = param("exDocumentoDto.id");
+			final String id = param("exDocumentoDTO.id");
 			if (id != null && id.length() != 0) {
 				exDocumentoDto.setDoc(daoDoc(Long.parseLong(id)));
 			}

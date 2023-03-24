@@ -371,7 +371,7 @@ public class DocumentosPost implements IDocumentosPost {
 
 		if (doc.getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante,
 				cadastrante.getLotacao(), doc.getExMobilPai())) {
-			exBL.copiarRestringir(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(), cadastrante,
+			exBL.herdaRestricaoAcessoDocumentoPai(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(), cadastrante,
 					ctx.getTitular(), doc.getData());
 		}
 

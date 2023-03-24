@@ -283,5 +283,11 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 		return id == ExTipoDeMovimentacao.CRIACAO
 				|| id == ExTipoDeMovimentacao.RECEBIMENTO;
 	}
+	
+	public static boolean hasArquivado(ITipoDeMovimentacao id) {
+		return id == ExTipoDeMovimentacao.ARQUIVAMENTO_CORRENTE
+			|| id == ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO
+			|| id == ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE;
+	}
 
 }

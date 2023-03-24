@@ -639,6 +639,7 @@ public interface IExApiV1 {
             public Boolean volumes;
             public Boolean exibirReordenacao;
             public Boolean tamanhoOriginal;
+            public Integer paramoffset;
         }
 
         public static class Response implements ISwaggerResponse {
@@ -1763,6 +1764,26 @@ public interface IExApiV1 {
                 this.headerFields = headerFields;
             }
 
+        }
+
+        public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+    }
+
+    public interface IDocumentosSiglaReclassificarPost extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String sigla;
+            public String novaClassificacao;
+            public String data;
+            public String responsavel;
+            public String titular;
+            public String motivo;
+            
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public String sigla;
+            public String status;
+            public String classificacao;
         }
 
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;

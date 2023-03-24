@@ -223,6 +223,18 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "			and (doc.lotaTitular.id = :idLotacao)"
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
 				+ "			and doc.dtFinalizacao is not null"),
+		@NamedQuery(name = "consultarDocumentosArquivados", query = "select mob from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
+				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"
+				+ "                where ((marca.dpPessoaIni.idPessoa=:pessoaIni or marca.dpLotacaoIni.idLotacao=:lotaIni)"
+				+ "                and (marca.cpMarcador.idMarcador in (:enumList))"
+				+ "                ) order by marca.dtIniMarca desc"),
+		@NamedQuery(name = "consultarDocumentosArquivadosJaTransferido", query = "select mob, em from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
+				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"
+				+ " 			   JOIN ExMovimentacao em on (em.idMov = mob.ultimaMovimentacaoNaoCancelada and em.exMovimentacaoRef is not null)"		
+				+ "                where ("
+				+ " 			   marca.dpLotacaoIni.idLotacao=:lotaDestinoIni "		
+				+ "                and (marca.cpMarcador.idMarcador in (:enumList))"
+				+ "                ) order by marca.dtIniMarca desc"),
 		@NamedQuery(name = "consultarDocumentosFinalizadosEntreDatas", query = "select doc from ExDocumento doc where "
 				+ "					doc.exTipoDocumento.idTpDoc = :idTipoDocumento"
 				+ "					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial"

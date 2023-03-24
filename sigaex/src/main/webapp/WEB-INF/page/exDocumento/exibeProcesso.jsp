@@ -453,7 +453,8 @@
 					</button>
 				</div>
 			</c:if>
-			<div id="paipainel" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
+			<div id="panelPagPdfs" style="margin: 0px; padding: 0px; border: 0px; clear: both;overflow:hidden;"></div>
+			<div id="paipainel" style="margin: 5px; padding: 0px; border: 0px; clear: both;overflow:hidden;">
 				<iframe style="visibility: visible; margin: 0px; padding: 0px; min-height: 20em;" name="painel" id="painel" src="" align="right" width="100%" onload="$(document).ready(function () {resize();});redimensionar();removerBotoes();verificarMensagem(this.src)" frameborder="0" scrolling="no"></iframe>
 			</div>
 		</div>
@@ -525,6 +526,7 @@
 	var htmlAtual = '${arqsNum[0].referenciaHtmlCompletoDocPrincipal}';
 	var pdfAtual = '${arqsNum[0].referenciaPDFCompletoDocPrincipal}';	
 	var path = '/sigaex/app/arquivo/exibir?idVisualizacao=${idVisualizacao}&iframe=true';
+	var tamanhoArquivosDocs = new Array();
 	
 	if ('${mob.doc.podeReordenar()}' === 'true' && '${podeExibirReordenacao}' === 'true') path += '&exibirReordenacao=true';			
 	path += '&arquivo=';			
@@ -558,7 +560,7 @@
 	}
 
 	//Nato: convem remover as outras maneiras de chamar o resize() e deixar apenas o jquery.
-	function exibir(refHTML, refPDF, semMarcas) {
+	async function exibir(refHTML, refPDF, semMarcas, paramoffset) {
 		var ifr = document.getElementById('painel');
 		var ifrp = document.getElementById('paipainel');
 		if('${excedeuTamanhoMax}' === 'true' && !($('#radioHTML').hasClass('active') || document.getElementById('radioHTML').checked)) {
@@ -588,28 +590,39 @@
 					ifr.addEventListener("load", resize, false);
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
+				
+				//Limpar links docs grandes volumes
+				document.getElementById('panelPagPdfs').innerHTML = "";
 			} else {
+				//Para exbicao PDFs Grandes Volumes
+				paramoffset = await validarArquivosDocCompletoExcedeuTamanhoExibicao(refHTML, refPDF, semMarcas, paramoffset);
+				
 				if ($('#radioPDFSemMarcas').hasClass('active')) {
-					$('#pdfsemmarcaslink').removeClass('d-none');
+					//Remocao de link download completo
+					if(paramoffset == null || paramoffset == "")
+						$('#pdfsemmarcaslink').removeClass('d-none');
 					
 					$('#pdflink').addClass('d-none');
 					$('#pdftamanhooriginallink').addClass('d-none');
 
-					ifr.src = path + refPDF + "&semmarcas=1";
+					ifr.src = path + refPDF + paramoffset + "&semmarcas=1";
 				} else if ($('#radioPDFTamanhoOriginal').hasClass('active')) {
-						$('#pdftamanhooriginallink').removeClass('d-none');
+						//Remocao de link download completo
+						if(paramoffset == null || paramoffset == "")
+							$('#pdftamanhooriginallink').removeClass('d-none');
 						
 						$('#pdflink').addClass('d-none');
 						$('#pdfsemmarcaslink').addClass('d-none');
 
-						ifr.src = path + refPDF + "&tamanhoOriginal=true";
+						ifr.src = path + refPDF + paramoffset + "&tamanhoOriginal=true";
 				} else {
-					$('#pdflink').removeClass('d-none');
+					if(paramoffset == null || paramoffset == "")
+						$('#pdflink').removeClass('d-none');
 					
 					$('#pdfsemmarcaslink').addClass('d-none');
 					$('#pdftamanhooriginallink').addClass('d-none');
 					
-					ifr.src = path + refPDF + refSiglaDocPrincipal;
+					ifr.src = path + refPDF + paramoffset + refSiglaDocPrincipal;
 				}
 				
 				if(!refPDF.includes("completo=1")) {
@@ -632,12 +645,15 @@
 				else if (ifr.attachEvent)
 					ifr.attachEvent("onload", resize);
 			} else {
+				//Para exbicao PDFs Grandes Volumes
+				paramoffset = await validarArquivosDocCompletoExcedeuTamanhoExibicao(refHTML, refPDF, semMarcas, paramoffset);
+				
 				if (document.getElementById('radioPDFSemMarcas').checked)
-					ifr.src = path + refPDF + "&semmarcas=1"
+					ifr.src = path + refPDF + paramoffset + "&semmarcas=1"
 				else if (document.getElementById('radioPDFTamanhoOriginal').checked)
-						ifr.src = path + refPDF + "&tamanhoOriginal=true"
+						ifr.src = path + refPDF + paramoffset + "&tamanhoOriginal=true"
 				else
-					ifr.src = path + refPDF;
+					ifr.src = path + refPDF + paramoffset;
 				
 				if(!refPDF.includes("completo=1")) {
 					var url = ifr.src;
@@ -710,6 +726,130 @@
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 	}
 	
+	async function validarArquivosDocCompletoExcedeuTamanhoExibicao(refHTML, refPDF, semMarcas, paramoffset){
+		let paramoffsetRet = paramoffset;
+		//Para exbicao PDFs Grandes Volumes
+		if(await arquivosExcedeuTamanhoExibicaoCompl(refPDF)){
+			if(paramoffset == null) {
+				//Primeiro Carregamento Link
+				paramoffsetRet = '&paramoffset=1';
+				if (exibirMsgPaginacaoPdf(paramoffsetRet))
+					sigaModal.alerta("Documento não pode ser exibido completo. Excedeu a capacidade máxima de exibição, selecione o bloco de documento para exibição de acordo com a sua necessidade.");
+			}
+			criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffsetRet);
+		}
+		return paramoffsetRet != null ? paramoffsetRet : "";
+	}
+	
+	function exibirMsgPaginacaoPdf (paramoffset){
+		var data = tamanhoArquivosDocs;
+		if (data != null){
+			var quantTotalDocs = data['quantTotalDocs'];
+			var qtdPorLink = data['quantDocsPagina'];
+			//Limite de botoes por pagina
+			var qtdLimiteBtLinkPage = 4;
+			let numOffsetAtual = paramoffset.match(/\d+/)[0];
+			let pag = calcularPaginacaoBotoesPdf(quantTotalDocs, qtdPorLink, numOffsetAtual);
+			
+			return pag.length > 1 ? true : false;
+		}
+		return false;
+	}
+		
+	async function verificarTamanhoDocComplMB(refPDF){
+		await $.ajax({
+			url: '${pageContext.request.contextPath}/app/arquivo/obterTamanhoArquivosDocs?arquivo='+refPDF,
+			type: 'GET',
+			success: function(data) {
+				try {
+					tamanhoArquivosDocs = JSON.parse(data);
+				} catch(err){
+				  	sigaSpinner.ocultar();
+				}
+			}	
+		});
+	}
+	
+	async function arquivosExcedeuTamanhoExibicaoCompl(refPDF){
+		var data = tamanhoArquivosDocs;
+		if (data == null || data ==''){
+			sigaSpinner.mostrar();
+			await verificarTamanhoDocComplMB(refPDF);
+			data = tamanhoArquivosDocs;
+			sigaSpinner.ocultar();
+		}
+		return data != null ? data['excedeuMB'] : false;
+	}
+	
+	function calcularPaginacaoBotoesPdf(quantTotalDocs, qtdPorLink, numOffsetAtual) {
+		if (numOffsetAtual != null) {
+			//Caculo para criacao de botoes
+			const paginate = (items, per, numOffsetAtual) =>
+			  Array .from ({length: Math .ceil (items / per)}, (_, i) => ({
+			    page: i + 1,
+			    offset: i * per + 1, //+ 1 para tratar na chamada
+			    range: [i * per + 1, Math .min ((i + 1) * per, items)],
+			    total: Math .min ((i + 1) * per, items) - (i * per),
+			    atual: numOffsetAtual == i * per + 1
+			 }));
+		  
+		 	let pag = paginate(quantTotalDocs, qtdPorLink, numOffsetAtual);
+		 	return pag;
+		}
+		return null;
+	}
+	
+	function criarLinksPaginacaoPdf(refHTML, refPDF, semMarcas, paramoffset){
+		var data = tamanhoArquivosDocs;
+		if (data != null){
+			var quantTotalDocs = data['quantTotalDocs'];
+			var qtdPorLink = data['quantDocsPagina'];
+			//Limite de botoes por pagina
+			var qtdLimiteBtLinkPage = 4;
+			let numOffsetAtual = paramoffset.match(/\d+/)[0];
+			let pag = calcularPaginacaoBotoesPdf(quantTotalDocs, qtdPorLink, numOffsetAtual);
+			
+			//caso a quant de botoes seja maior que 1, entao criar paginacao
+			if (pag.length > 1) {
+				let strInnerHtml = " <span class='titulo-docs text-size-6 card-header'>Exibir Documentos de:</span> ";
+				let strLinks = ''; 
+				
+				let i = 0;
+				let printLink = false;
+				let BreakException = {};
+				try {
+					pag.forEach(item => {
+						//Botoes anterior e primeiro
+						if(item.page > 1 && item.atual){
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", 1, "`);'>", " &laquo;&laquo; ","</a> ");
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset - qtdPorLink, "`);'>", " &laquo; ","</a> ");
+						}
+						//Botoes Links PDFs
+						if(item.atual)
+							printLink = true;
+						if(item.atual || printLink){
+							i++;
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat(numOffsetAtual == item.offset ? "disabled" : "active" ,"' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", item.range[0], " a ", item.range[1],"</a> ");
+						}
+						//Botoes proximo e ultimo
+						if(pag.length > qtdLimiteBtLinkPage && (pag.length > item.page && qtdLimiteBtLinkPage == i)){
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", item.offset, "`);'>", " &raquo; ","</a> ");
+							strLinks = strLinks + " <a href='#void' class='btn btn-primary btn-sm ".concat("' onclick='exibir(`",refHTML, "`, `", refPDF, "`, `", semMarcas, "`, `&paramoffset=", pag[pag.length - 1].offset, "`);'>", " &raquo;&raquo; ","</a> ");
+							throw BreakException;
+						}
+						if(pag.length == item.page)
+							throw BreakException;
+					});
+				} catch (e) {
+					if (e !== BreakException) 
+						throw e;
+				}
+				
+				document.getElementById('panelPagPdfs').innerHTML = strInnerHtml.concat(strLinks);
+			}
+		}
+	}
+	
 </script>
 <script>
 	$('#radioBtnXXXX a').on('click', function(){
@@ -719,7 +859,7 @@
 	    
 	    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
 	    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-	})
+	});
 </script>
 <c:if test="${mob.doc.podeReordenar()}"> 
 	<script src="/siga/javascript/documento.reordenar-doc.js"></script>

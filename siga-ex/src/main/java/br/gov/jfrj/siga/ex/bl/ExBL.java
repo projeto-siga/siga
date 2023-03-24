@@ -4640,7 +4640,7 @@ public class ExBL extends CpBL {
 		final ExMovimentacao mov;
 		
 		Boolean podeRestringir = Boolean.FALSE;
-		if (Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mob)) {
+		if (Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mobPai)) {
 			podeRestringir = Boolean.TRUE;
 		}
 

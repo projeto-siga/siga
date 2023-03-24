@@ -52,11 +52,11 @@ public class ExPodeRestringirAcesso extends CompositeExpressionSupport {
 						Not.of(new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 								.withIdTpConf(ExTipoDeConfiguracao.INCLUIR_DOCUMENTO)),
 
-						Not.of(new ExTemMobilPai(mob.doc()))), 
+						Not.of(new ExTemMobilPai(mob.doc())), 
 				
-				And.of(	
-						new CpNaoENulo(doc.getMobilDefaultParaReceberJuntada(),"móbil default para receber juntada"),
-						
-						Not.of(new ExTemJuntados(doc.getMobilDefaultParaReceberJuntada())))); 
+						And.of(	
+								new CpNaoENulo(doc.getMobilDefaultParaReceberJuntada(),"móbil default para receber juntada"),
+								
+								Not.of(new ExTemJuntados(doc.getMobilDefaultParaReceberJuntada()))))); 
 	}
 }

@@ -5,7 +5,8 @@
 	<groupId>siga</groupId>
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2-SNAPSHOT</version>
+	<!-- Registro Centralizado da Versão do SIGA -->
+	<version>11.0.3-SNAPSHOT</version>
 
 	<modules>		
 		<module>siga-base</module>
@@ -26,15 +27,9 @@
 		<module>sigagc</module>
 		<module>sigasr</module>
  		<module>sigatp</module>
-		<!--<module>sigari</module>
- 		<module>siga-cp-sinc</module> 
- 		<module>siga-dump</module>
- 		<module>siga-integration-test</module> -->
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
-		<!-- <module>siga-relarmaz</module> -->
 		<module>siga-oidc</module>
-		<!-- Desativado do Deploy por Enquanto <module>siga-le</module> !-->
 		<module>siga-integracao</module>
 		<module>siga-arq</module>
 	</modules>
@@ -42,12 +37,11 @@
 
 	<properties>
  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
- 		<siga.version>${project.version}</siga.version>
 		<hibernate.version>5.3.7.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>
-		<siga.versao>develop</siga.versao>
 		<log4j.version>2.18.0</log4j.version>
+		<maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
 	</properties>
 
 	<build>
@@ -83,6 +77,12 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>3.3.1</version>
 				<configuration>
+					<archive>
+			            <manifestEntries>
+							<Build-Time>${maven.build.timestamp}</Build-Time>
+							<Build-Label>${project.version}</Build-Label>
+			            </manifestEntries>
+			        </archive>
 				</configuration>
 			</plugin>
             <plugin>

@@ -1528,7 +1528,8 @@ public class ExDao extends CpDao {
 		StringBuilder sb = new StringBuilder("select mob from ExMobil mob join mob.exMarcaSet mar ");
 		sb.append(" where (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) ");
 		sb.append(chkGestorInteressado ? "	and (mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_GESTOR.getId() 
-										+ "or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+										+ " or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+		sb.append(" and mar.cpMarcador.idMarcador <> " + CpMarcadorEnum.SEM_EFEITO.getId());
 		sb.append(" order by mob.idMobil desc ");
 		
 		final Query query = em().createQuery(sb.toString())

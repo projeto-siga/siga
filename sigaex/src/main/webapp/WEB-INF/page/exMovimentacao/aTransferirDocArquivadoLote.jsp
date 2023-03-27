@@ -125,7 +125,7 @@
 						<c:otherwise>
 							<div class="row">
 								<div class="col-sm-1">
-									<button type="submit" class="btn btn-primary">Pesquisar</button>
+									<button id="pesquisar" type="submit" class="btn btn-primary">Pesquisar</button>
 								</div>
 							</div>
 						</c:otherwise>
@@ -139,7 +139,7 @@
 										<th rowspan="2" align="center"><input type="checkbox"
 											id="checkall" name="checkall" value="true"
 											onclick="checkUncheckAll(this)" /></th>
-										<th rowspan="2" class="text-right">Número</th>
+										<th rowspan="2" class="center">Número</th>
 										<th colspan="3">Documento</th>
 										<th colspan="2">Última Movimentação</th>
 										<th rowspan="2">Descrição</th>
@@ -170,15 +170,15 @@
 												type="checkbox" name="documentosSelecionados"
 												value="${documento.idMobil}" id="${x}" class="chkDocumento"
 												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
-											<td class="text-right"><c:choose>
+											<td class="text-center"><c:choose>
 													<c:when test='${param.popup!="true"}'>
 														<a
-															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}">
+															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}" target="_blank">
 															${documento.sigla} </a>
 													</c:when>
 													<c:otherwise>
 														<a
-															href="javascript:opener.retorna_${param.propriedade}('${documento.idMobil}','${documento.sigla},'');">
+															href="javascript:opener.retorna_${param.propriedade}('${documento.idMobil}','${documento.sigla},'');" target="_blank">
 															${documento.sigla} </a>
 													</c:otherwise>
 												</c:choose></td>
@@ -239,9 +239,9 @@
 	      		<div class="form-group row">
 				<div class="col-12">
 					<p><strong>Transferência De:</strong></p>
-					<p><span id="origem">X</span></p>
+					<p><strong><fmt:message key="usuario.lotacao"/>/Usuário: </strong><span id="origem">X</span></p>
 					<p><strong>Para:</strong></p>
-					<p><span id="destino"></span></p>
+					<p><strong><fmt:message key="usuario.lotacao"/>: </strong><span id="destino"></span></p>
 					
 					<p><strong>Quant. de Documentos:</strong> <span id="qtnDocumentosSelecionados"></span></p>
 				</div>
@@ -268,7 +268,17 @@
 			form.submit();
 		}
 
-		
+		if ((document.getElementById("formulario_responsavelSel_descricao").value != "") || 
+				(document.getElementById("formulario_lotaResponsavelSel_descricao").value != "")) {
+			document.getElementById("tipoResponsavel").disabled = true;
+			document.getElementById("lotaResponsavel").disabled = true;
+			document.getElementById("formulario_responsavelSel_sigla").disabled = true;
+			document.getElementById("formulario_lotaResponsavelSel_sigla").disabled = true;
+			document.getElementById("responsavelSelButton").disabled = true;
+			document.getElementById("lotaResponsavelSelButton").disabled = true;
+			document.getElementById("responsavelSelSpan").disabled = true;
+			document.getElementById("lotaResponsavelSelSpan").disabled = true;
+		}
 	
 		function checkUncheckAll(theElement) {
 			let isChecked = theElement.checked;

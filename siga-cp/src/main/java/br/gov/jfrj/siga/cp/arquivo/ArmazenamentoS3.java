@@ -15,7 +15,7 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 
-public class ArmazenamentoS3 {
+public class ArmazenamentoS3 implements Armazenamento {
 
 	private final static Logger log = Logger.getLogger(ArmazenamentoS3.class);
 
@@ -65,39 +65,42 @@ public class ArmazenamentoS3 {
 		
 	}
 
-	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
+    @Override
+    public void salvar(String caminho, String tipoDeConteudo, byte[] conteudo) {
 		try {
 			client.putObject(
 					PutObjectArgs.builder()
 					.bucket(bucket)
-					.object(cpArquivo.getCaminho())
+					.object(caminho)
 					.stream(new ByteArrayInputStream(conteudo), -1, 10485760L)
-					.contentType(cpArquivo.getConteudoTpArq())
+					.contentType(tipoDeConteudo)
 					.build());
 			
 		} catch (Exception e) {
-			log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
+			log.error(ERRO_GRAVAR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
 		}
 	}
 		
-	public void apagar(CpArquivo cpArquivo) {
+    @Override
+    public void apagar(String caminho) {
 		try {
 			client.removeObject(
-				    RemoveObjectArgs.builder().bucket(bucket).object(cpArquivo.getCaminho()).build());
+				    RemoveObjectArgs.builder().bucket(bucket).object(caminho).build());
 		} catch (Exception e) {
-			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
+			log.error(ERRO_EXCLUIR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
 		}
 	}
 	
-	public byte[] recuperar(CpArquivo cpArquivo) {
-		if(cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
+    @Override
+    public byte[] recuperar(String caminho) {
+		if(caminho == null)
 			return null;
 		try (InputStream stream = client.getObject(
 				  GetObjectArgs.builder()
 				  .bucket(bucket)
-				  .object(cpArquivo.getCaminho())
+				  .object(caminho)
 				  .build())) {
 					BufferedInputStream bis = new BufferedInputStream(stream);
 					ByteArrayOutputStream bao = new ByteArrayOutputStream();
@@ -110,7 +113,7 @@ public class ArmazenamentoS3 {
 					return bao.toByteArray();
 				
 		} catch (Exception e) {
-			log.error(ERRO_RECUPERAR_ARQUIVO, cpArquivo.getIdArq(), e);
+			log.error(ERRO_RECUPERAR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_RECUPERAR_ARQUIVO);
 		}
 	}

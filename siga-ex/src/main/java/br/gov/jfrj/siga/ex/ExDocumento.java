@@ -63,6 +63,7 @@ import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -1419,18 +1420,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public Map<String, String> getForm() {
 		Hashtable<String, String> m = new Hashtable<String, String>();
 		final byte[] form = getConteudoBlobForm();
-		if (form != null) {
-			final String as[] = new String(form).split("&");
-			for (final String s : as) {
-				final String param[] = s.split("=");
-				try {
-					if (param.length == 2)
-						m.put(param[0],
-								URLDecoder.decode(param[1], "iso-8859-1"));
-				} catch (final UnsupportedEncodingException e) {
-				}
-			}
-		}
+		if (form != null)
+		    Utils.mapFromUrlEncodedForm(m, form);
 		return m;
 	}
 

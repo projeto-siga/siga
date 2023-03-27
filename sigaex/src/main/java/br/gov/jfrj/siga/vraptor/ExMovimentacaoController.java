@@ -330,7 +330,8 @@ public class ExMovimentacaoController extends ExController {
 				
 				if (mob.isVolumeEncerrado()) {
 					//DpPessoa cadastrante, DpLotacao lotaCadastrante,		ExDocumento doc
-					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaTitular(), mob.doc());
+					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaCadastrante(), 
+							getTitular(), getLotaTitular(), mob.doc());
 					
 					mob = mob.doc().getUltimoVolume();
 				}
@@ -2214,6 +2215,12 @@ public class ExMovimentacaoController extends ExController {
 			grupo = dao.consultar(grupoSel.getId(), CpGrupoDeEmail.class, false);
 		}
 
+		if (titularSel.getSigla() == null) { 
+			if (!getCadastrante().equivale(getTitular())) 
+				mov.setTitular(getTitular());
+			if (!getLotaCadastrante().equivale(getLotaTitular())) 
+				mov.setLotaTitular(getLotaTitular());
+		}
 
 		Ex.getInstance()
 				.getBL()
@@ -5563,7 +5570,8 @@ public class ExMovimentacaoController extends ExController {
 		try {	
 			Ex.getInstance()
 					.getBL()
-					.registrarCiencia(getCadastrante(), getLotaTitular(),
+					.registrarCiencia(getCadastrante(), getLotaCadastrante(), 
+							getTitular(), getLotaTitular(),
 							documentoBuilder.getMob(), mov.getDtMov(),
 							mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
 							mov.getDescrMov());

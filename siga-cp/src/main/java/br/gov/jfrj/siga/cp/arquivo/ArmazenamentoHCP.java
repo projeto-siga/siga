@@ -28,7 +28,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 
-public class ArmazenamentoHCP {
+public class ArmazenamentoHCP implements Armazenamento {
 
 	private final static Logger log = Logger.getLogger(ArmazenamentoHCP.class);
 
@@ -76,9 +76,10 @@ public class ArmazenamentoHCP {
 	    client = HttpClients.custom().setSSLSocketFactory(csf).build();
 	}
 
-	public void salvar(CpArquivo cpArquivo, byte[] conteudo) {
+    @Override
+    public void salvar(String caminho, String tipoDeConteudo, byte[] conteudo) {
 		try {
-			HttpPut request = new HttpPut(uriRest+cpArquivo.getCaminho());
+			HttpPut request = new HttpPut(uriRest+caminho);
 			request.addHeader(AUTHORIZATION, token);
 			ByteArrayEntity requestEntity = new ByteArrayEntity(conteudo);
 			request.setEntity(requestEntity);
@@ -87,30 +88,32 @@ public class ArmazenamentoHCP {
 					throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 			}
 		} catch (Exception e) {
-			log.error(ERRO_GRAVAR_ARQUIVO, cpArquivo.getIdArq(), e);
+			log.error(ERRO_GRAVAR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
 		}
 	}
 		
-	public void apagar(CpArquivo cpArquivo) {
+    @Override
+    public void apagar(String caminho) {
 		try {
-			HttpDelete request = new HttpDelete(uriRest+cpArquivo.getCaminho());
+			HttpDelete request = new HttpDelete(uriRest+caminho);
 			request.addHeader(AUTHORIZATION, token);
 			try(CloseableHttpResponse response = client.execute(request)){
 				if(!(response.getStatusLine().getStatusCode()==200 || response.getStatusLine().getStatusCode()==404))
 					throw new Exception(response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
 			}
 		} catch (Exception e) {
-			log.error(ERRO_EXCLUIR_ARQUIVO, cpArquivo.getIdArq(), e);
+			log.error(ERRO_EXCLUIR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
 		}
 	}
 	
-	public byte[] recuperar(CpArquivo cpArquivo) {
-		if(cpArquivo.getIdArq() == null || cpArquivo.getCaminho() == null)
+    @Override
+    public byte[] recuperar(String caminho) {
+		if(caminho == null)
 			return null;
 		try {
-			HttpGet httpGet = new HttpGet(uriRest+cpArquivo.getCaminho());
+			HttpGet httpGet = new HttpGet(uriRest+caminho);
 			httpGet.addHeader(AUTHORIZATION, token);
 			try(CloseableHttpResponse response = client.execute(httpGet)){
 				if (response.getStatusLine().getStatusCode() == 200 ) {
@@ -127,7 +130,7 @@ public class ArmazenamentoHCP {
 				}
 			}
 		} catch (Exception e) {
-			log.error(ERRO_RECUPERAR_ARQUIVO, cpArquivo.getIdArq(), e);
+			log.error(ERRO_RECUPERAR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_RECUPERAR_ARQUIVO);
 		}
 	}

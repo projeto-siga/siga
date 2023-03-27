@@ -208,12 +208,19 @@ public interface ISigaApiV1 {
 
     public static class EntidadeItem implements ISwaggerModel {
         public String modulo;
+        public String tipo;
         public String refId;
         public String movId;
-        public String tipo;
         public String codigo;
         public String sigla;
         public String descricao;
+    }
+
+    public static class ArmazenamentoRef implements ISwaggerModel {
+        public String id;
+    }
+
+    public static class ArmazenamentoRefId implements ISwaggerModel {
     }
 
     public interface IAutenticarPost extends ISwaggerMethod {
@@ -589,6 +596,48 @@ public interface ISigaApiV1 {
 
         public static class Response implements ISwaggerResponse {
             public String status;
+        }
+
+        public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+    }
+
+    public interface IArmazenamentoEstatisticasGet extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String origem;
+            public String destino;
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public Double quantidade;
+            public Double memoria;
+        }
+
+        public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+    }
+
+    public interface IArmazenamentoReferenciasGet extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String origem;
+            public String destino;
+            public Double quantidade;
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public List<ArmazenamentoRef> list = new ArrayList<>();
+        }
+
+        public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;
+    }
+
+    public interface IArmazenamentoIdMigrarPost extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String id;
+            public String origem;
+            public String destino;
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public Double memoria;
         }
 
         public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception;

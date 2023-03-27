@@ -72,6 +72,11 @@
   <function-signature>java.lang.Object resource(java.lang.String)</function-signature>
  </function>
  <function>
+  <name>sigaVersion</name>
+  <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
+  <function-signature>java.lang.String sigaVersion()</function-signature>
+ </function>
+ <function>
   <name>formatarDDMMYY</name>
   <function-class>br.gov.jfrj.siga.jee.SigaLibsEL</function-class>
   <function-signature>java.lang.String formatarDDMMYY(java.util.Date)</function-signature>

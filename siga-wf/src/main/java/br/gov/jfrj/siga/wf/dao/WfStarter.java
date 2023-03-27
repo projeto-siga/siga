@@ -12,8 +12,8 @@ import javax.persistence.Persistence;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
-import br.gov.jfrj.siga.cp.converter.ITipoDeConfiguracaoConverter;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
@@ -29,6 +29,11 @@ public class WfStarter {
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO SIGAWF.WAR");
+		
+		SigaVersion.loadSigaVersion();
+		log.info("SIGAWF Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
+		
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		CpTipoDeConfiguracao.mapear(WfTipoDeConfiguracao.values());
 

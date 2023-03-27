@@ -4640,7 +4640,7 @@ public class ExBL extends CpBL {
 		final ExMovimentacao mov;
 		
 		Boolean podeRestringir = Boolean.FALSE;
-		if (Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mobPai)) {
+		if (Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mobPai.getDoc().getMobilGeral())) {
 			podeRestringir = Boolean.TRUE;
 		}
 
@@ -4689,7 +4689,7 @@ public class ExBL extends CpBL {
 				removerPendenciaDeDevolucao(movs, mob);
 				
 			if (podeRestringir) {
-				herdaRestricaoAcessoDocumentoPai(mob, mobPai, cadastrante, titular, dtMov);
+				herdaRestricaoAcessoDocumentoPai(mob.getDoc().getMobilGeral(), mobPai.getDoc().getMobilGeral(), cadastrante, titular, dtMov);
 			}
 			
 			concluirAlteracaoComRecalculoAcesso(mov);

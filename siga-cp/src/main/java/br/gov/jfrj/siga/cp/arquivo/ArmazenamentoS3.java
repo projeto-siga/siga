@@ -66,7 +66,7 @@ public class ArmazenamentoS3 implements Armazenamento {
 	}
 
     @Override
-    public void salvar(Long id, String caminho, String tipoDeConteudo, byte[] conteudo) {
+    public void salvar(String caminho, String tipoDeConteudo, byte[] conteudo) {
 		try {
 			client.putObject(
 					PutObjectArgs.builder()
@@ -77,25 +77,25 @@ public class ArmazenamentoS3 implements Armazenamento {
 					.build());
 			
 		} catch (Exception e) {
-			log.error(ERRO_GRAVAR_ARQUIVO, id, e);
+			log.error(ERRO_GRAVAR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO);
 		}
 	}
 		
     @Override
-    public void apagar(Long id, String caminho) {
+    public void apagar(String caminho) {
 		try {
 			client.removeObject(
 				    RemoveObjectArgs.builder().bucket(bucket).object(caminho).build());
 		} catch (Exception e) {
-			log.error(ERRO_EXCLUIR_ARQUIVO, id, e);
+			log.error(ERRO_EXCLUIR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_EXCLUIR_ARQUIVO);
 		}
 	}
 	
     @Override
-    public byte[] recuperar(Long id, String caminho) {
-		if(id == null || caminho == null)
+    public byte[] recuperar(String caminho) {
+		if(caminho == null)
 			return null;
 		try (InputStream stream = client.getObject(
 				  GetObjectArgs.builder()
@@ -113,7 +113,7 @@ public class ArmazenamentoS3 implements Armazenamento {
 					return bao.toByteArray();
 				
 		} catch (Exception e) {
-			log.error(ERRO_RECUPERAR_ARQUIVO, id, e);
+			log.error(ERRO_RECUPERAR_ARQUIVO, caminho, e);
 			throw new AplicacaoException(ERRO_RECUPERAR_ARQUIVO);
 		}
 	}

@@ -29,7 +29,7 @@ public class ArmazenamentoIdMigrarPost implements IArmazenamentoIdMigrarPost {
 
         String caminho = arq.gerarCaminho();
         Armazenamento a = ArmazenamentoFabrica.getInstance(destino);
-        a.salvar(arq.getIdArq(), caminho, arq.getConteudoTpArq(), conteudo);
+        a.salvar(caminho, arq.getConteudoTpArq(), conteudo);
 
         Connection con = getConnection();
         con.setAutoCommit(true);

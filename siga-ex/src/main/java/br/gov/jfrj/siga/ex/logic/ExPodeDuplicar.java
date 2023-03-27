@@ -5,6 +5,7 @@ import com.crivano.jlogic.CompositeExpressionSupport;
 import com.crivano.jlogic.Expression;
 import com.crivano.jlogic.Not;
 
+import br.gov.jfrj.siga.cp.logic.CpELotacaoAtiva;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
@@ -23,10 +24,10 @@ public class ExPodeDuplicar extends CompositeExpressionSupport {
 	}
 
 	/**
-	 * Retorna se é possível duplicar o documento ue contém o móbil mob. Basta não
-	 * estar eliminado o documento e não haver configuração impeditiva, o que
+	 * Retorna se é possível duplicar o documento que contém o móbil mob. Basta não estar eliminado
+	 * o documento, não ser de uma unidade inativa e não haver configuração impeditiva, o que
 	 * significa que, tendo acesso a um documento não eliminado, qualquer usuário
-	 * pode duplicá-lo.
+	 * pode duplicá-lo desde que este não seja de uma unidade inativa.
 	 * 
 	 * @param titular
 	 * @param lotaTitular
@@ -41,6 +42,8 @@ public class ExPodeDuplicar extends CompositeExpressionSupport {
 				Not.of(new ExEstaEliminado(mob)),
 
 				new ExPodeAcessarDocumento(mob, titular, lotaTitular),
+				
+				new CpELotacaoAtiva(lotaTitular),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 						.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.DUPLICAR));

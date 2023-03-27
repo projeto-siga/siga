@@ -88,11 +88,35 @@
 				<configuration>
 					<archive>
 			            <manifestEntries>
+			            	<Project-Version>${project.version}</Project-Version>
+			            	
 							<Build-Time>${maven.build.timestamp}</Build-Time>
-							<Build-Label>${project.version}</Build-Label>
+							<Build-Label>${project.version}-${git.commit.id.abbrev}</Build-Label>
+							
+							<SCM-CommitId>${git.commit.id}</SCM-CommitId>
+							<SCM-Tag>${git.tags}</SCM-Tag>
+							<SCM-Branch>${git.branch}</SCM-Branch>
+							<SCM-CommitIdAbbrev>${git.commit.id.abbrev}</SCM-CommitIdAbbrev>
 			            </manifestEntries>
 			        </archive>
 				</configuration>
+			</plugin>
+			<plugin>
+			    <groupId>pl.project13.maven</groupId>
+			    <artifactId>git-commit-id-plugin</artifactId>
+			    <version>4.9.10</version>
+			    <executions>
+			        <execution>
+			            <id>get-the-git-infos</id>
+			            <goals>
+			                <goal>revision</goal>
+			            </goals>
+			            <phase>package</phase>
+			        </execution>
+			    </executions>
+			    <configuration>
+			        <!-- ... -->
+			    </configuration>
 			</plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>

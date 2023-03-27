@@ -6,7 +6,7 @@
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
 	<!-- Registro Centralizado da Versão do SIGA -->
-	<version>11.0.3-SNAPSHOT</version>
+	<version>11.1.0-SNAPSHOT</version>
 
 	<modules>		
 		<module>siga-base</module>
@@ -33,10 +33,19 @@
 		<module>siga-integracao</module>
 		<module>siga-arq</module>
 	</modules>
+	
+	
+	<scm>
+        <url>https://github.com/projeto-siga/siga.git</url> 
+        <connection>scm:git:https://github.com/projeto-siga/siga.git</connection> 
+        <developerConnection>scm:git:https://github.com/projeto-siga/siga.git</developerConnection> 
+        <tag>HEAD</tag>
+    </scm>
 
 
 	<properties>
- 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
+ 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 		<java.version>8</java.version> 
 		<hibernate.version>5.3.7.Final</hibernate.version>
 		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
 		<spring.version>4.0.6.RELEASE</spring.version>

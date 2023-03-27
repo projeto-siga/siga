@@ -193,7 +193,7 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-cp</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>bcmail-jdk14</artifactId>
@@ -208,17 +208,17 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-base</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ws</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-rel</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
@@ -261,68 +261,68 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-sinc-lib</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<!-- Biblioteca configurada como modulo do Jboss -->
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ext</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module-old</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-jwt</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ldap</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ex</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>sigaex</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-wf</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>sigawf</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-oidc</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-integracao</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-arq</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>

@@ -160,9 +160,11 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                 }
                 break;
             default:
-                this.caminho = gerarCaminho();
-                Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
-                a.salvar(getCaminho(), getConteudoTpArq(), this.getConteudo());
+                if (this.tamanho > 0L) {
+                    this.caminho = gerarCaminho();
+                    Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+                    a.salvar(getCaminho(), getConteudoTpArq(), this.getConteudo());
+                }
                 break;
         }
         long fim = System.currentTimeMillis();

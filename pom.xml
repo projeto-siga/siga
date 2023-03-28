@@ -6,7 +6,7 @@
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
 	<!-- Registro Centralizado da Versão do SIGA -->
-	<version>11.1.0-SNAPSHOT</version>
+	<version>11.1-SNAPSHOT</version>
 
 	<modules>		
 		<module>siga-base</module>
@@ -94,10 +94,12 @@
 							<Build-Time>${maven.build.timestamp}</Build-Time>
 							<Build-Label>${project.version}-${git.commit.id.abbrev}</Build-Label>
 							
+							<SCM-RemoteURL>${git.remote.origin.url}</SCM-RemoteURL>
 							<SCM-CommitId>${git.commit.id}</SCM-CommitId>
 							<SCM-Tag>${git.tags}</SCM-Tag>
 							<SCM-Branch>${git.branch}</SCM-Branch>
 							<SCM-CommitIdAbbrev>${git.commit.id.abbrev}</SCM-CommitIdAbbrev>
+							
 			            </manifestEntries>
 			        </archive>
 				</configuration>

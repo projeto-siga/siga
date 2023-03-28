@@ -51,6 +51,7 @@
 		<spring.version>4.0.6.RELEASE</spring.version>
 		<log4j.version>2.18.0</log4j.version>
 		<maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
+		<generateBackupPoms>false</generateBackupPoms>
 	</properties>
 
 	<build>

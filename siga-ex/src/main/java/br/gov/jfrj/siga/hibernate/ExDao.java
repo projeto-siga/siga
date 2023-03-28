@@ -1492,10 +1492,14 @@ public class ExDao extends CpDao {
 	}
 	
 	public List<ExDocumento> consultarParaTransferirEntreArquivos(Long idPessoa, Long idLotacao, Integer offset, Integer tamPagina, List<Long> marcadores) {
+		List<Long> marcadoresCancelado = new ArrayList<Long>();
+		marcadoresCancelado.add(CpMarcadorEnum.SEM_EFEITO.getId());
+		
 		final Query query = em().createNamedQuery("consultarDocumentosArquivados");
 					query.setParameter("pessoaIni", idPessoa != null ? idPessoa : 0);
 					query.setParameter("lotaIni", idLotacao != null ? idLotacao : 0);
 					query.setParameter("enumList", marcadores);
+					query.setParameter("enumListCancelados", marcadoresCancelado);
 
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);

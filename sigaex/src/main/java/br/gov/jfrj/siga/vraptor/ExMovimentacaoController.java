@@ -6,6 +6,7 @@ import static br.gov.jfrj.siga.ex.ExMobil.removerIndicativoDeMovimentacaoComOrig
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -1297,9 +1298,13 @@ public class ExMovimentacaoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 		final ExDocumento doc = buscarDocumento(builder);
 		
-		ExMobil mobPai = doc.getUltimoVolume().getProcessoJuntadoPai();
-
-		
+		try {
+			Ex.getInstance().getBL().desfazerJuntadaProcProc(doc, getCadastrante(), getLotaCadastrante());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 
 	@Get("app/expediente/mov/apensar")

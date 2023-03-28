@@ -171,7 +171,13 @@ public class ArmazenamentoS3REST implements Armazenamento {
     public byte[] recuperar(String caminho) {
         if (caminho == null)
             return null;
-        return fetch("GET", bucket, caminho, null, null);
+        try {
+            return fetch("GET", bucket, caminho, null, null);
+        } catch (Exception e) {
+            log.error(ERRO_RECUPERAR_ARQUIVO, caminho, e);
+            throw new AplicacaoException(ERRO_GRAVAR_ARQUIVO, 0, e);
+        }
+
     }
 
 }

@@ -166,7 +166,7 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 	 */
 	@Override
 	public boolean equals(final Object rhs) {
-		if ((rhs == null) || !(rhs instanceof CpOrgao))
+		if ((rhs == null) || !(rhs instanceof CpOrgaoUsuario))
 			return false;
 		final CpOrgaoUsuario that = (CpOrgaoUsuario) rhs;
 

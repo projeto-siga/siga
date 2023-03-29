@@ -1528,10 +1528,10 @@ CKEDITOR.replace( '${var}',
         [#local v = ""/]
     [/#if]
     [#if v != ""]
-        [#local v = exbl.canonicalizarHtml(v, false, true, false, true)/]
-    [#else]
-        [#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
-    [/#if]
+       [#local v = exbl.canonicalizarHtml(v, false, true, false, true) aux=v /]        
+	[#else]
+        [#local aux="" v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
+	[/#if]
 
         <div>
         [#if titulo != ""]
@@ -1545,7 +1545,11 @@ CKEDITOR.replace( '${var}',
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
 		[#else]
-		<textarea id="${var}" name="${var}" class="editor"> ${default!}${v?html}</textarea>
+			[#if aux != ""]            
+      		 	<textarea id="${var}" name="${var}" class="editor">${v?html}</textarea>
+			[#else]
+       			<textarea id="${var}" name="${var}" class="editor"> ${default!}</textarea>
+			[/#if]
 		[/#if]
             <table class="entrevista" width="100%">
                 <tr>

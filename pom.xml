@@ -6,7 +6,7 @@
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
 	<!-- Registro Centralizado da Versão do SIGA -->
-	<version>11.1-SNAPSHOT</version>
+	<version>11.1.0-SNAPSHOT</version>
 
 	<modules>		
 		<module>siga-base</module>

@@ -2225,12 +2225,15 @@ public class CpDao extends ModeloDao {
 		final Query qry = em().createNamedQuery("consultarCpModeloGeral");
 		qry.setHint("org.hibernate.cacheable", true);
 		qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
-
-		final List<CpModelo> lista = qry.getResultList();
-		if (lista.size() > 0)
-			return lista.get(0);
-		else
-			return null;
+		try {
+		    final List<CpModelo> lista = qry.getResultList();
+    		if (lista.size() > 0)
+    			return lista.get(0);
+    		else
+    			return null;
+		} catch (Exception ex) {
+		    throw new RuntimeException("Erro ao consultar modelo GERAL", ex);
+		}
 	}
 
 	public CpModelo consultaCpModeloPorNome(String nome) {

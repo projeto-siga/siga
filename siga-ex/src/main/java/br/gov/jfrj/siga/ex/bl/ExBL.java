@@ -4643,11 +4643,6 @@ public class ExBL extends CpBL {
 
 		final ExMovimentacao mov;
 		
-		Boolean podeRestringir = Boolean.FALSE;
-		if (Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mob)) {
-			podeRestringir = Boolean.TRUE;
-		}
-
 		try {
 			iniciarAlteracao();
 
@@ -4691,9 +4686,9 @@ public class ExBL extends CpBL {
 			Set<ExMovimentacao> movs = mob.getTransferenciasPendentesDeDevolucao(mob);
 			if (!movs.isEmpty())
 				removerPendenciaDeDevolucao(movs, mob);
-				
-			if (podeRestringir) {
-				herdaRestricaoAcessoDocumentoPai(mob, mobPai, cadastrante, titular, dtMov);
+			
+			if (mobPai.isAcessoRestrito() && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mobPai.getDoc().getMobilGeral())) {
+				herdaRestricaoAcessoDocumentoPai(mob.getDoc().getMobilGeral(), mobPai.getDoc().getMobilGeral(), cadastrante, titular, dtMov);
 			}
 			
 			concluirAlteracaoComRecalculoAcesso(mov);

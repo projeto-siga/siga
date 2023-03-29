@@ -122,18 +122,20 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 
 		String template = (String) attrs.get("template");
 		
-		// Se o template não contem entrevista nem documento, processar com JModel
-        if (template.contains("[@markdown")) {
-            Matcher matcher = patternFreemarkerMarkdown.matcher(template);
-            StringBuffer sb = new StringBuffer();
-            while (matcher.find()) {
-                String rep = matcher.group("markdown");
-                matcher.appendReplacement(sb, com.crivano.jmodel.Template.markdownToFreemarker(null, rep, null));
-            }
-            matcher.appendTail(sb);
-            template = sb.toString();
-        } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
-		    template = com.crivano.jmodel.Template.markdownToFreemarker(null, template, null);
+		if (template != null) {
+    		// Se o template não contem entrevista nem documento, processar com JModel
+            if (template.contains("[@markdown")) {
+                Matcher matcher = patternFreemarkerMarkdown.matcher(template);
+                StringBuffer sb = new StringBuffer();
+                while (matcher.find()) {
+                    String rep = matcher.group("markdown");
+                    matcher.appendReplacement(sb, com.crivano.jmodel.Template.markdownToFreemarker(null, rep, null));
+                }
+                matcher.appendTail(sb);
+                template = sb.toString();
+            } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
+    		    template = com.crivano.jmodel.Template.markdownToFreemarker(null, template, null);
+    		}
 		}
 
 		String templateFinal = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";

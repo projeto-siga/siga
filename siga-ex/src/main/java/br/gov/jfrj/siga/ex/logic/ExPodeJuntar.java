@@ -59,7 +59,11 @@ public class ExPodeJuntar extends CompositeExpressionSupport {
 
 		return And.of(
 
-				Or.of(new ExEMobilVia(mob), new ExEMobilGeralDeProcesso(mob)),
+				Or.of(
+						new ExEMobilVia(mob), 
+						And.of(
+								new ExEMobilGeralDeProcesso(mob),
+								Not.of(new ExTemJuntadosProcComProc(mob.getDoc())))),
 
 				Not.of(new ExEstaPendenteDeAnexacao(mob)),
 

@@ -3313,4 +3313,13 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return listaOrdenada;
 	}
+	
+	public boolean temJuntadosProcComProc() {
+		for (ExMobil m : this.getExMobilSet()) {
+			if(m.possuiProcessoJuntado()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

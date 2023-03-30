@@ -1174,7 +1174,7 @@ public class ExMobilController extends
 	
 	@Get("/app/expediente/mov/listar_docs_para_receber_em_lote")
 	public void listarDocsParaReceberEmLote(final String atendente, int offset) {
-			
+		
 		int tamanho = dao().consultarQuantidadeDocsParaReceberEmLote(getTitular(), atendente);
 		List<ExMobil> itens = dao().consultarParaReceberEmLote(getTitular() ,atendente , offset, MAX_ITENS_PAGINA_CINQUENTA);
 		final List<ExMobil> l = new ArrayList<ExMobil>();

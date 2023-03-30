@@ -2941,7 +2941,7 @@ public class ExDao extends CpDao {
 				"consultarParaReceberEmLote");
 		query.setParameter("lotaIni", titular.getLotacao().getLotacaoInicial().getId());
 		query.setParameter("pessoaIni", titular.getIdPessoaIni());
-		query.setParameter("recPessoa", antendente.equals("pessoa") ? true : false);
+		query.setParameter("opcaoPessoa", antendente.equals("pessoa") ? 1 : null);
 		query.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId());
 		query.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
 		query.setFirstResult(offset);
@@ -2952,7 +2952,7 @@ public class ExDao extends CpDao {
 	
 	public int consultarQuantidadeDocsParaReceberEmLote(DpPessoa titular, String antendente) {
 		return ( (Long) em().createNamedQuery("consultarQuantidadeParaReceberEmLote", Long.class)
-				.setParameter("recPessoa", antendente.equals("pessoa") ? true : false)
+				.setParameter("opcaoPessoa", antendente.equals("pessoa") ? 1 : null)
 				.setParameter("pessoaIni", titular.getIdPessoaIni())
 				.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId())
 				.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId())

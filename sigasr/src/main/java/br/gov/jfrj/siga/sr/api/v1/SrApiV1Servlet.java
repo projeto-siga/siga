@@ -5,27 +5,28 @@ import java.net.URLConnection;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
 import com.crivano.swaggerservlet.SwaggerContext;
-import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
+import br.gov.jfrj.siga.context.SigaSwaggerServlet;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
-public class SrApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
+public class SrApiV1Servlet extends SigaSwaggerServlet implements IPropertyProvider {
 	private static final long serialVersionUID = 1756711359239182178L;
 
 //	public static ExecutorService executor = null;
 
 	@Override
-	public void initialize(ServletConfig config) throws ServletException {
-		setAPI(ISrApiV1.class);
+	public void initialize(ServletConfig config) throws Exception {
+        super.initialize(config);
+
+        setAPI(ISrApiV1.class);
 
 		setActionPackage("br.gov.jfrj.siga.sr.api.v1");
 

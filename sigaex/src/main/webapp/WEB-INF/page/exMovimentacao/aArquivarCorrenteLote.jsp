@@ -59,7 +59,7 @@
         <siga:siga-modal id="confirmacaoModal" exibirRodape="false"
                          tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
             <div class="modal-body">
-                Os documentos selecionados ser&atilde;o arquivados. Deseja, confirmar?
+                Deseja arquivar em lote os documentos selecionados?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
@@ -108,7 +108,7 @@
         function validar() {
             let checkedElements = $("input[name='documentosSelecionados']:checked");
             if (checkedElements.length == 0) {
-                sigaModal.alerta('Selecione pelo menos um documento');
+                sigaModal.alerta('Selecione pelo menos um documento para arquivar.');
             } else {
                 sigaModal.abrir('confirmacaoModal');
             }

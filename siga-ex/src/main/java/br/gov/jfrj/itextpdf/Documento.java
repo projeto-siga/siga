@@ -611,6 +611,9 @@ public class Documento {
 				an.evict();
 				an = null;
 				
+				writer.freeReader(reader);
+				reader.close();
+				
 				if(!Prop.getBool("garbage.tarefa") && Prop.get("arquivo.tamanho.gc") != null) {
 					garbage += ab.length;
 					if (garbage > Long.valueOf(Prop.get("arquivo.tamanho.gc"))) {
@@ -619,6 +622,7 @@ public class Documento {
 					}
 				}
 			}
+			
 			if (!master.isEmpty())
 				writer.setOutlines(master);
 

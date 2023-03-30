@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class SiafDoc {
 	private String unidadeGestora;
+	private String unidadeGestoraMUDAPAH2;
 	private String gestao;
 	private String objetoProcesso;
 	private String tipoLicitacao;
@@ -54,6 +55,7 @@ public class SiafDoc {
 			this.codUnico = get("codigoUnico") + get("digitoVerificadorCodigoUnico") ;
 			this.unidadeGestora = "00000" + get("unidadeGestora").split(" ")[0];
 			this.unidadeGestora = this.unidadeGestora.substring(this.unidadeGestora.length() - 6, this.unidadeGestora.length());
+			this.unidadeGestoraMUDAPAH2 = get("mudaSN").matches("[1Ss]") ? "#" + this.unidadeGestora : "";
 			this.gestao = get("compraGestao");
 			this.objetoProcesso = StringEscapeUtils.unescapeHtml4(get("objetoProcesso"));
 			this.tipoLicitacao = get("selecioneLicitacao").split("-")[0].trim();
@@ -135,6 +137,10 @@ public class SiafDoc {
 
 	public void setCodSemPapel(String codSemPapel) {
 		this.codSemPapel = codSemPapel;
+	}
+	
+	public String getUnidadeGestoraMUDAPAH2(){
+		return this.unidadeGestoraMUDAPAH2;
 	}
 
 	public String getSiafDoc() {

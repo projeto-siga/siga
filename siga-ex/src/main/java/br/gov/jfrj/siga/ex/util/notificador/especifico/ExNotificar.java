@@ -65,6 +65,8 @@ public class ExNotificar {
 	}
 
 	private void tramitarParaUnidade(ExMovimentacao mov) {
+	    if (mov.getLotaResp() == null)
+	        return;
 		email = new ExEmail();
 		String marcas = marcasDoDocumento(mov.getExDocumento().getExMobilSet());
 		for (DpPessoa pessoa: mov.getLotaResp().getDpPessoaLotadosSet()) {

@@ -378,7 +378,8 @@ public class ExServiceImpl implements ExService {
 				if (cadastranteParser.getLotacao() == null && cadastranteParser.getPessoa() == null)
 					return null;
 				Ex.getInstance().getBL().criarVia(cadastranteParser.getPessoa(),
-						cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa(), mob.doc());
+						cadastranteParser.getLotacaoOuLotacaoPrincipalDaPessoa(),
+						null, null, mob.doc());
 				return mob.doc().getUltimaVia().getSigla();
 			} catch (Exception ex) {
 				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
@@ -815,7 +816,7 @@ public class ExServiceImpl implements ExService {
 				doc = Ex.getInstance().getBL().gravar(cadastrante, cadastrante, lotaCadastrante, doc);
 
 				if (finalizar)
-					Ex.getInstance().getBL().finalizar(cadastrante, lotaCadastrante, doc);
+					Ex.getInstance().getBL().finalizar(cadastrante, lotaCadastrante, null, null, doc);
 
 				return doc.getSigla();
 			} catch (Exception ex) {

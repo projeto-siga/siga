@@ -1492,10 +1492,14 @@ public class ExDao extends CpDao {
 	}
 	
 	public List<ExDocumento> consultarParaTransferirEntreArquivos(Long idPessoa, Long idLotacao, Integer offset, Integer tamPagina, List<Long> marcadores) {
+		List<Long> marcadoresCancelado = new ArrayList<Long>();
+		marcadoresCancelado.add(CpMarcadorEnum.SEM_EFEITO.getId());
+		
 		final Query query = em().createNamedQuery("consultarDocumentosArquivados");
 					query.setParameter("pessoaIni", idPessoa != null ? idPessoa : 0);
 					query.setParameter("lotaIni", idLotacao != null ? idLotacao : 0);
 					query.setParameter("enumList", marcadores);
+					query.setParameter("enumListCancelados", marcadoresCancelado);
 
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
@@ -1528,7 +1532,8 @@ public class ExDao extends CpDao {
 		StringBuilder sb = new StringBuilder("select mob from ExMobil mob join mob.exMarcaSet mar ");
 		sb.append(" where (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) ");
 		sb.append(chkGestorInteressado ? "	and (mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_GESTOR.getId() 
-										+ "or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+										+ " or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+		sb.append(" and mar.cpMarcador.idMarcador <> " + CpMarcadorEnum.SEM_EFEITO.getId());
 		sb.append(" order by mob.idMobil desc ");
 		
 		final Query query = em().createQuery(sb.toString())

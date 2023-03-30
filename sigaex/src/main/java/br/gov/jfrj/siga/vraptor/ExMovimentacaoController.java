@@ -331,7 +331,8 @@ public class ExMovimentacaoController extends ExController {
 				
 				if (mob.isVolumeEncerrado()) {
 					//DpPessoa cadastrante, DpLotacao lotaCadastrante,		ExDocumento doc
-					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaTitular(), mob.doc());
+					Ex.getInstance().getBL().criarVolume(getCadastrante(), getLotaCadastrante(), 
+							getTitular(), getLotaTitular(), mob.doc());
 					
 					mob = mob.doc().getUltimoVolume();
 				}
@@ -2235,6 +2236,12 @@ public class ExMovimentacaoController extends ExController {
 			grupo = dao.consultar(grupoSel.getId(), CpGrupoDeEmail.class, false);
 		}
 
+		if (titularSel.getSigla() == null) { 
+			if (!getCadastrante().equivale(getTitular())) 
+				mov.setTitular(getTitular());
+			if (!getLotaCadastrante().equivale(getLotaTitular())) 
+				mov.setLotaTitular(getLotaTitular());
+		}
 
 		Ex.getInstance()
 				.getBL()
@@ -3895,15 +3902,38 @@ public class ExMovimentacaoController extends ExController {
 					.cancelar(getCadastrante(), getLotaTitular(), mob, mov,
 							movForm.getDtMov(), movForm.getSubscritor(),
 							movForm.getTitular(), descrMov);
+			
+			if(mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.VINCULACAO_PAPEL && mob.getDoc().getMobilGeral().isAcessoRestrito()) {
+				DpPessoa pessoa = mov.getSubscritor().getPessoaAtual();
+				List<ExMovimentacao> movRestricao = mob.getDoc().getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true);
+				
+				for (ExMovimentacao movRestricaoAcessoDePerfil : movRestricao) {
+					if (movRestricaoAcessoDePerfil.getSubscritor().equivale(pessoa)) {
+						result.include(SigaModal.CONFIRMACAO, 
+								SigaModal
+									.mensagem("Deseja manter usuário na restrição de acesso?")
+									.titulo("Confirmação")
+									.classBotaoDeAcao("btn-danger")
+									.classBotaoDeFechar("btn-success")
+									.descricaoBotaoFechaModalDoRodape("Sim")
+									.descricaoBotaoDeAcao("Não")
+									.linkBotaoDeAcao(String.format("javascript:sigaSpinner.mostrar();location.href='/sigaex/app/expediente/mov/cancelar_restricao_acesso?idMobil=%s&idPessoa=%s'", mob.getDoc().getMobilGeral().getId(), pessoa.getId())));
+					break;
+					}
+				}
+			}
+			
+			if(urlRedirecionar == null || "".equals(urlRedirecionar)) {
+				ExDocumentoController.redirecionarParaExibir(result, sigla);
+			} else {
+				result.redirectTo(urlRedirecionar);
+			}
+			
 		} catch (final Exception e) {
 			throw e;
 		}
 		
-		if(urlRedirecionar == null || "".equals(urlRedirecionar)) {
-			ExDocumentoController.redirecionarParaExibir(result, sigla);
-		} else {
-			result.redirectTo(urlRedirecionar);
-		}
+
 	}
 
 	@Get("app/expediente/mov/retirar_de_edital_eliminacao")
@@ -5584,7 +5614,8 @@ public class ExMovimentacaoController extends ExController {
 		try {	
 			Ex.getInstance()
 					.getBL()
-					.registrarCiencia(getCadastrante(), getLotaTitular(),
+					.registrarCiencia(getCadastrante(), getLotaCadastrante(), 
+							getTitular(), getLotaTitular(),
 							documentoBuilder.getMob(), mov.getDtMov(),
 							mov.getLotaResp(), mov.getResp(), mov.getSubscritor(),
 							mov.getDescrMov());

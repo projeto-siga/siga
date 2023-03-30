@@ -1583,42 +1583,8 @@ public class ExMovimentacaoController extends ExController {
         result.include("dtIni", dtIni);
         result.include("dtFim", dtFim);
     }
-
-	@Transacional
-	@Post("/app/expediente/mov/receber_lote_gravar")
-	public void aReceberLoteGravar(final Integer postback) {
-		this.setPostback(postback);
-
-		final ExMovimentacaoBuilder builder = ExMovimentacaoBuilder
-				.novaInstancia();
-		final ExMovimentacao mov = builder.construir(dao());
-
-		final Pattern p = Pattern.compile("chk_([0-9]+)");
-
-		for (final String s : getPar().keySet()) {
-			if (s.startsWith("chk_") && param(s).equals("true")) {
-				final Matcher m = p.matcher(s);
-				if (!m.find()) {
-					throw new AplicacaoException(
-							"Não foi possível ler a Id do documento e o número da via.");
-				}
-				final ExMobil mob = dao().consultar(Long.valueOf(m.group(1)),
-						ExMobil.class, false);
-
-				if (Ex.getInstance().getComp()
-						.pode(ExPodeReceber.class, getTitular(), getLotaTitular(), mob)) {
-					Ex.getInstance()
-							.getBL()
-							.receber(getCadastrante(), getTitular(), getLotaTitular(), mob,
-									mov.getDtMov());
-				}
-			}
-		}
-
-		result.redirectTo("/app/expediente/mov/receber_lote");
-	}
 	
-	@Transacional
+	@Transacional 
 	@Post("/app/expediente/mov/concluir_gravar")
 	public void aConcluirGravar(final String sigla) {
 

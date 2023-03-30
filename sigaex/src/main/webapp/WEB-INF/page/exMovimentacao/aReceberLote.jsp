@@ -18,7 +18,7 @@
                 <h5>Receber em Lote</h5>
             </div>
             <div class="card-body">
-                <form name="frm" id="frm" class="form" method="POST" action="listarDocsRecebidos" theme="simple">
+                <form name="frm" id="frm" class="form" method="POST" action="listar_docs_recebidos" theme="simple">
                 
                     <input type="hidden" name="siglasDocumentosRecebidosEmLote" value=""/>
                     <input type="hidden" name="errosDocumentosNaoRecebidosJson" value=""/>

@@ -2935,5 +2935,28 @@ public class ExDao extends CpDao {
 
 		return ((BigDecimal) query.getSingleResult()).intValue();
 	}
+	
+	public List<ExMobil> consultarParaReceberEmLote(DpPessoa titular, String antendente, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery(
+				"consultarParaReceberEmLote");
+		query.setParameter("lotaIni", titular.getLotacao().getLotacaoInicial().getId());
+		query.setParameter("pessoaIni", titular.getIdPessoaIni());
+		query.setParameter("recPessoa", antendente.equals("pessoa") ? true : false);
+		query.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId());
+		query.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
+		query.setFirstResult(offset);
+		query.setMaxResults(tamPagina);
+		
+		return query.getResultList();
+	}
+	
+	public int consultarQuantidadeDocsParaReceberEmLote(DpPessoa titular, String antendente) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaReceberEmLote", Long.class)
+				.setParameter("recPessoa", antendente.equals("pessoa") ? true : false)
+				.setParameter("pessoaIni", titular.getIdPessoaIni())
+				.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId())
+				.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId())
+				.setParameter("lotaIni", titular.getLotacao().getLotacaoInicial().getId()).getSingleResult() ).intValue();
+	}
 
 }

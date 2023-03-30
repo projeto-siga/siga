@@ -78,6 +78,7 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao; 
@@ -97,6 +98,7 @@ public class ExMobilController extends
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE = 200;
+	private static final int MAX_ITENS_PAGINA_CINQUENTA = 50;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1169,4 +1171,34 @@ public class ExMobilController extends
 
 		}
 	}
+	
+	@Get("/app/expediente/mov/listar_docs_para_receber_em_lote")
+	public void listarDocsParaReceberEmLote(final String atendente, int offset) {
+			
+		int tamanho = dao().consultarQuantidadeDocsParaReceberEmLote(getTitular(), atendente);
+		List<ExMobil> itens = dao().consultarParaReceberEmLote(getTitular() ,atendente , offset, MAX_ITENS_PAGINA_CINQUENTA);
+		final List<ExMobil> l = new ArrayList<ExMobil>();
+			
+		for (ExMobil m : itens) {
+			if (!m.isApensado()
+					&& Ex.getInstance()
+							.getComp()
+							.pode(ExPodeAcessarDocumento.class, getTitular(),
+									getLotaTitular(), m)) {
+				l.add(m);
+			}
+		}
+		
+		getP().setOffset(offset);
+		setItemPagina(MAX_ITENS_PAGINA_CINQUENTA);
+		setItens(l);
+		setTamanho(tamanho);
+
+		result.include("itens", this.getItens());
+		result.include("itemPagina", this.getItemPagina());
+		result.include("tamanho", this.getTamanho()); 
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		
+	}
+	
 }

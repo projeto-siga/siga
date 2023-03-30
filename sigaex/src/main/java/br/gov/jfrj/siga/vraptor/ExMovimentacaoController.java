@@ -1520,24 +1520,69 @@ public class ExMovimentacaoController extends ExController {
 	// Nato: Temos que substituir por uma tela que mostre os itens marcados como
 	// "em transito"
 	@Get("/app/expediente/mov/receber_lote")
-	public void aReceberLote() {
-		final List<ExMobil> provItens = dao().consultarParaReceberEmLote(
-				getLotaTitular());
-
-		final List<ExMobil> itens = new ArrayList<ExMobil>();
-
-		for (ExMobil m : provItens) {
-			if (!m.isApensado()
-					&& Ex.getInstance()
-							.getComp()
-							.pode(ExPodeAcessarDocumento.class, getTitular(),
-									getLotaTitular(), m)) {
-				itens.add(m);
-			}
-		}
-
-		result.include("itens", itens);
+	public void aReceberLote() { 
+		
 	}
+	
+	@Post("/app/expediente/mov/listar_docs_recebidos")
+    public void listarDocsRecebidos(final String siglasDocumentosRecebidosEmLote,
+                                       final String errosDocumentosNaoRecebidosJson) throws Exception {
+		
+        String[] arraySiglasDocumentosParaReceber = { };
+        if (siglasDocumentosRecebidosEmLote != null) {
+            arraySiglasDocumentosParaReceber = siglasDocumentosRecebidosEmLote.split(",");
+        }
+
+        final List<ExMobil> mobisDocumentosRecebidos = new ArrayList<ExMobil>();
+
+        BuscaDocumentoBuilder documentoBuilder;
+
+        for(String sigla : arraySiglasDocumentosParaReceber){
+            documentoBuilder = BuscaDocumentoBuilder.novaInstancia().setSigla(sigla);
+            buscarDocumento(documentoBuilder, false);
+            ExMobil mob = documentoBuilder.getMob();
+            mobisDocumentosRecebidos.add(mob);
+        }
+
+        List<ExMovimentacao> movsDocumentosNaoRecebidos =
+                montarListaResultadosMovimentacaoEmLote(null, null, null, 
+                        errosDocumentosNaoRecebidosJson);
+
+        if (( mobisDocumentosRecebidos == null
+                || mobisDocumentosRecebidos.isEmpty() )
+                && (movsDocumentosNaoRecebidos == null
+                || movsDocumentosNaoRecebidos.isEmpty())) {
+
+            throw new AplicacaoException("Não foi possível receber em lote");
+        }
+
+        ExMobil mobIni = mobisDocumentosRecebidos.isEmpty() ? null : mobisDocumentosRecebidos.get(0);
+        ExMovimentacao movIni = null;
+        if (mobIni != null) {
+            movIni = mobIni.getUltimaMovimentacao();
+        } else {
+            movIni = movsDocumentosNaoRecebidos.get(0);
+        }
+
+        ExMobil mobFim = mobisDocumentosRecebidos.isEmpty() ? null :
+                mobisDocumentosRecebidos.get(mobisDocumentosRecebidos.size() - 1);
+        ExMovimentacao movFim = null;
+        if (mobFim != null) {
+            movFim = mobFim.getUltimaMovimentacao();
+        }
+
+        result.include("mobisDocumentosRecebidos", mobisDocumentosRecebidos);
+        result.include("movsDocumentosNaoRecebidos", movsDocumentosNaoRecebidos);
+
+        result.include("lotaTitular", getLotaTitular());
+        result.include("movIni", movIni);
+
+        String dtIni = movIni != null ? movIni.getDtRegMovDDMMYYYYHHMMSS() : null;
+        String dtFim = movFim != null ? movFim.getDtRegMovDDMMYYYYHHMMSS() : null;
+
+        result.include("dtIni", dtIni);
+        result.include("dtFim", dtFim);
+    }
 
 	@Transacional
 	@Post("/app/expediente/mov/receber_lote_gravar")

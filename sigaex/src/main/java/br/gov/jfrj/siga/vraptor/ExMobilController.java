@@ -80,6 +80,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao; 
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -1197,10 +1198,9 @@ public class ExMobilController extends
 			
 		if (Objects.nonNull(tamanho)) {
 			for (ExMobil m : itens) {
-				if (!m.isApensado()
-						&& Ex.getInstance()
+				if (Ex.getInstance()
 								.getComp()
-								.pode(ExPodeAcessarDocumento.class, getTitular(),
+								.pode(ExPodeReceber.class, getTitular(),
 										getLotaTitular(), m)) {
 					l.add(m);
 				}

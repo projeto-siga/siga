@@ -85,14 +85,19 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		// Somente os "a receber"
-		@NamedQuery(name = "consultarParaReceberEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
-				+ "                and (mar.cpMarcador.idMarcador=3"
-				+ "                or mar.cpMarcador.idMarcador=14)"
-				+ "                ) order by mar.dtIniMarca desc"),
+		@NamedQuery(name = "consultarQuantidadeParaReceberEmLote", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+				+ "                and (mar.cpMarcador.idMarcador = :aReceber or mar.cpMarcador.idMarcador = :caixaDeEntrada))"),
+		// Somente os mobis possíveis para o recebimento em lote
+		@NamedQuery(name = "consultarParaReceberEmLote",  query = "select mob from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
+						+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+						+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+						+ "                and (mar.cpMarcador.idMarcador = :aReceber or mar.cpMarcador.idMarcador = :caixaDeEntrada)"
+						
+						+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os mobis possíveis para o arquivamento em lote
-		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", 
+		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote",  
 				query = "select mob from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
 				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
 				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"

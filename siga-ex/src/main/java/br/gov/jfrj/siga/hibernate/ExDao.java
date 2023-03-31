@@ -2935,5 +2935,26 @@ public class ExDao extends CpDao {
 
 		return ((BigDecimal) query.getSingleResult()).intValue();
 	}
+	
+	public List<ExMobil> consultarParaReceberEmLote(Long idPessoaIni, Long idLotacaoIni, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery(
+				"consultarParaReceberEmLote");
+		query.setParameter("idLotacaoIni", idLotacaoIni);
+		query.setParameter("idPessoaIni",idPessoaIni);
+		query.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId());
+		query.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
+		query.setFirstResult(offset);
+		query.setMaxResults(tamPagina);
+		
+		return query.getResultList();
+	}
+	
+	public int consultarQuantidadeDocsParaReceberEmLote(Long idPessoaIni, Long idLotacaoIni) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaReceberEmLote", Long.class)
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId())
+				.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId())
+				.setParameter("idLotacaoIni", idLotacaoIni).getSingleResult() ).intValue();
+	}
 
 }

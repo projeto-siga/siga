@@ -1175,6 +1175,8 @@ public class ExMobilController extends
 	@Get("/app/expediente/mov/listar_docs_para_receber_em_lote")
 	public void listarDocsParaReceberEmLote(final String atendente, int offset) {
 		
+		assertAcesso("RECLOTE:Receber em Lote");
+		
 		Long pessoaId = null;
 		Long lotacaoId = null;
 		
@@ -1193,13 +1195,15 @@ public class ExMobilController extends
 		List<ExMobil> itens = dao().consultarParaReceberEmLote(pessoaId, lotacaoId, offset, MAX_ITENS_PAGINA_CINQUENTA);
 		final List<ExMobil> l = new ArrayList<ExMobil>();
 			
-		for (ExMobil m : itens) {
-			if (!m.isApensado()
-					&& Ex.getInstance()
-							.getComp()
-							.pode(ExPodeAcessarDocumento.class, getTitular(),
-									getLotaTitular(), m)) {
-				l.add(m);
+		if (Objects.nonNull(tamanho)) {
+			for (ExMobil m : itens) {
+				if (!m.isApensado()
+						&& Ex.getInstance()
+								.getComp()
+								.pode(ExPodeAcessarDocumento.class, getTitular(),
+										getLotaTitular(), m)) {
+					l.add(m);
+				}
 			}
 		}
 		

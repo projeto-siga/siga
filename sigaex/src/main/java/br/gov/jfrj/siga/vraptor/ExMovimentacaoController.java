@@ -1520,8 +1520,8 @@ public class ExMovimentacaoController extends ExController {
 	// Nato: Temos que substituir por uma tela que mostre os itens marcados como
 	// "em transito"
 	@Get("/app/expediente/mov/receber_lote")
-	public void aReceberLote() { 
-		
+	public void aReceberLote() {  
+		assertAcesso("RECLOTE:Receber em Lote");
 	}
 	
 	@Post("/app/expediente/mov/listar_docs_recebidos")

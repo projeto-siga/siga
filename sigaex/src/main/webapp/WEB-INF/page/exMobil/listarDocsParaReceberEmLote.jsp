@@ -10,7 +10,7 @@
 <siga:pagina desabilitarbusca="sim" desabilitarmenu="sim" iframe="sim">
 
 	<c:if test="${not empty itens}">  
-        <p>Atenção: No Recebimento em Lote – Permitido até 50 documentos por operação.</p>
+        <p>Aten&ccedil;&atilde;o: No Recebimento em Lote – Permitido até 50 documentos por opera&ccedil;&atilde;o.</p>
         
             <table border="0" class="table table-hover">
                 <thead class="${thead_color} align-middle text-center">

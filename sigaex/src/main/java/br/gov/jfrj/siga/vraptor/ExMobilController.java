@@ -1175,8 +1175,22 @@ public class ExMobilController extends
 	@Get("/app/expediente/mov/listar_docs_para_receber_em_lote")
 	public void listarDocsParaReceberEmLote(final String atendente, int offset) {
 		
-		int tamanho = dao().consultarQuantidadeDocsParaReceberEmLote(getTitular(), atendente);
-		List<ExMobil> itens = dao().consultarParaReceberEmLote(getTitular() ,atendente , offset, MAX_ITENS_PAGINA_CINQUENTA);
+		Long pessoaId = null;
+		Long lotacaoId = null;
+		
+		switch (atendente) {
+			case "pessoa":
+				pessoaId = getTitular().getPessoaInicial().getId();
+				break;
+			case "lotacao":
+				lotacaoId = getLotaTitular().getLotacaoInicial().getId();
+				break;
+			default:
+				throw new AplicacaoException("Atendente deve ser informado");
+		}
+		
+		int tamanho = dao().consultarQuantidadeDocsParaReceberEmLote(pessoaId, lotacaoId);
+		List<ExMobil> itens = dao().consultarParaReceberEmLote(pessoaId, lotacaoId, offset, MAX_ITENS_PAGINA_CINQUENTA);
 		final List<ExMobil> l = new ArrayList<ExMobil>();
 			
 		for (ExMobil m : itens) {

@@ -2936,12 +2936,11 @@ public class ExDao extends CpDao {
 		return ((BigDecimal) query.getSingleResult()).intValue();
 	}
 	
-	public List<ExMobil> consultarParaReceberEmLote(DpPessoa titular, String antendente, Integer offset, Integer tamPagina) {
+	public List<ExMobil> consultarParaReceberEmLote(Long idPessoaIni, Long idLotacaoIni, Integer offset, Integer tamPagina) {
 		final Query query = em().createNamedQuery(
 				"consultarParaReceberEmLote");
-		query.setParameter("lotaIni", titular.getLotacao().getLotacaoInicial().getId());
-		query.setParameter("pessoaIni", titular.getIdPessoaIni());
-		query.setParameter("opcaoPessoa", antendente.equals("pessoa") ? 1 : null);
+		query.setParameter("idLotacaoIni", idLotacaoIni);
+		query.setParameter("idPessoaIni",idPessoaIni);
 		query.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId());
 		query.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
 		query.setFirstResult(offset);
@@ -2950,13 +2949,12 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 	
-	public int consultarQuantidadeDocsParaReceberEmLote(DpPessoa titular, String antendente) {
+	public int consultarQuantidadeDocsParaReceberEmLote(Long idPessoaIni, Long idLotacaoIni) {
 		return ( (Long) em().createNamedQuery("consultarQuantidadeParaReceberEmLote", Long.class)
-				.setParameter("opcaoPessoa", antendente.equals("pessoa") ? 1 : null)
-				.setParameter("pessoaIni", titular.getIdPessoaIni())
+				.setParameter("idPessoaIni", idPessoaIni)
 				.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId())
 				.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId())
-				.setParameter("lotaIni", titular.getLotacao().getLotacaoInicial().getId()).getSingleResult() ).intValue();
+				.setParameter("idLotacaoIni", idLotacaoIni).getSingleResult() ).intValue();
 	}
 
 }

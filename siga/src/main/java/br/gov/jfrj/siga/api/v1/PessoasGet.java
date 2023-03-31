@@ -37,9 +37,7 @@ public class PessoasGet implements IPessoasGet {
 			throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 		}
 		
-		Boolean exibirDadosSensiveis = Boolean.valueOf(Cp.getInstance().getConf().
-				podeUtilizarServicoPorConfiguracao(ctx.getTitular(), ctx.getTitular().getLotacao(), 
-						"SIGA:Sistema Integrado de Gestão Administrativa;WS_REST: Acesso aos webservices REST;DADOS_SENSIVEIS: Acesso a dados pessoais sensíveis"));
+		Boolean exibirDadosSensiveis = exibirDadosSensíveis(ctx);
 
 
 		if (req.cpf != null && !req.cpf.isEmpty()) {
@@ -64,6 +62,12 @@ public class PessoasGet implements IPessoasGet {
 
 		throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
 	}
+
+    public static Boolean exibirDadosSensíveis(SigaApiV1Context ctx) throws Exception {
+        return Boolean.valueOf(Cp.getInstance().getConf().
+				podeUtilizarServicoPorConfiguracao(ctx.getTitular(), ctx.getTitular().getLotacao(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;WS_REST: Acesso aos webservices REST;DADOS_SENSIVEIS: Acesso a dados pessoais sensíveis"));
+    }
 
 	private List<Pessoa> pesquisarPessoaAtualPorIdIni(Request req, Response resp, Boolean exibirDadosSensiveis) throws SwaggerException {
 		try {
@@ -141,7 +145,7 @@ public class PessoasGet implements IPessoasGet {
 		return pessoaToResultadoPesquisa(p, exibirDadosSensiveis);
 	}
 
-	private Pessoa pessoaToResultadoPesquisa(DpPessoa p, Boolean exibirDadosSensiveis) {
+	public static Pessoa pessoaToResultadoPesquisa(DpPessoa p, Boolean exibirDadosSensiveis) {
 		Pessoa pessoa = new Pessoa();
 		Orgao orgao = new Orgao();
 		Lotacao lotacao = new Lotacao();
@@ -171,6 +175,7 @@ public class PessoasGet implements IPessoasGet {
 		lotacao.idLotacaoIni = l.getIdLotacaoIni().toString();
 		lotacao.nome = l.getNomeLotacao();
 		lotacao.sigla = l.getSigla();
+		lotacao.orgao = orgao;
 		
 		// Localidade
 		CpLocalidade loc = l.getLocalidade();

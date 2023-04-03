@@ -42,23 +42,29 @@ public class ArmazenamentoS3REST implements Armazenamento {
     private static final String ERRO_BUCKET_INEXISTENTE_S3 = "Bucket %s não existe";
 
     // private CloseableHttpClient client;
-    private String uri = Prop.get("/siga.armazenamento.arquivo.url");
-    private String usuario = Prop.get("/siga.armazenamento.arquivo.usuario");
-    private String senha = Prop.get("/siga.armazenamento.arquivo.senha");
-    private String bucket = Prop.get("/siga.armazenamento.arquivo.bucket");
-    private String awsRegion = "br";
-    private String awsService = "s3";
+    private String uri;
+    private String usuario;
+    private String senha;
+    private String bucket;
+    private String awsRegion;
+    private String awsService;
 
     private ArmazenamentoS3REST() {
+        uri = Prop.get("/siga.armazenamento.arquivo.url");
+        usuario = Prop.get("/siga.armazenamento.arquivo.usuario");
+        senha = Prop.get("/siga.armazenamento.arquivo.senha");
+        bucket = Prop.get("/siga.armazenamento.arquivo.bucket");
+        awsRegion = "br";
+        awsService = "s3";
     }
 
     public static ArmazenamentoS3REST getInstance() {
         try {
-//            if (instance == null) {
-//                synchronized (ArmazenamentoS3.class) {
-            instance = new ArmazenamentoS3REST();
-//                }
-//            }
+            if (instance == null) {
+                synchronized (ArmazenamentoS3.class) {
+                    instance = new ArmazenamentoS3REST();
+                }
+            }
             return instance;
         } catch (Exception e) {
             log.error(ERRO_AO_INSTANCIAR_ARMAZENAMENTO_S3, e);

@@ -9,62 +9,31 @@ import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Uf;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class LotacoesSiglaGet implements ILotacoesSiglaGet {
-	@Override
-	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
-		if (StringUtils.isEmpty(req.sigla))
-			throw new SwaggerException("O parâmetro sigla é obrigatório.", 400, null, req, resp, null);
+    @Override
+    public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
+        if (StringUtils.isEmpty(req.sigla))
+            throw new SwaggerException("O parâmetro sigla é obrigatório.", 400, null, req, resp, null);
 
-		final DpLotacao flt = new DpLotacao();
-		flt.setSigla(req.sigla.toUpperCase());
-		DpLotacao lota = CpDao.getInstance().consultarPorSigla(flt);
-		if (lota == null)
-			throw new SwaggerException("Nenhuma lotação foi encontrada contendo a sigla informada.", 404, null, req,
-					resp, null);
+        final DpLotacao flt = new DpLotacao();
+        flt.setSigla(req.sigla.toUpperCase());
+        DpLotacao lota = CpDao.getInstance().consultarPorSigla(flt);
+        if (lota == null)
+            throw new SwaggerException("Nenhuma lotação foi encontrada contendo a sigla informada.", 404, null, req,
+                    resp, null);
 
-		resp.lotacao = lotacaoToResultadoPesquisa(lota);
-	}
+        resp.lotacao = LotacoesGet.lotacaoToResultadoPesquisa(lota);
+        LotacoesGet.incluirSuperioresEInferiores(resp.lotacao, lota);
+    }
 
-	private Lotacao lotacaoToResultadoPesquisa(DpLotacao lota) {
-		Lotacao rp = new Lotacao();
-		Orgao orgao = new Orgao();
-		Localidade localidade = new Localidade();
-		
-		rp.siglaLotacao = lota.getSigla();
-		rp.idLotacao = lota.getId().toString();
-		rp.idLotacaoIni = lota.getIdLotacaoIni().toString();
-		rp.nome = lota.getNomeLotacao();
-		rp.sigla = lota.getSiglaCompleta();
-		
-		// Localidade
-		CpLocalidade loc = lota.getLocalidade();
-		if (loc != null) {
-			localidade.idLocalidade = loc.getId().toString();
-			localidade.nome = loc.getNmLocalidade();
-			Uf uf = new Uf();
-			uf.idUf = loc.getUF().getIdUF().toString();
-			uf.nomeUf = loc.getUF().getNmUF();
-			localidade.uf = uf;
-			rp.localidade = localidade;
-		}
-		
-		// Orgao Pessoa
-		CpOrgaoUsuario o = lota.getOrgaoUsuario();
-		orgao.idOrgao = o.getId().toString();
-		orgao.nome = o.getNmOrgaoAI();
-		orgao.sigla = o.getSigla();
-
-		rp.orgao = orgao;
-		return rp;
-	}
-
-	@Override
-	public String getContext() {
-		return "selecionar lotações";
-	}
+    @Override
+    public String getContext() {
+        return "selecionar lotações";
+    }
 }

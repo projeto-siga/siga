@@ -2065,8 +2065,7 @@ public class ExRelatorioController extends ExController {
 	
 	@Post
 	@Path("app/expediente/rel/exportarDocsArquivadosTransferidoCsv")
-	public Download exportarDocsArquivadosTransferidoCsv(Long idOrgaoUsu, final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, 
-			final DpLotacaoSelecao lotacaoDestinatarioSel) throws UnsupportedEncodingException {
+	public Download exportarDocsArquivadosTransferidoCsv(Long idOrgaoUsu, final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel) throws UnsupportedEncodingException {
 
 		super.assertAcesso(ExMovimentacaoController.ACESSO_FORM_TRANSF_ARQ);
 		
@@ -2079,26 +2078,21 @@ public class ExRelatorioController extends ExController {
 			throw new AplicacaoException("Necessário informar um Usuário/" + SigaMessages.getMessage("usuario.lotacao") + " de ORIGEM.");
 		}
 		
-		if (lotacaoDestinatarioSel.getId() == null) {
-			throw new AplicacaoException("Necessário informar uma " + SigaMessages.getMessage("usuario.lotacao") + " de DESTINO.");
-		}
-		
 		DpPessoa pessoa = new DpPessoa();
 		DpLotacao lotacao = new DpLotacao();
-		DpLotacao lotacaoDestino = new DpLotacao();
+		
 		if(responsavelSel.getId() != null) {
 			pessoa = CpDao.getInstance().consultar(responsavelSel.getId(), DpPessoa.class, false).getPessoaAtual();
 		} else if (lotaResponsavelSel.getId() != null) {
 			lotacao = CpDao.getInstance().consultar(lotaResponsavelSel.getId(), DpLotacao.class, false).getLotacaoAtual();
 		}
 		
-		lotacaoDestino = CpDao.getInstance().consultar(lotacaoDestinatarioSel.getId(), DpLotacao.class, false).getLotacaoAtual();
-		List<Object[]> listDocsArquivadosJaTransferidos = dao().consultarDocsArquivadosJaTransferidos(pessoa.getIdInicial(), lotacao.getIdInicial(), lotacaoDestino.getIdInicial(), marcadores);
+		List<Object[]> listDocsArquivadosJaTransferidos = dao().consultarDocsArquivadosJaTransferidos(pessoa.getId(), lotacao.getId(), marcadores);
 		
 		if (listDocsArquivadosJaTransferidos.isEmpty()) {
 			result.include("msgCabecClass", "alert-warning");
-    		result.include("mensagemCabec", "Não foram encontrados resultados para essa busca");
-    		result.redirectTo(ExMovimentacaoController.class).aTransferirDocArquivadoLote(0, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+    		result.include("mensagemCabec", "Não foi possível gerar o arquivo CSV.");
+    		result.redirectTo(ExMovimentacaoController.class).aTransferirDocArquivadoLote(0, responsavelSel, lotaResponsavelSel, null, 
     				0L, 0, null, 0);
 		} else {
 			InputStream inputStream = null;

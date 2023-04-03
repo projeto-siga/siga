@@ -1322,6 +1322,15 @@ definitions:
         $ref: "#/definitions/Localidade"
       orgao:
         $ref: "#/definitions/Orgao"
+      superiores:
+        type: array
+        items:
+          $ref: "#/definitions/Lotacao"
+      inferiores:
+        type: array
+        items:
+          $ref: "#/definitions/Lotacao"
+        
 
   LotacaoAtual:
     type: object

@@ -1142,7 +1142,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		try {
 			return getCpArquivo().getConteudo();
 		} catch (Exception e) {
-			throw new AplicacaoException(e.getMessage());
+			throw new AplicacaoException("Erro obtendo conteúdo de documento", 0, e);
 		}
 	}
 

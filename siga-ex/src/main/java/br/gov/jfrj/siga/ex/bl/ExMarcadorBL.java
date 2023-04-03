@@ -613,7 +613,10 @@ public class ExMarcadorBL {
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
 							: CpMarcadorEnum.EM_TRANSITO.getId(),
-					tramite.getDtIniMov(), null, tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
+					tramite.getDtIniMov(), null, 
+					(tramite.getTitular() != null? tramite.getTitular() : tramite.getCadastrante()),
+					(tramite.getLotaTitular() != null ? tramite.getLotaTitular() : tramite.getLotaCadastrante()), 
+					null);
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
 							: CpMarcadorEnum.A_RECEBER.getId(),

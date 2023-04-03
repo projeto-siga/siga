@@ -58,7 +58,7 @@ public class LotacoesGet implements ILotacoesGet {
 
 		List<DpLotacao> l;
 		l = CpDao.getInstance().consultarLotacaoPorOrgao(org);
-		return l.stream().map(this::lotacaoToResultadoPesquisa).collect(Collectors.toList());
+		return l.stream().map(LotacoesGet::lotacaoToResultadoPesquisa).collect(Collectors.toList());
 	}
 
 	private List<Lotacao> pesquisarPorTexto(Request req, Response resp) {
@@ -66,7 +66,7 @@ public class LotacoesGet implements ILotacoesGet {
 		flt.setNome(Texto.removeAcentoMaiusculas(req.texto));
 		List<DpLotacao> l;
 		l = CpDao.getInstance().consultarPorFiltro(flt);
-		return l.stream().map(this::lotacaoToResultadoPesquisa).collect(Collectors.toList());
+		return l.stream().map(LotacoesGet::lotacaoToResultadoPesquisa).collect(Collectors.toList());
 	}
 
 	private List<Lotacao> pesquisarLotacaoAtualPorIdIni(Request req, Response resp) throws SwaggerException {
@@ -83,38 +83,49 @@ public class LotacoesGet implements ILotacoesGet {
 		}
 	}
 
-	private Lotacao lotacaoToResultadoPesquisa(DpLotacao lota) {
-		Lotacao rp = new Lotacao();
-		Orgao orgao = new Orgao();
-		Localidade localidade = new Localidade();
+    public static Lotacao lotacaoToResultadoPesquisa(DpLotacao lota) {
+        Lotacao rp = new Lotacao();
+        Orgao orgao = new Orgao();
+        Localidade localidade = new Localidade();
 
-		rp.siglaLotacao = lota.getSigla();
-		rp.idLotacao = lota.getId().toString();
-		rp.idLotacaoIni = lota.getIdLotacaoIni().toString();
-		rp.nome = lota.getNomeLotacao();
-		rp.sigla = lota.getSiglaCompleta();
-		
-		// Localidade
-		CpLocalidade loc = lota.getLocalidade();
-		if (loc != null) {
-			localidade.idLocalidade = loc.getId().toString();
-			localidade.nome = loc.getNmLocalidade();
-			Uf uf = new Uf();
-			uf.idUf = loc.getUF().getIdUF().toString();
-			uf.nomeUf = loc.getUF().getNmUF();
-			localidade.uf = uf;
-			rp.localidade = localidade;
-		}
-		
-		// Orgao Pessoa
-		CpOrgaoUsuario o = lota.getOrgaoUsuario();
-		orgao.idOrgao = o.getId().toString();
-		orgao.nome = o.getNmOrgaoAI();
-		orgao.sigla = o.getSigla();
+        rp.siglaLotacao = lota.getSigla();
+        rp.idLotacao = lota.getId().toString();
+        rp.idLotacaoIni = lota.getIdLotacaoIni().toString();
+        rp.nome = lota.getNomeLotacao();
+        rp.sigla = lota.getSiglaCompleta();
+        
+        // Localidade
+        CpLocalidade loc = lota.getLocalidade();
+        if (loc != null) {
+            localidade.idLocalidade = loc.getId().toString();
+            localidade.nome = loc.getNmLocalidade();
+            Uf uf = new Uf();
+            uf.idUf = loc.getUF().getIdUF().toString();
+            uf.nomeUf = loc.getUF().getNmUF();
+            localidade.uf = uf;
+            rp.localidade = localidade;
+        }
+        
+        // Orgao Pessoa
+        CpOrgaoUsuario o = lota.getOrgaoUsuario();
+        orgao.idOrgao = o.getId().toString();
+        orgao.nome = o.getNmOrgaoAI();
+        orgao.sigla = o.getSigla();
 
-		rp.orgao = orgao;
-		return rp;
-	}
+        rp.orgao = orgao;
+        return rp;
+    }
+
+    public static void incluirSuperioresEInferiores(Lotacao rp, DpLotacao lota) {
+        DpLotacao pai = lota.getLotacaoPai();
+        while (pai != null) {
+            rp.superiores.add(lotacaoToResultadoPesquisa(pai.getLotacaoAtual()));
+            pai = pai.getLotacaoPai();
+        }
+        for (DpLotacao l : CpDao.getInstance().listarLotacoesPorPai(lota)) {
+            rp.inferiores.add(lotacaoToResultadoPesquisa(l));
+        }
+    }
 
 	@Override
 	public String getContext() {

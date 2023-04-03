@@ -184,8 +184,10 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	@Override
 	public void close() throws IOException {
 		try {
-		    if (em.getTransaction().isActive())
+		    if (em.getTransaction().isActive()) {
 				em.getTransaction().commit();
+				ContextoPersistencia.runAfterCommit();
+		    }
 		} catch (Exception e) {
 			if (em.getTransaction().isActive())
 				em.getTransaction().rollback();

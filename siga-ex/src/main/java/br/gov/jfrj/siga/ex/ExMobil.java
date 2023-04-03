@@ -1443,13 +1443,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 */
 	public Set<ExMobil> getJuntados(boolean recursivo) {
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
-		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet())
-			if (!mov.isCancelada()) {
-				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-					set.add(mov.getExMobil());
-				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
-					set.remove(mov.getExMobil());
+		
+		if (getExMovimentacaoReferenciaSet() != null ) {
+			for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
+				if (!mov.isCancelada()) {
+					if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+						set.add(mov.getExMobil());
+					if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
+						set.remove(mov.getExMobil());
+				}
 			}
+		}
 		if (!recursivo)
 			return set;
 		else {
@@ -1787,12 +1791,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	public boolean temDocumentosJuntados() {
 		boolean b = false;
-		for (ExMovimentacao movRef : getExMovimentacaoReferenciaSet()) {
-			if (!movRef.isCancelada())
-				if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-					b = true;
-				else if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
-					b = false;
+		if (getExMovimentacaoReferenciaSet() != null ) {
+			for (ExMovimentacao movRef : getExMovimentacaoReferenciaSet()) {
+				if (!movRef.isCancelada())
+					if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+						b = true;
+					else if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
+						b = false;
+			}
 		}
 		return b;
 	}
@@ -2389,17 +2395,18 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	
 	public boolean isModeloIncluso(Long idModelo, Date depoisDaData) {
 		ExModelo mod = ExDao.getInstance().consultar(idModelo, ExModelo.class, false);
-		
-		for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
-			if (m.getExMovimentacaoCanceladora() != null)
-				continue;
-			if (depoisDaData != null && depoisDaData.after(m.getDtIniMov()))
-				continue;
-			if (m.getExTipoMovimentacao() != ExTipoDeMovimentacao.JUNTADA)
-				continue;
-			if (m.getExMobilRef() == this && m.getExMobil() != null 
-					&& m.getExMobil().doc().getExModelo().getIdInicial().equals(mod.getIdInicial()))
-				return true;
+		if (getExMovimentacaoReferenciaSet() != null ) {
+			for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
+				if (m.getExMovimentacaoCanceladora() != null)
+					continue;
+				if (depoisDaData != null && depoisDaData.after(m.getDtIniMov()))
+					continue;
+				if (m.getExTipoMovimentacao() != ExTipoDeMovimentacao.JUNTADA)
+					continue;
+				if (m.getExMobilRef() == this && m.getExMobil() != null 
+						&& m.getExMobil().doc().getExModelo().getIdInicial().equals(mod.getIdInicial()))
+					return true;
+			}
 		}
 		return false;
 	}
@@ -2494,21 +2501,27 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public DpPessoa getTitular() {
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
-			return criacao.getCadastrante();
+			if (criacao.getTitular() != null)
+				return criacao.getTitular();
+			else
+				return criacao.getCadastrante();		
 		else if (doc().getCadastrante() != null)
 			return doc().getCadastrante();
 		else
 		    return doc().getSubscritor();
 	}
-	
+
 	public DpLotacao getLotaTitular() {
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
-			return criacao.getLotaCadastrante();
+			if (criacao.getLotaTitular() != null)
+				return criacao.getLotaTitular();
+			else
+				return criacao.getLotaCadastrante();
 		else if (doc().getLotaCadastrante() != null)
 			return doc().getLotaCadastrante();
 		else
-		    return doc().getLotaSubscritor();
+		    return doc().getLotaSubscritor();		
 	}
 	
 	public boolean isEmTramiteParalelo() {

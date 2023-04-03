@@ -199,8 +199,8 @@ public class Prop {
 		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 		
 		/* Indica onde está armazenado o Manual de Operações* */
-		provider.addPublicProperty("/sigaex.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
-		provider.addPublicProperty("/siga.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
+		provider.addPublicProperty("/sigaex.manual.url", "https://sigadoc.gitbook.io/siga-doc");
+		provider.addPublicProperty("/siga.manual.url", "https://sigadoc.gitbook.io/siga-doc");
 		
 		/* Services
 		 * 

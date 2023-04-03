@@ -2969,6 +2969,10 @@ public class ExMovimentacaoController extends ExController {
 				? dao().consultarParaTransferirEntreArquivos(pessoa.getIdInicial(), lotacao.getIdInicial(), null, null, marcadores)
 				: dao().consultarParaTransferirEntreArquivos(pessoa.getIdInicial(), lotacao.getIdInicial(), offsetTransferencia, MAX_ITENS_PAGINA_DUZENTOS, marcadores);
 		
+		List<Object[]> listDocsArquivadosJaTransferidos = dao().consultarDocsArquivadosJaTransferidos(pessoa.getId(), lotacao.getId(), marcadores);
+		
+		result.include("hasTransferenciaRealizada", listDocsArquivadosJaTransferidos);
+		
 		if (docArquivadosParaTransferir	== null || docArquivadosParaTransferir.isEmpty()) {
 			result.include("msgCabecClass", "alert-danger");
 			result.include("mensagemCabec", "Nenhum documento encontrado para o usuário " + responsavelSel.getDescricao());

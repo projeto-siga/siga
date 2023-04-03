@@ -51,6 +51,8 @@ public interface ISigaApiV1 {
         public String nome;
         public Localidade localidade;
         public Orgao orgao;
+        public List<Lotacao> superiores = new ArrayList<>();
+        public List<Lotacao> inferiores = new ArrayList<>();
     }
 
     public static class LotacaoAtual implements ISwaggerModel {

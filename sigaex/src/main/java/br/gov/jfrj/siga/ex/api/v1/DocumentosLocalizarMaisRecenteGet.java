@@ -66,7 +66,7 @@ public class DocumentosLocalizarMaisRecenteGet implements IDocumentosLocalizarMa
 			throw new SwaggerException("Nenhum documento foi encontrado com os argumentos informados.", 404, null, req,
 					resp, null);
 		ExMobil mob = (ExMobil) l.get(0)[1];
-		SwaggerServlet.getHttpServletResponse().sendRedirect("/sigaex/api/v1/documentos/" + mob.getCodigoCompacto());
+		SwaggerServlet.getHttpServletResponse().sendRedirect("/sigaex/api/v1/documentos/" + mob.getCodigoCompacto() + "?completo=true");
 	}
 
 	@Override

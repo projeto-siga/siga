@@ -18,7 +18,7 @@
 			</div>
 			<div class="card-body">
 				<c:choose>
-					<c:when test="${not empty itens}">
+					<c:when test="${not empty hasTransferenciaRealizada}">
 						<form name="frm" id="listar">
 					</c:when>
 					<c:otherwise>	
@@ -68,6 +68,17 @@
 								</c:if>
 							</div>
 						</div>
+						<c:if test="${(not empty hasTransferenciaRealizada) }">
+							<div class="col-sm-1">
+								<div class="form-group">
+									<label>&nbsp;</label> 
+									<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" 
+										onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/exportarDocsArquivadosTransferidoCsv');">
+										<i class="fa fa-file-csv"></i> Exportar Docs Transf.
+									</button>
+								</div>
+							</div>
+						</c:if>
 					</div>
 					<c:choose>
 						<c:when test="${not empty itens}">
@@ -113,12 +124,6 @@
 								</div>
 								<div class="col-sm-1 ml-3 my-2 my-sm-0">
 		                    		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
-								</div>
-								<div class="col-sm-1">
-									<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" 
-										onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/exportarDocsArquivadosTransferidoCsv');">
-										<i class="fa fa-file-csv"></i> Exportar Docs Transf.
-									</button>
 								</div>
 							</div>
 						</c:when>
@@ -268,8 +273,9 @@
 			form.submit();
 		}
 
-		if ((document.getElementById("formulario_responsavelSel_descricao").value != "") || 
-				(document.getElementById("formulario_lotaResponsavelSel_descricao").value != "")) {
+		if (((document.getElementById("formulario_responsavelSel_descricao").value != "") || 
+				(document.getElementById("formulario_lotaResponsavelSel_descricao").value != "")) &&
+				document.getElementsByName("documentosSelecionados").length != 0) {
 			document.getElementById("tipoResponsavel").disabled = true;
 			document.getElementById("lotaResponsavel").disabled = true;
 			document.getElementById("formulario_responsavelSel_sigla").disabled = true;
@@ -447,11 +453,12 @@
 		}
 		
 		function csv(id, action) {
-			var frm = document.getElementById(id);
+			//var frm = document.getElementById(id);
+			let frm = document.forms['frm'];
 			console.log(frm);
+			frm.action = action;
 			frm.method = "POST";
-			console.log(action);
-			sbmtAction(id, action);
+			frm.submit();
 			
 			$('.mensagem-pesquisa').alert('close');
 			

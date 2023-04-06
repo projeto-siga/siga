@@ -21,7 +21,8 @@ public class SigaVersion {
 		try {
 			SIGA_VERSION = Manifests.read("Build-Label") != null ? Manifests.read("Build-Label")
 					.replace("-SNAPSHOT", "")
-					.replace("-RELEASE", "") : "SNAPSHOT";
+					.replace("-RELEASE", "")
+					.replace("-FINAL", "") : "SNAPSHOT";
 			
 			SIGA_PROJECT_VERSION = Manifests.read("Project-Version") != null ? Manifests.read("Project-Version") : "SNAPSHOT";
 			

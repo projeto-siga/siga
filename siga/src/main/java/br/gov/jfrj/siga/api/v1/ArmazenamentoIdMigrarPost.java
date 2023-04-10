@@ -24,12 +24,17 @@ public class ArmazenamentoIdMigrarPost implements IArmazenamentoIdMigrarPost {
         CpArquivo arq = CpDao.getInstance().consultar(Long.parseLong(req.id), CpArquivo.class, false);
         byte[] conteudo = arq.getConteudo();
         
-        if (conteudo == null)
-            throw new NullPointerException("Conteúdo nulo para arquivo " + req.id);
-
-        String caminho = arq.gerarCaminho();
-        Armazenamento a = ArmazenamentoFabrica.getInstance(destino);
-        a.salvar(caminho, arq.getConteudoTpArq(), conteudo);
+        String caminho = null;
+        
+        if (conteudo != null) {
+            caminho = arq.gerarCaminho();
+            Armazenamento a = ArmazenamentoFabrica.getInstance(destino);
+            a.salvar(caminho, arq.getConteudoTpArq(), conteudo);
+            resp.memoria = (double) conteudo.length;
+        } else {
+            resp.memoria = 0d;
+//            throw new NullPointerException("Conteúdo nulo para arquivo " + req.id);
+        }
 
         Connection con = getConnection();
         con.setAutoCommit(true);
@@ -47,8 +52,6 @@ public class ArmazenamentoIdMigrarPost implements IArmazenamentoIdMigrarPost {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
-        resp.memoria = (double) conteudo.length;
     }
 
     public Connection getConnection() throws Exception {

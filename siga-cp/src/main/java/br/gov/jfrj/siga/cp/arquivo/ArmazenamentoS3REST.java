@@ -72,7 +72,7 @@ public class ArmazenamentoS3REST implements Armazenamento {
         }
     }
 
-    public byte[] fetch(String method, String bucket, String path, String contentType, byte[] body)
+    private byte[] fetch(String method, String bucket, String path, String contentType, byte[] body)
             throws RuntimeException {
         String bucketAndPath = "/" + bucket + "/" + path;
         String url = uri + bucketAndPath;
@@ -155,7 +155,7 @@ public class ArmazenamentoS3REST implements Armazenamento {
 
     @Override
     public void salvar(String caminho, String tipoDeConteudo, byte[] conteudo) {
-        log.info("*** salvar: " + caminho);
+        // log.info("*** salvar: " + caminho);
         try {
             fetch("PUT", bucket, caminho, tipoDeConteudo, conteudo);
         } catch (Exception e) {
@@ -166,7 +166,7 @@ public class ArmazenamentoS3REST implements Armazenamento {
 
     @Override
     public void apagar(String caminho) {
-        log.info("*** apagar: " + caminho);
+        // log.info("*** apagar: " + caminho);
         try {
             fetch("DELETE", bucket, caminho, null, null);
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class ArmazenamentoS3REST implements Armazenamento {
 
     @Override
     public byte[] recuperar(String caminho) {
-        log.info("*** recuperar: " + caminho);
+        // log.info("*** recuperar: " + caminho);
         if (caminho == null)
             return null;
         try {

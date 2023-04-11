@@ -89,6 +89,7 @@
 					<input type="hidden" name="p.offset" value="0" />
 					<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" />
 					<input type="hidden" name="modal" value="${param['modal']}" />
+					<input type="hidden" name="campoOrgaoDesabilitado" value="${param['campoOrgaoDesabilitado']}" />
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
@@ -103,10 +104,10 @@
 							<div class="form-group">
 								<c:choose>
 									<c:when test="${siga_cliente == 'GOVSP'}">
-										<siga:selecao titulo="Unidade" urlAcao="buscar" propriedade="lotacao" modulo="siga" onchange="valida()" onblur="valida()"/>
+										<siga:selecao titulo="Unidade" urlAcao="buscar" propriedade="lotacao" paramList="campoOrgaoDesabilitado=${param['campoOrgaoDesabilitado']}" modulo="siga" onchange="valida()" onblur="valida()"/>
 									</c:when>
 									<c:otherwise>
-										<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" modulo="siga" onchange="valida()" onblur="valida()"/>
+										<siga:selecao titulo="Lotação" urlAcao="buscar" propriedade="lotacao" paramList="campoOrgaoDesabilitado=${param['campoOrgaoDesabilitado']}" modulo="siga" onchange="valida()" onblur="valida()"/>
 									</c:otherwise>	
 								</c:choose>	
 								<c:choose>
@@ -185,7 +186,16 @@
 		</c:if>
 
 	</div>
+<script type="text/javascript" language="Javascript1.1">
 
+	if (${param.campoOrgaoDesabilitado == true}) {
+		$('#idOrgaoUsu').prop('disabled', true);
+	
+		$('#frm').on('submit', function() {
+		    $('#idOrgaoUsu').prop('disabled', false);
+		});
+	}
+</script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	

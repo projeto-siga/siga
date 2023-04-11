@@ -917,7 +917,9 @@ public class WfProcedimento extends Objeto
 	}
 
 	public Date getDtInicioDaTarefa() {
-		Date dt = getHisDtIni();
+		Date dt = getDtEvent();
+		if (dt == null)
+		    return null;
 		for (WfMov mov : getMovimentacoes()) {
 			if (!mov.isAtivo())
 				continue;

@@ -105,7 +105,7 @@
 											<hr class="my-2">
 											<p class="text-left font-weight-bold">Ou acesse com: </p>
 							
-											<a href="/siga/public/app/loginSSO"class="btn btn-lg btn-dark btn-block">${siga_cliente_sso_btn_txt}</a>
+											<a href="/siga/public/app/loginSSO"class="btn btn-dark btn-lg btn-block btn-gov-br">Entrar com&nbsp;<span><b>${siga_cliente_sso_btn_txt}</b></span> </a>
 										</c:when>
 									</c:choose>
 									

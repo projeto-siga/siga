@@ -102,7 +102,7 @@ ${meta}
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">
-		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css?v=1647962650" type="text/css" media="screen, projection">
+		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css?v=1681243175" type="text/css" media="screen, projection">
 		
 		<c:set var="body_color" value="body_color_govsp" scope="request" />
 		
@@ -154,7 +154,7 @@ ${meta}
 	</c:otherwise>
 </c:choose>
 
-<link rel="stylesheet" href="/siga/css/style_siga.css?v=1647962650" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/style_siga.css?v=1681243175" type="text/css" media="screen, projection">
 <link rel="shortcut icon" href="/siga/imagens/${ico_siga}" />
 
 

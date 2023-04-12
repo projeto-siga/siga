@@ -1926,6 +1926,11 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			return false;
 		if (!getMestre().isVolume())
 			return false;
+		// Se forem dois processos incorporados (juntados), assume que sim
+		if (this.getProcessoJuntadoFilho().getIdMobil() != null 
+				&& getMestre().doc().getIdDoc().equals(
+						this.getProcessoJuntadoFilho().doc().getIdDoc())) 
+			return true;
 		if (!getMestre().doc().getIdDoc().equals(doc().getIdDoc()))
 			return false;
 		return true;

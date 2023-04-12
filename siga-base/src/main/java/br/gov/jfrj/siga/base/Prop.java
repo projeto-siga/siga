@@ -128,6 +128,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.integracao.sso", null);
 		provider.addPublicProperty("/siga.integracao.sso.dominio", null);
 		provider.addPublicProperty("/siga.integracao.sso.context", null);
+		provider.addPublicProperty("/siga.integracao.sso.iss", "/");
 		provider.addPublicProperty("/siga.integracao.sso.jwks.uri", "/jwk");
 		provider.addPrivateProperty("/siga.integracao.sso.cliente.id", null);
 		provider.addPrivateProperty("/siga.integracao.sso.client.secret", null);

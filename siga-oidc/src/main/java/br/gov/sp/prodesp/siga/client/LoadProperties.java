@@ -28,7 +28,7 @@ public class LoadProperties {
 	
 	static String sso_context = "/siga.integracao.sso.context"; /* /sts/connect */
 	
-	static final String iss = "";	
+	static final String iss = "/siga.integracao.sso.iss";	
 	static final String jwksUri = "/siga.integracao.sso.jwks.uri"; //"/sts/.well-known/openid-configuration/jwks";
 	static final String authzUri = "/authorize";
 	static final String tokenUri = "/token";
@@ -95,7 +95,7 @@ public class LoadProperties {
 		 */
 		
 		sso_context = Prop.get(sso_context) != null ? Prop.get(sso_context) : "";
-		parametersOIDC.setIss(Prop.get(sso_dominio) + iss);
+		parametersOIDC.setIss(Prop.get(sso_dominio) + Prop.get(iss));
 		parametersOIDC.setJwksUri(Prop.get(sso_dominio)  + Prop.get(jwksUri));		
 		parametersOIDC.setAuthzUri(Prop.get(sso_dominio)  + sso_context + authzUri); 
 		parametersOIDC.setTokenUri(Prop.get(sso_dominio ) + sso_context + tokenUri);

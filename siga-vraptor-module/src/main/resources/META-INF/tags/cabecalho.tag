@@ -99,10 +99,13 @@ ${meta}
 
 <c:set var="siga_version"  scope="request" value="${f:sigaVersion()}" />
 
+<c:set var="siga_cliente_sso" scope="request" value="${f:resource('/siga.integracao.sso')}" />
+<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('/siga.integracao.sso.nome')}" />
+
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">
-		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css?v=1647962650" type="text/css" media="screen, projection">
+		<link rel="stylesheet" href="/siga/css/style_siga_govsp.css?v=1681243175" type="text/css" media="screen, projection">
 		
 		<c:set var="body_color" value="body_color_govsp" scope="request" />
 		
@@ -154,7 +157,7 @@ ${meta}
 	</c:otherwise>
 </c:choose>
 
-<link rel="stylesheet" href="/siga/css/style_siga.css?v=1647962650" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/siga/css/style_siga.css?v=1681243175" type="text/css" media="screen, projection">
 <link rel="shortcut icon" href="/siga/imagens/${ico_siga}" />
 
 
@@ -430,7 +433,17 @@ ${meta}
 									</c:catch> 
 								</span>
 							</div>
-							<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
+							<c:choose>
+								<c:when test="${siga_cliente_sso}">
+									<c:set var="siga_cliente_sso_logout_url" scope="request" value="${f:resource('/siga.integracao.sso.dominio.logout')}?post_logout_redirect_uri=${f:resource('/siga.base.url')}" />
+								</c:when>
+								<c:otherwise>
+									<c:set var="siga_cliente_sso_logout_url" scope="request" value="" />
+								</c:otherwise>
+							</c:choose>
+							
+							<button class="btn btn-danger btn-sm ml-3 mt-1 align-bottom" type="button" onclick="delSession();javascript:location.href='${siga_cliente_sso_logout_url}/siga/public/app/logout'"><i class="fas fa-sign-out-alt"></i> Sair</button>
+							
 							<div class="pt-1">
 								<c:catch>
 									<c:choose>

@@ -4929,6 +4929,7 @@ ${texto}
 
 
 [#macro interview]
+	[#assign _scope='interview']
 	[@entrevista]
 		<div class="row">
 		[#nested/]
@@ -4936,7 +4937,7 @@ ${texto}
 	[/@entrevista]
 [/#macro]
 
-[#macro field var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col=""]
+[#macro field var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true]
 	[#if col?is_number]
 		[#local colr=('col-' + col) /]
 	[#elseif col?is_string]
@@ -4947,9 +4948,12 @@ ${texto}
 		[/#if]
 	[/#if]
 	[@campo var=var+index titulo=title tipo=kind largura=width colunas=columns linhas=lines maxcaracteres=maxchars reler=refresh obrigatorio=required valor=value default=default opcoes=options buscarFechadas=searchClosed atts=atts alterado=altered id=id col=colr /]
+    [#if hint?? && hint != ""]
+        <div class="text-muted small">${hint}</div>
+    [/#if]
 [/#macro]
 
-[#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col=""]${(.vars[var+index])!}[/#macro]
+[#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true][#if document]${(.vars[var+index])!}[/#if][/#macro]
 
 [#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={}]
     [#if !hidden]
@@ -4967,6 +4971,7 @@ ${texto}
 [/#macro]
 
 [#macro document]
+	[#assign _scope='document']
     [#assign document_content][#nested/][/#assign]
 	[@documento formato=(PAGE_SIZE!"A4") orientacao=(PAGE_ORIENTATION!"portrait") margemEsquerda=(MARGIN_LEFT!"3cm") margemDireita=(MARGIN_RIGHT!"2cm") margemSuperior=(MARGIN_TOP!"1cm") margemInferior=(MARGIN_BOTTOM!"2cm")]
 		[#switch STYLE!]
@@ -5003,7 +5008,7 @@ ${texto}
 [/#macro]
 
 [#macro if expr depend='']
-	[#if depend??]
+	[#if depend?? && (_scope!'') == 'interview']
 		[@group depend=depend]
 			[#if expr][#nested][/#if]
 		[/@group]
@@ -5051,5 +5056,15 @@ ${texto}
 		[@assinatura]
 			[#nested]
 		[/@assinatura]
+	[/#if]
+[/#macro]
+
+[#macro print expr depend='']
+	[#if depend?? && depend != '']
+		[@group depend=depend]
+			${expr}
+		[/@group]
+	[#else]
+        ${expr}
 	[/#if]
 [/#macro]

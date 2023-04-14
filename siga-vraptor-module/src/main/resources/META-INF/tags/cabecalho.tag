@@ -393,7 +393,7 @@ ${meta}
 										</c:when>
 									</c:choose>
 								</span>
-								<span >- v.${siga_version}</span>
+								<span >- ${siga_version}</span>
 							</div>
 						</div>
 	

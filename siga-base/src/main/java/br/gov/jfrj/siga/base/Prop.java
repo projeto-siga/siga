@@ -126,11 +126,15 @@ public class Prop {
 
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 		provider.addPublicProperty("/siga.integracao.sso", null);
+		provider.addPublicProperty("/siga.integracao.sso.nome", "SSO");
 		provider.addPublicProperty("/siga.integracao.sso.dominio", null);
+		provider.addPublicProperty("/siga.integracao.sso.dominio.logout", get("/siga.integracao.sso.dominio") + "/logout");
+		provider.addPublicProperty("/siga.integracao.sso.context", null);
+		provider.addPublicProperty("/siga.integracao.sso.iss", "/");
+		provider.addPublicProperty("/siga.integracao.sso.jwks.uri", "/jwk");
 		provider.addPrivateProperty("/siga.integracao.sso.cliente.id", null);
 		provider.addPrivateProperty("/siga.integracao.sso.client.secret", null);
 		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", get("/siga.base.url") + "/siga/callBack");
-		provider.addPublicProperty("/siga.integracao.sso.btn.txt", "Entrar com o SSO");
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");
@@ -199,8 +203,8 @@ public class Prop {
 		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 		
 		/* Indica onde está armazenado o Manual de Operações* */
-		provider.addPublicProperty("/sigaex.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
-		provider.addPublicProperty("/siga.manual.url", "/siga/arquivos/apostila_sigaex.pdf");
+		provider.addPublicProperty("/sigaex.manual.url", "https://sigadoc.gitbook.io/siga-doc");
+		provider.addPublicProperty("/siga.manual.url", "https://sigadoc.gitbook.io/siga-doc");
 		
 		/* Services
 		 * 
@@ -220,6 +224,9 @@ public class Prop {
 
 		// Propriedade que controla o acesso ao método de conferência de assinaturas de Documentos da API REST
 		provider.addPrivateProperty("/sigaex.auditoria.assinaturas.password", null);
+
+		// Propriedade que controla o acesso ao método de númeração genérica da API REST
+		provider.addPrivateProperty("/sigaex.numeracao.generica.password", null);
 
 		/* Services
 		 * 

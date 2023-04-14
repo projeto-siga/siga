@@ -52,18 +52,18 @@
 								<label>&nbsp;</label> 
 								<c:if test="${tipoResponsavel == 1}">
 									 <div id="lotaResponsavel" style="display:">
-										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div> 
-									<div id="responsavel" style="display: none;"> 
-										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+									<div id="responsavel" style="display: none;">
+										<siga:selecao propriedade="responsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div>
 								</c:if>
 								<c:if test="${tipoResponsavel == 2}">
 									<div id="lotaResponsavel" style="display: none">
-										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div> 
-									<div id="responsavel" style="display:"> 
-										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+									<div id="responsavel" style="display:">
+										<siga:selecao propriedade="responsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div>
 								</c:if>
 							</div>

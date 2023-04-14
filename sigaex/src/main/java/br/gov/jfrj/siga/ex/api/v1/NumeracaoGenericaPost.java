@@ -23,22 +23,22 @@ public class NumeracaoGenericaPost implements INumeracaoGenericaPost {
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-        // Verifica o acesso via chave
-        {
-            String auth = SwaggerServlet.getHttpServletRequest().getHeader("Authorization");
-			
-            if (Objects.isNull(auth)) {
-                throw new SwaggerAuthorizationException();
-            }
+		// Verifica o acesso via chave
+		{
+			String auth = SwaggerServlet.getHttpServletRequest().getHeader("Authorization");
+
+			if (Objects.isNull(auth)) {
+				throw new SwaggerAuthorizationException();
+			}
 
 			DpPessoa cadastrante = ctx.getCadastrante();
 			String pwd = Prop.get("/sigaex.numeracao.generica.password");
-			
-            if (Objects.isNull(cadastrante) && !Objects.equals(pwd, auth)) {
-                throw new SwaggerAuthorizationException("Propriedade sigaex.numeracao.generica.password não " + 
-                        "confere com o valor recebido no cabeçalho Authorization");
-            }
-        }
+
+			if (Objects.isNull(cadastrante) && !Objects.equals(pwd, auth)) {
+				throw new SwaggerAuthorizationException("Propriedade sigaex.numeracao.generica.password não " + 
+						"confere com o valor recebido no cabeçalho Authorization");
+			}
+		}
         
 		try {
 			final ExBL exBL = Ex.getInstance().getBL();

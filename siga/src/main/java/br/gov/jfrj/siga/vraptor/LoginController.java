@@ -338,6 +338,9 @@ public class LoginController extends SigaController {
 				}
 				if (!usuarioPermitido)
 					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
+				
+				/******** TRATAR CÓDIGO PARA VERIFICAR O SELO DE CONFIABILIDADE ANTES DE EMITIR TOKEN DO SIGA ********/
+				/* Pode registrar no Token do SIGA o Nível e decidir com regras de Negócio o que pode fazer. Ou usar um PODE ou NAO PODE a partir de tal nível */
 				gravaCookieComToken(cpf, cont);
 			}
 				
@@ -345,7 +348,7 @@ public class LoginController extends SigaController {
 				result.include("loginMensagem", a.getMessage());		
 				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
 			}catch(Exception e){
-				throw new AplicacaoException("Não foi possivel acessar o LoginSP." );
+				throw new AplicacaoException("Não foi possivel acessar o ." + Prop.get("/siga.integracao.sso.nome") );
 		}
 	}
 	

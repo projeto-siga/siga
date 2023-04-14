@@ -26,13 +26,14 @@ public class NumeracaoGenericaPost implements INumeracaoGenericaPost {
         // Verifica o acesso via chave
         {
             String auth = SwaggerServlet.getHttpServletRequest().getHeader("Authorization");
-            String pwd = Prop.get("/sigaex.numeracao.generica.password");
-            DpPessoa cadastrante = ctx.getCadastrante();
-
+			
             if (Objects.isNull(auth)) {
                 throw new SwaggerAuthorizationException();
             }
 
+			DpPessoa cadastrante = ctx.getCadastrante();
+			String pwd = Prop.get("/sigaex.numeracao.generica.password");
+			
             if (Objects.isNull(cadastrante) && !Objects.equals(pwd, auth)) {
                 throw new SwaggerAuthorizationException("Propriedade sigaex.numeracao.generica.password não " + 
                         "confere com o valor recebido no cabeçalho Authorization");

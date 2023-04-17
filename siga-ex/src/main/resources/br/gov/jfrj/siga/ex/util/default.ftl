@@ -4955,6 +4955,8 @@ ${texto}
 
 [#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true][#if document]${(.vars[var+index])!}[/#if][/#macro]
 
+[#macro context var]${var}[/#macro]
+
 [#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={}]
     [#if !hidden]
     	</div>
@@ -5067,4 +5069,10 @@ ${texto}
 	[#else]
         ${expr}
 	[/#if]
+[/#macro]
+
+[#macro description]
+	[@descricao]
+		[#nested]
+	[/@descricao]
 [/#macro]

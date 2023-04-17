@@ -133,7 +133,9 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
                 }
                 matcher.appendTail(sb);
                 template = sb.toString();
-            } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
+            } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && 
+                    !template.contains("[@interview") && !template.contains("[@document") && !template.contains("[@description") && 
+                    !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
     		    template = markdownToFreemarker(template);
     		}
 		}

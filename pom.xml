@@ -5,9 +5,24 @@
 	<groupId>siga</groupId>
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
-	<!-- Registro Centralizado da Versão do SIGA -->
+	
+	<!-- Registro Centralizado da MAJOR.MINOR versão do SIGA -->
 	<version>11.1-SNAPSHOT</version>
 
+	<properties>
+		<!-- Registro Centralizado da PATCH versão do SIGA -->
+		<patch.version>1</patch.version>
+		
+ 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 		<java.version>8</java.version> 
+		<hibernate.version>5.3.7.Final</hibernate.version>
+		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
+		<spring.version>4.0.6.RELEASE</spring.version>
+		<log4j.version>2.18.0</log4j.version>
+		<maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
+		<generateBackupPoms>false</generateBackupPoms>
+	</properties>
+	
 	<modules>		
 		<module>siga-base</module>
 		<module>siga-ws</module>
@@ -41,19 +56,7 @@
         <developerConnection>scm:git:https://github.com/projeto-siga/siga.git</developerConnection> 
         <tag>HEAD</tag>
     </scm>
-
-
-	<properties>
- 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
- 		<java.version>8</java.version> 
-		<hibernate.version>5.3.7.Final</hibernate.version>
-		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
-		<spring.version>4.0.6.RELEASE</spring.version>
-		<log4j.version>2.18.0</log4j.version>
-		<maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
-		<generateBackupPoms>false</generateBackupPoms>
-	</properties>
-
+      
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
@@ -90,16 +93,16 @@
 					<archive>
 			            <manifestEntries>
 			            	<Project-Version>${project.version}</Project-Version>
+			            	<Patch-Version>${patch.version}</Patch-Version>
 			            	
-							<Build-Time>${maven.build.timestamp}</Build-Time>
-							<Build-Label>${git.tags}-${git.commit.id.abbrev}</Build-Label>
-							
-							<SCM-RemoteURL>${git.remote.origin.url}</SCM-RemoteURL>
+			            	<SCM-RemoteURL>${git.remote.origin.url}</SCM-RemoteURL>
 							<SCM-CommitId>${git.commit.id}</SCM-CommitId>
 							<SCM-Tag>${git.tags}</SCM-Tag>
 							<SCM-Branch>${git.branch}</SCM-Branch>
 							<SCM-CommitIdAbbrev>${git.commit.id.abbrev}</SCM-CommitIdAbbrev>
-							
+			            	
+							<Build-Label>${human.version}-${git.commit.id.abbrev}</Build-Label>
+							<Build-Time>${maven.build.timestamp}</Build-Time>
 			            </manifestEntries>
 			        </archive>
 				</configuration>
@@ -134,6 +137,22 @@
 			      <groupId>org.codehaus.mojo</groupId>
 			      <artifactId>build-helper-maven-plugin</artifactId>
 			      <version>3.2.0</version>
+			      
+			      <executions>
+			          <execution>
+			            <id>regex-property</id>
+			            <goals>
+			              <goal>regex-property</goal>
+			            </goals>
+			            <configuration>
+			              <name>human.version</name>
+			              <value>v${project.version}</value>
+			              <regex>-SNAPSHOT</regex>
+			              <replacement>.${patch.version}</replacement>
+			              <failIfNoMatch>false</failIfNoMatch>
+			            </configuration>
+			          </execution>
+			      </executions>
 			  </plugin>
 			  <plugin>
 			      <groupId>org.codehaus.mojo</groupId>

@@ -5,6 +5,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -28,6 +29,12 @@ public class ExStarter {
 	private final static org.jboss.logging.Logger log = Logger.getLogger(ExStarter.class);
 	public static EntityManagerFactory emf;
 
+    @Inject
+    public void setEM(EntityManagerFactory factory) {
+        emf = factory;
+    }
+
+	
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO SIGAEX.WAR");
@@ -35,7 +42,6 @@ public class ExStarter {
 		CpTipoDeConfiguracao.mapear(ExTipoDeConfiguracao.values());
 		CpTipoDeMovimentacao.mapear(ExTipoDeMovimentacao.values());
 
-		emf = Persistence.createEntityManagerFactory("default");
 		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_EX);
 		new MigrationThread().start();
 

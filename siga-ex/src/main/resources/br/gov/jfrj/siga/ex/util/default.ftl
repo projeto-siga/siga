@@ -4775,8 +4775,10 @@ ${texto}
 		    [#elseif kind == "selecao"]
 				${(.vars[var+index])!}
 		    [#elseif kind == "memo"]
-				${(.vars[var+index])!}
-		    [#elseif kind == "data"]
+				[#if .vars[var+index]?has_content]
+    				${(func.formatarMemo(.vars[var+index]))!}
+  				[/#if]
+  		    [#elseif kind == "data"]
 				${(.vars[var+index])!}
 		    [#elseif kind == "hora"]
 				${(.vars[var+index])!}

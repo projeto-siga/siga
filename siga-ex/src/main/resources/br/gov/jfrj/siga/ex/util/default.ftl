@@ -2780,7 +2780,9 @@ Pede deferimento.</span><br/><br/><br/>
 	<p style="font-family: Arial; font-size: 11pt;" align="center">
 	<br>
 	[#list doc.listaAssinantesOrdenados as pessoaVO]
+	    [#if (pessoaVO?counter != 1)]
 		<br/><br/><br/>
+		[/#if]
 		[@inicioSubscritor sigla=doc.codigoCompacto]${(pessoaVO.subscritor.idPessoa)!}[/@inicioSubscritor]
 		[#if (pessoaVO.nmSubscritor)??]
         	${pessoaVO.nmSubscritor}

@@ -47,26 +47,16 @@ import br.gov.jfrj.siga.base.SigaMessages;
 
 public class Stamp {
 	private static final String VALIDAR_ASSINATURA_URL = "/sigaex/app/validar-assinatura?pessoa=";
-	private static float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
+	private static float QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
 	private static float QRCODE_SIZE_IN_CM = 1.5f;
 	private static float BARCODE_HEIGHT_IN_CM = 2.0f;
 	private static int TEXT_TO_CIRCLE_INTERSPACE = 2;
 	private static int TEXT_HEIGHT = 5;
 	private static float SAFETY_MARGIN = 0.1f;
 	private static float CM_UNIT = 72.0f / 2.54f;
-	private static float PAGE_BORDER_IN_CM = 0.8f;
+	private static float PAGE_BORDER_IN_CM = 0.5f;
 	private static float STAMP_BORDER_IN_CM = 0.2f;
 
-	static {
-		if (SigaMessages.isSigaSP()) { // Adequa marcas para SP
-			QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
-			BARCODE_HEIGHT_IN_CM = 2.0f;
-			PAGE_BORDER_IN_CM = 0.5f;
-			STAMP_BORDER_IN_CM = 0.2f;
-		}
-
-	}
-	
 	//Default Com Redimensionamento para folha A4
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,

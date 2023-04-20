@@ -2275,7 +2275,7 @@ public class ExMovimentacaoController extends ExController {
 		if (tpTramite == ExTipoDeMovimentacao.NOTIFICACAO)
 			result.forwardTo(this).aNotificar(sigla, tipoResponsavel, lotaResponsavelSel, responsavelSel, grupoSel);
 		else if (tpTramite == ExTipoDeMovimentacao.TRAMITE_PARALELO)
-			result.forwardTo(this).aTramitarParalelo(sigla, tipoTramite, lotaResponsavelSel, responsavelSel);
+			result.forwardTo(this).aTramitarParalelo(sigla, tipoTramite, lotaResponsavelSel, responsavelSel, grupoSel);
 		else
 			result.forwardTo(this).aTransferir(
 					sigla, idTpDespacho, tipoResponsavel, postback, dtMovString, subscritorSel, 
@@ -2326,7 +2326,7 @@ public class ExMovimentacaoController extends ExController {
 	public void aTramitarParalelo(final String sigla,
 			final Integer tipoResponsavel, 
 			final DpLotacaoSelecao lotaResponsavelSel,
-			final DpPessoaSelecao responsavelSel) {
+			final DpPessoaSelecao responsavelSel, final CpGrupoDeEmailSelecao grupoSel) {
 		
 		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
 				.novaInstancia().setSigla(sigla);
@@ -2335,6 +2335,9 @@ public class ExMovimentacaoController extends ExController {
 				lotaResponsavelSel).or(new DpLotacaoSelecao());
 		final DpPessoaSelecao responsavelSelFinal = Optional.fromNullable(
 				responsavelSel).or(new DpPessoaSelecao());
+		final CpGrupoDeEmailSelecao grupoSelFinal = Optional.fromNullable(
+				grupoSel).or(new CpGrupoDeEmailSelecao());	
+
 		
 
 		Integer tipoResponsavelFinal = Optional.fromNullable(tipoResponsavel)
@@ -2355,6 +2358,7 @@ public class ExMovimentacaoController extends ExController {
 		result.include("tipoResponsavel", tipoResponsavelFinal);
 		result.include("lotaResponsavelSel", lotaResponsavelSelFinal);
 		result.include("responsavelSel", responsavelSelFinal);
+		result.include("grupoSel", grupoSelFinal);
 	}
 
 	@Get

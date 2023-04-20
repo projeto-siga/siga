@@ -67,6 +67,7 @@ import br.gov.jfrj.siga.gc.util.diff_match_patch;
 import br.gov.jfrj.siga.gc.util.diff_match_patch.Diff;
 import br.gov.jfrj.siga.gc.util.diff_match_patch.Operation;
 import br.gov.jfrj.siga.model.DadosRI;
+import br.gov.jfrj.siga.vraptor.RequestParamsPermissiveCheck;
 import br.gov.jfrj.siga.vraptor.SigaIdDescr;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.Transacional;
@@ -1001,6 +1002,7 @@ public class AppController extends GcController {
 	}
 
 	@Transacional
+	@RequestParamsPermissiveCheck
 	public void gravar(GcInformacao informacao, String inftitulo, String conteudo, String classificacao, String origem,
 			GcTipoInformacao tipo, GcAcesso visualizacao, GcAcesso edicao, CpPerfil grupo) throws Exception {
 

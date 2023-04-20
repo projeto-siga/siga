@@ -9005,7 +9005,8 @@ public class ExBL extends CpBL {
 				
 				gravarMovimentacaoCancelamento(movArquivamentoNova, movArquivadaACancelar);
 						
-				concluirAlteracaoDocComRecalculoAcesso(movArquivamentoNova);			
+				concluirAlteracaoParcial(movArquivamentoNova.getExMobil(), true, movArquivamentoNova.getLotaResp(), movArquivadaACancelar.getLotaResp());
+				concluirAlteracao();
 			} else {
 				throw new AplicacaoException("NÃO foi encontrado nenhuma movimentação do tipo (" + 
 						ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE.getDescr() + ", " +

@@ -434,7 +434,7 @@ ${meta}
 								</span>
 							</div>
 							<c:choose>
-								<c:when test="${siga_cliente_sso}">
+								<c:when test="${siga_cliente_sso and f:resource('/siga.integracao.sso.dominio.logout') != ''}">
 									<c:set var="siga_cliente_sso_logout_url" scope="request" value="${f:resource('/siga.integracao.sso.dominio.logout')}?post_logout_redirect_uri=${f:resource('/siga.base.url')}" />
 								</c:when>
 								<c:otherwise>

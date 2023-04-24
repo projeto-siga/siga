@@ -74,7 +74,7 @@
 									<label>&nbsp;</label> 
 									<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" 
 										onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/exportarDocsArquivadosTransferidoCsv');">
-										<i class="fa fa-file-csv"></i> Exportar Docs Transf.
+										<i class="fa fa-file-csv"></i> Exportar Transferência de Docs. Arq.
 									</button>
 								</div>
 							</div>

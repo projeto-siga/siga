@@ -8,9 +8,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -47,6 +51,7 @@ import br.gov.jfrj.siga.base.SigaMessages;
 
 public class Stamp {
 	private static final String VALIDAR_ASSINATURA_URL = "/sigaex/app/validar-assinatura?pessoa=";
+	private static final boolean EXIBICAO_TODAS_ASS_SOMENTE_ULT_PAG_DOC_PDF = Prop.getBool("/siga.exibicao.todas.assinaturas.somente.ultima.pagina.documentos.pdf");
 	private static float QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
 	private static float QRCODE_SIZE_IN_CM = 1.5f;
 	private static float BARCODE_HEIGHT_IN_CM = 2.0f;
@@ -259,10 +264,11 @@ public class Stamp {
 				}
 
 				if (mensagem != null) {
+					String msg = i == n ? mensagem : gerarReducaoAssinaturas(mensagem);
 					PdfPTable table = new PdfPTable(1);
 					table.setTotalWidth(r.getWidth() - image39.getHeight() - (QRCODE_LEFT_MARGIN_IN_CM
 							+ QRCODE_SIZE_IN_CM + 4 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT);
-					PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
+					PdfPCell cell = new PdfPCell(new Paragraph(msg,
 							FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, Color.BLACK)));
 					cell.setBorderWidth(0);
 					table.addCell(cell);
@@ -397,6 +403,30 @@ public class Stamp {
 			byte[] pdf = bo2.toByteArray();
 			return pdf;
 		}
+	}
+	
+	private static String gerarReducaoAssinaturas(String mensagem) {
+		Pattern pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b");
+		if (EXIBICAO_TODAS_ASS_SOMENTE_ULT_PAG_DOC_PDF && pattern.matcher(mensagem).find()) {
+			pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b|(,| e )|(\\bDocumento Nº: \\b)");
+	        Matcher mm = pattern.matcher(mensagem);
+			
+	        Map<Integer, Integer> assinaturas = new HashMap<Integer, Integer>();
+	        int contador=0;
+			while(mm.find()) {
+				//System.out.println(mm.start() +" "+ mm.group() +" "+ mm.end());
+				assinaturas.put(++contador, mm.start());
+	        }
+			if (!assinaturas.isEmpty() && assinaturas.size() > 2) {
+				StringBuilder str = new StringBuilder();
+				//print 2 assinaturas
+				str.append(mensagem.substring(assinaturas.get(1), assinaturas.get(3)));
+				str.append("\n +" + (assinaturas.size() - (mensagem.substring(assinaturas.get(assinaturas.size())).contains("Documento Nº:") ? 3 : 2)) + " pessoas (Vide última página)");
+				str.append(mensagem.substring(assinaturas.get(assinaturas.size())));
+				return str.toString();
+			}
+		}
+		return mensagem;
 	}
 
 	private static byte[] estamparAssinaturas(byte[] pdf, List<Long> idsAssinantes) {

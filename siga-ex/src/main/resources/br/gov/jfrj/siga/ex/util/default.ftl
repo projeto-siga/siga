@@ -5115,6 +5115,8 @@ ${texto}
     	[#return "pessoa"]
 	[#elseif var?matches("^lotacao([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "lotacao"]
+	[#elseif var?matches("^doc([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "documento"]
 	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "funcao"]
     [#elseif opcoes?has_content]
@@ -5214,6 +5216,7 @@ tipo: 			indica o tipo do campo, conforme padrão HTML. Vide tabela abaixo:
 				lotacao		lotacao		Campo de seleção de lotação
 				cossignatario			Campo para seleção de cossignatário (será automaticamente 
 										incluído na lista de cossignatários do documento)
+				documento	doc			Campo para seleção de documento/móbil
 				funcao		funcao		Campo para seleção de função gratificada
 				
 				Quando o tipo não é informado e nenhum prefixo é reconhecido, se for
@@ -5801,6 +5804,8 @@ Exemplos de utilização:
 				[@field_selectable tipo="cosignatario" titulo=title var=var reler=refresh idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
 			[#elseif kind == "funcao"]
 				[@field_selectable tipo="funcao" titulo=title var=var reler=refresh relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			[#elseif kind == "documento"]
+			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var reler=refresh relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
 			[/#if]
 		        [#if required]            		    
 			   		<div class="invalid-feedback invalid-feedback-${var}${suffix!}">Preenchimento obrigatório</div>
@@ -5841,7 +5846,7 @@ Exemplos de utilização:
     [#local larguraPopup = 600 /]
     [#local alturaPopup =400 /]
     [#local tipoSel = "_" + tipo /]
-        [#local acaoBusca = (modulo=="")?string("/siga/","/"+modulo+"/") + tipo /]
+        [#local acaoBusca = (modulo=="")?string("/siga/","/"+modulo+"/") + "app/" + tipo /]
     
         [#if paramList != ""]
             [#list paramList?split(";") as parametro]
@@ -5879,7 +5884,7 @@ Exemplos de utilização:
      
     self.newwindow_${var} = '';
     self.popitup_${var}${tipoSel} = function(sigla) {
-                 var url = '${acaoBusca}/buscar.action?propriedade=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
+                 var url = '${acaoBusca}/buscar?propriedade=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
         
         if (!newwindow_${var}.closed && newwindow_${var}.location) {
             newwindow_${var}.location.href = url;
@@ -5923,7 +5928,7 @@ Exemplos de utilização:
         if (sigla == '') {
             return retorna_${var}${tipoSel}('', '', '');
         }
-        var url = '${acaoBusca}/selecionar.action?var=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
+        var url = '${acaoBusca}/selecionar?var=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
         url = url + '&sigla=' + sigla;
         PassAjaxResponseToFunction(url, 'resposta_ajax_${var}${tipoSel}', false);
     }

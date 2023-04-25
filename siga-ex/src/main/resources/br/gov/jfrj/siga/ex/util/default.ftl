@@ -23,10 +23,10 @@ tipo: 			indica o tipo do campo, conforme padrão HTML. Vide tabela abaixo:
 				editor					Campo de edição de HTML
 				selecao					Campo do tipo "select" do HTML
 				memo		memo		Campo do tipo "textarea" do HTML
-				data		dt			Campo de texto para entrada de data
-				hora		hm 			Campo de texto para entrada de hora
-				numero		num			Campo de texto para entrada de número inteiro
-				valor		val			Campo de texto para entrada de valor monetário
+				data		data		Campo de texto para entrada de data
+				hora		hora		Campo de texto para entrada de hora
+				numero		numero		Campo de texto para entrada de número inteiro
+				valor		valor		Campo de texto para entrada de valor monetário
 				checkbox	chk			Campo do tipo "checkbox" do HTML
 				radio		rad			Campo do tipo "radio" do HTML
 				pessoa		pessoa		Campo de seleção de pessoa
@@ -101,7 +101,7 @@ Exemplos de utilização:
 [@grupo depende="rad"]${radNumeral!}[/@grupo]
 
 --]
-[#macro campo var titulo=var tipo="" largura="" colunas=80 linhas=3 maxcaracteres="" reler=false obrigatorio=false valor="" default="" opcoes="" buscarFechadas=false atts={} alterado="" id="" col="" hint=""]
+[#macro campo var titulo=var tipo="" largura="" colunas=80 linhas=3 maxcaracteres="" reler=false obrigatorio=false valor="" default="" opcoes="" buscarFechadas=false atts={} alterado="" id="" ]
    	[#local idAjax = "" /]
    	[#local relerString = "" /]
 	[#if reler?is_string]
@@ -113,105 +113,74 @@ Exemplos de utilização:
     [/#if]
 
 	[#-- tenta identificar automaticamente o tipo pelo nome da variável --]
-	[#if tipo == ""][#local tipo = inferirTipo(var, opcoes) /][/#if]
+	[#if tipo == ""]
+    	[#if var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "cpf" /]
+    	[#elseif var?matches("^cnpj([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "cnpj" /]
+    	[#elseif var?matches("^memo([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "memo" /]
+    	[#elseif var?matches("^data([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "data" /]
+    	[#elseif var?matches("^hora([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "hora" /]
+    	[#elseif var?matches("^numero([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "numero" /]
+    	[#elseif var?matches("^valor([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "valor" /]
+    	[#elseif var?matches("^chk([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "checkbox" /]
+    	[#elseif var?matches("^rad([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "radio" /]
+    	[#elseif var?matches("^pessoa([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "pessoa" /]
+    	[#elseif var?matches("^lotacao([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "lotacao" /]
+    	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	    	[#local tipo = "funcao" /]
+	    [#elseif opcoes?has_content]
+	    	[#local tipo = "selecao" /]
+        [#else]
+    		[#local tipo = "texto" /]
+	    [/#if]
+    [/#if]
 
 	[#if tipo == "texto"]
-		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=false col=col hint=hint /]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=false /]
     [#elseif tipo == "cpf"]
-		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=true isCnpj=false col=col hint=hint /]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=true isCnpj=false /]
     [#elseif tipo == "cnpj"]
-		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=true col=col hint=hint /]
+		[@texto var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default atts=atts isCpf=false isCnpj=true /]
     [#elseif tipo == "oculto"]
 		[@oculto var=var valor=valor default=default /]
     [#elseif tipo == "checkbox"]
-        [@checkbox var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id col=col hint=hint /]
+        [@checkbox var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id /]
     [#elseif tipo == "radio"]
-        [@radio var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id col=col hint=hint /]
+        [@radio var=var titulo=titulo valor=(valor == "")?string("Sim", valor) default=(default == "")?string("Não", default) idAjax=idAjax reler=reler obrigatorio=obrigatorio id=id /]
     [#elseif tipo == "editor"]
-        [@editor var=var titulo=titulo default=default col=col hint=hint /]
+        [@editor var=var titulo=titulo default=default /]
     [#elseif tipo == "selecao"]
-		[@selecao var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio atts=atts opcoes=opcoes col=col hint=hint /]
+		[@selecao var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio atts=atts opcoes=opcoes /]
     [#elseif tipo == "memo"]
-		[@memo var=var titulo=titulo reler=reler colunas=colunas linhas=linhas obrigatorio=obrigatorio default=default col=col hint=hint /]
+		[@memo var=var titulo=titulo reler=reler colunas=colunas linhas=linhas obrigatorio=obrigatorio default=default /]
     [#elseif tipo == "data"]
-		[@data var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default atts=atts col=col hint=hint /]
+		[@data var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default atts=atts /]
     [#elseif tipo == "hora"]
-		[@horaMinuto var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default col=col hint=hint /]
+		[@horaMinuto var=var titulo=titulo idAjax=idAjax reler=reler obrigatorio=obrigatorio default=default /]
     [#elseif tipo == "numero"]
-		[@numero var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default col=col hint=hint /]
+		[@numero var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default /]
     [#elseif tipo == "valor"]
-		[@moeda var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default col=col hint=hint /]
+		[@moeda var=var titulo=titulo largura=largura maxcaracteres=maxcaracteres idAjax=idAjax reler=relerString obrigatorio=obrigatorio?string("sim","nao") default=default /]
     [#elseif tipo == "pessoaOuLotacao"]
-	    [@pessoaLotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col hint=hint /]
+	    [@pessoaLotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
     [#elseif tipo == "pessoa"]
-      	[@pessoa var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col hint=hint /]
+      	[@pessoa var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
     [#elseif tipo == "lotacao"]
-      	[@lotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col hint=hint /]
+      	[@lotacao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
     [#elseif tipo == "cossignatario"]
-      	[@cosignatario var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col hint=hint /]
+      	[@cosignatario var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
     [#elseif tipo == "funcao"]
-      	[@funcao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio col=col hint=hint /]
-	[/#if]
-[/#macro]
-
-[#function inferirTipo var opcoes=""]
-	[#if var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "cpf"]
-	[#elseif var?matches("^cnpj([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "cnpj"]
-	[#elseif var?matches("^memo([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "memo"]
-	[#elseif var?matches("^(?:dt|data)([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "data"]
-	[#elseif var?matches("^(?:hm|hora)([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "hora"]
-	[#elseif var?matches("^(?:num|numero)([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "numero"]
-	[#elseif var?matches("^(?:val|valor)([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "valor"]
-	[#elseif var?matches("^chk([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "checkbox"]
-	[#elseif var?matches("^rad([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "radio"]
-	[#elseif var?matches("^pessoa([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "pessoa"]
-	[#elseif var?matches("^lotacao([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "lotacao"]
-	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
-    	[#return "funcao"]
-    [#elseif opcoes?has_content]
-    	[#return "selecao"]
-    [#else]
-    	[#return "texto"]
-    [/#if]
-[/#function]
-
-[#macro grupodeformulario var="" titulo="" obrigatorio=false col="" hint=""]
-    [#if (alerta!"Não") = 'Sim' && v = ""]
-	    [#list obrigatorios?split(",") as campo]
-    	     [#if campo == var]
-        		[#local vermelho = "color:red"]
-             [/#if]
-        [/#list]
-    [/#if]
-
-    [#if obrigatorio]
-    	[#local negrito = "font-weight:bold"]
-    	<input type="hidden" name="obrigatorios" value="${var}" />
-    [/#if]
-
-    [#if !gerar_formulario!false]    	
-		<div class="form-group ${col} mb-2">
-			[#if titulo?has_content]    			
-				<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${titulo}</label>
-			[/#if]
-			[#nested/]
-		    [#if hint?? && hint != ""]
-		        <div class="text-muted small">${hint}</div>
-		    [/#if]
-		</div>
-	[#else]
-		[#nested/]
+      	[@funcao var=var titulo=titulo idAjax=idAjax reler=reler buscarFechadas=buscarFechadas default=default obrigatorio=obrigatorio /]
 	[/#if]
 [/#macro]
 
@@ -1255,7 +1224,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" isCpf=false isCnpj=false col="" hint=""]
+[#macro texto var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" atts={} onkeyup="" isCpf=false isCnpj=false ]
     [#if reler == 'ajax']
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -1281,11 +1250,29 @@ LINHA  VARIÁVEL / CONTEÚDO
         [#local v = default/]
     [/#if]
     
-    [@grupodeformulario var=var titulo=titulo obrigatorio=(obrigatorio == 'Sim') col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
+	
+	    [#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == var]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	
+	    [#if obrigatorio == 'Sim']
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	
 		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 	    [#if !gerar_formulario!false]    	
-       		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""}${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control" [#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" [#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" [#else]${jlargura!""}${jmaxcaracteres!""}[/#if]/>
+    		[#if titulo != ""]    			
+    			<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+    		[/#if]
+    		
+       		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""}${jrelertab!""} ${attsHtml} onkeyup="${onkeyup}" class="form-control" [#if isCpf]data-formatar-cpf="true" placeholder="000.000.000-00" maxlength="14" style="max-width: 150px"[#elseif isCnpj]data-formatar-cnpj="true" placeholder="00.000.000/000-00" maxlength="18" style="max-width: 180px"[#else]${jlargura!""}${jmaxcaracteres!""}[/#if]/>
        		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>	     	
 	     	[#if isCpf]    
 		     	<script>
@@ -1328,7 +1315,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 	    [#else]
 	    <span class="valor">${v}</span>
 	    [/#if]
-	[/@grupodeformulario]
+	</div>	    
 [/#macro]
 
 [#macro oculto var valor="" default=""]
@@ -1339,7 +1326,7 @@ LINHA  VARIÁVEL / CONTEÚDO
     [/#if]
 [/#macro]
 
-[#macro checkbox var titulo="" valor="Sim" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id="" col="" hint=""]
+[#macro checkbox var titulo="" valor="Sim" default="Nao" idAjax="" reler=false onclique="" obrigatorio=false id=""]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
@@ -1354,7 +1341,7 @@ LINHA  VARIÁVEL / CONTEÚDO
         [@inlineTemplate/]
     [/#if]
 
-    [@grupodeformulario col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
 	    <input type="hidden" id="${var}" name="${var}" value="${v}" />
 	
@@ -1384,10 +1371,10 @@ LINHA  VARIÁVEL / CONTEÚDO
 	    [#else]
 	    <span class="valor">${v}</span>
 	    [/#if]
-	[/@grupodeformulario]	    
+	</div>	    
 [/#macro]
 
-[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique="" atts={} obrigatorio=false id="" col="" hint=""]	
+[#macro radio titulo var reler=false idAjax="" default="Não" valor="Sim" onclique="" atts={} obrigatorio=false id=""]	
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');"]
     [#elseif reler == true]
@@ -1396,7 +1383,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 
     [#local v = .vars[var]!(default == "Sim")?string(valor, "") /]
 
-    [@grupodeformulario col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
 	    [#if !.vars["temRadio_"+var]??]
 	        <input type="hidden" name="vars" value="${var}" />
 	        <input type="hidden" id="${var}" name="${var}" value="${v}" />
@@ -1424,7 +1411,7 @@ LINHA  VARIÁVEL / CONTEÚDO
 	    [#else]
 	    <span class="valor">${v}</span>    
 	    [/#if]
-    [/@grupodeformulario]
+    </div>
 [/#macro]
 
 [#macro editor_antigo var titulo="" default=""]
@@ -1534,7 +1521,7 @@ CKEDITOR.replace( '${var}',
     </div>
 [/#macro]
 
-[#macro editor var titulo="" default="" col="" hint=""]
+[#macro editor var titulo="" default=""]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
     [#else]
@@ -1546,7 +1533,7 @@ CKEDITOR.replace( '${var}',
         [#local aux="" v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
 	[/#if]
 
-	[@grupodeformulario col=col hint=hint]
+        <div>
         [#if titulo != ""]
                         <span title="campo: ${var}"><b>${titulo}</b></span>
         [/#if]
@@ -1788,11 +1775,11 @@ CKEDITOR.replace( '${var}',
         [#else]
             <br>${v}<br><br>
         [/#if]
-    [/@grupodeformulario]
+    </div>
 [/#macro]
 
 
-[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false col="" hint=""]
+[#macro selecao var titulo opcoes reler=false idAjax="" onclick="" pontuacao=":" atts={} opcaoNeutra="" obrigatorio=false]
     [#local l=opcoes?split(";")]
     [#if .vars[var]??]
         [#local v = .vars[var]/]
@@ -1808,7 +1795,8 @@ CKEDITOR.replace( '${var}',
 	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
 
     [#if !gerar_formulario!false]    
-	    [@grupodeformulario var=var titulo=titulo obrigatorio=obrigatorio col=col hint=hint]
+    	<div class="form-group" style="margin-bottom:0">
+    		[#if titulo?? && titulo != ""]<label title="campo: ${var}" for="${var}" [#if obrigatorio]style="font-weight:bold"[/#if]>${titulo}</label>[/#if]  
     		<select id="${var}" name="${var}" [#if reler] onchange="javascript: sbmt([#if idAjax != ""]'${idAjax}'[/#if]);"[/#if] onclick="${onclick}" class="form-control" ${attsHtml}>
     			[#if opcaoNeutra?? && opcaoNeutra != "" && obrigatorio]
     				<option id="opcaoNeutra" value="${opcaoNeutra}" [#if !(temValor??)]selected[/#if]>${opcaoNeutra}</option>
@@ -1822,7 +1810,7 @@ CKEDITOR.replace( '${var}',
 				<input type="hidden" name="obrigatorios" value="${var}" />
 			[/#if]    
 			<input type="hidden" name="vars" value="${var}" />                  	    	    	  	   		   								    			 				
-		[/@grupodeformulario]          
+		</div>                
     [#else]
         <span class="valor">${v}</span>
     [/#if]
@@ -1873,22 +1861,40 @@ CKEDITOR.replace( '${var}',
     [/#if]
 [/#macro]
 
-[#macro memo var titulo colunas linhas reler=false obrigatorio=false default="" col="" hint=""]
-    [#if reler == true]
-            [#local jreler = " onchange=\"javascript: sbmt();\""]
-    [/#if]
+[#macro memo var titulo colunas linhas reler=false obrigatorio=false default=""]
+        [#if reler == true]
+                [#local jreler = " onchange=\"javascript: sbmt();\""]
+        [/#if]
 
-    [#local v = .vars[var]!default]
+        [#local v = .vars[var]!default]
 
-    [@grupodeformulario var=var titulo=titulo obrigatorio=obrigatorio col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
         <input type="hidden" name="vars" value="${var}" />
+
+        [#if (alerta!"Não") = 'Sim' && v = ""]
+    		[#list obrigatorios?split(",") as campo]
+                [#if campo == var]
+                	[#local vermelho = "color:red"]
+            	[/#if]
+           	[/#list]
+        [/#if]
+
+        [#if obrigatorio]
+            [#local negrito = "font-weight:bold"]
+            <input type="hidden" name="obrigatorios" value="${var}" />
+        [/#if]
+        
+        [#if titulo != ""]                         
+        	<label title="campo: ${var}" for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+        [/#if]
+
         [#if !gerar_formulario!false]
         	<textarea id="${var}" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;" class="form-control">${v}</textarea>
         	<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
         [#else]
             <span class="valor">${v}</span>
         [/#if]
-	[/@grupodeformulario]
+	</div>
 [/#macro]
 
 [#macro memocomposto var titulo colunas linhas reler=false obrigatorio=false default="" forceDefault=false disabled=false]
@@ -1901,17 +1907,144 @@ CKEDITOR.replace( '${var}',
     [#else]
     	[#local v = .vars[var]!default]
 	[/#if]
-    [@grupodeformulario var=var titulo=titulo obrigatorio=obrigatorio col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
         <input type="hidden" name="vars" value="${var}" />
-        [#if !gerar_formulario!false]
-            <textarea class="form-control" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;"[#if disabled == true] readonly[/#if]>${v}</textarea>
-       		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
-        [#else]
-            <span class="valor">${v}</span>
-        [/#if]
-    [/@grupodeformulario]
-[/#macro]
 
+        [#if (alerta!"Não") = 'Sim' && v = ""]
+    		[#list obrigatorios?split(",") as campo]
+                [#if campo == var]
+                	[#local vermelho = "color:red"]
+                [/#if]
+             [/#list]
+        [/#if]
+
+        [#if obrigatorio]
+            [#local negrito = "font-weight:bold"]
+            <input type="hidden" name="obrigatorios" value="${var}" />
+        [/#if]
+
+        
+                [#if titulo != ""]                         
+                    <label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+                [/#if]
+
+                [#if !gerar_formulario!false]
+                    <textarea class="form-control" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;"[#if disabled == true] readonly[/#if]>${v}</textarea>
+               		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
+                [#else]
+                    <span class="valor">${v}</span>
+                [/#if]
+    </div>
+[/#macro]
+[#macro XStandard nome="" conteudo=""]
+        <script type="text/javascript" language="Javascript1.1">
+
+        var insertingTable = false;
+     
+        /*function onSave() {
+            var xstandard = document.getElementById('xstandard');
+            if (xstandard && xstandard.readyState == 4){
+                xstandard.value = xstandard.value.replace(/class=\"indent-first\"/g, 'style=\"text-indent: 2cm; text-align:justify;\"');
+                xstandard.value = xstandard.value.replace(/class=\"underline\"/g, 'style=\"text-decoration: underline\"');
+                xstandard.value = xstandard.value.replace(/class=\"justify\"/g, 'style=\"text-align:justify;\"');
+                document.getElementById('${nome}').EscapeUnicode = false;
+                document.getElementById('${nome}').value = xstandard.value;
+            }
+        }*/
+        function onSave() {
+            var xstandard = document.getElementById('xstandard');
+            var inputHidden = document.getElementById('${nome}');
+            if (xstandard && xstandard.readyState == 4){
+                inputHidden.EscapeUnicode = false;
+                inputHidden.value = xstandard.value;
+                inputHidden.value = inputHidden.value.replace(/class=\"indent-first\"/g, 'style=\"text-indent: 2cm; text-align:justify;\"');
+                inputHidden.value = inputHidden.value.replace(/class=\"underline\"/g, 'style=\"text-decoration: underline\"');
+                inputHidden.value = inputHidden.value.replace(/class=\"justify\"/g, 'style=\"text-align:justify;\"');
+            }
+        }
+    
+        function xsDialogPropertiesActivated(id, qpath, element, attributes, metadata) {
+        if (qpath == '' && element == 'table'){
+            document.getElementById('xstandard').SetDialogProperties("<attributes><attr><name>summary</name><value>Tabela</value></attr><attr><name>bordercolor</name><value>#000000</value></attr><attr><name>style</name><value>border-width:1px;border-style:solid;border-collapse:collapse</value></attr></attributes>", false, false);
+            }
+        }
+
+        setTimeout("verificaSeCarregou()",2000);
+        function verificaSeCarregou()
+        {
+          var xstandard = document.getElementById('xstandard');
+          if (!xstandard || xstandard.readyState != 4){
+              document.getElementById('desconsiderarExtensao').value='true';
+              document.getElementById('${nome}').value = 
+                  document.getElementById('xstandard_temp').innerHTML;
+              sbmt();
+            }
+        }
+  
+        </script>
+
+        <div id="xstandard_temp" style="display:none">
+        ${conteudo}
+        </div>
+
+        <object classid="clsid:0EED7206-1661-11D7-84A3-00606744831D"
+        codebase="http://${serverAndPort}/siga-ext-editor/XStandard/XStandard.cab#Version=3,0,0,0"
+        type="application/x-xstandard" id="xstandard" width="100%" height="400">
+        <param nams="ImageLibraryURL"
+        value="http://soap.xstandard.com/imagelibrary.aspx" />
+        <param name="AttachmentLibraryURL"
+        value="http://soap.xstandard.com/attachmentlibrary.aspx" />
+        <param name="SpellCheckerURL"
+        value="http://soap.xstandard.com/spellchecker.aspx" />
+        <param name="DirectoryURL"
+        value="http://soap.xstandard.com/directory.aspx" />
+        <param name="SubdocumentURL"
+        value="http://soap.xstandard.com/subdocument.aspx" />
+        <param name="EscapeUnicode" value="false" />
+
+         
+        <param name="Value" value="${conteudo?html}" />
+
+        <param name="SpellCheckerLangFilter" value="pt" />
+        <param name="SpellCheckerLang" value="pt" />
+        <param name="License" value="http://${serverAndPort}/siga-ext-editor/XStandard/license.txt" />
+        <param name="CSS" value="http://${serverAndPort}/siga-ext-editor/XStandard/format.css" />
+        <param name="Styles" value="http://${serverAndPort}/siga-ext-editor/XStandard/styles-pt.xml" />
+        <param name="Buttons" value="http://${serverAndPort}/siga-ext-editor/XStandard/buttons-pt.xml" />
+        <param name="Icons" value="http://${serverAndPort}/siga-ext-editor/XStandard/icons.xml" />
+        <!-- Ver como coloca português -->
+        <param name="Lang" value="pt" />
+        <param name="Localization" value="http://${serverAndPort}/siga-ext-editor/XStandard/localization-pt.xml" />
+        <param name="EnablePasteMarkup" value="yes" />
+        <param name="ToolbarWysiwyg"
+        value="cut,copy,paste,undo,redo,find-replace,,strong,em,underline,,align-left,align-center,align-right,justify,,undo-blockquote,blockquote,,undo-indent-first,indent-first,,ordered-list,unordered-list,,draw-data-table,,separator,pagebreak,,spellchecker,,source,,help" />
+        <param name="BackgroundColor" value="white" />
+        <param name="BorderColor" value="#888888" />
+        <!-- <param name="Base" value="http://soap.xstandard.com/library/" /> -->
+        <param name="LatestVersion" value="2.0.5.0" />
+        <param name="ToolbarEffect" value="linear-gradient" />
+        <param name="ShowStyles" value="yes" />
+        <param name="ShowToolbar" value="yes" />
+        <param name="Mode" value="wysiwyg" />
+        <param name="Options" value="0" />
+        <param name="IndentOutput" value="yes" />
+        <param name="ProxySetting" value="platform" />
+        <param name="Debug" value="yes" />
+
+        <!-- Tem duas opções que talvez sejam úteis: PreviewXSLT e ScreenReaderXSLT -->
+        <!-- A opção icons é pros ícones das operações principais. O Placeholders é pros ícones das tags customizadas -->
+        <!-- Ver qual a utilidade desse aqui: param name = EditorCSS --> <!-- Essas abaixo definem os botões em outros modos de visualização 
+        <param name="ToolbarSource" value="" />
+        <param name="ToolbarPreview" value="" />
+        <param name="ToolbarScreenReader" value="" /> 
+        Talvez CustomInlineElements, CustomBlockElements e CustomEmptyElements sirvam pras tabelas
+        Depois, ver se as integration settings servem pra alguma coisa
+        VER HeartbeatURL e Heartbeat Interval. Parecem ser úteis pra verificar sessão
+        Talvez algumas subs sejam úteis para mudar os contexts menus. Ver na seção Hooks & Extensions
+        Funções TagList, Path e QPath e TagListXML são interessantes
+        --> 
+        </object>
+[/#macro]
 [#macro formulario texto fecho="" tamanhoLetra="Normal" _tipo="FORMULÁRIO"]
 [#--
   Aplicação: Formatar documento para o tipo Formulário
@@ -2023,7 +2156,7 @@ Pede deferimento.</span><br/><br/><br/>
     <hr color="#FFFFFF"/>
 [/#macro]
 
-[#macro caixaSelecao titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" grande=false col="" hint=""]
+[#macro caixaSelecao titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" grande=false]
     [#local larguraPopup = 600 /]
     [#local alturaPopup =400 /]
     [#local tipoSel = "_" + tipo /]
@@ -2147,15 +2280,15 @@ Pede deferimento.</span><br/><br/><br/>
     </script>
 [/#macro]
 
-[#macro selecionavel titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo="" col="" hint=""]
+[#macro selecionavel titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo=""]
     [#assign tipoSel = "_" + tipo /]
 
     [#assign varName = var + tipoSel + "Sel.id" /]    
     [#local vId = .vars[varName]!default]
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
-    [@grupodeformulario var=varName titulo=titulo obrigatorio=obrigatorio col=col hint=hint]
+    <div class="form-group" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${varName}" />
 	
+	    [#assign varName = var + tipoSel + "Sel.sigla" /]
 	    [#local vSigla = .vars[varName]!default]
 	    <input type="hidden" name="vars" value="${varName}" />
 	
@@ -2163,40 +2296,54 @@ Pede deferimento.</span><br/><br/><br/>
 	    [#local vDescricao = .vars[varName]!default]
 	    <input type="hidden" name="vars" value="${varName}" />
 	
+	    [#if (alerta!"Não") = 'Sim' && vId == ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == varName]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	    [#if obrigatorio]
+	    [#local negrito = "font-weight:bold"]
 	    [#assign varName = var + tipoSel + "Sel.sigla" /]
 	    <input type="hidden" name="obrigatorios" value="${varName}" />	    
+	    [/#if]
+	
+	    [#if titulo?? && titulo != ""]	    	
+	    	<label for="${varName}" style="${negrito!};${vermelho!}">${titulo}</label>
+	    [/#if]
 	
 	    [#if !gerar_formulario!false]
-	        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo col=col hint=hint /]	        
+	        [@caixaSelecao titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo /]	        
 	    [#else]
 	    <span class="valor">[#if vSigla??]${vSigla} - [/#if]${vDescricao}</span>
 	    [/#if]
-    [/@grupodeformulario]
+    </div>
 [/#macro]
 
-[#macro pessoa titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col="" hint=""]
+[#macro pessoa titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]
-    [@selecionavel tipo="pessoa" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+    [@selecionavel tipo="pessoa" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro cosignatario titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col="" hint=""]
+[#macro cosignatario titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]
-    [@selecionavel tipo="cosignatario" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+    [@selecionavel tipo="cosignatario" titulo=titulo var=var reler=reler idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro funcao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col="" hint=""]
-    [@selecionavel tipo="funcao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+[#macro funcao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
+    [@selecionavel tipo="funcao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro lotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col="" hint=""]
-    [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+[#macro lotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
+    [@selecionavel tipo="lotacao" titulo=titulo var=var reler=reler relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
 [/#macro]
 
-[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} col="" hint=""]
+[#macro data titulo var reler=false idAjax="" default="" onSelect="" obrigatorio=false atts={} ]
     [#if reler == true && idAjax != ""]
         [#local jreler = " onchange=\"javascript: sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -2212,14 +2359,30 @@ Pede deferimento.</span><br/><br/><br/>
         [/#if]
     [/#if]
 
-    [@grupodeformulario var=var titulo=titulo obrigatorio=obrigatorio col=col hint=hint]
+
+    [#if (alerta!"Não") = 'Sim' && v==""]
+    [#list obrigatorios?split(",") as campo]
+         [#if campo == var]
+         [#local vermelho = "color:red"]
+             [/#if]
+        [/#list]
+    [/#if]
+
+	<div class="form-group" style="margin-bottom:0">  
+	    [#if obrigatorio]
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	    
 	    [#if !gerar_formulario!false]
 	        <input type="hidden" name="vars" value="${var}" />
-			[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
-			<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""} size="10" maxlength="10" class="form-control  campoData" ${attsHtml} placeholder="00/00/0000"/>		
-			<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>				
+	         
+		[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 
+		[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+		<input type="text" id="${var}" name="${var}" value="${v}" ${jreler!""} size="10" maxlength="10" class="form-control  campoData" ${attsHtml} style="max-width: 115px" placeholder="00/00/0000"/>		
+		<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>				
 	    [#else]
-		    <span class="valor">${v}</span>
+	    <span class="valor">${v}</span>
 	    [/#if]
         <script type="text/javascript">
 	    	$('.campoData').mousedown(function() {
@@ -2230,7 +2393,7 @@ Pede deferimento.</span><br/><br/><br/>
 				});
 			});
 		</script>
-	[/@grupodeformulario]		
+	</div>		
 [/#macro]
 
 [#macro letra tamanho]
@@ -2578,10 +2741,7 @@ Pede deferimento.</span><br/><br/><br/>
 	      [#if (Logradouro!"") != ""]${Logradouro!}[/#if][#if (Numero!"") != ""], ${Numero!}[/#if][#if (Complemento!"") != ""], ${Complemento!}<br />[/#if]
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
 	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
-	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if] 
-	      [#if (OrgaoArea!"") != ""]<br /><br />${OrgaoArea!}<br />[/#if] 
-	      [#if (Endereco!"") != ""]${Endereco!}<br />[/#if]
-	      [#if (Telefone!"") != ""]Telefone: ${Telefone!}[/#if]  [#if (Email!"") != ""]Email: ${Email!}[/#if]
+	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if]   
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]
@@ -3475,7 +3635,7 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" col="" hint=""]
+[#macro moeda var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
     [#if reler == 'ajax']
         [#local jreler = " onblur=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -3501,8 +3661,26 @@ Pede deferimento.</span><br/><br/><br/>
         [#local v = default/]
     [/#if]
 
-    [@grupodeformulario var=var titulo=titulo obrigatorio=(obrigatorio == 'Sim') col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
+	
+	    [#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == var]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	
+	    [#if obrigatorio == 'Sim']
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	
+	    [#if titulo != ""]    
+	    	<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>
+	    [/#if]
+	    
 	    [#if !gerar_formulario!false]
 	    <input onkeypress="return formataReais(this, '.' , ',', event)"
 	    type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} class="form-control"/>
@@ -3510,7 +3688,7 @@ Pede deferimento.</span><br/><br/><br/>
 	    [#else]
 	    <span class="valor">${v}</span>
 	    [/#if]
-    [/@grupodeformulario]
+    </div>
 [/#macro]
 [#macro identificacao pessoa="" funcao="" nivelHierarquicoMaximoDaLotacao="" obs="" negrito="nao"]
     [#if pessoa?? && pessoa.sigla != ""]
@@ -3583,7 +3761,7 @@ Pede deferimento.</span><br/><br/><br/>
 <!--	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="conteudo">Conte&uacute;do</label>
-	        <input type="text" id="fullText" value="${valFullText}" size="80" name="fullText" class="form-control" />
+	        <input type="text" id="fullText" value="${valFullText}" size="80" name="fullText" class="form-control" />
 		</div>
 	</div> -->
 [/#macro]
@@ -4229,7 +4407,7 @@ Pede deferimento.</span><br/><br/><br/>
    [/@rodape]
 [/#macro]
 
-[#macro numero var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default="" col="" hint=""]
+[#macro numero var titulo="" largura="" maxcaracteres="" idAjax="" reler="" relertab="" obrigatorio="nao" default=""]
     [#if reler == 'ajax']
         [#local jreler = " onblur=\"javascript: sbmt('" + idAjax + "');\""]
     [/#if]
@@ -4255,20 +4433,34 @@ Pede deferimento.</span><br/><br/><br/>
         [#local v = default/]
     [/#if]
 
-    [@grupodeformulario var=var titulo=titulo obrigatorio=(obrigatorio == 'Sim') col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
 	    <input type="hidden" name="vars" value="${var}" />
 	
+	    [#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+	         [#if campo == var]
+	         [#local vermelho = "color:red"]
+	             [/#if]
+	        [/#list]
+	    [/#if]
+	
+	    [#if obrigatorio == 'Sim']
+	    [#local negrito = "font-weight:bold"]
+	    <input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]
+	
 	    [#if !gerar_formulario!false]    	    	  
+		   	[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if]					
 		    <input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" 
 				id="${var}" type="text" name="${var}" value="${v}" ${jreler!""}${jrelertab!""}${jlargura!""}${jmaxcaracteres!""} class="form-control"/>			 					
 			<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>			         
 	    [#else]
 	    <span class="valor">${v}</span>
 	    [/#if]
-    [/@grupodeformulario]
+    </div>
 [/#macro]
 
-[#macro horaMinuto titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false col="" hint=""]
+[#macro horaMinuto titulo var reler=false idAjax="" default="" alerta=false obrigatorio=false]
     [#if reler == true && idAjax != ""]
             [#local jreler = " sbmt('" + idAjax + "');\""]
     [#elseif reler == true]
@@ -4277,7 +4469,12 @@ Pede deferimento.</span><br/><br/><br/>
 
     [#local v = .vars[var]!default]
 
-    [@grupodeformulario var=var titulo=titulo obrigatorio=obrigatorio col=col hint=hint]
+	<div class="form-group" style="margin-bottom:0">
+	    [#if obrigatorio]
+			[#local negrito = "font-weight:bold"]
+			<input type="hidden" name="obrigatorios" value="${var}" />
+	    [/#if]          
+	
 	    [#if !gerar_formulario!false]
 	        <input type="hidden" name="vars" value="${var}" />                            	  
 			[#if titulo?? && titulo != ""]<label for="${var}" style="${negrito!};${vermelho!}">${titulo}</label>[/#if] 			
@@ -4286,7 +4483,7 @@ Pede deferimento.</span><br/><br/><br/>
 	    [#else]
 			<span class="valor">${v}</span>
 	    [/#if]
-	[/@grupodeformulario]	    
+	</div>	    
 [/#macro]
 
 [#macro webservice var url timeout cache="" compactarXml=false]
@@ -4344,16 +4541,16 @@ Pede deferimento.</span><br/><br/><br/>
      [/@estiloBrasaoCentralizado]
 [/#macro]
 
-[#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList="" col="" hint=""]
+[#macro pessoaLotacao titulo var reler=false relertab="" buscarFechadas=false idAjax="" default="" obrigatorio=false paramList=""]
 [@selecaoX2 titulo=titulo var=var opcoes="Matrícula;Orgão Integrado" reler=true idAjax=idAjax/]   
     [#if buscarFechadas]
         [@assign paramList = "buscarFechadas=true" /]
     [/#if]
 [@grupoX2 depende=idAjax]
   [#if .vars[var] == "Orgão Integrado"]  
-[@selecionavel tipo="lotacao" titulo="" var=var reler=reler idAjax=idAjax+"1" relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+[@selecionavel tipo="lotacao" titulo="" var=var reler=reler idAjax=idAjax+"1" relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
   [#else]
-[@selecionavel tipo="pessoa" titulo="" var=var reler=reler idAjax=idAjax+"2" relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+[@selecionavel tipo="pessoa" titulo="" var=var reler=reler idAjax=idAjax+"2" relertab=relertab paramList=paramList obrigatorio=obrigatorio /]
   [/#if]
 [/@grupoX2]
 [/#macro]
@@ -4732,6 +4929,15 @@ ${texto}
 
 
 
+
+
+
+
+
+
+
+
+
 [#--
 
                                 MODELOS SIMPLES
@@ -4887,10 +5093,42 @@ ${texto}
 	[/#if]
 [/#macro]
 
+[#function infer_type var opcoes=""]
+	[#if var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "cpf"]
+	[#elseif var?matches("^cnpj([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "cnpj"]
+	[#elseif var?matches("^memo([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "memo"]
+	[#elseif var?matches("^(?:dt|data)([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "data"]
+	[#elseif var?matches("^(?:hm|hora)([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "hora"]
+	[#elseif var?matches("^(?:num|numero)([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "numero"]
+	[#elseif var?matches("^(?:val|valor)([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "valor"]
+	[#elseif var?matches("^chk([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "checkbox"]
+	[#elseif var?matches("^rad([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "radio"]
+	[#elseif var?matches("^pessoa([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "pessoa"]
+	[#elseif var?matches("^lotacao([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "lotacao"]
+	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
+    	[#return "funcao"]
+    [#elseif opcoes?has_content]
+    	[#return "selecao"]
+    [#else]
+    	[#return "texto"]
+    [/#if]
+[/#function]
+
 [#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true sensitivity=""][#compress]
 	[#if document]
 		<span style="color: ${VALUE_COLOR};">
-			[#if kind == ""][#local kind = inferirTipo(var, opcoes) /][/#if]
+			[#if kind == ""][#local kind = infer_type(var, opcoes) /][/#if]
 		    [#if kind == "oculto"]
 		    [#elseif kind == "checkbox"]
 		    	${(.vars[var+index]?string(valor!"Sim", default!"Não"))!}
@@ -5058,7 +5296,7 @@ Exemplos de utilização:
 	[#local attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#local]
 
 	[#-- tenta identificar automaticamente o tipo pelo nome da variável --]
-	[#if kind == ""][#local kind = inferirTipo(var, options) /][/#if]
+	[#if kind == ""][#local kind = infer_type(var, options) /][/#if]
 	
 	[#-- tipo oculto não deve gerar nem o grupo --]
 	[#if kind=="oculto"]
@@ -5080,7 +5318,7 @@ Exemplos de utilização:
 	[#if kind == "cpf"]
 		[#local isCpf = true kind="texto" /]
 		[#local maxchars="14" /]
-		[#local placeholder="000.000.000-00" /]111
+		[#local placeholder="000.000.000-00" /]
 	[#elseif kind == "cnpj"]
 		[#local isCnpj = true kind="texto" /]
 		[#local maxchars="18" /]

@@ -4741,6 +4741,80 @@ ${texto}
 [#assign VALUE_COLOR="blue"/]
 [#assign _group_count={}/]
 
+[#macro print expr depend='']
+	[#if depend?? && depend != '']
+		[@group depend=depend]
+			${expr}
+		[/@group]
+	[#else]
+        ${expr}
+	[/#if]
+[/#macro]
+
+[#macro context var]${var}[/#macro]
+
+[#macro division id="" depend="" suppressIndependent=false atts={}]
+	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+    [#if suppressIndependent || depend != ""]
+        <div[#if id != ""] id="${id}"[/#if][#if depend != ""] depende=";${depend};"[/#if] ${attsHtml}>[#if id != ""]<!--ajax:${id}-->[/#if][#nested][#if id != ""]<!--/ajax:${id}-->[/#if]</div>
+    [#else]
+    [#nested]
+    [/#if]
+[/#macro]
+
+[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={}]
+    [#if !hidden]
+    	</div>
+    	[#local id=""/]
+    	[#if depend?has_content]
+    		[#local c = (_group_count[depend]!0) + 1 /]
+    		[#assign _group_count = _group_count + {depend: c} /]
+		    [#local id = (depend=="")?string("", "div-" + c + "-" + depend)] 
+		    [#local id = (depend=="")?string("", "div-" + depend)] 
+    	[/#if]
+	    [@division id=id depend=depend suppressIndependent=true atts={'class': 'row'}]
+	    	[#if title?? && title != '']<h5 class="col-12">${title}</h5>[/#if]
+	    	[#if info?? && info != '']<div class="col-12"><p class="alert alert-info mb-1">${info}</p></div>[/#if]
+	    	[#if warning?? && warning != '']<div class="col-12"><p class="alert alert-warning mb-1">${warning}</p></div>[/#if]
+	    	[#if danger?? && danger != '']<div class="col-12"><p class="alert alert-danger mb-1">${danger}</p></div>[/#if]
+			[#nested]
+	    [/@division]
+	    <div class="row">
+    [/#if]
+[/#macro]
+
+[#macro if expr depend='']
+	[#if depend?has_content && (_scope!'') == 'interview']
+		[@group depend=depend]
+			[#if expr][#nested][/#if]
+		[/@group]
+	[#else]
+		[#if expr][#nested][/#if]
+	[/#if]
+[/#macro]
+
+[#macro for expr depend='']
+	[#local max = 0 /]
+	[#if expr?is_number]
+		[#local max = expr?round /]
+	[#elseif expr?is_string && expr?matches("^\\d+$")]
+	    [#local max = expr?number /]
+	[/#if]
+
+	[#if depend??]
+		[@group depend=depend]
+			[#if max?? && max > 0]
+				[#list 1..max as index][#assign _index = index/][#nested _index][/#list]
+			[/#if]
+		[/@group]
+	[#else]
+		[#if max?? && max > 0]
+			[#list 1..max as index][#assign _index = index/][#nested _index][/#list]
+		[/#if]
+	[/#if]
+	[#assign _index = _inexistentVariable!/]
+[/#macro]
+
 [#macro interview]
 	[#assign _scope='interview']
 	[@entrevista]
@@ -4750,20 +4824,70 @@ ${texto}
 	[/@entrevista]
 [/#macro]
 
-[#macro field var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true]
-	[#if col?is_number]
-		[#local colr=('col-' + col) /]
-	[#elseif col?is_string]
-		[#if col != '']
-			[#local colr=col/]
-		[#else]
-			[#local colr='col-12'/]
-		[/#if]
-	[/#if]
-	[@campo var=var+index titulo=title tipo=kind largura=width colunas=columns linhas=lines maxcaracteres=maxchars reler=refresh obrigatorio=required valor=value default=default opcoes=options buscarFechadas=searchClosed atts=atts alterado=altered id=id col=colr hint=hint /]
+[#macro document]
+	[#assign _scope='document']
+    [#assign document_content][#nested/][/#assign]
+	[@documento formato=(PAGE_SIZE!"A4") orientacao=(PAGE_ORIENTATION!"portrait") margemEsquerda=(MARGIN_LEFT!"3cm") margemDireita=(MARGIN_RIGHT!"2cm") margemSuperior=(MARGIN_TOP!"1cm") margemInferior=(MARGIN_BOTTOM!"2cm")]
+		[#switch STYLE!]
+  			[#case "memorando"]
+				[@memorando texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"MEMORANDO")/]
+      			[#break]
+  			[#case "assentamentoFuncional"]
+				[@assentamento_funcional texto=(document_content!) fecho=(_fecho!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"ASSENTAMENTO FUNCIONAL")/]
+      			[#break]
+  			[#case "requerimento"]
+				[@requerimento texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"") formatarOrgao=(_formatarOrgao!false)/]
+      			[#break]
+  			[#case "processo"]
+				[@processo /]
+      			[#break]
+  			[#case "provimento"]
+				[@provimento texto=(document_content!) abertura=(_abertura!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"PROVIMENTO") ementa=(_ementa!"") titulo=(_titulo!"") subtitulo=(_subtitulo!"")/]
+      			[#break]
+  			[#case "portaria"]
+				[@portaria texto=(document_content!) abertura=(_abertura!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"PORTARIA") dispoe_sobre=(_dispoeSobre!"")/]
+      			[#break]
+  			[#case "oficio"]
+				[@oficio _texto=(document_content!) _tipo_autoridade=(_tipoAutoridade!"") _genero=(_genero!"") _vocativo=(_vocativo!"") _enderecamento_dest=(_enderecamentoDest!"") _nome_dest=(_nomeDest!"") _cargo_dest=(_cargoDest!"") _orgao_dest=(_orgaoDest!"") _enderecoDest=(_enderecoDest!"") _fecho=(_fecho!"") _tamanho_letra=(_tamanhoLetra!"Normal") _autoridade={} _tipo=(_tipo!"OFÍCIO")/]
+      			[#break]
+  			[#case "solicitacao"]
+				[@solicitacao tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"FORMULÁRIO") assunto=(_assunto!"")/]
+      			[#break]
+  			[#default]
+                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!false) incluirMioloDJE=(_incluirMioloDJE!false) omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
+				    ${document_content!}
+                [/@estiloBrasaoCentralizado]
+  		[/#switch]
+	[/@documento]
 [/#macro]
 
-[#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true][#compress]
+[#macro description]
+	[@descricao]
+		[#nested]
+	[/@descricao]
+[/#macro]
+
+[#macro hook expr]
+	[#if expr == 'AFTER_DRAFT']
+		[@finalizacao]
+			[#nested]
+		[/@finalizacao]
+	[#elseif expr == 'BEFORE_SAVE']
+		[@gravacao]
+			[#nested]
+		[/@gravacao]
+	[#elseif expr == 'BEFORE_SIGN']
+		[@pre_assinatura]
+			[#nested]
+		[/@pre_assinatura]
+	[#elseif expr == 'AFTER_SIGN']
+		[@assinatura]
+			[#nested]
+		[/@assinatura]
+	[/#if]
+[/#macro]
+
+[#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true sensitivity=""][#compress]
 	[#if document]
 		<span style="color: ${VALUE_COLOR};">
 			[#if kind == ""][#local kind = inferirTipo(var, opcoes) /][/#if]
@@ -4805,129 +4929,797 @@ ${texto}
 	[/#if]
 [/#compress][/#macro]
 
-[#macro context var]${var}[/#macro]
+[#macro field var index=(_index!'') title=var+index kind="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true sensitivity=""]
+	[#if col?is_number]
+		[#local colr=('col-' + col) /]
+	[#elseif col?is_string]
+		[#if col != '']
+			[#local colr=col/]
+		[#else]
+			[#local colr='col-12'/]
+		[/#if]
+	[/#if]
+	[@field_impl var=var+index title=title kind=kind columns=columns lines=lines maxchars=maxchars refresh=refresh required=required value=value default=default options=options searchClosed=searchClosed atts=atts id=id col=colr hint=hint /]
+[/#macro]
 
-[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={}]
-    [#if !hidden]
-    	</div>
-    	[#local id=""/]
-    	[#if depend?has_content]
-    		[#local c = (_group_count[depend]!0) + 1 /]
-    		[#assign _group_count = _group_count + {depend: c} /]
-		    [#local id = (depend=="")?string("", "div-" + c + "-" + depend)] 
-    	[/#if]
-	    [@div id=id depende=depend suprimirIndependente=true atts={'class': 'row'}]
-	    	[#if title?? && title != '']<h5 class="col-12">${title}</h5>[/#if]
-	    	[#if info?? && info != '']<div class="col-12"><p class="alert alert-info mb-1">${info}</p></div>[/#if]
-	    	[#if warning?? && warning != '']<div class="col-12"><p class="alert alert-warning mb-1">${warning}</p></div>[/#if]
-	    	[#if danger?? && danger != '']<div class="col-12"><p class="alert alert-danger mb-1">${danger}</p></div>[/#if]
-			[#nested]
-	    [/@div]
-	    <div class="row">
+[#--
+
+A macro campo representa um campo que será utilizado dentro da entrevista para colher dados.
+
+Atenção programadores: não incluir parâmtros novos nesta macro sem antes haver consenso. Está
+macro foi criada para ser simples e padronizada.
+
+Os parâmetros da macro "campo" serão responsáveis por configurar seu funcionamento. Veja abaixo a
+lista de parâmetros e seus significados:
+
+var: 			indica o nome da variável que receberá o valor fornecido. O nome da variável pode
+     			ser utilizado para inferir o tipo. Por exemplo, se o nome for "cpf" ou "cpf_servidor" ou 
+     			"cpfServidor" será automaticamente atribuído o tipo "cpf".
+
+tipo: 			indica o tipo do campo, conforme padrão HTML. Vide tabela abaixo:
+
+				Tipo		Prefixo		Descrição
+				----------- ----------- -------------------------------------------------------
+				texto					Campo de texto padrão
+				cpf			cpf			Campo de texto para entrada de CPF
+				cnpj		cnpj		Campo de texto para entrada de CNPJ
+				oculto					Campo do tipo "hidden" do HTML
+				editor					Campo de edição de HTML
+				selecao					Campo do tipo "select" do HTML
+				memo		memo		Campo do tipo "textarea" do HTML
+				data		dt			Campo de texto para entrada de data
+				hora		hm 			Campo de texto para entrada de hora
+				numero		num			Campo de texto para entrada de número inteiro
+				valor		val			Campo de texto para entrada de valor monetário
+				checkbox	chk			Campo do tipo "checkbox" do HTML
+				radio		rad			Campo do tipo "radio" do HTML
+				pessoa		pessoa		Campo de seleção de pessoa
+				lotacao		lotacao		Campo de seleção de lotação
+				cossignatario			Campo para seleção de cossignatário (será automaticamente 
+										incluído na lista de cossignatários do documento)
+				funcao		funcao		Campo para seleção de função gratificada
+				
+				Quando o tipo não é informado e nenhum prefixo é reconhecido, se for
+				informado o parâmetro "opcoes" será assumido o tipo "selecao", caso o
+				contrário, será assumido o tipo "texto"
+
+largura:		indica a largura do campo, conforme estilo "width" do HTML
+
+colunas:		indica a quantidade de colunas, apenas no tipo "memo"
+
+linhas:			indica a quantidade de linhas, apenas no tipo "memo"
+
+maxcaracteres: 	indica o número máximo de caracteres dos campos de texto
+
+reler:			indica se, ao alterar o conteúdo do campo, a página deve ser recarregada.
+				Isto é especialmente útil quando existem outros campos que só serão exibidos
+				para determinados valores do campo atual. Por default, o valor de reler é
+				"false", o que significa que a alteração no campo não provoca o recarregamento
+				da página. Se for informado "true", toda a página será recarregada. Ainda existe
+				a opção de se informar uma string e, nesse caso, será feita uma recarga parcial:
+				apenas o trechos da página que estiverem dentro de uma tag "grupo" com um parâmetro
+				"depende" igual à string informada serão recarregados.
+			
+obrigatorio:	indica se o preechimento do campo é obrigatório e impede a gravação do documento quando ele não é informado
+
+valor:			indica o valor que deve ser persistido no caso do tipo "oculto" ou o valor que deve ser selecionado no
+				caso dos tipos "checkbox" e "radio"
+
+default:		indica o valor inicial do campo
+
+opcoes:			indica quais são as opções de um campo do tipo selecao. Forneça uma string contento opções separadas por ponto-e-vírgula
+
+buscarFechadas: inclui itens que já estão inativos na busca dos campos do tipo "pessoa", "lotacao" e "pessoaOuLotacao"
+
+atts:			permite customizar o elemento HTML com atributos adicionais
+
+id:				inclui um atributo "id" no elemento HTML
+
+Exemplos de utilização:
+
+[@field var="text" /]
+[@field var="cpf" /]
+[@field var="cpfServidor"  /]
+[@field kind="cpf" var="cpfPessoa" title="CPF" required=true /]
+[@field kind="cnpj" var="cnpj" title="CNPJ" /]
+[@field kind="oculto" var="campooculto" value="valor oculto" /]
+[@field kind="editor" var="campoeditavel" title="Editor de Texto" default="Começa vazio" /]
+[@field kind="selecao" var="camposelecionavel" title="Escolha na lista" options="primeiro;segundo;terceiro" /]
+[@field kind="memo" var="campomemo" title="Campo Memo" columns=100 lines=4 /]
+[@field kind="data" var="campodata" title="Campo de Data" /]
+[@field kind="hora" var="campohhmm" title="Campo de Hora e Minuto" /]
+[@field var="numeroDePessoas" title="Campo de Número Inteiro" /]
+[@field var="valorTotal" title="Campo de Valor em Reais" /]
+[@field var="pessoaServidor" title="Campo de Pessoa" /]
+[@field var="lotacaoServidor" title="Campo de Lotacao" /]
+[@field kind="cossignatario" var="cossignatarioServidor" title="Campo de Cossignatario" /]
+[@field kind="checkbox" var="ligado" refresh="chk" /]
+[@field var="chkAdiantamento" title="Adiantamento" refresh="chk" /]
+[@field var="chkAtividade" title="Ativo" value="Ativo" default="Inativo" refresh="chk" /]
+[@group depend="chk"]${ligado} ${chkAdiantamento} ${chkAtividade}[/@group]
+[@field kind="radio" var="radNumeral" value="Primeiro" default="Sim" refresh="rad" /]
+[@field kind="radio" var="radNumeral" title="Segundo" value="Segundo" refresh="rad" /]
+[@field kind="radio" var="radNumeral" title="Terceiro" value="Terceiro" refresh="rad" /]
+[@group depend="rad"]${radNumeral!}[/@group]
+--]
+[#macro field_impl var title=var kind="" maxchars="" refresh=false required=false columns=80 lines=3  value="" default="" options="" searchClosed=false atts={} id="" col="" hint=""]
+    [#if gerar_formulario!false]
+    	[#return]
+    [/#if]
+    
+   	[#local idAjax = "" /]
+	[#if refresh?is_string]
+    	[#local idAjax = refresh /]
+    	[#local refresh = true /]
+    [/#if]
+	[#assign refresh_js][#if refresh]sbmt([#if idAjax != ""]'${idAjax}'[/#if]);[/#if][/#assign]
+	[#assign refresh_inc][#if refresh] onchange="javascript: ${refresh_js}"[/#if][/#assign]
+
+	[#local attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#local]
+
+	[#-- tenta identificar automaticamente o tipo pelo nome da variável --]
+	[#if kind == ""][#local kind = inferirTipo(var, options) /][/#if]
+	
+	[#-- tipo oculto não deve gerar nem o grupo --]
+	[#if kind=="oculto"]
+		[#local v = (value != "")?string(value,.vars[var]!default) /]
+	    <input type="hidden" name="vars" value="${var}" />
+        <input type="hidden" id="${var}" name="${var}" value="${v}"/>
+        [#return]
+    [/#if]
+    
+	[#-- tipo oculto não deve gerar nem o grupo --]
+	[#if kind=="checkbox"]
+		[#local value=(value == "")?string("Sim", value) /]
+		[#local default=(default == "")?string("Não", default) /]
+		[#local suffix="_chk" /]
+    [/#if]
+	
+	[#-- trata cpf e cnpj --]
+	[#local isCpf = false isCnpj=false /]
+	[#if kind == "cpf"]
+		[#local isCpf = true kind="texto" /]
+		[#local maxchars="14" /]
+		[#local placeholder="000.000.000-00" /]111
+	[#elseif kind == "cnpj"]
+		[#local isCnpj = true kind="texto" /]
+		[#local maxchars="18" /]
+		[#local placeholder="00.000.000/000-00" /]
+    [/#if]
+
+    [#if maxchars != ""][#local maxchars_inc = " maxlength=\"" + maxchars + "\""][/#if]
+    [#if placeholder?has_content][#local placeholder_inc = " placeholder=\"" + placeholder + "\""][/#if]
+
+	[#-- pega o valor da variável, ou atribui o valor default e altera no contexto .vars[] --]
+    [#if .vars[var]??]
+    	[#local v = .vars[var]/]
+        [#local foundValue = v/]
+    [#else]
+    	[#local v = (value?has_content)?string(value, default!"") /]
+		[#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
+		[@inlineTemplate/] 
+    [/#if]
+
+	[#if (alerta!"Não") = 'Sim' && v = ""]
+	    [#list obrigatorios?split(",") as campo]
+    	     [#if campo == var]
+        		[#local vermelho = "color:red"]
+             [/#if]
+        [/#list]
+    [/#if]
+
+    [#if required]
+    	[#local negrito = "font-weight:bold"]
+    	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
+    [/#if]
+
+    [#if !gerar_formulario!false]    	
+		<div class="form-group ${col} mb-2">
+			[#if title?has_content && kind != "checkbox" && kind != "radio" ]    			
+				<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${title}</label>
+			[/#if]
+			<input type="hidden" name="vars" value="${var}" />
+		
+			[#if kind == "texto"]
+				<input type="text" id="${var}" name="${var}" value="${v}" ${refresh_inc!} ${maxchars_inc!} ${placeholder_inc!} ${attsHtml} onkeyup="${onkeyup!}" class="form-control" [#if isCpf]data-formatar-cpf="true"[#elseif isCnpj]data-formatar-cnpj="true"[#else][/#if]/>
+				[#if isCpf]    
+					<script>
+						function aplicarMascaraCPF(evento) {	     			             
+							cpf = this.value.replace(/([^\d])/g, '');
+
+							if (evento.type == 'change') {
+							while (cpf.length < 11) {
+								cpf = '0' + cpf;
+							}               
+							}
+							cpf = cpf.replace(/^(\d{3})(\d)/, '$1.$2');
+							cpf = cpf.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+							cpf = cpf.replace(/\.(\d{3})(\d)/, '.$1-$2');            
+							this.value = cpf;
+						}
+						document.querySelector('input[name=${var}]').addEventListener('input', aplicarMascaraCPF);
+						document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraCPF);
+					</script>  
+				[#elseif isCnpj]
+					<script>
+						function aplicarMascaraCNPJ(evento) {	     			             
+							cnpj = this.value.replace(/([^\d])/g, '');
+
+							if (evento.type == 'change') {
+							while (cnpj.length < 14) {
+								cnpj = '0' + cnpj;
+							}
+							}
+							cnpj = cnpj.replace(/^(\d{2})(\d)/, '$1.$2');
+							cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+							cnpj = cnpj.replace(/\.(\d{3})(\d)/, '.$1/$2');
+							cnpj = cnpj.replace(/(\d{4})(\d)/, '$1-$2');
+							this.value = cnpj;
+						}
+						document.querySelector('input[name=${var}]').addEventListener('input', aplicarMascaraCNPJ);
+						document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraCNPJ);
+					</script> 
+				[/#if] 		
+			[#elseif kind == "checkbox"]
+				<input type="hidden" id="${var}" name="${var}" value="${v}" />
+				<div class="form-check">
+					<input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="${value}"
+						[#if v==value]checked[/#if] 
+						onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${value}'; else document.getElementById('${var}').value = '${default}'; ${onclique!}; ${refresh_js!}" [#if id == ""]data-criar-id="true"[/#if]/> 
+					<label title="campo: ${var}" class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${title!""}</label>
+				</div>		
+			[#elseif kind == "radio"]
+				[#if !.vars["temRadio_"+var]??]
+					<input type="hidden" name="vars" value="${var}" />
+					<input type="hidden" id="${var}" name="${var}" value="${v}" />
+					[#assign inlineTemplate = ["[#assign temRadio_${var} = true/]", "assignInlineTemplate"]?interpret /]
+					[@inlineTemplate/]
+				[/#if]
+				[#if v == value]
+					<script>document.getElementById('${var}').value = '${value}';</script>
+				[/#if]
+				<div class="custom-control custom-radio">
+					<input class="form-check-input" type="radio" id="${id}" name="${var}_chk" value="${value}" [#if v == value]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${value}'; ${onclique!}; ${refresh_js!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
+					<label title="campo: ${var}" class="form-check-label mr-4" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${title!""}</label>
+				</div>  			  
+			[#elseif kind == "editor"]
+				[#if v != ""]
+					[#local v = exbl.canonicalizarHtml(v, false, true, false, true) aux=v /]        
+				[#else]
+					[#local aux="" v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
+				[/#if]
+				[#if aux != ""]            
+					<textarea id="${var}" name="${var}" class="editor">${v?html}</textarea>
+				[#else]
+					<textarea id="${var}" name="${var}" class="editor"> ${default!}</textarea>
+				[/#if]
+				<script type="text/javascript">
+					CKEDITOR.config.disableNativeSpellChecker = false;
+					CKEDITOR.config.scayt_autoStartup = false;
+					CKEDITOR.config.scayt_sLang = 'pt_BR';
+					CKEDITOR.config.stylesSet = 'siga_ckeditor_styles';
+
+					if (CKEDITOR.stylesSet.get('siga_ckeditor_styles') == null) {
+
+						CKEDITOR.stylesSet.add('siga_ckeditor_styles', [{
+								name: 'Título',
+								element: 'h1',
+								styles: {
+									'text-align': 'justify',
+									'text-indent': '2cm'
+								}
+							},
+							{
+								name: 'Subtítulo',
+								element: 'h2',
+								styles: {
+									'text-align': 'justify',
+									'text-indent': '2cm'
+								}
+							},
+							{
+								name: 'Com recuo',
+								element: 'p',
+								styles: {
+									'text-align': 'justify',
+									'text-indent': '2cm'
+								}
+							},
+							{
+								name: 'Marcador',
+								element: 'span',
+								styles: {
+									'background-color': '#FFFF00'
+								}
+							},
+							{
+								name: 'Normal',
+								element: 'span'
+							}
+						]);
+					};
+					CKEDITOR.config.toolbar = 'SigaToolbar';
+					CKEDITOR.config.toolbar_SigaToolbar = [{
+							name: 'styles',
+							items: ['Styles']
+						},
+						{
+							name: 'clipboard',
+							items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+						},
+						{
+							name: 'editing',
+							items: ['Find', 'Replace', '-', 'SelectAll']
+						},
+						'/',
+						{
+							name: 'basicstyles',
+							items: ['Bold', 'Italic', 'Subscript', 'Underline', 'Strike', '-', 'RemoveFormat']
+						},
+						{
+							name: 'paragraph',
+							items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyBlock', 'JustifyRight']
+						},
+						{
+							name: 'insert',
+							items: ['Table', 'Footnotes', '-', 'SpecialChar', '-', 'PageBreak']
+						},
+						{
+							name: 'document',
+							items: ['Source']
+						},
+						{
+							name: 'extra',
+							items: ['strinsert']
+						}
+					];
+
+					// @license Copyright © 2013 Stuart Sillitoe <stuart@vericode.co.uk>
+					// This is open source, can modify it as you wish.
+					// Stuart Sillitoe - stuartsillitoe.co.uk
+					CKEDITOR.config.strinsert_strings = [{
+							'name': 'Documento em Elaboração'
+						},
+						{
+							'name': 'Número',
+							'value': '$' + '{doc.sigla}'
+						},
+						{
+							'name': 'Data',
+							'value': '$' + '{doc.dtDocDDMMYYYY}'
+						},
+						{
+							'name': 'Nome do Subscritor',
+							'value': '$' + '{doc.subscritor.descricao}'
+						},
+						{
+							'name': 'Nome da Lotação do Subscritor',
+							'value': '$' + '{doc.subscritor.lotacao.descricao}'
+						},
+						{
+							'name': 'Sigla da Lotação do Subscritor',
+							'value': '$' + '{doc.lotaSubscritor.sigla}'
+						},
+						{
+							'name': 'Sigla da Lotação do Cadastrante',
+							'value': '$' + '{doc.lotaCadastrante.sigla}'
+						},
+						{
+							'name': 'Destinatário',
+							'value': '$' + '{doc.destinatarioString}'
+						},
+						{
+							'name': 'Campo de cadastro do doc',
+							'value': '$' + '{doc.form.NOMECAMPO}'
+						},
+						{
+							'name': 'Descrição',
+							'value': '$' + '{doc.descrDocumento}'
+						},
+						{
+							'name': 'Documento Pai'
+						},
+						{
+							'name': 'Número',
+							'value': '$' + '{doc.pai.sigla}'
+						},
+						{
+							'name': 'Data',
+							'value': '$' + '{doc.pai.dtDocDDMMYYYY}'
+						},
+						{
+							'name': 'Nome do Subscritor',
+							'value': '$' + '{doc.pai.subscritor.descricao}'
+						},
+						{
+							'name': 'Nome da Lotação do Subscritor',
+							'value': '$' + '{doc.pai.subscritor.lotacao.descricao}'
+						},
+						{
+							'name': 'Sigla da Lotação do Subscritor',
+							'value': '$' + '{doc.pai.lotaSubscritor.sigla}'
+						},
+						{
+							'name': 'Sigla da Lotação do Cadastrante',
+							'value': '$' + '{doc.pai.lotaCadastrante.lotacao.sigla}'
+						},
+						{
+							'name': 'Destinatário',
+							'value': '$' + '{doc.pai.destinatarioString}'
+						},
+						{
+							'name': 'Campo de cadastro do doc',
+							'value': '$' + '{doc.pai.form.NOMECAMPO}'
+						},
+						{
+							'name': 'Descrição',
+							'value': '$' + '{doc.pai.descrDocumento}'
+						},
+						{
+							'name': 'Documento Autuado'
+						},
+						{
+							'name': 'Número',
+							'value': '$' + '{ref.pai.autuado.mob.sigla}'
+						},
+						{
+							'name': 'Data',
+							'value': '$' + '{ref.pai.autuado.doc.dtDocDDMMYYYY}'
+						},
+						{
+							'name': 'Nome do Subscritor',
+							'value': '$' + '{ref.pai.autuado.doc.subscritor.descricao}'
+						},
+						{
+							'name': 'Nome da Lotação do Subscritor',
+							'value': '$' + '{ref.pai.autuado.doc.subscritor.lotacao.descricao}'
+						},
+						{
+							'name': 'Sigla da Lotação do Subscritor',
+							'value': '$' + '{ref.pai.autuado.doc.lotaSubscritor.sigla}'
+						},
+						{
+							'name': 'Sigla da Lotação do Cadastrante',
+							'value': '$' + '{ref.pai.autuado.doc.lotaCadastrante.sigla}'
+						},
+						{
+							'name': 'Destinatário',
+							'value': '$' + '{ref.pai.autuado.doc.destinatarioString}'
+						},
+						{
+							'name': 'Campo de cadastro do doc Autuado',
+							'value': '$' + '{ref.pai.autuado.form.NOMECAMPO}'
+						},
+						{
+							'name': 'Descrição',
+							'value': '$' + '{ref.pai.autuado.doc.descrDocumento}'
+						},
+						{
+							'name': 'Outros Documentos'
+						},
+						{
+							'name': 'Relação de docs juntados do modelo',
+							'value': '$' + "{ref.modelo('MODELO DESEJADO 1','MODELO DESEJADO 2')}"
+						},
+						{
+							'name': 'Último doc juntado do modelo',
+							'value': '$' + "{ref.modelo('MODELO DESEJADO').ultimo.mob.sigla}"
+						},
+						{
+							'name': 'Campo do último doc juntado do modelo',
+							'value': '$' + "{ref.modelo('memorando').form.NOMECAMPO}"
+						},
+						{
+							'name': 'Workflow'
+						},
+						{
+							'name': 'Número do Procedimento',
+							'value': '$' + '{wf.sigla}'
+						},
+						{
+							'name': 'Número do Principal vinculado ao procedimento',
+							'value': '$' + '{wf.principal}'
+						},
+						{
+							'name': 'Nome de quem iniciou o Procedimento',
+							'value': '$' + '{wf.titular}'
+						},
+						{
+							'name': 'Lotação de quem iniciou o Procedimento',
+							'value': '$' + '{wf.lotaTitular}'
+						},
+						{
+							'name': 'Variável (sem formatação)',
+							'value': '$' + '{wf.var.NOMEVARIAVEL}'
+						},
+						{
+							'name': 'Variável (Data)',
+							'value': '$' + '{fmt.data(wf.var.NOMEVARIAVEL)}'
+						},
+						{
+							'name': 'Variável (Reais)',
+							'value': '$' + '{fmt.reais(wf.var.NOMEVARIAVEL)}'
+						},
+						{
+							'name': 'Variável (Reais por Extenso)',
+							'value': '$' + '{fmt.reaisPorExtenso(wf.var.NOMEVARIAVEL)}'
+						},
+						{
+							'name': 'Documento Criado por uma tarefa',
+							'value': '$' + '{wf.var.doc_NOMETAREFA}'
+						},
+					];
+					CKEDITOR.config.strinsert_button_label = 'Parâmetro';
+					CKEDITOR.config.strinsert_button_title = 'Inserir Parâmetro';
+					CKEDITOR.config.strinsert_button_voice = 'Inserir Parâmetro';
+
+					if (CKEDITOR.plugins.get('strinsert') == null) {
+						CKEDITOR.plugins.add('strinsert', {
+							requires: ['richcombo'],
+							init: function(editor) {
+								var config = editor.config;
+
+								// Gets the list of insertable strings from the settings.
+								var strings = config.strinsert_strings;
+
+								// add the menu to the editor
+								editor.ui.addRichCombo('strinsert', {
+									label: config.strinsert_button_label,
+									title: config.strinsert_button_title,
+									voiceLabel: config.strinsert_button_voice,
+									toolbar: 'insert',
+									className: 'cke_format',
+									multiSelect: false,
+									panel: {
+										css: [editor.config.contentsCss, CKEDITOR.skin.getPath('editor')],
+										voiceLabel: editor.lang.panelVoiceLabel
+									},
+
+									init: function() {
+										var lastgroup = '';
+										for (var i = 0, len = strings.length; i < len; i++) {
+											string = strings[i];
+											// If there is no value, make a group header using the name.
+											if (!string.value) {
+												this.startGroup(string.name);
+											}
+											// If we have a value, we have a string insert row.
+											else {
+												// If no name provided, use the value for the name.
+												if (!string.name) {
+													string.name = string.value;
+												}
+												// If no label provided, use the name for the label.
+												if (!string.label) {
+													string.label = string.name;
+												}
+												this.add(string.value, string.name, string.label);
+											}
+										}
+									},
+
+									onClick: function(value) {
+										editor.focus();
+										editor.fire('saveSnapshot');
+										editor.insertHtml(value);
+										editor.fire('saveSnapshot');
+									},
+
+								});
+							}
+						});
+					}
+					CKEDITOR.config.extraPlugins = ['footnotes', 'strinsert'];
+					CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
+					CKEDITOR.replace('${var}', {
+						toolbar: 'SigaToolbar'
+					});
+				</script>
+			[#elseif kind == "selecao"]
+				[#local neutralOption = ""]
+				[#local l=options?split(";")]
+				[#if !foundValue??]
+					[#local v = l?first/]
+					[#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
+					[@inlineTemplate/] 
+				[/#if]
+				<select id="${var}" name="${var}" ${refresh_inc} onclick="${onclick!}" class="form-control" ${attsHtml}>
+					[#if neutralOption?? && neutralOption != "" && required]
+						<option id="neutralOption" value="${neutralOption}" [#if !(foundValue??)]selected[/#if]>${neutralOption}</option>
+					[/#if]
+					[#list l as option]
+						<option value="${option}" [#if v == option && (neutralOption == "" || (foundValue?? && foundValue != ""))] selected[/#if]>${option}</option>
+					[/#list]
+				</select> 
+			[#elseif kind == "memo"]
+				<textarea id="${var}" cols="${columns}" rows="${lines}" name="${var}" ${refresh_inc!""} style="width:100%;" class="form-control">${v}</textarea>
+			[#elseif kind == "data"]
+				<input type="text" id="${var}" name="${var}" value="${v}" ${refresh_inc!""} size="10" maxlength="10" class="form-control campoData" ${attsHtml} placeholder="00/00/0000"/>
+				<script type="text/javascript">
+					$('.campoData').mousedown(function() {
+						$('.campoData').datepicker({
+							onSelect: function(){
+								${onSelect!}
+							}
+						});
+					});
+				</script>
+			[#elseif kind == "hora"]
+				<input type="text" id="${var}" name="${var}" value="${v}" size="6" maxlength="5" class="form-control campoHoraMinuto" placeholder="00:00" />
+			[#elseif kind == "numero"]
+				<input onkeypress="javascript: var tecla=(window.event)?event.keyCode:e.which;if((tecla>47 && tecla<58)) return true;  else{  if (tecla==8 || tecla==0) return true;  else  return false;  }" id="${var}" type="text" name="${var}" value="${v}" ${refresh_inc!} ${maxchars_inc!} class="form-control"/>			 					
+			[#elseif kind == "valor"]
+				<input onkeypress="return formataReais(this, '.' , ',', event)" type="text" name="${var}" value="${v}" ${refresh_inc!} ${maxchars_inc!} class="form-control"/>
+			[#elseif kind == "pessoa"]
+				[#if searchClosed]
+					[@assign paramList = "searchClosed=true" /]
+				[/#if]
+				[@field_selectable tipo="pessoa" titulo=title var=var reler=refresh idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			[#elseif kind == "lotacao"]
+				[@field_selectable tipo="lotacao" titulo=title var=var reler=refresh relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			[#elseif kind == "cossignatario"]
+				[#if searchClosed]
+					[@assign paramList = "searchClosed=true" /]
+				[/#if]
+				[@field_selectable tipo="cosignatario" titulo=title var=var reler=refresh idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			[#elseif kind == "funcao"]
+				[@field_selectable tipo="funcao" titulo=title var=var reler=refresh relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			[/#if]
+		        [#if required]            		    
+			   		<div class="invalid-feedback invalid-feedback-${var}${suffix!}">Preenchimento obrigatório</div>
+				[/#if]    
+				[#if hint?? && hint != ""]
+					<div class="text-muted small">${hint}</div>
+				[/#if]
+			</div>
+		[/#if]
+[/#macro]
+
+[#macro field_selectable titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo="" col="" hint=""]
+    [#assign tipoSel = "_" + tipo /]
+
+    [#assign varName = var + tipoSel + "Sel.id" /]    
+    [#local vId = .vars[varName]!default]
+    [#assign varName = var + tipoSel + "Sel.sigla" /]
+    <input type="hidden" name="vars" value="${varName}" />
+
+    [#local vSigla = .vars[varName]!default]
+    <input type="hidden" name="vars" value="${varName}" />
+
+    [#assign varName = var + tipoSel + "Sel.descricao" /]
+    [#local vDescricao = .vars[varName]!default]
+    <input type="hidden" name="vars" value="${varName}" />
+
+    [#assign varName = var + tipoSel + "Sel.sigla" /]
+    <input type="hidden" name="obrigatorios" value="${varName}" />	    
+
+    [#if !gerar_formulario!false]
+        [@field_selectable_box titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo col=col hint=hint /]	        
+    [#else]
+    <span class="valor">[#if vSigla??]${vSigla} - [/#if]${vDescricao}</span>
     [/#if]
 [/#macro]
 
-[#macro document]
-	[#assign _scope='document']
-    [#assign document_content][#nested/][/#assign]
-	[@documento formato=(PAGE_SIZE!"A4") orientacao=(PAGE_ORIENTATION!"portrait") margemEsquerda=(MARGIN_LEFT!"3cm") margemDireita=(MARGIN_RIGHT!"2cm") margemSuperior=(MARGIN_TOP!"1cm") margemInferior=(MARGIN_BOTTOM!"2cm")]
-		[#switch STYLE!]
-  			[#case "memorando"]
-				[@memorando texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"MEMORANDO")/]
-      			[#break]
-  			[#case "assentamentoFuncional"]
-				[@assentamento_funcional texto=(document_content!) fecho=(_fecho!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"ASSENTAMENTO FUNCIONAL")/]
-      			[#break]
-  			[#case "requerimento"]
-				[@requerimento texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"") formatarOrgao=(_formatarOrgao!false)/]
-      			[#break]
-  			[#case "processo"]
-				[@processo /]
-      			[#break]
-  			[#case "provimento"]
-				[@provimento texto=(document_content!) abertura=(_abertura!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"PROVIMENTO") ementa=(_ementa!"") titulo=(_titulo!"") subtitulo=(_subtitulo!"")/]
-      			[#break]
-  			[#case "portaria"]
-				[@portaria texto=(document_content!) abertura=(_abertura!"") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"PORTARIA") dispoe_sobre=(_dispoeSobre!"")/]
-      			[#break]
-  			[#case "oficio"]
-				[@oficio _texto=(document_content!) _tipo_autoridade=(_tipoAutoridade!"") _genero=(_genero!"") _vocativo=(_vocativo!"") _enderecamento_dest=(_enderecamentoDest!"") _nome_dest=(_nomeDest!"") _cargo_dest=(_cargoDest!"") _orgao_dest=(_orgaoDest!"") _enderecoDest=(_enderecoDest!"") _fecho=(_fecho!"") _tamanho_letra=(_tamanhoLetra!"Normal") _autoridade={} _tipo=(_tipo!"OFÍCIO")/]
-      			[#break]
-  			[#case "solicitacao"]
-				[@solicitacao tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"FORMULÁRIO") assunto=(_assunto!"")/]
-      			[#break]
-  			[#default]
-                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!false) incluirMioloDJE=(_incluirMioloDJE!false) omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
-				    ${document_content!}
-                [/@estiloBrasaoCentralizado]
-  		[/#switch]
-	[/@documento]
-[/#macro]
-
-[#macro if expr depend='']
-	[#if depend?? && (_scope!'') == 'interview']
-		[@group depend=depend]
-			[#if expr][#nested][/#if]
-		[/@group]
-	[#else]
-		[#if expr][#nested][/#if]
-	[/#if]
-[/#macro]
-
-[#macro for expr depend='']
-	[#local max = 0 /]
-	[#if expr?is_number]
-		[#local max = expr?round /]
-	[#elseif expr?is_string && expr?matches("^\\d+$")]
-	    [#local max = expr?number /]
-	[/#if]
-
-	[#if depend??]
-		[@group depend=depend]
-			[#if max?? && max > 0]
-				[#list 1..max as index][#assign _index = index/][#nested _index][/#list]
-			[/#if]
-		[/@group]
-	[#else]
-		[#if max?? && max > 0]
-			[#list 1..max as index][#assign _index = index/][#nested _index][/#list]
-		[/#if]
-	[/#if]
-	[#assign _index = _inexistentVariable!/]
-[/#macro]
-
-[#macro hook expr]
-	[#if expr == 'AFTER_DRAFT']
-		[@finalizacao]
-			[#nested]
-		[/@finalizacao]
-	[#elseif expr == 'BEFORE_SAVE']
-		[@gravacao]
-			[#nested]
-		[/@gravacao]
-	[#elseif expr == 'BEFORE_SIGN']
-		[@pre_assinatura]
-			[#nested]
-		[/@pre_assinatura]
-	[#elseif expr == 'AFTER_SIGN']
-		[@assinatura]
-			[#nested]
-		[/@assinatura]
-	[/#if]
-[/#macro]
-
-[#macro print expr depend='']
-	[#if depend?? && depend != '']
-		[@group depend=depend]
-			${expr}
-		[/@group]
-	[#else]
-        ${expr}
-	[/#if]
-[/#macro]
-
-[#macro description]
-	[@descricao]
-		[#nested]
-	[/@descricao]
+[#macro field_selectable_box titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" grande=false col="" hint=""]
+    [#local larguraPopup = 600 /]
+    [#local alturaPopup =400 /]
+    [#local tipoSel = "_" + tipo /]
+        [#local acaoBusca = (modulo=="")?string("/siga/","/"+modulo+"/") + tipo /]
+    
+        [#if paramList != ""]
+            [#list paramList?split(";") as parametro]
+                [#local p2 = parametro?split("=") /]
+            [#if p2??]
+                [#local selecaoParams = selecaoParams!"" + "&" + p2[0] + "=" + p2[1] /]
+            [/#if]
+        [/#list]
+        [/#if]
+    
+    <script type="text/javascript">
+    
+    self.retorna_${var}${tipoSel} = function(id, sigla, descricao) {
+        try {
+            newwindow_${var}.close();
+        } catch (E) {
+        } finally {
+        }
+        document.getElementsByName('${var}${tipoSel}Sel.id')[0].value = id;
+        [#if !ocultarDescricao]
+            try {
+                document.getElementsByName('${var}${tipoSel}Sel.descricao')[0].value = descricao;
+                document.getElementById('${var}${tipoSel}SelSpan').innerHTML = descricao;
+            } catch (E) {
+            }
+        [/#if]
+        document.getElementsByName('${var}${tipoSel}Sel.sigla')[0].value = sigla;
+        [#if reler]
+                    //window.alert("vou reler tudo!");
+            document.getElementsByName('req${var}${tipoSel}Sel')[0].value = "sim";
+            document.getElementById('alterouSel').value='${var}';
+            sbmt([#if idAjax != ""]'${idAjax}'[/#if]);
+        [/#if]
+    }
+     
+    self.newwindow_${var} = '';
+    self.popitup_${var}${tipoSel} = function(sigla) {
+                 var url = '${acaoBusca}/buscar.action?propriedade=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
+        
+        if (!newwindow_${var}.closed && newwindow_${var}.location) {
+            newwindow_${var}.location.href = url;
+        } else {
+            var popW = ${larguraPopup};
+            var popH = ${alturaPopup};
+            
+            [#if grande]
+                popW = screen.width*0.75;
+                popH = screen.height*0.75;
+            [/#if]
+            var winleft = (screen.width - popW) / 2;
+            var winUp = (screen.height - popH) / 2; 
+            winProp = 'width='+popW+',height='+popH+',left='+winleft+',top='+winUp+',scrollbars=yes,resizable'
+            newwindow_${var}=window.open(url,'${var}${tipoSel}',winProp);
+        }
+        newwindow_${var}.opener = self;
+        
+        if (window.focus) {
+            newwindow_${var}.focus()
+        }
+        return false;
+    }
+    
+    self.resposta_ajax_${var}${tipoSel} = function(response, d1, d2, d3) {
+        var sigla = document.getElementsByName('${var}${tipoSel}Sel.sigla')[0].value;
+        var data = response.split(';');
+        if (data[0] == '1')
+            return retorna_${var}${tipoSel}(data[1], data[2], data[3]);
+        retorna_${var}${tipoSel}('', '', '');
+    
+        [#if buscar]
+            return popitup_${var}${tipoSel}(sigla);
+        [#else]
+            return;
+        [/#if]
+    }
+    
+    self.ajax_${var}${tipoSel} = function() {
+        var sigla = document.getElementsByName('${var}${tipoSel}Sel.sigla')[0].value;
+        if (sigla == '') {
+            return retorna_${var}${tipoSel}('', '', '');
+        }
+        var url = '${acaoBusca}/selecionar.action?var=${var}${tipoSel}&sigla='+encodeURI(sigla)+'${selecaoParams!}';
+        url = url + '&sigla=' + sigla;
+        PassAjaxResponseToFunction(url, 'resposta_ajax_${var}${tipoSel}', false);
+    }
+    
+    </script>
+    
+    <input type="hidden" name="${var}${tipoSel}Sel.id" value="${.vars[var+tipoSel+"Sel.id"]!}" />
+    <input type="hidden" name="${var}${tipoSel}Sel.descricao" />
+    <input type="hidden" name="${var}${tipoSel}Sel.buscar" />
+    <input type="hidden" name="req${var}${tipoSel}Sel" />
+    <input type="hidden" name="alterouSel" value="" id="alterouSel" />
+    <div class="input-group">
+    <input type="text" class="form-control" name="${var}${tipoSel}Sel.sigla" value="${.vars[var+tipoSel+"Sel.sigla"]!}" onkeypress="return handleEnter(this, event)"
+	        onblur="javascript: ajax_${var}${tipoSel}();" size="25" ${desativar?string('disabled="true"','')} />
+	    [#if buscar]
+	    	<div class="input-group-append">
+		        <input type="button" class="btn btn-secondary" id="${var}${tipoSel}SelButton" value="..."
+		            onclick="javascript: popitup_${var}${tipoSel}('');"
+		            ${desativar?string("disabled","")} theme="simple">
+	        </div>
+	    [/#if]	    
+		<div class="invalid-feedback  invalid-feedback-${var}${tipoSel}Sel.sigla">Preenchimento obrigatório</div>		
+    </div>
+    [#if !ocultarDescricao]
+        <span id="${var}${tipoSel}SelSpan">${.vars[var+tipoSel+"Sel.descricao"]!}</span>
+    [/#if]
+    
+    <script type="text/javascript">
+        document.getElementsByName('${var}${tipoSel}Sel.id')[0].value = '${(idInicial=="")?string(.vars[var+tipoSel+"Sel.id"]!, idInicial)}';
+        document.getElementsByName('${var}${tipoSel}Sel.sigla')[0].value = '${(siglaInicial=="")?string(.vars[var+tipoSel+"Sel.sigla"]!, siglaInicial)}';
+        document.getElementsByName('${var}${tipoSel}Sel.descricao')[0].value = '${(descricaoInicial=="")?string(.vars[var+tipoSel+"Sel.descricao"]!, descricaoInicial)}';
+        [#if !ocultarDescricao]
+        document.getElementById('${var}${tipoSel}SelSpan').innerHTML = '${(descricaoInicial=="")?string(.vars[var+tipoSel+"Sel.descricao"]!, descricaoInicial)}';
+        [/#if]
+    </script>
 [/#macro]

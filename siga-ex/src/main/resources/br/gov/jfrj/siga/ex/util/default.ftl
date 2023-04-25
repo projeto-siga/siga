@@ -4976,7 +4976,6 @@ ${texto}
     		[#local c = (_group_count[depend]!0) + 1 /]
     		[#assign _group_count = _group_count + {depend: c} /]
 		    [#local id = (depend=="")?string("", "div-" + c + "-" + depend)] 
-		    [#local id = (depend=="")?string("", "div-" + depend)] 
     	[/#if]
 	    [@division id=id depend=depend suppressIndependent=true atts={'class': 'row'}]
 	    	[#if title?? && title != '']<h5 class="col-12">${title}</h5>[/#if]
@@ -5421,8 +5420,8 @@ Exemplos de utilização:
 					<label title="campo: ${var}" class="form-check-label mr-4" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${title!""}</label>
 				</div>  			  
 			[#elseif kind == "editor"]
-				[#if v != ""]
-					[#local v = exbl.canonicalizarHtml(v, false, true, false, true) aux=v /]        
+				[#if v?has_content]
+					[#local v = (exbl.canonicalizarHtml(v, false, true, false, true)!"") aux=v /]        
 				[#else]
 					[#local aux="" v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
 				[/#if]

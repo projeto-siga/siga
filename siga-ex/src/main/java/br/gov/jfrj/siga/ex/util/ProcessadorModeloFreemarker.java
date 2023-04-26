@@ -129,12 +129,14 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
                 StringBuffer sb = new StringBuffer();
                 while (matcher.find()) {
                     String rep = matcher.group("markdown");
-                    matcher.appendReplacement(sb, com.crivano.jmodel.Template.markdownToFreemarker(null, rep, null));
+                    matcher.appendReplacement(sb, markdownToFreemarker(rep));
                 }
                 matcher.appendTail(sb);
                 template = sb.toString();
-            } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
-    		    template = com.crivano.jmodel.Template.markdownToFreemarker(null, template, null);
+            } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && 
+                    !template.contains("[@interview") && !template.contains("[@document") && !template.contains("[@description") && 
+                    !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
+    		    template = markdownToFreemarker(template);
     		}
 		}
 
@@ -200,6 +202,12 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			root = null;
 		}
 	}
+
+    private String markdownToFreemarker(String rep) {
+        String s = com.crivano.jmodel.Template.markdownToFreemarker(null, rep, null);
+        s = s.replace("<table>", "<table class=\"table table-sm table-striped doc-table\">");
+        return s;
+    }
 
 	public void closeTemplateSource(Object arg0) throws IOException {
 	}

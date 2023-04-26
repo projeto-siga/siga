@@ -2964,6 +2964,14 @@ public class ExMovimentacaoController extends ExController {
 			return;
 		}
 		
+		if (!((getTitular().getOrgaoUsuario().equals(pessoa.getOrgaoUsuario())) || (getTitular().getOrgaoUsuario().equals(lotacao.getOrgaoUsuario())))) {
+			result.include("msgCabecClass", "alert-danger");
+			result.include("mensagemCabec", "O Usuário/" +SigaMessages.getMessage("usuario.lotacao") + " não pertence ao órgão " + getTitular().getOrgaoUsuario().getNmOrgaoUsu() +".");
+			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
+					tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
+			return;
+		}
+		
 		offsetTransferencia = Objects.nonNull(paramoffset)
 				? ((paramoffset >= tamanho) ? ((paramoffset / MAX_ITENS_PAGINA_DUZENTOS - 1) * MAX_ITENS_PAGINA_DUZENTOS)
 						: paramoffset)
@@ -2979,7 +2987,8 @@ public class ExMovimentacaoController extends ExController {
 		
 		if (docArquivadosParaTransferir	== null || docArquivadosParaTransferir.isEmpty()) {
 			result.include("msgCabecClass", "alert-danger");
-			result.include("mensagemCabec", "Nenhum documento encontrado para o usuário " + responsavelSel.getDescricao());
+			result.include("mensagemCabec", "Nenhum documento encontrado para o " + 
+					(pessoa.getNomePessoa() != null ? "Usuário " + pessoa.getNomePessoa() : SigaMessages.getMessage("usuario.lotacao") + " " + lotacao.getNomeLotacao()));
 			result.forwardTo(this).aTransferirDocArquivadoLote(paramoffset, responsavelSel, lotaResponsavelSel, lotacaoDestinatarioSel, 
 					tamanho, offsetTransferencia, docArquivadosParaTransferir, tipoResponsavel);
 			return;
@@ -3017,22 +3026,12 @@ public class ExMovimentacaoController extends ExController {
 			try {
 			
 				final ExMobil mobil = dao().consultar(idDocumento, ExMobil.class, false);
-				if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mobil)) {
-					if (msgErroNivelAcessoso == null) {
-						msgErroNivelAcessoso = new AplicacaoException(
-								"O documento não pode ser transferido por estar inacessível ao usuário.");
-					}
-					if (!(msgErroNivelAcessoso == null)) {
-						MapMensagens.put(mobil, msgErroNivelAcessoso);
-					}
-				} else {
-					
-					Ex.getInstance()
-					.getBL()
-					.transferirEntreArquivos(mobil, getCadastrante(), getLotaCadastrante(), 
-							mov.getLotaDestinoFinal(), motivoTransferencia);
+				
+				Ex.getInstance()
+				.getBL()
+				.transferirEntreArquivos(mobil, getCadastrante(), getLotaCadastrante(), 
+						mov.getLotaDestinoFinal(), motivoTransferencia);
 
-				}
 			} catch (AplicacaoException e) {
 				MapMensagens.put(nmobil, e);
 			}

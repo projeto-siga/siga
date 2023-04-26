@@ -74,6 +74,7 @@ import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJustica
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJusticaFederalResultado;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.FaixaEnum;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.TipoDeDiariaEnum;
+import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.TipoDeTransporteParaEmbarqueEDestinoEnum;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
@@ -1151,8 +1152,20 @@ public class FuncoesEL {
 				DiariasDaJusticaFederalParametroTrecho t = new DiariasDaJusticaFederalParametroTrecho();
 				t.dataInicio = LocalDate.parse((String) map.get("data_de_embarque" + i), formatter);
 				t.trecho = (String) map.get("trecho" + i);
-				t.carroOficialAteOEmbarque = "Sim".equals((String) map.get("veiculo_oficial_embarque" + i));
-				t.carroOficialAteODestino = "Sim".equals((String) map.get("veiculo_oficial_desembarque" + i));
+                t.transporteEmbarque = TipoDeTransporteParaEmbarqueEDestinoEnum.find((String) map.get("transporte_embarque" + i));
+                if (t.transporteEmbarque == null) {
+                    if ("Sim".equals((String) map.get("veiculo_oficial_embarque" + i)))
+                        t.transporteEmbarque = TipoDeTransporteParaEmbarqueEDestinoEnum.VEICULO_OFICIAL;
+                    else
+                        t.transporteEmbarque = TipoDeTransporteParaEmbarqueEDestinoEnum.COM_ADICIONAL_DE_DESLOCAMENTO;
+                }
+                t.transporteDesembarque = TipoDeTransporteParaEmbarqueEDestinoEnum.find((String) map.get("transporte_desembarque" + i));
+                if (t.transporteDesembarque == null) {
+                    if ("Sim".equals((String) map.get("veiculo_oficial_desembarque" + i)))
+                        t.transporteDesembarque = TipoDeTransporteParaEmbarqueEDestinoEnum.VEICULO_OFICIAL;
+                    else
+                        t.transporteDesembarque = TipoDeTransporteParaEmbarqueEDestinoEnum.COM_ADICIONAL_DE_DESLOCAMENTO;
+                }
 				t.semDespesasDeHospedagem = "Sim".equals((String) map.get("sem_despesas_de_hospedagem" + i));
 				trechos.add(t);
 			}

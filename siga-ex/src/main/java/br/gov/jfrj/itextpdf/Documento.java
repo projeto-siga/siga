@@ -191,7 +191,9 @@ public class Documento {
 				/*** Exibe para Documentos Capturados a Funcao / Unidade ***/
 				if (movAssinatura.getExDocumento().isInternoCapturado()
 						&& (movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_COM_SENHA
-								|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO)) {
+							|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO
+							|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_COM_SENHA
+							|| movAssinatura.getExTipoMovimentacao() == ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO)) {
 					/* Interno Exibe Personalização se realizada */
 					s.append(Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(movAssinatura,true));
 				} else if (movAssinatura.getExDocumento().isExternoCapturado()
@@ -379,16 +381,21 @@ public class Documento {
 			new PdfOutline(cb.getRootOutline(), destination, "teste ");
 		}
 	}
-
+	
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov)
 			throws Exception {
+		return getDocumento(mob, mov, false);
+	}
+
+	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov, boolean tamanhoOriginal)
+			throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		getDocumento(baos, null, mob, mov, false, true, false, null, null);
+		getDocumento(baos, null, mob, mov, false, true, false, null, null,tamanhoOriginal);
 		return baos.toByteArray();
 	}
 
 	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado)
+			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado,boolean tamanhoOriginal)
 			throws Exception {
 		PdfReader reader;
 		int n;
@@ -460,7 +467,7 @@ public class Documento {
 						Prop.get("carimbo.texto.superior"), 
 						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
 						mob.getExDocumento().getMarcaDagua(), 
-						an.getMobil().getDoc().getIdsDeAssinantes());	
+						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal);	
 				
 
 				bytes += ab.length;
@@ -536,7 +543,7 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				if(Prop.get("arquivo.tamanho.gc") != null) {
+				if(!Prop.getBool("garbage.tarefa") && Prop.get("arquivo.tamanho.gc") != null) {
 					garbage += ab.length;
 					if (garbage > Long.valueOf(Prop.get("arquivo.tamanho.gc"))) {
 						garbage = 0;
@@ -653,7 +660,8 @@ public class Documento {
 					sb.append("</div>");
 				}
 
-				if ((an.getArquivo() instanceof ExDocumento && !((ExDocumento)an.getArquivo()).isCapturado()) ||
+				if ((an.getArquivo() instanceof ExDocumento && (!((ExDocumento)an.getArquivo()).isCapturado() || 
+						(((ExDocumento)an.getArquivo()).isCapturadoFormatoLivre()))) ||
 						(an.getArquivo() instanceof ExMovimentacao && an.getArquivo().getHtml() != null)) {
 					String sHtml = fixHtml(contextpath, an);				
 					sHtml = novoHtmlPersonalizado(sHtml).comBody().comBootstrap().comCSSInterno().obter();
@@ -692,7 +700,7 @@ public class Documento {
 						&& an.getArquivo().getMensagem().trim().length() > 0) {
 					sb.append("</td></tr><tr><td>");
 					sb.append("<div style=\"margin:3pt; padding:3pt; border: 1px solid #ccc; border-radius: 5px; background-color:lightgreen;\" class=\"anexo\">");
-					sb.append(an.getArquivo().getMensagem());
+					sb.append(an.getArquivo().getMensagem(true));
 					sb.append("</div>");
 				}
 				sb.append("</td></tr></table></div>");
@@ -700,7 +708,7 @@ public class Documento {
 				an.evict();
 				an = null;
 				
-				if(Prop.get("arquivo.contagem.gc") != null) {
+				if(!Prop.getBool("garbage.tarefa") && Prop.get("arquivo.contagem.gc") != null) {
 					garbage += 1;
 					if (garbage > Long.valueOf(Prop.get("arquivo.contagem.gc"))) {
 						garbage = 0;

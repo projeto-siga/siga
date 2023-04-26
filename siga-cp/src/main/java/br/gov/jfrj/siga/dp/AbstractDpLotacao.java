@@ -84,7 +84,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " or ( :nome != null and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and (upper(concat(lot.orgaoUsuario.acronimoOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%')"
 				+ " or upper(concat(lot.orgaoUsuario.siglaOrgaoUsu, lot.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and lot.dataFimLotacao = null"
-				+ "	 order by lot.nomeLotacao"),
+				+ "	 order by nomeLotacaoAI, siglaLotacao"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacao", query = "select count(lot) from DpLotacao lot "
 				+ "  where ((upper(lot.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lot.siglaLotacao) like upper('%' || :sigla || '%'))"
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
@@ -98,7 +98,7 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ " or upper(concat(lotacao.orgaoUsuario.siglaOrgaoUsu, lotacao.siglaLotacao)) like upper(:nome || '%'))))"
 				+ "	and exists (select 1 from DpLotacao lAux where lAux.idLotacaoIni = lotacao.idLotacaoIni"
 				+ "	 group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"
-				+ "  order by upper(nomeLotacaoAI)"),
+				+ "  order by nomeLotacaoAI, siglaLotacao"),
 		@NamedQuery(name = "consultarQuantidadeDpLotacaoInclusiveFechadas", query = "select count(distinct lotacao.idLotacaoIni) from DpLotacao lotacao"
 				+ "  where ((upper(lotacao.nomeLotacaoAI) like upper('%' || :nome || '%') or upper(lotacao.siglaLotacao) like upper('%' || :sigla || '%')) " 
 				+ "	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or lotacao.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
@@ -108,22 +108,16 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "	 group by lAux.idLotacaoIni having max(lAux.dataInicioLotacao) = lotacao.dataInicioLotacao)"),
 		@NamedQuery(name = "consultarPorNomeOrgaoDpLotacao", query = "select lot from DpLotacao lot where upper(REMOVE_ACENTO(lot.nomeLotacao)) = upper(REMOVE_ACENTO(:nome)) and lot.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu")})
 		@NamedNativeQueries({
-		@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
-				+ " left join corporativo.dp_lotacao lotacao on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
-				+ " WHERE id_marcador not in (1,10,32)"
-				+ " AND lotacao.id_lotacao_ini = :idLotacao"
-				+ " AND id_tp_marca = :idTipoMarca "),
-		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
-				+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
-				+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
-				+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-				+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao"),
-		@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacaoECpMarca", query = "SELECT count(1) FROM siga.ex_documento doc "
-						+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
-						+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
-						+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
-						+ " where lot.id_lotacao_ini = :idLotacao or (marca.ID_LOTACAO_INI = :idLotacao"
-				        + " and marca.ID_MARCADOR not in (:listMarcadores))")})
+			@NamedNativeQuery(name = "consultarQuantidadeDocumentosPorDpLotacao", query = "SELECT count(1) FROM corporativo.cp_marca marca "
+					+ " left join corporativo.dp_lotacao lotacao on lotacao.ID_LOTACAO = marca.ID_LOTACAO_INI"
+					+ " WHERE id_marcador not in (1,10,32)"
+					+ " AND lotacao.id_lotacao_ini = :idLotacao"
+					+ " AND id_tp_marca = :idTipoMarca "),
+			@NamedNativeQuery(name = "consultarQtdeDocCriadosPossePorDpLotacao", query = "SELECT count(1) FROM siga.ex_documento doc "
+					+ " left join corporativo.dp_lotacao lot on doc.id_lota_cadastrante = lot.id_lotacao "
+					+ " left join siga.ex_mobil mob on mob.id_doc = doc.id_doc "
+					+ " left join corporativo.cp_marca marca on marca.id_ref = mob.ID_MOBIL"
+					+ " where lot.id_lotacao_ini = :idLotacao or marca.ID_LOTACAO_INI = :idLotacao")})
 
 public abstract class AbstractDpLotacao extends DpResponsavel implements
 		Serializable, HistoricoAuditavel {
@@ -174,7 +168,6 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
-	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "lotacaoPai")
@@ -195,7 +188,6 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private CpLocalidade localidade;
 	
 	@Column(name = "IS_EXTERNA_LOTACAO")
-    @Desconsiderar
 	private Integer isExternaLotacao;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -209,8 +201,15 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	private CpIdentidade hisIdcFim;
 	
 	@Column(name = "IS_SUSPENSA")
-    @Desconsiderar
 	private Integer isSuspensa;
+	
+	@Column(name = "MOTIVO_INATIVACAO", length = 500)
+	@Desconsiderar
+	private String motivoInativacao;
+	
+	@Column(name = "MOTIVO_ATIVACAO", length = 500)
+	@Desconsiderar
+	private String motivoAtivacao;
 
 	public Integer getIsExternaLotacao() {
 		return isExternaLotacao;
@@ -444,5 +443,26 @@ public abstract class AbstractDpLotacao extends DpResponsavel implements
 	public void setIsSuspensa(Integer isSuspensa) {
 		this.isSuspensa = isSuspensa;
 	}
+	
+	
+	/* 
+	 * Motivo da Inativação/Ativação de Lotações para Histórico
+	 * */
+	public String getMotivoInativacao() {
+		return motivoInativacao;
+	}
+
+	public void setMotivoInativacao(String motivoInativacao) {
+		this.motivoInativacao = motivoInativacao;
+	}
+
+	public String getMotivoAtivacao() {
+		return motivoAtivacao;
+	}
+
+	public void setMotivoAtivacao(String motivoAtivacao) {
+		this.motivoAtivacao = motivoAtivacao;
+	}
+
 
 }

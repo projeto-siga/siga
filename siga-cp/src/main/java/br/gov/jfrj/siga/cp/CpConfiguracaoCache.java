@@ -189,7 +189,7 @@ public class CpConfiguracaoCache {
 		if (cfg.getIdInicial() != null)
 			this.configuracaoInicial = longOrZero(cfg.getIdInicial());
 
-		this.orgaoUsuario = longOrZero(cfg.getOrgaoUsuario() != null ? cfg.getOrgaoUsuario().getId() : null);
+		this.orgaoUsuario = longOrZero(cfg.getOrgaoUsuario() != null ? cfg.getOrgaoUsuario().getIdInicial() : null);
 		this.lotacao = longOrZero(cfg.getLotacao() != null ? cfg.getLotacao().getIdInicial() : null);
 		this.complexo = longOrZero(cfg.getComplexo() != null ? cfg.getComplexo().getIdComplexo() : null);
 		this.cargo = longOrZero(cfg.getCargo() != null ? cfg.getCargo().getIdInicial() : null);
@@ -199,8 +199,8 @@ public class CpConfiguracaoCache {
 		this.cpTipoConfiguracao = cfg.getCpTipoConfiguracao();
 		this.cpServico = longOrZero(cfg.getCpServico() != null ? cfg.getCpServico().getId() : null);
 		this.cpIdentidade = longOrZero(cfg.getCpIdentidade() != null ? cfg.getCpIdentidade().getIdInicial() : null);
-		this.cpTipoLotacao = longOrZero(cfg.getCpGrupo() != null ? cfg.getCpGrupo().getIdInicial() : null);
-		this.orgaoObjeto = longOrZero(cfg.getOrgaoObjeto() != null ? cfg.getOrgaoObjeto().getId() : null);
+		this.cpTipoLotacao = longOrZero(cfg.getCpTipoLotacao() != null ? cfg.getCpTipoLotacao().getIdTpLotacao() : null);
+		this.orgaoObjeto = longOrZero(cfg.getOrgaoObjeto() != null ? cfg.getOrgaoObjeto().getIdInicial() : null);
 		this.lotacaoObjeto = longOrZero(cfg.getLotacaoObjeto() != null ? cfg.getLotacaoObjeto().getIdInicial() : null);
 		this.complexoObjeto = longOrZero(
 				cfg.getComplexoObjeto() != null ? cfg.getComplexoObjeto().getIdComplexo() : null);

@@ -2,10 +2,6 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -29,8 +25,9 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.cp.CpAcesso;
-import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
+import br.gov.jfrj.siga.cp.logic.CpPodePorConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.util.SiglaDeEntidadeParser;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -95,8 +92,9 @@ public class PrincipalController extends SigaController {
 
 	@Get("permalink/{sigla}")
 	public void permalink(final String sigla) {
+       String urlBase = Contexto.urlBase(request);
 		GenericoSelecao sel = buscarGenericoPorSigla(sigla, getTitular(), getLotaTitular(),
-				(getTitular() != null) ? getTitular().getSiglaCompleta() : null);
+				(getTitular() != null) ? getTitular().getSiglaCompleta() : null, urlBase);
 		if (sel == null || sel.getDescricao() == null)
 			result.notFound();
 		else {
@@ -123,10 +121,11 @@ public class PrincipalController extends SigaController {
 				incluirMatricula = "&matricula=" + getTitular().getSiglaCompleta();
 			}
 
-			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula);
+			String urlBase = Contexto.urlBase(request);
+			final GenericoSelecao sel = buscarGenericoPorSigla(sigla, pes, lot, incluirMatricula, urlBase);
 
 			if (sel.getId() == null) {
-				if (Prop.getBool("/xjus.url") != null) {
+				if (podeUtilizarPesquisaGenericaViaXjus(pes, lot)) {
 					sel.setId(-1L);
 					sel.setSigla(sigla);
 					sel.setDescricao("/siga/app/xjus#!?filter=" + sigla);
@@ -147,46 +146,23 @@ public class PrincipalController extends SigaController {
 		}
 	}
 
-	private GenericoSelecao buscarGenericoPorSigla(String sigla, DpPessoa pes, DpLotacao lot, String incluirMatricula) {
+    public static GenericoSelecao buscarGenericoPorSigla(String sigla, DpPessoa pes, DpLotacao lot, String incluirMatricula, String urlBase) {
 
-		sigla = sigla.trim().toUpperCase();
-
-		Map<String, CpOrgaoUsuario> mapAcronimo = new TreeMap<String, CpOrgaoUsuario>();
-		for (CpOrgaoUsuario ou : CpDao.getInstance().listarOrgaosUsuarios()) {
-			mapAcronimo.put(ou.getAcronimoOrgaoUsu(), ou);
-			mapAcronimo.put(ou.getSiglaOrgaoUsu(), ou);
-		}
-
-		StringBuilder acronimos = new StringBuilder();
-		for (String s : mapAcronimo.keySet()) {
-			if (acronimos.length() > 0)
-				acronimos.append("|");
-			acronimos.append(s);
-		}
-
-		final Pattern p1 = Pattern.compile("^(?<orgao>" + acronimos.toString()
-				+ ")?-?(?:(?<especie>[A-Za-z]{3})|(?<modulo>SR|TMPSR|GC|TMPGC|DP|WF|TP))-?([0-9][0-9A-Za-z\\.\\-\\/]*)$");
-		final Matcher m1 = p1.matcher(sigla);
-
+        SiglaDeEntidadeParser sp = new SiglaDeEntidadeParser(sigla);
+        
 		final GenericoSelecao sel = new GenericoSelecao();
 		if (incluirMatricula == null)
 			incluirMatricula = "";
 
-		String urlBase = Contexto.urlBase(request);
-
 		List<String> lurls = new ArrayList<>();
 
-		if (m1.find()) {
-			String orgao = m1.group("orgao");
-			String especie = m1.group("especie");
-			String modulo = m1.group("modulo");
-
-			if (especie != null) {
+		if (sp.isValida()) {
+			if (sp.getEspecie() != null) {
 				// Documentos
 				lurls.add(urlBase + "/sigaex/public/app/expediente/selecionar?sigla=" + sigla + incluirMatricula
 						+ ";/sigaex/app/expediente/doc/exibir?sigla=");
-			} else if (modulo != null) {
-				switch (modulo) {
+			} else if (sp.getModulo() != null) {
+				switch (sp.getModulo()) {
 				case "SR": // Solicitacoes
 				case "TMPSR":
 					lurls.add(urlBase + "/sigasr/public/app/selecionar?sigla=" + sigla + incluirMatricula);
@@ -275,6 +251,13 @@ public class PrincipalController extends SigaController {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		response.addHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+	}
+
+	private boolean podeUtilizarPesquisaGenericaViaXjus(DpPessoa pessoa, DpLotacao lotacao) throws Exception {
+		return (Prop.getBool("/xjus.url") != null && new CpPodePorConfiguracao(pessoa, lotacao)
+				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_GENERICA_VIA_XJUS)
+				.withOrgaoObjeto(lotacao.getLotacaoAtual().getOrgaoUsuario())
+				.eval());
 	}
 
 }

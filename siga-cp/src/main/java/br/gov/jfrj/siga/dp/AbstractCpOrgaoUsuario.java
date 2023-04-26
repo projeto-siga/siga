@@ -23,29 +23,49 @@
 package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.model.HistoricoAuditavel;
 import br.gov.jfrj.siga.model.Objeto;
+import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
 @NamedQueries({
-		@NamedQuery(name = "consultarSiglaOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.siglaOrgaoUsu) = upper(:sigla) or upper(org.acronimoOrgaoUsu) = upper(:sigla)"),
-		@NamedQuery(name = "consultarCpOrgaoUsuario", query = "select u from CpOrgaoUsuario u order by u.siglaOrgaoUsu"), 
+		@NamedQuery(name = "consultarSiglaOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.siglaOrgaoUsu) = upper(:sigla) or upper(org.acronimoOrgaoUsu) = upper(:sigla) order by org.hisDtIni desc"),
+		@NamedQuery(name = "consultarCpOrgaoUsuario", query = "select u from CpOrgaoUsuario u where "
+				+ "  	exists (select 1 from CpOrgaoUsuario oAux where oAux.idOrgaoUsuIni = u.idOrgaoUsuIni "
+				+ "		group by oAux.idOrgaoUsuIni having max(oAux.hisDtIni) = u.hisDtIni) or u.hisDtFim is null "
+				+ " 	order by u.siglaOrgaoUsu "),
+		@NamedQuery(name = "consultarCpOrgaoUsuarioTodos", query = "select u from CpOrgaoUsuario u order by u.siglaOrgaoUsu "), 
 		@NamedQuery(name = "consultarCpOrgaoUsuarioOrdenadoPorNome", query = "select u from CpOrgaoUsuario u order by u.nmOrgaoUsu"),
 		@NamedQuery(name = "consultarIdOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.idOrgaoUsu) = upper(:idOrgaoUsu)"),
 		@NamedQuery(name = "consultarNomeOrgaoUsuario", query = "from CpOrgaoUsuario org where upper(org.nmOrgaoAI) = upper(:nome)"),
 		@NamedQuery(name = "consultarPorFiltroCpOrgaoUsuario", query = "from CpOrgaoUsuario org where (upper(org.nmOrgaoUsu) like upper('%' || :nome || '%'))	order by org.nmOrgaoUsu"),
 		@NamedQuery(name = "consultarQuantidadeCpOrgaoUsuario", query = "select count(org) from CpOrgaoUsuario org"
-				+ " where ((upper(org.nmOrgaoUsu) like upper('%' || :nome || '%')) or (upper(org.siglaOrgaoUsu) like upper('%' || :nome || '%'))) order by org.siglaOrgaoUsu")})
+				+ " where ((upper(org.nmOrgaoUsu) like upper('%' || :nome || '%')) or (upper(org.siglaOrgaoUsu) like upper('%' || :nome || '%'))) "
+				+ " and (exists (select 1 from CpOrgaoUsuario oAux where oAux.idOrgaoUsuIni = org.idOrgaoUsuIni "
+				+ "		group by oAux.idOrgaoUsuIni having max(oAux.hisDtIni) = org.hisDtIni) or org.hisDtFim is null)"
+				+ " order by org.siglaOrgaoUsu")})
 
 public abstract class AbstractCpOrgaoUsuario extends Objeto implements
-		Serializable {
+		Serializable, HistoricoAuditavel {
 
 	@Column(name = "CGC_ORGAO_USU")
 	private Integer cgcOrgaoUsu;
@@ -54,6 +74,8 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 	private Integer codOrgaoUsu;
 
 	@Id
+	@SequenceGenerator(name = "CP_ORGAO_USUARIO_SEQ", sequenceName = "CORPORATIVO.CP_ORGAO_USUARIO_SEQ")
+	@GeneratedValue(generator = "CP_ORGAO_USUARIO_SEQ")
 	@Column(name = "ID_ORGAO_USU", unique = true, nullable = false)
 	private Long idOrgaoUsu;
 
@@ -92,6 +114,44 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 	
 	@Column(name = "IS_EXTERNO_ORGAO_USU", length = 1)
 	private Integer isExternoOrgaoUsu;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="HIS_IDC_INI")
+	@Desconsiderar
+	private CpIdentidade hisIdcIni;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@Desconsiderar
+    @JoinColumn(name="HIS_IDC_FIM")
+	private CpIdentidade hisIdcFim;
+	
+	@Column(name = "ID_ORGAO_USU_INICIAL")
+	@Desconsiderar
+	private Long idOrgaoUsuIni;
+
+	@Desconsiderar
+	@Column(name = "MARCO_REGULATORIO")
+	private String marcoRegulatorio;
+	
+	@Desconsiderar
+	@Column(name = "DT_ALTERACAO")
+	private Date dataAlteracao;
+	
+	@Column(name = "HIS_DT_INI")
+	@Desconsiderar
+	private Date hisDtIni;
+
+	@Column(name = "HIS_DT_FIM")
+	@Desconsiderar
+	private Date hisDtFim;
+
+	@Column(name = "HIS_ATIVO")
+	private Integer hisAtivo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_ORGAO_USU_INICIAL", insertable = false, updatable = false)
+	@Desconsiderar
+	private CpOrgaoUsuario orgaoUsuarioInicial;
 
 	public Integer getIsExternoOrgaoUsu() {
 		return isExternoOrgaoUsu;
@@ -119,6 +179,14 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 		}
 		return false;
 
+	}
+
+	public CpOrgaoUsuario getOrgaoUsuarioInicial() {
+		return orgaoUsuarioInicial;
+	}
+
+	public void setOrgaoUsuarioInicial(CpOrgaoUsuario orgaoUsuarioInicial) {
+		this.orgaoUsuarioInicial = orgaoUsuarioInicial;
 	}
 
 	public String getBairroOrgaoUsu() {
@@ -251,4 +319,68 @@ public abstract class AbstractCpOrgaoUsuario extends Objeto implements
 		this.acronimoOrgaoUsu = acronimoOrgaoUsu;
 	}
 
+	public CpIdentidade getHisIdcIni() {
+		return hisIdcIni;
+	}
+
+	public void setHisIdcIni(CpIdentidade hisIdcIni) {
+		this.hisIdcIni = hisIdcIni;
+	}
+
+	public CpIdentidade getHisIdcFim() {
+		return hisIdcFim;
+	}
+
+	public void setHisIdcFim(CpIdentidade hisIdcFim) {
+		this.hisIdcFim = hisIdcFim;
+	}
+
+	public Long getIdOrgaoUsuIni() {
+		return idOrgaoUsuIni;
+	}
+
+	public void setIdOrgaoUsuIni(Long idOrgaoUsuIni) {
+		this.idOrgaoUsuIni = idOrgaoUsuIni;
+	}
+
+	public String getMarcoRegulatorio() {
+		return marcoRegulatorio;
+	}
+
+	public void setMarcoRegulatorio(String marcoRegulatorio) {
+		this.marcoRegulatorio = marcoRegulatorio;
+	}
+
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
+	}
+
+	public Date getHisDtIni() {
+		return hisDtIni;
+	}
+
+	public void setHisDtIni(Date hisDtIni) {
+		this.hisDtIni = hisDtIni;
+	}
+
+	public Date getDtFim() {
+		return hisDtFim;
+	}
+
+	public void setDtFim(Date hisDtFim) {
+		this.hisDtFim = hisDtFim;
+	}
+
+	public Integer getAtivo() {
+		return hisAtivo;
+	}
+
+	public void setAtivo(Integer hisAtivo) {
+		this.hisAtivo = hisAtivo;
+	}
+	
 }

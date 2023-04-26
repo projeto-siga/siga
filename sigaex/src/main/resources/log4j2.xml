@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <!-- https://logging.apache.org/log4j/2.x/manual/configuration.html#PropertySubstitution -->
+    <Properties>
+        <Property name="logdir">${sys:jboss.server.log.dir}</Property>
+    </Properties>
+    <!-- Define custom levels before using them for filtering below. -->
+    <CustomLevels>
+        <CustomLevel name="BLAME" intLevel="450"/>
+    </CustomLevels>
+
+    <Appenders>
+        <RollingFile name="file"
+                     fileName="${logdir}/sigaex/user-request-track.log"
+                     filePattern="sigaex-user-request-track-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout charset="UTF-8" pattern="%-5p %d %c{1} %m [%MDC]%n"/>
+            <SizeBasedTriggeringPolicy size="100 MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="json-file"
+                     fileName="${logdir}/sigaex/user-request-track.log.json"
+                     filePattern="sigaex-user-request-track-%d{yyyy-MM-dd}-%i.log.gz">
+            <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
+            <SizeBasedTriggeringPolicy size="100 MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="file-request"
+                     fileName="${logdir}/siga/request-check-events.log"
+                     filePattern="siga-request-check-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout charset="UTF-8" pattern="%-5p %d %C{1} %m %n"/>
+            <SizeBasedTriggeringPolicy size="100 MB"/>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="br.gov.jfrj.siga.ex.interceptor.UserRequestInterceptor" level="BLAME">
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="json-file"/>
+        </AsyncLogger>
+        
+
+    	<Logger name="br.gov.jfrj.siga.vraptor.RequestParamsCheckInterceptor" level="BLAME">
+    		<AppenderRef ref="file-request"/>
+    	</Logger>
+    	<Logger name="br.gov.jfrj.siga.context.ApiContextSupport" level="BLAME">
+    		<AppenderRef ref="file-request"/>
+    	</Logger>
+    	
+    </Loggers>
+
+</Configuration>

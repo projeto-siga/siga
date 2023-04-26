@@ -71,17 +71,17 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		+ "                inner join fetch mob.exDocumento doc" + "                where ("
 		+ "                mob.numSequencia=:numSequencia"
 		+ "                and mob.exTipoMobil.idTipoMobil=:idTipoMobil"
-		+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
+		+ "                and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or doc.orgaoUsuario.idOrgaoUsuIni = :idOrgaoUsu)"
 		+ "                and doc.idDoc=mob.exDocumento.idDoc" + "                and doc.anoEmissao=:anoEmissao"
 		+ "                and doc.exFormaDocumento.idFormaDoc=:idFormaDoc"
 		+ "                and doc.numExpediente=:numExpediente)"),
 		// Somente os "2 - em andamento" ou "75 - Assinado (Equivalente a primeiro aguardando andamento)"
 	    // (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) devido a nível de acesso add pessoa Inicial também
-		@NamedQuery(name = "consultarParaTransferirEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
+		@NamedQuery(name = "consultarParaTramitarEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		@NamedQuery(name = "consultarQuantidadeParaTransferirEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
+		@NamedQuery(name = "consultarQuantidadeParaTramitarEmLote", query = "select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
@@ -91,11 +91,29 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                and (mar.cpMarcador.idMarcador=3"
 				+ "                or mar.cpMarcador.idMarcador=14)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		// Somente os "em andamento", "Transferido para Órgão Externo"
-		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
-				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=11)"
+		// Somente os mobis possíveis para o arquivamento em lote
+		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", 
+				query = "select mob from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+				+ "                and (mob.exDocumento.dtFinalizacao is not null)" // doc está finalizado
+				+ "                and (mob.exTipoMobil.idTipoMobil = :tipoMobilVia " // é via ou é geral de processo
+				+ "                		or (mob.exTipoMobil.idTipoMobil = :tipoMobilGeral " 
+				+ "                				and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc != :tipoFormaDocExpediente))" 
+				+ "                and (mar.cpMarcador.idMarcador not in :notInCpMarcadorEnumList)"
+				+ "                and (mar.cpMarcador.idMarcador in :cpMarcadorEnumList)"
 				+ "                ) order by mar.dtIniMarca desc"),
+		@NamedQuery(name = "consultarQuantidadeParaArquivarCorrenteEmLote",
+				query = "select count(*) from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+				+ "                and (mob.exDocumento.dtFinalizacao is not null)"
+				+ "                and (mob.exTipoMobil.idTipoMobil = :tipoMobilVia "
+				+ "                		or (mob.exTipoMobil.idTipoMobil = :tipoMobilGeral "
+				+ "                				and doc.exFormaDocumento.exTipoFormaDoc.idTipoFormaDoc != :tipoFormaDocExpediente))"
+				+ "                and (mar.cpMarcador.idMarcador not in :notInCpMarcadorEnumList)"
+				+ "                and (mar.cpMarcador.idMarcador in :cpMarcadorEnumList)"
+				+ "                )"),
 		// Somente os "a recolher para arquivo intermediário"
 		@NamedQuery(name = "consultarParaArquivarIntermediarioEmLote", query = "select mob, mar from ExMobil mob join mob.exMarcaSet mar"
 				+ "                where mar.cpMarcador.idMarcador=51              "
@@ -176,9 +194,9 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 		// Voltar todas as movimentacoes realizadas por uma determinada pessoa
 		// em um exato momento. Usado principalmente para gerar segunda-via de
 		// protocolos. 
-		@NamedQuery(name = "consultarMovimentacoes", query = "from ExMovimentacao mov"
-				+ "                where mov.cadastrante.idPessoaIni=:pessoaIni and mov.dtIniMov= :data"
-				+ "                order by mov.dtTimestamp"), 
+		@NamedQuery(name = "consultarMovimentacoesPorCadastranteEntreDatas", query = "from ExMovimentacao mov"
+				+ "                where mov.cadastrante.idPessoaIni = :pessoaIni " 
+				+ "                and mov.dtIniMov between :dtIni and :dtFim"), 
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_QUERY),
 		@NamedQuery(name = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_NAMED_QUERY, query = AbstractExMovimentacao.CONSULTAR_TRAMITACOES_POR_MOVIMENTACAO_DOC_CANCELADO_QUERY),
 })
@@ -283,20 +301,9 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	@Column(name = "ID_MOV", unique = true, nullable = false)
 	private Long idMov;
 	
-	@Transient
-	protected byte[] cacheConteudoBlobMov;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cadastrante")
 	private DpPessoa cadastrante;
-
-	@Lob
-	@Column(name = "conteudo_blob_mov")
-	@Basic(fetch = FetchType.LAZY)
-	private byte[] conteudoBlobMov;
-
-	@Column(name = "conteudo_tp_mov", length = 128)
-	private String conteudoTpMov;
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMovimentacaoRef")
@@ -832,44 +839,29 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 
 	public String getConteudoTpMov() {
-		if (getCpArquivo() == null || getCpArquivo().getConteudoTpArq() == null)
-			return conteudoTpMov;
+		if (getCpArquivo() == null)
+			return null;
 		return getCpArquivo().getConteudoTpArq();
 	}
 
 	public void setConteudoTpMov(final String conteudoTp) {
-	    this.conteudoTpMov = conteudoTp;
-	    if (orgaoPermiteHcp() && this.conteudoBlobMov == null && !CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")))) {
-	    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
-	    }
+    	cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, conteudoTp);
 	}
 
 	public byte[] getConteudoBlobMov() {
-		if(cacheConteudoBlobMov != null) {
-			return cacheConteudoBlobMov;
-		} else if (getCpArquivo() == null) {
-			cacheConteudoBlobMov = conteudoBlobMov;
-		} else {
-			try {
-				cacheConteudoBlobMov = getCpArquivo().getConteudo();
-			} catch (Exception e) {
-				throw new AplicacaoException(e.getMessage());
-			}
+		try {
+			if (getCpArquivo() == null)
+				return null;
+			return getCpArquivo().getConteudo();
+		} catch (Exception e) {
+			throw new AplicacaoException(e.getMessage());
 		}
-		return cacheConteudoBlobMov;
 	}
 
 	public void setConteudoBlobMov(byte[] createBlob) {
-		cacheConteudoBlobMov = createBlob;
-		if (this.cpArquivo==null && (this.conteudoBlobMov!=null || CpArquivoTipoArmazenamentoEnum.BLOB.equals(CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"))))) {
-			this.conteudoBlobMov = createBlob;
-		} else if(cacheConteudoBlobMov != null){
-			if (orgaoPermiteHcp())
-				cpArquivo = CpArquivo.updateConteudo(cpArquivo, cacheConteudoBlobMov);
-			else
-				this.conteudoBlobMov = createBlob;
+		if(createBlob != null){
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
 		}
-		
 	}
 
 	public Date getDtParam1() {

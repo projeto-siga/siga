@@ -125,11 +125,11 @@ public class AuthJwtFormFilter implements Filter {
 				Map<String, Object> decodedToken = validarToken(token);
 				final long now = System.currentTimeMillis() / 1000L;
 				if (((Integer) decodedToken.get("exp")) < (now + TIME_TO_RENEW_IN_S)) {
-					// Seria bom incluir o attributo HttpOnly
+
 					String tokenNew = renovarToken(token);
-					Map<String, Object> decodedNewToken = validarToken(token);
-					Cookie cookie = buildCookie(tokenNew);
-					resp.addCookie(cookie);
+					validarToken(token);
+					addCookie(req, resp, buildCookie(tokenNew));
+					
 //					Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.RENOVACAO_AUTOMATICA,
 //							(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
 //							(Integer) decodedNewToken.get("exp"), HttpRequestUtils.getIpAudit(req));
@@ -182,12 +182,20 @@ public class AuthJwtFormFilter implements Filter {
 
 		return cookie;
 	}
+	
+	private static String removeSpecial(String str) {
+		//return str.replaceAll("[a-zA-Z0-9]+", ""); Ajustar REGEX para suportar ., traço e Número
+		return str;
+	}
 
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {
 		response.setHeader("Set-Cookie",
-				cookie.getName() + "=" + cookie.getValue() + "; Path=" + cookie.getPath() + "; Max-Age="
-						+ cookie.getMaxAge() + "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
-						+ "; HttpOnly" + (request.getServerName().equals("localhost") ? "" : "; Secure; SameSite=None"));
+				removeSpecial(cookie.getName()) + "=" + removeSpecial(cookie.getValue()) 
+						+ "; Path=" + cookie.getPath() 
+						+ (cookie.getDomain() == null ? "" : "; Domain="+removeSpecial(cookie.getDomain()))
+						+ "; Max-Age="+ cookie.getMaxAge() 
+						+ "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
+						+ "; HttpOnly" + (!Prop.get("/siga.base.url").contains("https") ? "" : "; Secure; SameSite=None"));
 	}
 	
 	public static Cookie buildEraseCookie() {

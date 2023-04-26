@@ -32,15 +32,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,11 +40,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.auth0.jwt.JWTSigner;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -61,13 +51,11 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
-import br.com.caelum.vraptor.view.HttpResult;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
-import br.gov.jfrj.siga.base.SigaHTTP;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaModal;
 import br.gov.jfrj.siga.base.TipoResponsavelEnum;
@@ -104,6 +92,11 @@ public class ExMobilController extends
 	private static final String SIGA_DOC_PESQ_PESQDESCR = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição";
 	private static final String SIGA_DOC_PESQ_PESQDESCR_LIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;PESQDESCR:Pesquisar descrição;LIMITADA:Pesquisar descrição só se informar outros filtros";
 	private static final String SIGA_DOC_PESQ_DTLIMITADA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar;DTLIMITADA:Pesquisar somente com data limitada";
+
+	private static final int MAX_ITENS_PAGINA_DUZENTOS = 200;
+	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
+	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
+	private static final int MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE = 200;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -303,7 +296,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) throws UnsupportedEncodingException {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String fromQuadro) throws UnsupportedEncodingException {
 			
 		
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -311,7 +304,10 @@ public class ExMobilController extends
 		try {
 			final ExMobilDaoFiltro flt = createDaoFiltro();
 			//long tempoIni = System.currentTimeMillis();
-			setTamanho(dao().consultarQuantidadePorFiltroOtimizado(flt,getTitular(), getLotaTitular()));
+
+			pesquisarXjus(flt);
+			Integer tamanhoResultado = flt.getListaIdDoc() == null ? null : flt.getListaIdDoc().size();
+			setTamanho(tamanhoResultado == null ? dao().consultarQuantidadePorFiltroOtimizado(flt, getTitular(), getLotaTitular()) : tamanhoResultado);
 			
 			
 			LocalDate dtIni = null;
@@ -374,6 +370,7 @@ public class ExMobilController extends
 			List lista = dao().consultarPorFiltroOtimizado(flt,
 					builder.getOffset(), -1, getTitular(),
 					getLotaTitular());
+			
 			Set<?> items = new HashSet<>(lista); 
 			
 			InputStream inputStream = null;
@@ -392,8 +389,8 @@ public class ExMobilController extends
 				e = (ExDocumento)(((Object[])object)[0]);
 				m = (ExMobil)(((Object[])object)[1]);
 				ma = (ExMarca)(((Object[])object)[2]);
-				
-				texto.append(m.getCodigo()+";");
+	
+				texto.append(m.getDnmSigla()+";");
 				if(e.getLotaSubscritor() != null && e.getLotaSubscritor().getSigla() != null) {
 					texto.append(e.getLotaSubscritor().getSigla().replaceAll(";",","));
 				}
@@ -459,7 +456,7 @@ public class ExMobilController extends
 
 		} catch (final RegraNegocioException e) {
 			result.include(SigaModal.ALERTA, SigaModal.mensagem(e.getMessage()));
-			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset);
+			result.forwardTo(this).aListar(popup, primeiraVez, propriedade, postback, apenasRefresh, ultMovIdEstadoDoc, ordem, visualizacao, ultMovTipoResp, ultMovRespSel, ultMovLotaRespSel, orgaoUsu, idTpDoc, dtDocString, dtDocFinalString, idTipoFormaDoc, idFormaDoc, idMod, anoEmissaoString, numExpediente, numExtDoc, cpOrgaoSel, numAntigoDoc, subscritorSel, nmSubscritorExt, tipoCadastrante, cadastranteSel, lotaCadastranteSel, tipoDestinatario, destinatarioSel, lotacaoDestinatarioSel, orgaoExternoDestinatarioSel, nmDestinatario, classificacaoSel, descrDocumento, fullText, ultMovEstadoDoc, paramoffset, fromQuadro);
 		}
 		return null;	
 	}
@@ -473,7 +470,7 @@ public class ExMobilController extends
 			final Integer tipoCadastrante, final DpPessoaSelecao cadastranteSel, final DpLotacaoSelecao lotaCadastranteSel, final Integer tipoDestinatario,
 			final DpPessoaSelecao destinatarioSel, final DpLotacaoSelecao lotacaoDestinatarioSel, final CpOrgaoSelecao orgaoExternoDestinatarioSel,
 			final String nmDestinatario, final ExClassificacaoSelecao classificacaoSel, final String descrDocumento, final String fullText,
-			final Long ultMovEstadoDoc, final Integer paramoffset) {
+			final Long ultMovEstadoDoc, final Integer paramoffset, final String fromQuadro) {
 		
 		assertAcesso("PESQ:Pesquisar");
 		if (getCadastrante().isUsuarioExterno() && Prop.isGovSP()) {
@@ -483,7 +480,11 @@ public class ExMobilController extends
 		if (Prop.getBool("atualiza.anotacao.pesquisa"))
 			SigaTransacionalInterceptor.upgradeParaTransacional();
 
-    Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
+		Integer maxDiasPesquisa = Prop.getInt("/siga.pesquisa.limite.dias");
+
+		boolean pesquisaLimitadaPorData = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+				SIGA_DOC_PESQ_DTLIMITADA); 
+		result.include("pesquisaLimitadaPorData", pesquisaLimitadaPorData);
 		
 		getP().setOffset(paramoffset);
 		this.setPostback(postback);
@@ -517,8 +518,7 @@ public class ExMobilController extends
 				result.include("msgPesqErro", e.getMessage());
 			}
 		} else {
-			if( Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
-					SIGA_DOC_PESQ_DTLIMITADA )) {
+			if( pesquisaLimitadaPorData ) {
         		result.include("msgCabecClass", "alert-warning");
         		result.include("mensagemCabec", "ATENÇÃO: Para os órgãos com grande demanda de documentos, a pesquisa deve ser limitada com uma range de datas de no máximo "
         				+ maxDiasPesquisa.toString() + " dias. Será assumida uma data inicial "
@@ -582,8 +582,8 @@ public class ExMobilController extends
 		result.include("idTipoFormaDoc", idTipoFormaDoc);
 		result.include("idFormaDoc", idFormaDoc);
 		result.include("idMod", idMod);	
-		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());	
-		
+		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());
+		result.include("fromQuadro", (fromQuadro != null? fromQuadro : "false"));	
 
 		if (visualizacao == 3 || visualizacao == 4) {
 			TreeMap campos = new TreeMap<String, String>();
@@ -600,7 +600,10 @@ public class ExMobilController extends
 	}
 
 	private void pesquisarXjus(ExMobilDaoFiltro flt) {
-		if (!(new ExPodePorConfiguracao(getTitular(), getLotaTitular()).withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_XJUS).eval())) {
+		if (!( new ExPodePorConfiguracao(getTitular(), getLotaTitular())
+				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_AVANCADA_VIA_XJUS)
+				.eval() )
+		) {
 			flt.setDescrPesquisaXjus(null);
 			return;
 		}
@@ -609,13 +612,16 @@ public class ExMobilController extends
 			return;
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		
+
 		String filter = flt.getDescrPesquisaXjus();
 		String acronimoOrgaoUsu = dao().consultarOrgaoUsuarioPorId(flt.getIdOrgaoUsu()).getAcronimoOrgaoUsu();
 		String descEspecie = flt.getIdFormaDoc() == null || flt.getIdFormaDoc() == 0 ? null : dao().consultarExFormaPorId(flt.getIdFormaDoc()).getDescrFormaDoc();
-		String descModelo = flt.getIdMod() == null  || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getDescMod();
+		String descModelo = flt.getIdMod() == null || flt.getIdMod() == 0 ? null : dao().consultar(flt.getIdMod(), ExModelo.class, false).getNmMod();
 		String dataInicial = flt.getDtDoc() == null ? null : df.format(flt.getDtDoc());
 		String dataFinal = flt.getDtDocFinal() == null ? null : df.format(flt.getDtDocFinal());
+		String anoEmissao = flt.getAnoEmissao() == null || flt.getAnoEmissao() == 0 ? null : flt.getAnoEmissao().toString();
+		String numeroExpediente = flt.getNumExpediente() == null ? null : String.format("%05d", flt.getNumExpediente());
+		String lotacaoSubscritor = flt.getLotaSubscritorSelId() == null || flt.getLotaSubscritorSelId() == 0 ? null : daoLot(flt.getLotaSubscritorSelId()).getSiglaLotacao();
 		String acl = "PUBLIC;O" + getTitular().getOrgaoUsuario().getId() + ";L"
 				+ getTitular().getLotacao().getIdInicial() + ";P"
 				+ getTitular().getIdInicial();
@@ -631,7 +637,10 @@ public class ExMobilController extends
 					descEspecie,
 					descModelo,
 					dataInicial, 
-					dataFinal, 
+					dataFinal,
+					anoEmissao,
+					numeroExpediente,
+					lotacaoSubscritor,
 					acl, 
 					page++, 
 					1000));
@@ -695,6 +704,12 @@ public class ExMobilController extends
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0
 					&& flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0
 					&& flt.getIdFormaDoc() != null && flt.getIdFormaDoc() != 0)
+			return;
+		
+		// Pesquisa dos documentos por descrição informando órgão, ano de emissão e número expediente
+		if ( (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0)
+					&& (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0)
+					&& (flt.getNumExpediente() != null && flt.getNumExpediente() != 0))
 			return;
 
 		// Pesquisa dos documentos da lotação/pessoa vinda do quadro quantitativo
@@ -1055,4 +1070,113 @@ public class ExMobilController extends
 		result.include("listaNivelAcesso", listaNivelAcesso);
 	}
 
+	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
+	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao,
+													final String dpLotacaoSelecao, 
+													final int offset) {
+
+		assertAcesso("RECLALOTE:Reclassificar em Lote");
+
+        Long idDpLotacaoSelecao = 0L;
+		if(Objects.nonNull(dpLotacaoSelecao) && !dpLotacaoSelecao.isEmpty()){
+			idDpLotacaoSelecao = Long.valueOf(dpLotacaoSelecao);	
+		}
+		
+        Integer tamanho = null;
+		if (Objects.nonNull(siglaClassificacao) && !siglaClassificacao.isEmpty()) {
+			tamanho = ExDao.getInstance()
+					.consultarQuantidadeParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
+                            idDpLotacaoSelecao, siglaClassificacao);
+
+		}
+		
+		if (Objects.nonNull(tamanho)) {
+			List<ExDocumentoVO> documentosPorCodificacaoClassificacao =
+					ExDao.getInstance().consultarParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
+                            idDpLotacaoSelecao, siglaClassificacao, offset,
+							MAX_ITENS_PAGINA_DUZENTOS);
+
+			List<ExDocumentoVO> itens = new ArrayList<>();
+			for (ExDocumentoVO item : documentosPorCodificacaoClassificacao) {
+				ExMobil mob = dao().consultar(item.getIdDoc(), ExDocumento.class, false).getMobilGeral();
+
+				if (new ExPodeReclassificar(mob, getTitular(), getLotaTitular()).eval()) {
+					itens.add(item);
+				}
+			}
+
+			documentosPorCodificacaoClassificacao = null;
+					
+			getP().setOffset(offset);
+			setItemPagina(MAX_ITENS_PAGINA_DUZENTOS);
+			setItens(itens);
+			setTamanho(tamanho);
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+			
+		}
+	}
+
+    @Get("/app/expediente/doc/listar_docs_para_tramitar_lote")
+    public void listar_docs_para_tramitar_lote(final int offset) {
+
+        Integer tamanho = dao().consultarQuantidadeParaTramitarEmLote(getTitular());
+
+        if (Objects.nonNull(tamanho)) {
+			final List<ExMobil> itens = dao().consultarParaTramitarEmLote(getTitular(), offset,
+					MAX_ITENS_PAGINA_DUZENTOS);
+
+            getP().setOffset(offset);
+            setItemPagina(MAX_ITENS_PAGINA_DUZENTOS);
+            setItens(itens);
+            setTamanho(tamanho);
+            
+            result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+            result.include("tamanho", this.getTamanho());
+            result.include("currentPageNumber", calculaPaginaAtual(offset));
+
+        }
+    }
+
+	@Get("/app/expediente/doc/listar_docs_para_arquivar_corrente_lote")
+	public void listar_docs_para_arquivar_corrente_lote(final String atendente, final int offset) {
+
+		assertAcesso("ARQLOTE:Arquivar em Lote");
+
+		Long pessoaId = null;
+		Long lotacaoId = null;
+		
+		switch (atendente){
+			case "pessoa":
+				pessoaId = getTitular().getPessoaInicial().getId();
+				break;
+			case "lotacao":
+				lotacaoId = getLotaTitular().getLotacaoInicial().getId();
+				break;
+			default:
+				throw new AplicacaoException("Atendente deve ser informado");
+		}
+		
+		Integer tamanho = dao().consultarQuantidadeParaArquivarCorrenteEmLote(pessoaId, lotacaoId);
+
+		if (Objects.nonNull(tamanho)) {
+			final List<ExMobil> itens = dao().consultarParaArquivarCorrenteEmLote(pessoaId, lotacaoId, 
+					offset, MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+
+			getP().setOffset(offset);
+			setItemPagina(MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE);
+			setItens(itens);
+			setTamanho(tamanho);
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+
+		}
+	}
 }

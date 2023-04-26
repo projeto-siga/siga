@@ -46,6 +46,14 @@ public class Prop {
 			return null;
 		return Integer.valueOf(p.trim());
 	}
+	
+	public static Long getLong(String nome) {
+		String p = Prop.get(nome);
+		if (p == null)
+			return null;
+		return Long.valueOf(p.trim());
+	}
+
 
 	public static Double getDouble(String nome) {
 		String p = Prop.get(nome);
@@ -86,6 +94,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigagc.base.url", get("/siga.base.url"));
 		provider.addPublicProperty("/sigawf.base.url", get("/siga.base.url"));
+		provider.addPublicProperty("/sigaarq.base.url", get("/siga.base.url"));
 		
 		//URL Interna (para back-end). Objetivo não usar Proxy, SSL, Firewall.. entre outras camandas de rede para chamadas internas
 		provider.addPublicProperty("/siga.service.base.url", get("/siga.base.url"));		
@@ -186,6 +195,7 @@ public class Prop {
 		provider.addPublicProperty("/sigaex.url", get("/sigaex.base.url") + "/sigaex");
 		provider.addPublicProperty("/sigaex.autenticidade.url", get("/sigaex.base.url") + "/sigaex/public/app/autenticar");
 		provider.addPublicProperty("/sigagc.url", get("/sigagc.base.url") + "/sigagc");
+		provider.addPublicProperty("/sigaarq.url", get("/sigaarq.base.url") + "/sigaarq");
 		provider.addPublicProperty("/ckeditor.url", "/ckeditor/ckeditor/ckeditor.js");
 		
 		/* Indica onde está armazenado o Manual de Operações* */
@@ -207,6 +217,9 @@ public class Prop {
 
 		// Propriedade que controla o acesso aos métodos de exportação para BI da API REST
 		provider.addPrivateProperty("/siga.bi.password", null);
+
+		// Propriedade que controla o acesso ao método de conferência de assinaturas de Documentos da API REST
+		provider.addPrivateProperty("/sigaex.auditoria.assinaturas.password", null);
 
 		/* Services
 		 * 
@@ -262,17 +275,25 @@ public class Prop {
 		
 
 		/* Parâmetros para configuração do armazenamento de documento */
-		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "BLOB");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.tipo", "TABELA");
 		String armaz = get("/siga.armazenamento.arquivo.tipo");
+		provider.addPublicProperty("/siga.armazenamento.arquivo.tamanhomax", 
+				(Long.toString(10 * 1024 * 1024))); // 10MB
 		if ("BLOB".equals(armaz) || "TABELA".equals(armaz)) {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario", null);
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha", null);
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url", null);
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
+			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", get("/siga.armazenamento.arquivo.tamanhomax"));
 		} else {
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.usuario");
 			provider.addPrivateProperty("/siga.armazenamento.arquivo.senha");
 			provider.addRestrictedProperty("/siga.armazenamento.arquivo.url");
+			provider.addRestrictedProperty("/siga.armazenamento.arquivo.bucket", null);
+			provider.addPublicProperty("/siga.armazenamento.arquivo.formatolivre.tamanhomax", "10737418240"); //10GB
 		}
+		provider.addRestrictedProperty("/siga.armazenamento.arquivo.formatolivre.url", get("/siga.armazenamento.arquivo.url"));
+		
 		/* Lista de unidades que farão o armazenamento no HCP */
 		provider.addPublicProperty("/siga.armazenamento.orgaos", "*");
 		
@@ -317,7 +338,25 @@ public class Prop {
 		 * */
 		provider.addPublicProperty("/siga.session.modelos.tempo.expiracao", "60");
 
-		/* Permite inativar lotação com determinadas marcações */
-		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", "false");
+		/* Permite realizar o upload das extensões declaradas */
+		provider.addPublicProperty("/sigagc.todos.extensoes.anexo.permitidas", "jpg,bmp,png,doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+		provider.addPublicProperty("/sigagc.imagem.extensoes.anexo.permitidas", "jpg,bmp,png");
+		provider.addPublicProperty("/sigagc.documento.extensoes.anexo.permitidas", "doc,docx,docm,xls,xlsx,ppt,pptx,pdf,txt");
+	
+		/* Permite inativar lotação com determinadas marcações*/
+		/* Trocado de Bool para List String que deve conter as chaves de marcadores permitidas separadas por virgula no padrao do getList() */
+		provider.addPublicProperty("/siga.lotacao.inativacao.marcadores.permitidos", null);
+		/* Permitir Inativar Lotação com Marcas nos Grupos de Marcadores. 
+		 * É ligada caso property siga.lotacao.inativacao.marcadores.permitidos seja diferente de null e soma-se as listas
+		 * Default: Documentos não apresentados na Mesa.*/
+		provider.addPublicProperty("/siga.lotacao.inativacao.grupo.marcadores.permitidos", "NENHUM");
+		
+		/* Permite Alterar a lotação da Pessoa com determinadas marcações*/
+		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.marcadores.permitidos", get("/siga.lotacao.inativacao.marcadores.permitidos"));
+		provider.addPublicProperty("/siga.alteracao.lotacao.pessoa.grupo.marcadores.permitidos", get("/siga.lotacao.inativacao.grupo.marcadores.permitidos"));
+
+		/* Properties para ativação do Módulo de compra e contratações.*/
+		provider.addPrivateProperty("/secc.ui.url", null);
+		
 	}
 }

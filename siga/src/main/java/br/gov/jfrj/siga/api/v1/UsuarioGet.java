@@ -21,7 +21,8 @@ public class UsuarioGet implements IUsuarioGet {
 		if (ctx.getCadastrante() != null) {
 			resp.usuario.cadastranteId = ctx.getCadastrante().getId().toString();
 			resp.usuario.cadastranteSigla = ctx.getCadastrante().getSigla();
-			resp.usuario.cadastranteNome = ctx.getCadastrante().getNomePessoa();
+            resp.usuario.cadastranteNome = ctx.getCadastrante().getNomePessoa();
+            resp.usuario.cadastranteCpf = ctx.getCadastrante().getCpfFormatado().replace(".", "").replace("-", "");
 		}
 		if (ctx.getLotaCadastrante() != null) {
 			resp.usuario.lotaCadastranteId = ctx.getLotaCadastrante().getId().toString();
@@ -32,6 +33,7 @@ public class UsuarioGet implements IUsuarioGet {
 			resp.usuario.titularId = ctx.getTitular().getId().toString();
 			resp.usuario.titularSigla = ctx.getTitular().getSigla();
 			resp.usuario.titularNome = ctx.getTitular().getNomePessoa();
+            resp.usuario.titularCpf = ctx.getTitular().getCpfFormatado().replace(".", "").replace("-", "");
 		}
 		if (ctx.getLotaTitular() != null) {
 			resp.usuario.lotaTitularId = ctx.getLotaTitular().getId().toString();

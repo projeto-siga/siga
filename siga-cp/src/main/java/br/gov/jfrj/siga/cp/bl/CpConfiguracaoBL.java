@@ -783,9 +783,8 @@ public class CpConfiguracaoBL {
 						srv.setDscServico(sDesc);
 						srv.setCpServicoPai(srvPai);
 						srv.setCpTipoServico(tpsrv);
-						ContextoPersistencia.begin();
+						ContextoPersistencia.upgradeToTransactional();
 						dao().acrescentarServico(srv);
-						ContextoPersistencia.commit();
 					}
 					srvPai = srvRecuperado;
 				}
@@ -867,14 +866,15 @@ public class CpConfiguracaoBL {
 					.getListaPorTipo(CpTipoDeConfiguracao.UTILIZAR_SERVICO_OUTRA_LOTACAO);
 			for (CpConfiguracaoCache c : configs) {
 				DpLotacao lotacaoAtual = CpDao.getInstance().consultarPorIdInicial(DpLotacao.class, c.lotacao);
-				System.out.println("Lotação atual : " + lotacaoAtual);
-				if (c.hisDtFim == null && lotacaoAtual.getDataFim() == null && c.dpPessoa == pes.getIdInicial()) {
-					resultado.add(lotacaoAtual);
+				if (lotacaoAtual != null) {
+					// System.out.println("Lotação atual : " + lotacaoAtual);
+					if (c.hisDtFim == null && lotacaoAtual.getDataFim() == null && c.dpPessoa == pes.getIdInicial()) {
+						resultado.add(lotacaoAtual);
+					}
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 		return resultado;
 

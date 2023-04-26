@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import br.gov.jfrj.siga.vraptor.TrackRequest;
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -22,6 +23,7 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
+@TrackRequest
 public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 
 	@Override
@@ -66,8 +68,10 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 		boolean estampar = req.estampa == null ? false : req.estampa;
 		boolean volumes = req.volumes == null ? false : req.volumes;
 		boolean exibirReordenacao = req.exibirReordenacao == null ? false : req.exibirReordenacao;
+		boolean tamanhoOriginal = req.tamanhoOriginal == null ? false : req.tamanhoOriginal;
+		
 		DownloadAssincrono task = new DownloadAssincrono(uuid, contenttype, sigla, estampar, volumes, contextpath,
-				servernameport, exibirReordenacao);
+				servernameport, exibirReordenacao, tamanhoOriginal);
 
 		ExApiV1Servlet.submitToExecutor(task);
 	}

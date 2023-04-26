@@ -13,52 +13,54 @@
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
-	<script src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script
+		src="/siga/javascript/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.blockUI.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
 
-	<div class="gt-bd clearfix">
-		<div class="gt-content">
-			<h2>Pesquisas de Satisfa&ccedil;&atilde;o</h2>
-			<!-- content bomex -->
-			<div class="gt-content-box dataTables_div">
-				<div class="gt-form-row dataTables_length">
-					<label> <siga:checkbox name="mostrarDesativados"
-							value="${mostrarDesativados}"></siga:checkbox> <b>Incluir
-							Inativas</b>
-					</label>
-				</div>
-
-				<table id="pesquisa_table" class="gt-table display">
-					<thead>
-						<tr>
-							<th>Nome</th>
-							<th>Descri&ccedil;&atilde;o</th>
-							<th></th>
+	<div class="container-fluid mb-2">
+		<h2>Pesquisas de Satisfa&ccedil;&atilde;o</h2>
+		<!-- content bomex -->
+		<div class="card card-body mb-2">
+			<label> <siga:checkbox name="mostrarDesativados"
+					value="${mostrarDesativados}"></siga:checkbox> <b>Incluir
+					Inativas</b>
+			</label>
+			<table id="pesquisa_table" class="gt-table display">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Descri&ccedil;&atilde;o</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${pesquisas}" var="pesquisa">
+						<tr data-json-id="${pesquisa.idPesquisa}"
+							data-json='${pesquisa.toJson()}'
+							onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"
+							style="cursor: pointer;">
+							<td>${pesquisa.nomePesquisa}</td>
+							<td>${pesquisa.descrPesquisa}</td>
+							<td class="acoes"><sigasr:desativarReativar
+									id="${pesquisa.idPesquisa}"
+									onReativar="pesquisaService.reativar"
+									onDesativar="pesquisaService.desativar"
+									isAtivo="${pesquisa.isAtivo()}"></sigasr:desativarReativar></td>
 						</tr>
-					</thead>
-
-					<tbody>
-						<c:forEach items="${pesquisas}" var="pesquisa">
-							<tr data-json-id="${pesquisa.idPesquisa}" data-json='${pesquisa.toJson()}' onclick="pesquisaService.editar($(this).data('json'), 'Alterar pesquisa')"	style="cursor: pointer;">
-								<td>${pesquisa.nomePesquisa}</td>
-								<td>${pesquisa.descrPesquisa}</td>
-								<td class="acoes">
-									<sigasr:desativarReativar id="${pesquisa.idPesquisa}" onReativar="pesquisaService.reativar" onDesativar="pesquisaService.desativar" isAtivo="${pesquisa.isAtivo()}"></sigasr:desativarReativar>
-								</td>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
-			</div>
-			<!-- /content box -->
-			<div class="gt-table-buttons">
-				<a onclick="pesquisaService.cadastrar('Incluir Pesquisa')" class="gt-btn-medium gt-btn-left">Incluir</a>
-			</div>
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
+		<!-- /content box -->
+		<div class="gt-table-buttons">
+			<a onclick="pesquisaService.cadastrar('Incluir Pesquisa')"
+				class="btn btn-primary" style="color: #fff">Incluir</a>
 		</div>
 	</div>
+
 	<sigasr:modal nome="pesquisa" titulo="Cadastrar Pesquisa">
 		<div id="divEditarPesquisaForm">
 			<jsp:include page="editar.jsp" />

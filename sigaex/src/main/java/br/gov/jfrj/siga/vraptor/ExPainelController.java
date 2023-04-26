@@ -22,6 +22,9 @@
  */
 package br.gov.jfrj.siga.vraptor;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,11 +37,13 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Result;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.bl.ExTramiteBL.Pendencias;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -47,8 +52,8 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 @Controller
 public class ExPainelController extends ExController {
 	private static final String CORRIGEMOBIL = "CORRIGEMOBIL:Corrige Documento sem Mobil de Via ou Volume";
-	private static final int TEMPO_MAX_MILISEG = 5000;
-	
+	private static final String CANCELAMOV = "CANCELAMOV:Cancela movimentação";
+	private static final List<ITipoDeMovimentacao> tpMovimentacoesCancelaveis = new ArrayList<ITipoDeMovimentacao> ();
 	/**
      * @deprecated CDI eyes only
      */
@@ -66,6 +71,10 @@ public class ExPainelController extends ExController {
 	@Get("app/expediente/painel/exibir")
 	public void exibe(final ExMobilSelecao documentoRefSel) throws Exception {
 		assertAcesso("");
+		if (tpMovimentacoesCancelaveis.isEmpty()) {
+			inicializaTpMovimentacoesCancelaveis();
+		}
+			
 		boolean postback = param("postback") != null;
 		
 		if (documentoRefSel.getSigla() == null) {
@@ -107,21 +116,6 @@ public class ExPainelController extends ExController {
 				result.include("erroDocBtn", "Corrige Falta de Descri&ccedil;&atilde;o");
 				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() +  " está sem a descri&ccedil;&atilde;o.");
 			}
-			// Verifica se ha movs duplicadas no documento
-			Set<ExMovimentacao> setDuplicadas = new java.util.TreeSet<ExMovimentacao>();
-			ITipoDeMovimentacao[] tpMovs = {ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.JUNTADA};			
-			for (ExMobil mob : exDocumentoDTO.getDoc().getExMobilSet()) {
-				setDuplicadas.addAll(mob.getMovsDuplicadas(TEMPO_MAX_MILISEG, tpMovs));
-			}			
-			
-			if (!setDuplicadas.isEmpty()) {
-				String idMovDup = setDuplicadas.iterator().next().getIdMov().toString();
-				result.include("erroDocLink", "corrigeMovDuplicada?documentoRefSel.sigla=" + documentoRefSel.getSigla() 
-					+ "&idMovDuplicada=" + idMovDup);
-				result.include("erroDocBtn", "Cancela Movimenta&ccedil;&atilde;o Duplicada");
-				result.include("erroDocMsg", "Aten&ccedil;&atilde;o: O documento " + documentoRefSel.getSigla() 
-					+  " provavelmente tem a movimenta&ccedil;&atilde;o " + idMovDup + " duplicada, CONFIRA COM ATENÇÃO.");
-			}
 			
 		} catch (AplicacaoException e) {
 			result.include("mensagemCabec", "Documento não encontrado." );
@@ -142,6 +136,8 @@ public class ExPainelController extends ExController {
 		result.include("docVO", docVO);
 		result.include("mob", exDocumentoDTO.getMob());
 		result.include("currentTimeMillis", System.currentTimeMillis());
+		result.include("podeCancelarMov", Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(getTitular(), getLotaTitular(),
+				"SIGA;DOC;FE:Ferramentas;PAINEL:Painel Administrativo;" +  CANCELAMOV));
 	}
 
 	@Transacional
@@ -188,56 +184,87 @@ public class ExPainelController extends ExController {
 	}
 
 	@Transacional
-	@Get("app/expediente/painel/corrigeMovDuplicada")
-	public void corrigeMovDuplicada(final ExMobilSelecao documentoRefSel, final long idMovDuplicada) throws Exception {
-		assertAcesso(CORRIGEMOBIL);
+	@Get("app/expediente/painel/cancelaMov")
+	public void corrigeMovDuplicada(final ExMobilSelecao documentoRefSel, final long idMov) throws Exception {
+		assertAcesso(CANCELAMOV);
+		
+		if (tpMovimentacoesCancelaveis.isEmpty()) 
+			inicializaTpMovimentacoesCancelaveis();		
 		
 		result.include("postback", true);
 
-		if (idMovDuplicada == 0) {
-			result.include("mensagemCabec", "Informe o id da movimentação duplicada.");
+		if (idMov == 0) {
+			result.include("mensagemCabec", "Informe o id da movimentação a cancelar.");
 			result.include("msgCabecClass", "alert-warning");
 			result.redirectTo(this).exibe(documentoRefSel);
 			return;
 		}
-		final ExDocumentoDTO exDocumentoDTO = new ExDocumentoDTO();
-		exDocumentoDTO.setSigla(documentoRefSel.getSigla());
-		ExDocumentoVO docVO;
-		buscarDocumento(false, exDocumentoDTO);
-		docVO = new ExDocumentoVO(exDocumentoDTO.getDoc(),
-				exDocumentoDTO.getMob(), getCadastrante(), getTitular(),
-				getLotaTitular(), true, true, false, false);
 		
-		ExMovimentacao mov = dao().consultar(idMovDuplicada, ExMovimentacao.class, false);
+		ExMovimentacao mov = dao().consultar(idMov, ExMovimentacao.class, false);
 
-		ITipoDeMovimentacao[] tpMovs = {ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.TRANSFERENCIA, ExTipoDeMovimentacao.JUNTADA}; 
-		java.util.Set<ExMovimentacao> setDuplicadas = mov.getExMobil().getMovsDuplicadas(TEMPO_MAX_MILISEG, tpMovs);
-		
-		if (!setDuplicadas.contains(mov)) {
-			result.include("mensagemCabec", "A movimentação informada não está duplicada.");
+		if (mov.isCancelada()) {
+			result.include("mensagemCabec", "A movimentação informada já está cancelada.");
 			result.include("msgCabecClass", "alert-warning");
 			result.redirectTo(this).exibe(documentoRefSel);
 			return;
 		}
-		
-		if (!(mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.RECEBIMENTO
-				|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
-				|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)) {
-			result.include("mensagemCabec", "O cancelamento só é possível para recebimento, trâmite ou juntada duplicada.");
+			
+		if (!tpMovimentacoesCancelaveis.contains(mov.getExTipoMovimentacao())) {
+			result.include("mensagemCabec", "O cancelamento só é possível para recebimento, trâmite, marcação ou juntada.");
 			result.include("msgCabecClass", "alert-warning");
 			result.redirectTo(this).exibe(documentoRefSel);
 			return;
 		}
 
+		if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA ||
+				mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO ||
+				mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO) {
+			Pendencias pendentes = mov.getExMobil().calcularTramitesPendentes();
+			boolean isPendente = false;
+			for (ExMovimentacao movPendente : pendentes.tramitesPendentes) {
+				if (movPendente.equals(mov)) {
+					isPendente = true;
+					break;
+				}
+			}
+			if (!isPendente) {
+				result.include("mensagemCabec", "Cancelamento não permitido, este trâmite já foi recebido.");
+				result.include("msgCabecClass", "alert-warning");
+				result.redirectTo(this).exibe(documentoRefSel);
+			}
+		}
+		
+		if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.RECEBIMENTO) {
+			Pendencias pendentes = mov.getExMobil().calcularTramitesPendentes();
+			Set<ExMovimentacao> setMov = new HashSet<>();
+			setMov.addAll(pendentes.recebimentosPendentes);
+			boolean isPendenteRecebimento = false;
+			
+			for (ExMovimentacao movPendente : setMov) {
+				if (movPendente.equals(mov)) {
+					isPendenteRecebimento = true;
+					break;
+				}
+			}
+			if (!isPendenteRecebimento) {
+				result.include("mensagemCabec", "Cancelamento não permitido, este recebimento já foi posteriormente tramitado.");
+				result.include("msgCabecClass", "alert-warning");
+				result.redirectTo(this).exibe(documentoRefSel);
+			}
+		}
+		
 		try {
-			mov.setExMovimentacaoCanceladora(mov);
-			String descrAnterior = (mov.getDescrMov() != null? mov.getDescrMov() + " ":"");
-			mov.setDescrMov(descrAnterior + "Cancelado pelo suporte (" 
-					+ getCadastrante().getSigla() + "/" + getCadastrante().getNomePessoa() 
-					+ ") por estar duplicado.");
-		} catch (final Throwable t) {
-			throw new AplicacaoException("Erro ao tentar corrigir documento sem mobil.", 0, t);
+			Ex.getInstance()
+				.getBL()
+				.cancelar(getTitular(), getLotaTitular(), mov.getExMobil(),
+						mov, null, null, null,
+						(mov.getDescrMov() != null ? mov.getDescrMov() + " - ": "") + "Cancelado pelo suporte (" 
+								+ getCadastrante().getSigla() + "/" + getCadastrante().getNomePessoa() 
+								+ ").", true);
+		} catch (final Exception e) {
+			throw e;
 		}
+
 		result.redirectTo(this).exibe(documentoRefSel);
 	}
 
@@ -315,7 +342,7 @@ public class ExPainelController extends ExController {
 			exDocumentoDto.setDoc(exDocumentoDto.getMob().doc());
 		}
 		if (exDocumentoDto.getDoc() == null) {
-			final String id = param("exDocumentoDto.id");
+			final String id = param("exDocumentoDTO.id");
 			if (id != null && id.length() != 0) {
 				exDocumentoDto.setDoc(daoDoc(Long.parseLong(id)));
 			}
@@ -332,7 +359,16 @@ public class ExPainelController extends ExController {
 			verificaNivelAcesso(exDocumentoDto.getMob());
 		}
 	}
-	
+
+	private void inicializaTpMovimentacoesCancelaveis() {
+		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.TRANSFERENCIA);
+		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.RECEBIMENTO);
+		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.TRAMITE_PARALELO);
+		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.NOTIFICACAO);
+		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.JUNTADA);
+		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.MARCACAO);
+	}
+
 	protected void assertAcesso(final String pathServico) {
 		super.assertAcesso("FE:Ferramentas;PAINEL:Painel Administrativo;" + pathServico);
 	}

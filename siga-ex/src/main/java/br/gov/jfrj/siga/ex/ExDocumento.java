@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,6 +63,7 @@ import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -80,6 +82,7 @@ import br.gov.jfrj.siga.ex.util.DocumentoUtil;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.ex.util.ProcessadorReferencias;
 import br.gov.jfrj.siga.ex.util.TipoMobilComparatorInverso;
+import br.gov.jfrj.siga.ex.vo.AssinanteVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.CarimboDeTempo;
 
@@ -1251,6 +1254,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return false;
 	}
+	
+	public boolean isPublicacaoAgendadaEhCadastranteDOE(DpPessoa titular) {
+		final Set<ExMovimentacao> movs = getMobilGeral().getMovsNaoCanceladas(ExTipoDeMovimentacao.AGENDAR_PUBLICACAO_DOE, Boolean.TRUE);
+
+		if(movs.isEmpty()) {
+			return false;
+		} else {
+			for (ExMovimentacao exMovimentacao : movs) {
+				if(exMovimentacao.getDtFimMov() != null || !exMovimentacao.getCadastrante().equivale(titular)) {
+					return true;
+				}
+			}
+			return false;	
+		}
+	}
 
 	/**
 	 * Verifica se um documento possui <b>solicitação</b> de publicação no DJE.
@@ -1384,20 +1402,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public Map<String, String> getForm() {
 		Hashtable<String, String> m = new Hashtable<String, String>();
-		final byte[] form = getConteudoBlob("doc.form");
-		if (form != null) {
-			final String as[] = new String(form).split("&");
-			for (final String s : as) {
-				final String param[] = s.split("=");
-				try {
-					if (param.length == 2)
-						m.put(param[0],
-								URLDecoder.decode(param[1], "iso-8859-1"));
-				} catch (final UnsupportedEncodingException e) {
-				}
-			}
-		}
-		return m;
+		final byte[] form = getConteudoBlobForm();
+        if (form != null)
+            Utils.mapFromUrlEncodedForm(m, form);
+        return m;
 	}
 
 	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
@@ -2446,7 +2454,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean isInternoCapturado() {
 		if (getExTipoDocumento() == null)
 			return false;
-		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO);
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO ||
+				getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE);
 	}
 
 	/**
@@ -2455,11 +2464,19 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public boolean isExternoCapturado() {
 		if (getExTipoDocumento() == null)
 			return false;
-		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO);
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO ||
+				getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
+	}
+
+	public boolean isCapturadoFormatoLivre() {
+		if (getExTipoDocumento() == null)
+			return false;
+		return (getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO_FORMATO_LIVRE ||
+				getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO_FORMATO_LIVRE);
 	}
 
 	/**
-	 * Verifica se um documento é capturado de uma fonte externa.
+	 * Verifica se um documento é capturado.
 	 */
 	public boolean isCapturado() {
 		return isInternoCapturado() || isExternoCapturado();
@@ -2480,7 +2497,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	}
 	
 	public DpPessoa getSubscritorDiffTitularDoc() {
-		if (getSubscritor() != null && !this.getCadastrante().equivale(getSubscritor())) 
+		if (getSubscritor() != null && !getSubscritor().equivale(getCadastrante())) 
 			return getSubscritor();
 		return null;
 	}
@@ -3206,5 +3223,38 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	public String fragmento(String nome) {
 		return Texto.extrai(getHtml(), "<!-- fragmento:" + nome + " -->", "<!-- /fragmento:" + nome + " -->");
+	}
+	
+	public List<AssinanteVO> getListaAssinantesOrdenados() {
+		List<AssinanteVO> listaOrdenada = new ArrayList<AssinanteVO>();
+		ExMovimentacao mov = this.getMobilGeral().getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.ORDEM_ASSINATURA);
+		if(mov != null) {
+			String ordem = mov.getDescrMov();
+
+			List<String> listaMatricula = new ArrayList<>();
+			listaMatricula.addAll(Arrays.asList(ordem.split(";")));
+			for (String matricula : listaMatricula) {
+				for (ExMovimentacao movCossig : this.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, true)) {
+					if(matricula.equals(movCossig.getSubscritor().getSigla())) {
+						listaOrdenada.add(new AssinanteVO(movCossig.getSubscritor(), movCossig.getTitular(), movCossig.getNmFuncao(), movCossig.getNmLotacao(), movCossig.getNmSubscritor()));
+					}
+				}
+				if(matricula.equals(getSubscritor().getSigla())) {
+					AssinanteVO pesVO = new AssinanteVO(this.getSubscritor(), this.getTitular(), this.getNmFuncao(), this.getNmLotacao(), this.getNmSubscritor());
+
+					listaOrdenada.add(pesVO);
+				}
+
+			}
+		} else {
+			if (this.getSubscritor() != null && this.getTitular() != null) {
+				listaOrdenada.add(new AssinanteVO(this.getSubscritor(), this.getTitular(), this.getNmFuncao(), this.getNmLotacao(), this.getNmSubscritor()));
+			}
+			
+			for (ExMovimentacao movCossig : this.getMobilGeral().getMovimentacoesPorTipo(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO, true)) {
+				listaOrdenada.add(new AssinanteVO(movCossig.getSubscritor(), movCossig.getTitular(), movCossig.getNmFuncao(), movCossig.getNmLotacao(), movCossig.getNmSubscritor()));
+			}
+		}
+		return listaOrdenada;
 	}
 }

@@ -58,7 +58,7 @@ public class Mesa2Ant {
 		public boolean grupoHide;
 		public boolean grupoAtingiuLimite;
 		public List<MesaItem> grupoDocs;
-		public List<Integer> grupoMarcadores;
+		public List<Long> grupoMarcadores;
 	}
 	
 	public static class MesaItem implements ISwaggerModel {
@@ -229,7 +229,8 @@ public class Mesa2Ant {
 				if (ultMov != null && ultMov.getCadastrante() != null) {
 					r.nomePessoaPosse = ultMov.getCadastrante().getNomePessoa(); 
 				} else {
-					r.nomePessoaPosse = mobil.getDoc().getCadastrante().getNomePessoa();
+				    if (mobil.getDoc().getCadastrante() != null)
+				        r.nomePessoaPosse = mobil.getDoc().getCadastrante().getNomePessoa();
 				}
 				if (ultMov != null && ultMov.getCadastrante() != null) {
 					r.lotaPosse = ultMov.getCadastrante().getLotacao().getSigla();
@@ -542,7 +543,7 @@ public class Mesa2Ant {
 					}
 					grpItem.grupoQtdPag = 15L;
 					grpItem.grupoHide = gEnum.isHide();
-					grpItem.grupoMarcadores = CpMarcadorEnum.getListIdByGrupo(gEnum.getNome());
+					grpItem.grupoMarcadores = CpMarcadorEnum.getListIdByGrupo(gEnum);
 					gruposBase.add(grpItem);
 				}
 			}

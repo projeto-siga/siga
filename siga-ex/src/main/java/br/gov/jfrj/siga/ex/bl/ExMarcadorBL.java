@@ -1,12 +1,6 @@
 package br.gov.jfrj.siga.ex.bl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
@@ -26,6 +20,8 @@ import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTemporalidade;
 import br.gov.jfrj.siga.ex.ExTipoDestinacao;
 import br.gov.jfrj.siga.ex.bl.ExTramiteBL.Pendencias;
+import br.gov.jfrj.siga.ex.logic.ExEAssinanteAtual;
+import br.gov.jfrj.siga.ex.logic.ExEstaOrdenadoAssinatura;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -125,9 +121,11 @@ public class ExMarcadorBL {
 				m = CpMarcadorEnum.JUNTADO_EXTERNO.getId();
 			if (t == ExTipoDeMovimentacao.APENSACAO && apensadoAVolumeDoMesmoProcesso)
 				m = CpMarcadorEnum.APENSADO.getId();
-			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
-					|| t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
+			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {
 				m = CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId();
+				// Quando é transferido para um órgão externo, a marca deve ficar
+				// com o cadastrante e sua lotação, em vez do responsável
+				acrescentarMarca(m, dt, mov.getCadastrante(), mov.getLotaCadastrante());
 			}
 //			if ((t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
 //					|| t == ExTipoDeMovimentacao.TRANSFERENCIA) && !apensadoAVolumeDoMesmoProcesso) {
@@ -181,11 +179,7 @@ public class ExMarcadorBL {
 				acrescentarMarca(m, dt, null, null);
 		} else {
 			for (PessoaLotacaoParser pl : mob.getAtendente()) {
-				if (m == CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()) {
-					// Quando é transferido para um órgão externo, a marca deve ficar
-					// com o cadastrante e sua lotação, em vez do responsável
-					acrescentarMarca(m, dt, pl.getPessoa(), pl.getLotacao());
-				} else if (m != 0L) {
+				if (m != 0L) {
 					// Edson: Os marcadores "Arq Corrente" e
 					// "Aguardando andamento" são mutuamente exclusivos
 					if (m != CpMarcadorEnum.EM_ANDAMENTO.getId()
@@ -212,7 +206,7 @@ public class ExMarcadorBL {
 		// Só produzir marcas no último volume de processos administrativos
 		if (mob.doc().isProcesso() && !mob.isUltimoVolume())
 			return;
-			
+		
 		if(mob.isJuntado())
 			return;
 
@@ -307,11 +301,17 @@ public class ExMarcadorBL {
 
 				if (lotacoesComMarcaDePasta.contains(lot))
 					continue;
-
+				
 				if (lot != null) {
 					CpMarcador mpp = ExDao.getInstance().obterPastaPadraoDaLotacao(lot);
-					if (mpp != null)
+					if (mpp != null) {
+		                // Se a finalidade especificar que não é para incluir a marca quando está
+		                // arquivado
+		                if (mpp.getIdFinalidade().isArquivarOcultaAMarca() && mob.isArquivado())
+		                    continue;
+
 						acrescentarMarcaTransferencia(mpp.getId(), null, null, null, lot, null);
+					}
 				}
 			}
 
@@ -367,7 +367,7 @@ public class ExMarcadorBL {
 							mob.doc().getLotaCadastrante(), null, mob.doc().getExModelo().getExFormaDocumento(), null,
 							ExTipoDeConfiguracao.TMP_PARA_LOTACAO) ? mob.doc().getLotaCadastrante() : null));
 			if (mob.getExDocumento().getSubscritor() != null && !(Prop.getBool("/siga.mesa.nao.revisar.temporarios")
-					&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()) && !mob.doc().isFinalizado())) {
+					&& (mob.doc().getCadastrante() == null || !mob.doc().getCadastrante().equals(mob.doc().getSubscritor())) && !mob.doc().isFinalizado())) {
 				acrescentarMarca(CpMarcadorEnum.REVISAR.getId(), mob.doc().getDtRegDoc(),
 						mob.getExDocumento().getSubscritor(), null);
 			}
@@ -467,8 +467,9 @@ public class ExMarcadorBL {
 				acrescentarMarca(CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(), mob.doc().getDtRegDoc(),
 						mob.doc().getCadastrante(), mob.doc().getLotaCadastrante(), dtPrazo);
 				if (!mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()
+						&& (!new ExEstaOrdenadoAssinatura(mob.getDoc()).eval() || new ExEAssinanteAtual(mob.getDoc(), mob.getDoc().getSubscritor()).eval())
 						&& !(Prop.getBool("/siga.mesa.nao.revisar.temporarios")
-								&& !mob.doc().getCadastrante().equals(mob.doc().getSubscritor())
+								&& (mob.doc().getCadastrante() == null || !mob.doc().getCadastrante().equals(mob.doc().getSubscritor()))
 								&& !mob.doc().isFinalizado())) {
 					acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mob.doc().getDtRegDoc(),
 							mob.getExDocumento().getSubscritor(), null, dtPrazo);
@@ -525,7 +526,8 @@ public class ExMarcadorBL {
 				if (mob.getDoc().isAssinadoPelaPessoaComTokenOuSenha(mov.getSubscritor())
 						|| mob.getDoc().isPrazoDeAssinaturaVencido())
 					continue;
-				else if (mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha()) {
+				else if ((mob.getDoc().isAssinadoPeloSubscritorComTokenOuSenha() && !new ExEstaOrdenadoAssinatura(mob.getDoc()).eval())
+						|| (new ExEstaOrdenadoAssinatura(mob.getDoc()).eval() && new ExEAssinanteAtual(mob.getDoc(), mov.getSubscritor()).eval())) {
 					acrescentarMarca(CpMarcadorEnum.COMO_SUBSCRITOR.getId(), mov.getDtIniMov(), mov.getSubscritor(),
 							null, dtPrazo);
 				} else {
@@ -853,9 +855,19 @@ public class ExMarcadorBL {
 
 	public ExMovimentacao contemTransferenciaRetorno(ExMovimentacao mov, ExMobil mob) {
 		ExMovimentacao movRetorno = null;
-		List<ExMovimentacao> transferencias = mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, false);
-		transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, false));
-		transferencias.removeAll(mob.getMovimentacoesCanceladas());
+		List<ExMovimentacao> transferencias = new ArrayList<>();
+		
+		if(mob.isVolume()) {
+			for(ExMobil m : mob.getDoc().getExMobilSet()) {
+				if(!m.isGeralDeProcesso() && m.getNumSequencia() >= mob.getNumSequencia()) {
+					transferencias.addAll(m.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, true));
+				}
+			}
+		} else {
+			transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.TRANSFERENCIA, true));
+		}
+		transferencias.addAll(mob.getMovimentacoesPorTipo(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA, true));
+//		transferencias.removeAll(mob.getMovimentacoesCanceladas());
 
 		Iterator it = transferencias.iterator();
 		while (it.hasNext()) {
@@ -869,5 +881,5 @@ public class ExMarcadorBL {
 		}
 		return movRetorno;
 	}
-
+	
 }

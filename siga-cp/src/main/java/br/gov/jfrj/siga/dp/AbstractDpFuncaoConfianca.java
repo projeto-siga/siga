@@ -85,7 +85,6 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements
 	/** Campos que geram versionamento de registro **/
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FIM_FUNCAO_CONFIANCA", length = 19)
-    @Desconsiderar
 	private Date dataFimFuncao;
 	
 	@Column(name = "CATEGORIA_FUNCAO_CONFIANCA", length = 15)
@@ -127,7 +126,6 @@ public abstract class AbstractDpFuncaoConfianca extends Objeto implements
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
-	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@ManyToOne(fetch=FetchType.LAZY)

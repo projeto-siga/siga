@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import br.gov.jfrj.siga.vraptor.TrackRequest;
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerServlet;
@@ -23,13 +24,15 @@ import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 
 @AcessoPublicoEPrivado
+@TrackRequest
 public class DocumentosSiglaArquivoProduzirGet implements IDocumentosSiglaArquivoProduzirGet {
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
 		req.completo = req.completo != null ? req.completo : false;
 		req.estampa = req.estampa != null ? req.estampa : false;
-		req.volumes = req.volumes != null ? req.volumes : false;
+        req.volumes = req.volumes != null ? req.volumes : false;
+        req.tamanhoOriginal = req.tamanhoOriginal != null ? req.tamanhoOriginal : false;
 
 		String usuario = ContextoPersistencia.getUserPrincipal();
 
@@ -70,7 +73,7 @@ public class DocumentosSiglaArquivoProduzirGet implements IDocumentosSiglaArquiv
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		if ("application/pdf".equals(req.contenttype)) {
 			resp.contenttype = "application/pdf";
-			Documento.getDocumento(baos, null, mob, mov, req.completo, req.estampa, req.volumes, null, null);
+			Documento.getDocumento(baos, null, mob, mov, req.completo, req.estampa, req.volumes, null, null, req.tamanhoOriginal);
 		} else {
 			Documento.getDocumentoHTML(baos, null, mob, mov, req.completo, req.volumes, contextpath, servernameport);
 		}

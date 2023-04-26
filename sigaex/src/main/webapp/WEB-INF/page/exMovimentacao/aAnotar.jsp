@@ -5,7 +5,7 @@
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-<siga:pagina titulo="Movimentação">
+<siga:pagina titulo="Anotação">
 	<div class="container-fluid content" id="page">
 
 		<c:if test="${not mob.doc.eletronico}">
@@ -17,7 +17,8 @@
 
 		<script type="text/javascript" language="Javascript1.1">
 			function sbmt() {
-				frm.action = '${pageContext.request.contextPath}/app/expediente/mov/anotar?id=${doc.idDoc}';
+				document.getElementById("btnOk").disabled = true;
+				sigaSpinner.mostrar();
 				frm.submit();
 			}
 			function tamanho() {
@@ -164,7 +165,7 @@
 
 					<div class="row">
 						<div class="col-sm">
-							<input type="submit" value="Ok" class="btn btn-primary" />
+							<input type="button" id="btnOk" value="Ok" class="btn btn-primary" onclick="sbmt();"/>
 							<input type="button" value="Cancela" onclick="javascript:history.back();" class="btn btn-cancel ml-2" />
 						</div>
 					</div>

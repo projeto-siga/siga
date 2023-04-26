@@ -217,6 +217,18 @@
 							</ul></li>
 					</c:if>
 				</c:if>
+				
+				<c:if																         
+					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;SECC: Módulo serviço de compra e contratação')}"> 
+					<li class="dropdown-submenu"><a href="javascript:void(0);"
+							class="dropdown-item dropdown-toggle">Compras e Contratações</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a class="dropdown-item" href="${f:resource('/secc.ui.url')}">Memorando de aquisição</a>
+								</li>
+							</ul>
+					</li>
+				</c:if>
 
 			</ul></li>
 		</c:if>
@@ -240,7 +252,10 @@
 				<c:if test="${(f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;CEMAIL: Módulo de notificação por email'))}">
 					<li><a class="dropdown-item"
 							href="/siga/app/notificarPorEmail/listar">Receber notificações por email</a></li>
-				</c:if> 
+				</c:if>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;PUB_DOE: Publicar DOE')}">
+						<li><a class="dropdown-item" href="/siga/app/usuario/associar_login">Associar Login de Publicação no DOE</a></li>
+				</c:if>
 				<c:if test="${f:podeUtilizarSegundoFatorPin(cadastrante,cadastrante.lotacao) }">
 					<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Gerenciar PIN</a>
 						<ul class="dropdown-menu">
@@ -350,11 +365,12 @@
 						<li><a class="dropdown-item" href="/siga/app/funcao/listar">Cadastro
 								de Função de Confiança</a></li>
 					</c:if>
-					<c:if
+					<c:if 
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;CAD_PESSOA:Cadastrar Pessoa')}">
-						<li><a class="dropdown-item" href="/siga/app/pessoa/listar">Cadastro
-								de Pessoa</a></li>
-					</c:if>
+						<li class="dropdown-submenu">
+							<li><a class="dropdown-item" href="/siga/app/pessoa/listar">Cadastro de Pessoa</a>
+						</li>
+					</c:if>					
 					<c:if
 						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;GI;ENV:Envio de E-mail para Novos Usuários')}">
 						<li><a class="dropdown-item"
@@ -448,6 +464,13 @@
 						<li><a class="dropdown-item"
 							href="/siga/app/marcador/listar">Cadastro de 
 								Marcadores</a></li>
+					</c:if>
+					<c:if
+						test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;PUB_DOE: Publicar DOE')}">
+						<li><a class="dropdown-item"
+							href="/sigaex/app/exMovimentacao/listarDOE">Publicar DOE</a></li>
+						<li><a class="dropdown-item"
+							href="/sigaex/app/exMovimentacao/consultarDOE">Consultar Publicação DOE</a></li>
 					</c:if>
 					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;FE: Ferramentas;ARMAZ:Armazenamento de Arquivos')}">
 						<li class="dropdown-submenu"><a href="javascript:void(0);" class="dropdown-item dropdown-toggle">Armazenamento ${f:resource('/siga.armazenamento.arquivo.tipo')}</a>

@@ -44,6 +44,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -52,6 +53,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -573,8 +575,10 @@ public class ExDao extends CpDao {
 		}
 
 		if (flt.getIdOrgaoUsu() != null && flt.getIdOrgaoUsu() != 0) {
-
-			query.setParameter("idOrgaoUsu", flt.getIdOrgaoUsu());
+			List<CpOrgaoUsuario> lista = CpDao.getInstance().listarHistoricoOrgaoUsuario(flt.getIdOrgaoUsu());
+			for (int i = 0; i < lista.size(); i++) {
+				query.setParameter("idOrgaoUsu"+i, lista.get(i).getId());
+			}
 		}
 
 		if (flt.getAnoEmissao() != null && flt.getAnoEmissao() != 0) {
@@ -687,54 +691,106 @@ public class ExDao extends CpDao {
 			}
 		}
 	}
+	
+	private boolean orgaoPermiteQueryNativa(DpPessoa titular) {
+		List<String> orgaos = Prop.getList("montador.query.nativa.orgaos");
+		
+		if (orgaos == null) 
+			return false;
+		
+		if ("*".equals(orgaos.get(0)))
+			return true;
+		
+		final String sigla = titular !=null ? titular.getOrgaoUsuario().getSigla() : null;
+		if(orgaos.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla)))
+			return true;
+		return false;
+	}
 
 	public List consultarPorFiltroOtimizado(final ExMobilDaoFiltro flt,
 			final int offset, final int itemPagina, DpPessoa titular,
 			DpLotacao lotaTitular) {
+		
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
+		
+		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);	
 
-		IMontadorQuery montadorQuery = carregarPlugin();
-
-		long tempoIni = System.nanoTime();
 		List<Object[]> l2 = new ArrayList<Object[]>();
-		Query query = null;
+		Query queryFiltro = null;
+		Query queryPagina = null;
+		Query queryExportacao = null;
 		
 		if(itemPagina > 0) {
-			query = em().createQuery(
-					montadorQuery.montaQueryConsultaporFiltro(flt, false));
-			preencherParametros(flt, query);
+			
+			if (isNativeQuery) {
+				queryFiltro = em().createNativeQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			} else {
+				queryFiltro = em().createQuery(montadorQuery.montaQueryConsultaporFiltro(flt, false));
+			}
+			
+			preencherParametros(flt, queryFiltro);
 	
 			if (offset > 0) {
-				query.setFirstResult(offset);
+				queryFiltro.setFirstResult(offset);
 			}
 			if (itemPagina > 0) {
-				query.setMaxResults(itemPagina);
+				queryFiltro.setMaxResults(itemPagina);
 			}
-			List l = query.getResultList();
+			
+			List listResult = queryFiltro.getResultList();
+			List l;
+			
+			//Conversão dos tipos nativos BigDecimal para Oracle e Integer para MySQL para Long
+			if (isNativeQuery) {
+				//Tratamento para Offset com Oracle
+				if (!listResult.isEmpty() && listResult.get(0) instanceof Object[]) {
+					l = (List<Object[]>) listResult.stream()
+							.map(k -> ((Number) ((Object[]) k)[0]).longValue())
+							.collect(Collectors.toList());	
+				} else {
+					l = (List<Object[]>) listResult.stream()
+							.map(k -> ((Number) k).longValue())
+							.collect(Collectors.toList());	
+				}
+			} else {
+				l = listResult;
+			}
 			 
 			if (l != null && l.size() > 0) {
-				query = em().createQuery("select doc, mob, label from ExMarca label"
+				queryPagina = em().createQuery("select doc, mob, label from ExMarca label"
 						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-						+ " where label.idMarca in (:listIdMarca)");
-				query.setParameter("listIdMarca", l);
-				l2 = query.getResultList();
-				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(
-					    		Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+						+ " where label.idMarca in (:listIdMarca) ");
+				queryPagina.setParameter("listIdMarca", l);
+				
+				
+				l2 = queryPagina.getResultList();
+				Collections.sort(l2, Comparator.comparing( item -> l.indexOf(Long.valueOf (((ExMarca) (item[2])).getIdMarca()))));
+				
 			}
 		} else { //exportar excel
 			flt.setOrdem(-1);
-			query = em().createQuery("select doc, mob, label from ExMarca label"
-					+ " inner join label.exMobil mob inner join mob.exDocumento doc"
-					+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
-			preencherParametros(flt, query);
-			l2 = query.getResultList();
+
+			if (isNativeQuery) {
+				queryExportacao = em().createNativeQuery("select doc.*, mob.*, label.* from corporativo.cp_marca label "
+						+ " inner join siga.ex_mobil mob on mob.id_mobil = label.id_ref "
+						+ " inner join siga.ex_documento doc on doc.id_doc =  mob.id_doc "
+						+ " where label.id_marca in ( "+ montadorQuery.montaQueryConsultaporFiltro(flt, false) + " )","ExportacaoCsvResults");				
+			} else {
+				queryExportacao = em().createQuery("select doc, mob, label from ExMarca label"
+						+ " inner join label.exMobil mob inner join mob.exDocumento doc"
+						+ " where label.idMarca in ("+montadorQuery.montaQueryConsultaporFiltro(flt, false)+")");
+				
+			}
+
+			preencherParametros(flt, queryExportacao);
+			l2 = queryExportacao.getResultList();
 		}
-		long tempoTotal = System.nanoTime() - tempoIni;
 		
 		if (Prop.getBool("limita.acesso.documentos.por.configuracao")) {
-		
+			
 			Iterator<Object[]> listaObjetos = l2.iterator();
 			while (listaObjetos.hasNext()) {
-				   Object[] objeto = listaObjetos.next(); // must be called before you can call i.remove()
+				   Object[] objeto = listaObjetos.next(); 
 				   ExDocumento doc = ((ExDocumento) objeto[0]);
 				   if (! ExBL.exibirQuemTemAcessoDocumentosLimitados(doc, titular, lotaTitular))
 				   		listaObjetos.remove();
@@ -742,29 +798,46 @@ public class ExDao extends CpDao {
 		
 		}
 
-		// System.out.println("consultarPorFiltroOtimizado: " +
-		// tempoTotal/1000000 + " ms -> " + query + ", resultado: " + l)RExRR;
 		return l2;
 	}
 
 	private IMontadorQuery carregarPlugin() {
+		return carregarPlugin(false);
+	}
+	private IMontadorQuery carregarPlugin(boolean isNative) {
 		CarregadorPlugin carregador = new CarregadorPlugin();
-		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl();
-		montadorQuery
-				.setMontadorPrincipal(carregador.getMontadorQueryDefault());
+		IMontadorQuery montadorQuery = carregador.getMontadorQueryImpl(isNative);
+		montadorQuery.setMontadorPrincipal(carregador.getMontadorQueryDefault());
 		return montadorQuery;
 	}
 
 	public Integer consultarQuantidadePorFiltroOtimizado(
 			final ExMobilDaoFiltro flt, DpPessoa titular, DpLotacao lotaTitular) {
 		long tempoIni = System.nanoTime();
-		IMontadorQuery montadorQuery = carregarPlugin();
+		
+		boolean isNativeQuery = (orgaoPermiteQueryNativa(titular) || Prop.get("montador.query").toUpperCase().contains("NATIVE")); 
+		
+		IMontadorQuery montadorQuery = carregarPlugin(isNativeQuery);		
+		Query query = null;
+		
 		String s = montadorQuery.montaQueryConsultaporFiltro(flt, true);
-		Query query = em().createQuery(s);
+		
+		if (isNativeQuery) {
+			query = em().createNativeQuery(s);
+		} else {
+			query = em().createQuery(s);
+		}
 
 		preencherParametros(flt, query);
 
-		Long l = (Long) query.getSingleResult();
+		Long l = null;
+		
+		if (isNativeQuery) {
+			l = ((Number) query.getSingleResult()).longValue();
+		} else {
+			l = (Long) query.getSingleResult();
+		}
+		
 		long tempoTotal = System.nanoTime() - tempoIni;
 		// System.out.println("consultarQuantidadePorFiltroOtimizado: "
 		// + tempoTotal / 1000000 + " ms -> " + s + ", resultado: " + l);
@@ -839,6 +912,11 @@ public class ExDao extends CpDao {
 			if (flt.getAnoEmissao() == null)
 				flt.setAnoEmissao(Long.valueOf(new Date().getYear()) + 1900);
 
+			CpOrgaoUsuario orgaoUsuario = new CpOrgaoUsuario();
+			orgaoUsuario.setId(flt.getIdOrgaoUsu());
+			orgaoUsuario = CpDao.getInstance().consultarPorId(orgaoUsuario);
+			flt.setIdOrgaoUsu(orgaoUsuario.getIdInicial());
+			
 			if (flt.getNumSequencia() == null) {
 				final Query query = em().createNamedQuery(
 						"consultarPorSiglaDocumento");
@@ -1307,12 +1385,43 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMobil> consultarParaArquivarCorrenteEmLote(DpLotacao lot) {
-		final Query query = em().createNamedQuery(
-
-		"consultarParaArquivarCorrenteEmLote");
-		query.setParameter("lotaIni", lot.getIdLotacaoIni());
+	public List<ExMobil> consultarParaArquivarCorrenteEmLote(final Long idPessoaIni, final Long idLotacaoIni,
+															 final int offset, final int tamPagina) {
+			
+		final Query query = em().createNamedQuery("consultarParaArquivarCorrenteEmLote")
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("idLotacaoIni", idLotacaoIni)
+				.setParameter("tipoMobilVia", ExTipoMobil.TIPO_MOBIL_VIA)
+				.setParameter("tipoMobilGeral", ExTipoMobil.TIPO_MOBIL_GERAL)
+				.setParameter("tipoFormaDocExpediente", ExTipoFormaDoc.TIPO_FORMA_DOC_EXPEDIENTE)
+				.setParameter("notInCpMarcadorEnumList", Arrays.asList(CpMarcadorEnum.SEM_EFEITO.getId(),
+						CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(),
+						CpMarcadorEnum.ARQUIVADO_CORRENTE.getId(),
+						CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+						CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId(),
+						CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()))
+				.setParameter("cpMarcadorEnumList", CpMarcadorEnum.EM_ANDAMENTO.getId())
+				.setFirstResult(offset)
+				.setMaxResults(tamPagina);
+		
 		return query.getResultList();
+	}
+
+	public int consultarQuantidadeParaArquivarCorrenteEmLote(final Long idPessoaIni, final Long idLotacaoIni) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaArquivarCorrenteEmLote", Long.class)
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("idLotacaoIni", idLotacaoIni)
+				.setParameter("tipoMobilVia", ExTipoMobil.TIPO_MOBIL_VIA)
+				.setParameter("tipoMobilGeral", ExTipoMobil.TIPO_MOBIL_GERAL)
+				.setParameter("tipoFormaDocExpediente", ExTipoFormaDoc.TIPO_FORMA_DOC_EXPEDIENTE)
+				.setParameter("notInCpMarcadorEnumList", Arrays.asList(CpMarcadorEnum.SEM_EFEITO.getId(),
+						CpMarcadorEnum.PENDENTE_DE_ASSINATURA.getId(),
+						CpMarcadorEnum.ARQUIVADO_CORRENTE.getId(),
+						CpMarcadorEnum.ARQUIVADO_INTERMEDIARIO.getId(),
+						CpMarcadorEnum.ARQUIVADO_PERMANENTE.getId(),
+						CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()))
+				.setParameter("cpMarcadorEnumList", CpMarcadorEnum.EM_ANDAMENTO.getId())
+				.getSingleResult() ).intValue();
 	}
 
 	public List<ExItemDestinacao> consultarParaArquivarIntermediarioEmLote(
@@ -1367,10 +1476,11 @@ public class ExDao extends CpDao {
 		return ((Long) query.getSingleResult()).intValue();
 	}
 
-	public List<ExMobil> consultarParaTransferirEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
-		final Query query = em().createNamedQuery("consultarParaTransferirEmLote")
-				.setParameter("pessoaIni",pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId());
+	public List<ExMobil> consultarParaTramitarEmLote(DpPessoa pes, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery("consultarParaTramitarEmLote")
+				.setParameter("pessoaIni", pes.getIdPessoaIni())
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId());
+		
 		if (Objects.nonNull(offset)) {
 			query.setFirstResult(offset);
 		}
@@ -1381,11 +1491,43 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public Long consultarQuantidadeParaTransferirEmLote(DpPessoa pes) {
-		return (Long) em().createNamedQuery("consultarQuantidadeParaTransferirEmLote", Long.class)
+	public int consultarQuantidadeParaTramitarEmLote(DpPessoa pes) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaTramitarEmLote", Long.class)
 				.setParameter("pessoaIni", pes.getIdPessoaIni())
-				.setParameter("lotaIni",pes.getLotacao().getLotacaoInicial().getId())
-				.getSingleResult();
+				.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId()).getSingleResult() ).intValue();
+	}
+	
+	public List<ExMobil> consultarParaAcompanhamentoEmLote(DpPessoa pes, boolean chkGestorInteressado, Integer offset, Integer tamPagina) {
+		StringBuilder sb = new StringBuilder("select mob from ExMobil mob join mob.exMarcaSet mar ");
+		sb.append(" where (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) ");
+		sb.append(chkGestorInteressado ? "	and (mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_GESTOR.getId() 
+										+ "or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+		sb.append(" order by mob.idMobil desc ");
+		
+		final Query query = em().createQuery(sb.toString())
+									.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId())
+									.setParameter("pessoaIni", pes.getIdPessoaIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+		return query.getResultList();
+	}
+
+	public Long consultarQuantidadeParaAcompanhamentoEmLote(DpPessoa pes, boolean chkGestorInteressado) {
+		
+		StringBuilder sb = new StringBuilder("select COUNT(mob) from ExMobil mob join mob.exMarcaSet mar ");
+		sb.append(" where (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni) ");
+		sb.append(chkGestorInteressado ? "	and (mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_GESTOR.getId() 
+										+ "or mar.cpMarcador.idMarcador = " + CpMarcadorEnum.COMO_INTERESSADO.getId() + ") " : "");
+		sb.append(" order by mob.idMobil desc ");
+		
+		return (Long) em().createQuery(sb.toString(), Long.class)
+							.setParameter("lotaIni", pes.getLotacao().getLotacaoInicial().getId())
+							.setParameter("pessoaIni", pes.getIdPessoaIni())
+							.getSingleResult();
 	}
 
 	public List<ExMobil> consultarParaAnotarEmLote(DpLotacao lot) {
@@ -1475,17 +1617,20 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List<ExMovimentacao> consultarMovimentacoes(DpPessoa pes, Date dt) {
+	public List<ExMovimentacao> consultarMovimentacoesPorCadastranteEntreDatas(DpPessoa pes, Date dtIni, Date dtFim) {
 
-		if (pes == null || dt == null) {
+		if (pes == null || dtIni == null) {
 			throw new IllegalStateException(
 					"A pessoa e/ou a data informada para a realização da consulta é nula.");
 		}
 
-		final Query query = em().createNamedQuery("consultarMovimentacoes");
+		dtFim = (dtFim == null) ? dtIni : dtFim;
+
+		final Query query = em().createNamedQuery("consultarMovimentacoesPorCadastranteEntreDatas");
 
 		query.setParameter("pessoaIni", pes.getIdPessoaIni());
-		query.setParameter("data", dt);
+		query.setParameter("dtIni", dtIni);
+		query.setParameter("dtFim", dtFim);
 		return query.getResultList();
 	}
 
@@ -1611,6 +1756,37 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
+	public List<ExDocumento> listarDocPendenteAssinatura(DpPessoa pessoa, 
+											boolean apenasComSolicitacaoDeAssinatura, Integer offset, Integer tamPagina) {
+		final Query query = em().createQuery(getHqlListarDocPendenteAssinatura(apenasComSolicitacaoDeAssinatura, Boolean.FALSE))
+								.setParameter("idPessoaIni", pessoa.getIdPessoaIni());
+		if (Objects.nonNull(offset)) {
+			query.setFirstResult(offset);
+		}
+		if (Objects.nonNull(tamPagina)) {
+			query.setMaxResults(tamPagina);
+		}
+		return query.getResultList();
+	}
+	
+	public Long listarQuantidadeDocPendenteAssinatura(DpPessoa pessoa, boolean apenasComSolicitacaoDeAssinatura) {
+		return (Long) em().createQuery(getHqlListarDocPendenteAssinatura(apenasComSolicitacaoDeAssinatura, Boolean.TRUE), Long.class)
+								.setParameter("idPessoaIni", pessoa.getIdPessoaIni())
+								.getSingleResult();
+	}
+	
+	private String getHqlListarDocPendenteAssinatura(boolean apenasComSolicitacaoDeAssinatura, boolean queryContar) {
+		StringBuilder sb = new StringBuilder("select  " + (queryContar ? " COUNT(doc) " : " doc "));
+		sb.append("	from ExDocumento doc where doc.idDoc in (");
+		sb.append("				select distinct(exDocumento.idDoc) from ExMobil mob where mob.idMobil in (");
+		sb.append("						select exMobil.idMobil from ExMarca label where label.cpMarcador.idMarcador = ");
+		sb.append(apenasComSolicitacaoDeAssinatura ? CpMarcadorEnum.PRONTO_PARA_ASSINAR.getId() : CpMarcadorEnum.COMO_SUBSCRITOR.getId());
+		sb.append("						and label.dpPessoaIni.idPessoa = :idPessoaIni)) ");
+		sb.append(" and dtFinalizacao is not null ");
+		sb.append(" order by doc.dtDoc desc  ");
+		return sb.toString();
+	}
+	
 	public List<ExMovimentacao> listarAnexoPendenteAssinatura(DpPessoa pessoa) {
 		final Query query = em().createNamedQuery(
 				"listarAnexoPendenteAssinatura");
@@ -1894,17 +2070,46 @@ public class ExDao extends CpDao {
 		Root<ExModelo> c = q.from(ExModelo.class);
 		q.select(c);
 		List<Predicate> whereList = new LinkedList<Predicate>();
-		if(flt.getSigla() != null) {
+		if(flt.getSigla() != null || flt.getNome() != null) {
 			Expression<String> path = c.get("nmMod");
 			path = cb().upper(path);
-			whereList.add(cb().like(path, "%" + flt.getSigla() + "%"));
-			whereList.add(cb().equal(c.get("hisAtivo"), 1));
+			whereList.add(cb().like(path, "%" 
+					+ (flt.getSigla() != null ? flt.getSigla().toUpperCase().replaceAll(" ", "%") + "%" : "") 
+					+ (flt.getNome() != null ? flt.getNome().toUpperCase().replaceAll(" ", "%") + "%" : "")));
 		}
+
+		if(flt.getDescricao() != null) {
+			Expression<String> path = c.get("descMod");
+			path = cb().upper(path);
+			whereList.add(cb().like(path, "%" + flt.getDescricao().toUpperCase().replaceAll(" ", "%") + "%"));
+		}
+
+		if (flt.getExFormaDocumento() != null)
+			whereList.add(cb().equal(c.get("exFormaDocumento"), flt.getExFormaDocumento()));
+
+		if (flt.getExClassificacao() != null)
+			whereList.add(cb().equal(c.get("exClassificacao"), flt.getExClassificacao()));
+
+		if (flt.getExNivelAcesso() != null)
+			whereList.add(cb().equal(c.get("exNivelAcesso"), flt.getExNivelAcesso()));
+		
+		if(flt.getAtivos() == null || flt.getAtivos()) 
+			whereList.add(cb().equal(c.get("hisAtivo"), 1));
+
 		Predicate[] whereArray = new Predicate[whereList.size()];
 		whereList.toArray(whereArray);
 		q.where(whereArray);
-			q.orderBy(cb().desc(c.get("nmMod")));
-		return em().createQuery(q).getResultList();
+		q.orderBy(cb().desc(c.get("nmMod")));
+		
+		TypedQuery<ExModelo> query = em().createQuery(q);
+		
+		if (offset > 0) 
+			query.setFirstResult(offset);
+
+		if (itemPagina > 0) 
+			query.setMaxResults(itemPagina);
+		
+		return query.getResultList();
 	}
 
 	public int consultarQuantidade(final ExModeloDaoFiltro flt) {
@@ -2106,31 +2311,36 @@ public class ExDao extends CpDao {
 		StringBuilder sbQueryString = new StringBuilder();
 		
 		String queryMarcasAIgnorar = "";
-		String queryMarcasAIgnorarWhere = "";
-		
-		
 		
 		if (marcasAIgnorar != null && marcasAIgnorar.size() > 0) {
-			queryMarcasAIgnorar += " left join corporativo.cp_marca mx on"
-					+ " mx.id_ref = m.id_ref and mx.id_marcador in(";
+			// Se o mobil tiver uma das marcas contidas em marcasAIgnorar, não deve ser mostrado na mesa
 			for (Integer marcaAIgnorar : marcasAIgnorar)
 				queryMarcasAIgnorar += marcaAIgnorar.toString() + ",";
-			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1) + ") ";
-			queryMarcasAIgnorarWhere = " and mx.id_marca is null ";
+			queryMarcasAIgnorar = queryMarcasAIgnorar.substring(0, queryMarcasAIgnorar.length() - 1);
 		}		
 
 		/* String Builder Query Primeira Marca entre os Grupos */
 		StringBuilder sbQueryPrimeiraMarca = new StringBuilder();
 		
-		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca ");
+		sbQueryPrimeiraMarca.append("and m.id_marca = (SELECT id_marca FROM (SELECT marcaAux.id_marca, ");
+		// O grupo 5 - Caixa de Entrada deve mostrar o documento mesmo que ele já tenha aparecido em outro grupo prioritário (ex.: Alerta)
+		sbQueryPrimeiraMarca.append("CASE WHEN " + (!"".equals(queryMarcasAIgnorar) ?  "marcaAux.id_marcador in(" + queryMarcasAIgnorar 
+					+ ") OR " : "") + "(marcadorAux.GRUPO_MARCADOR = 5 and md.GRUPO_MARCADOR = 5) THEN 0 ELSE 1 END ignorar, ");
+		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcaAux.id_marcador = 1 THEN 0 ELSE 1 END temporario, " : "1 temporario, ");
+		sbQueryPrimeiraMarca.append("CASE WHEN marcaAux.");
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? "id_pessoa_ini = :titular " : "id_lotacao_ini = :lotaTitular "); // Traz a marca com a Pessoa ou Lotação em questão para o TOPO pra depois distribuir nos grupos
+		sbQueryPrimeiraMarca.append("THEN 0 ELSE 1 END pessoa, ");
+		sbQueryPrimeiraMarca.append("marcadorAux.grupo_marcador grupo ");
+		
 		sbQueryPrimeiraMarca.append("FROM corporativo.cp_marca marcaAux INNER JOIN ");
 		sbQueryPrimeiraMarca.append("     corporativo.cp_marcador marcadorAux ");
 		sbQueryPrimeiraMarca.append("          ON marcaAux.id_marcador = marcadorAux.id_marcador ");
 		sbQueryPrimeiraMarca.append("WHERE marcaAux.id_ref = m.id_ref ");
 		
-		sbQueryPrimeiraMarca.append(contar ? " AND (marcaAux.id_pessoa_ini = :titular OR marcaAux.id_lotacao_ini = :lotaTitular) " : ""); // Se CONTAR filtra PESSOA e LOTACAO
-		sbQueryPrimeiraMarca.append(!contar && titular != null ? " AND marcaAux.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
-		sbQueryPrimeiraMarca.append(!contar && lotaTitular != null ? " AND marcaAux.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		sbQueryPrimeiraMarca.append(" AND ((marcaAux.id_pessoa_ini = :titular");
+		sbQueryPrimeiraMarca.append(lotaTitular == null ? ")" : " OR marcaAux.id_lotacao_ini = :lotaTitular)");
+		sbQueryPrimeiraMarca.append(" OR marcaAux.id_marcador in(1" +
+				(!"".equals(queryMarcasAIgnorar) ? "," + queryMarcasAIgnorar : "") + ")) "); // Inclui temporarios tambem 
 		
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaAssinSenha ");
 		sbQueryPrimeiraMarca.append("      AND marcadorAux.id_marcador <> :marcaMovAssinSenha ");
@@ -2138,10 +2348,9 @@ public class ExDao extends CpDao {
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_ini_marca is null OR marcaAux.dt_ini_marca < :dbDatetime ) ");
 		sbQueryPrimeiraMarca.append("      AND (marcaAux.dt_fim_marca is null OR marcaAux.dt_fim_marca > :dbDatetime ) ");
 		
-		sbQueryPrimeiraMarca.append("ORDER BY ");
-		sbQueryPrimeiraMarca.append(Prop.isGovSP() ? "CASE WHEN marcadorAux.grupo_marcador = 6 THEN 0 ELSE marcadorAux.grupo_marcador END" //Para GOVSP, TMP só deve aparecer no grupo EM ELABORACAO
-												   : " marcadorAux.grupo_marcador ");
-		sbQueryPrimeiraMarca.append(", marcaAux.id_pessoa_ini, marcaAux.id_lotacao_ini) aux ");
+		sbQueryPrimeiraMarca.append("ORDER BY ignorar, temporario, pessoa, grupo");
+		
+		sbQueryPrimeiraMarca.append(") aux ");
 		
 		sbQueryPrimeiraMarca.append(isOracle() ? "WHERE rownum = 1 " : "LIMIT 1 "); //Obtém a primeira MARCA daquele ID_REF seguindo os critérios, desprezando as demais ocorrências
 		sbQueryPrimeiraMarca.append(")");
@@ -2151,13 +2360,10 @@ public class ExDao extends CpDao {
 		sbQueryString.append("WITH marca AS (SELECT m.*, md.grupo_marcador ");
 		sbQueryString.append(" FROM corporativo.cp_marca m ");
 		sbQueryString.append(" INNER JOIN corporativo.cp_marcador md ON m.id_marcador = md.id_marcador ");
-		
-		sbQueryString.append(queryMarcasAIgnorar);
-		
 		sbQueryString.append(" WHERE 1=1 ");
-		sbQueryString.append(contar ? " AND (m.id_pessoa_ini = :titular OR m.id_lotacao_ini = :lotaTitular)" : ""); // Se CONTAR filtra PESSOA e LOTACAO
-		sbQueryString.append(!contar && titular != null ? " and m.id_pessoa_ini = :titular" : ""); //Se LISTANDO PESSOA
-		sbQueryString.append(!contar && lotaTitular != null ? " and m.id_lotacao_ini = :lotaTitular" : ""); //Se LISTANDO LOTACAO
+		
+		sbQueryString.append(lotaTitular == null ? " AND m.id_pessoa_ini = :titular" : " AND m.id_lotacao_ini = :lotaTitular"); 
+
 		
 		//MARCAS ativas
 		sbQueryString.append(" AND (m.dt_ini_marca is null OR m.dt_ini_marca < :dbDatetime)");
@@ -2166,28 +2372,28 @@ public class ExDao extends CpDao {
 		//Remove MARCAS de Assinatura e a ignorar
 		sbQueryString.append(" and m.id_marcador <> :marcaAssinSenha ");
 		sbQueryString.append(" and m.id_marcador <> :marcaMovAssinSenha ");
-		
-		sbQueryString.append(queryMarcasAIgnorarWhere);
+		sbQueryString.append(grupos != null && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "");
+		sbQueryString.append(!"".equals(queryMarcasAIgnorar) ? " and not m.id_marcador in(" + queryMarcasAIgnorar + ")" : "");
 		
 		sbQueryString.append(sbQueryPrimeiraMarca);
 		
 		sbQueryString.append(") SELECT");
-		sbQueryString.append(contar ?  " CONCAT(grupo_marcador,''),"
-				+ " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end), "  
-				+ " sum(case when marca.id_lotacao_ini = :lotaTitular then 1 else 0 end) " 
-				
-				: " CONCAT(grupo_marcador,''),"
-				+ " id_ref, "
-				+ " (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem");
+		
+		sbQueryString.append(" CONCAT(grupo_marcador,''),");
+		
+		sbQueryString.append(contar && lotaTitular == null ? " sum(case when marca.id_pessoa_ini = :titular then 1 else 0 end) ":"");
+		sbQueryString.append(contar && lotaTitular != null ? " sum(case when marca.id_lotacao_ini = :lotaTitular then 1 else 0 end)" : "");
+
+		sbQueryString.append(!contar ? "id_ref, (case when movultima.id_mov is null then doc.his_dt_alt else movultima.dt_ini_mov end) dtOrdem" : "");
 		
 		sbQueryString.append(" FROM marca ");
-		sbQueryString.append(" INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ");
+		//Qdo conta, não precisa ordenar mas precisa filtrar se for solicitado 
+		sbQueryString.append(!contar || (contar && filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_mobil mob on mob.id_mobil = marca.id_ref ": "");
 		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " INNER JOIN siga.ex_documento doc on doc.id_doc = mob.id_doc ": "");
-		sbQueryString.append(!contar || (filtro != null && !"".equals(filtro)) ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); //Se CONTANDO e SEM FILTROS, não adiciona
+		sbQueryString.append(!contar ? " LEFT JOIN siga.ex_movimentacao movultima on movultima.id_mov = mob.id_ult_mov " : ""); 
 		
 		sbQueryString.append(" WHERE 1=1");
 		sbQueryString.append(filtro != null && !"".equals(filtro)? " and (mob.dnm_sigla like :flt or doc.descr_documento_ai like :flt)" : "");
-		sbQueryString.append(grupos != null && grupos.size() > 0? " and grupo_marcador in (:listGrupos)" : "");
 		sbQueryString.append(contar ? " GROUP BY grupo_marcador ORDER BY grupo_marcador " 
 									: " ORDER BY grupo_marcador, dtOrdem " + (ordemCrescenteData ? " ASC":" DESC" + ", marca.id_marca"));
 
@@ -2197,10 +2403,10 @@ public class ExDao extends CpDao {
 	
 		Query query = em().createNativeQuery(sbQueryString.toString());
 		
-		if (contar || titular != null)
+		if (titular != null)
 			query.setParameter("titular", titular.getIdPessoaIni());
 		
-		if (contar || lotaTitular != null)
+		if (lotaTitular != null)
 			query.setParameter("lotaTitular", lotaTitular.getIdLotacaoIni());
 		
 		if (grupos != null && grupos.size() > 0) {
@@ -2536,6 +2742,154 @@ public class ExDao extends CpDao {
 		query.setParameter("dtIni", dataIniInclusive);
 		query.setParameter("dtFim", dataFimExclusive);
 		return query.getResultList();
+	}
+
+
+	
+	public List<ExMovimentacao> listarMovPorTipoNaoCancNaoFinal(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante) {
+		return listarMovPorTipo(tipoDeMovimentacao, cadastrante, Boolean.TRUE);	
+	}
+	
+	public List<ExMovimentacao> listarMovPorTipo(ExTipoDeMovimentacao tipoDeMovimentacao, DpPessoa cadastrante, Boolean naoCancNaoFinal) {
+		CriteriaBuilder criteriaBuilder = em().getCriteriaBuilder();
+		CriteriaQuery<ExMovimentacao> criteriaQuery = criteriaBuilder.createQuery(ExMovimentacao.class);	
+		Root<ExMovimentacao> movRoot = criteriaQuery.from(ExMovimentacao.class);
+		
+		criteriaQuery.select(movRoot);
+		Join<ExMovimentacao, DpPessoa> joinCadastrante = movRoot.join("cadastrante", JoinType.INNER);
+	
+		Predicate predicateAnd;
+		Predicate predicateEqualTipo = criteriaBuilder.equal(movRoot.get("exTipoMovimentacao"), tipoDeMovimentacao);
+		Predicate predicateEqualNaoFinalizada = criteriaBuilder.isNull(movRoot.get("dtFimMov"));
+		Predicate predicateEqualNaoCancelada = criteriaBuilder.isNull(movRoot.get("exMovimentacaoCanceladora"));
+		Predicate predicateEqualsPessoa = criteriaBuilder.equal(joinCadastrante.get("idPessoaIni"),cadastrante.getIdInicial());
+		
+		predicateAnd = naoCancNaoFinal ? criteriaBuilder.and(predicateEqualTipo,predicateEqualNaoFinalizada, predicateEqualsPessoa, predicateEqualNaoCancelada)
+							: criteriaBuilder.and(predicateEqualTipo, predicateEqualsPessoa);
+		criteriaQuery.where(predicateAnd);
+		
+		return em().createQuery(criteriaQuery).getResultList();		
+	}
+	
+
+	public List<ExDocumentoVO> consultarParaReclassificarEmLote(final Long idOrgaoTitular, final Long idLotacaoTitular,
+																final String classificacaoSigla, 
+																final int offset, final int itemPagina) {
+		
+		/* Query para obter Documentos e Movimentações com determinada Classificação
+		* Caso o Documento possua uma movimentação de reclassificação a query irá retornar a sigla da movimentação reclassifada  
+		* */
+		String sql = "select" 
+				+ "    doc.id_doc as idDoc, mob.dnm_sigla as sigla," 
+				+ "    case" 
+				+ "        when classific_mov.codificacao is not null then classific_mov.codificacao" 
+				+ "        else classific_doc.codificacao" 
+				+ "    end as classificacaoSigla," 
+				+ "    lotacao.sigla_lotacao as lotaCadastranteString,"
+				+ "    pessoa.sesb_pessoa || pessoa.matricula as cadastranteString,"
+				+ "    doc.descr_documento as descrDocumento"
+				+ " from" 
+				+ "    siga.ex_mobil mob" 
+				+ " join siga.ex_documento doc on" 
+				+ "    doc.id_doc = mob.id_doc" 
+				+ " join siga.ex_classificacao classific_doc on" 
+				+ "    classific_doc.id_classificacao = doc.id_classificacao" 
+				+ " full join siga.ex_movimentacao mov on" 
+				+ "    mov.id_mobil = mob.id_mobil and mov.id_tp_mov in (:enumList) and mov.id_mov_canceladora is null "
+				+ " left join siga.ex_classificacao classific_mov on" 
+				+ "    classific_mov.id_classificacao = mov.id_classificacao" 
+				+ " join corporativo.dp_lotacao lotacao on" 
+				+ "    lotacao.id_lotacao = doc.id_lota_titular" 
+				+ " join corporativo.dp_pessoa pessoa on" 
+				+ "    pessoa.id_pessoa = doc.id_titular" 
+				+ " where"
+				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.id_mob_pai is null" //somente documento pai (documentos filhos não deverão ser apresentados)
+				+ "    and doc.dt_finalizacao is not null" 
+				+ "    and doc.dt_primeiraassinatura is not null" 
+				+ "    and doc.id_orgao_usu = :idOrgaoTitular"
+				+ "    and (:idLotacaoTitular is null or :idLotacaoTitular = 0 or doc.id_lota_cadastrante = :idLotacaoTitular)"
+				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
+				+ "        or (classific_mov.codificacao is not null"
+				+ "            and mov.id_mov = ("
+				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "                from siga.ex_movimentacao ultmovtipo"
+				+ "                where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "                and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "            )"
+				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "        )"
+				+ "    )"
+				+ " order by mob.dnm_sigla";
+		
+		Query query = em().createNativeQuery(sql, "DocumentosPorCodificacaoClassificacao");
+
+		query.setParameter("idOrgaoTitular", idOrgaoTitular);
+		query.setParameter("idLotacaoTitular", idLotacaoTitular);
+		query.setParameter("mascara", classificacaoSigla);
+		query.setParameter("enumList", Arrays.asList(
+				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
+				ExTipoDeMovimentacao.AVALIACAO_COM_RECLASSIFICACAO.getId()));
+		query.setFirstResult(offset);
+		query.setMaxResults(itemPagina);
+		
+		return query.getResultList();
+	}
+
+	public int consultarQuantidadeParaReclassificarEmLote(final Long idOrgaoTitular, final Long idLotacaoTitular,
+														   final String classificacaoSigla) {
+
+		/* Query para obter a quantidade Documentos e Movimentações com Classificação
+		 * */
+		String sql = " select count(*) from ( "
+				+ " select"
+				+ "    doc.id_doc"
+				+ " from"
+				+ "    siga.ex_mobil mob"
+				+ " join siga.ex_documento doc on"
+				+ "    doc.id_doc = mob.id_doc"
+				+ " join siga.ex_classificacao classific_doc on"
+				+ "    classific_doc.id_classificacao = doc.id_classificacao"
+				+ " full join siga.ex_movimentacao mov on"
+				+ "    mov.id_mobil = mob.id_mobil and mov.id_tp_mov in (:enumList) and mov.id_mov_canceladora is null "
+				+ " left join siga.ex_classificacao classific_mov on"
+				+ "    classific_mov.id_classificacao = mov.id_classificacao"
+				+ " join corporativo.dp_lotacao lotacao on"
+				+ "    lotacao.id_lotacao = doc.id_lota_titular"
+				+ " join corporativo.dp_pessoa pessoa on"
+				+ "    pessoa.id_pessoa = doc.id_titular"
+				+ " where"
+				+ "    mob.id_tipo_mobil = 1" //somente mobil geral
+				+ "    and doc.id_mob_pai is null" //somente documento pai (documentos filhos não deverão ser apresentados)
+				+ "    and doc.dt_finalizacao is not null"
+				+ "    and doc.dt_primeiraassinatura is not null"
+				+ "    and doc.id_orgao_usu = :idOrgaoTitular"
+				+ "    and (:idLotacaoTitular is null or :idLotacaoTitular = 0 or doc.id_lota_cadastrante = :idLotacaoTitular)"
+				+ "    and ((classific_mov.codificacao is null and classific_doc.codificacao like :mascara)"
+				+ "        or (classific_mov.codificacao is not null"
+				+ "            and mov.id_mov = ("
+				+ "                select max(ultmovtipo.id_mov)" //obter a última movimentação não cancelada do tipo 51 ou 53
+				+ "                from siga.ex_movimentacao ultmovtipo"
+				+ "                where ultmovtipo.id_mobil = mob.id_mobil"
+				+ "                and ultmovtipo.id_tp_mov in (:enumList)" //movimentação do tipo 51,53 Reclassificação
+				+ "                and ultmovtipo.id_mov_canceladora is null" //movimentação não cancelada
+				+ "            )"
+				+ "            and (classific_mov.codificacao like :mascara)"
+				+ "        )"
+				+ "    )"
+				+ " )";
+
+		Query query = em().createNativeQuery(sql);
+
+		query.setParameter("idOrgaoTitular", idOrgaoTitular);
+		query.setParameter("idLotacaoTitular", idLotacaoTitular);
+		query.setParameter("mascara", classificacaoSigla);
+		query.setParameter("enumList", Arrays.asList(
+				ExTipoDeMovimentacao.RECLASSIFICACAO.getId(),
+				ExTipoDeMovimentacao.AVALIACAO_COM_RECLASSIFICACAO.getId()));
+
+		return ((BigDecimal) query.getSingleResult()).intValue();
 	}
 
 }

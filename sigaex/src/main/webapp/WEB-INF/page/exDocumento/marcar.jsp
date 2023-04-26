@@ -88,41 +88,11 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button type="button" class="btn btn-primary"
-					onclick="javascript: sbmt();">Gravar</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="modal fade" id="anotacaoObservacaoModal" tabindex="-1"
-	role="dialog" aria-labelledby="anotarModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="anotarModalLabel" style="font-weight: bold;">
-					Anotar
-				</h5>
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body" style="padding-top: 70px; padding-bottom: 60px;">
-					<input type="hidden" name="sigla" value="${m.sigla}" />
-					<div class="form-group">
-						<div class="form-group">
-							<p style="font-size: 13px; color: #9e9e9e;"><span style="font-size: 14px; font-weight: bold;">ATENÇÃO: </span>Anotações cadastradas não 
-							constituem o documento, são apenas  lembretes ou avisos 
-							para os usuários com acesso ao documento, podendo ser 
-							excluídas a qualquer tempo.</p>
-						</div>
-					</div>
-			</div>
-			<div class="modal-footer">
-				<a href="${linkTo[ExMovimentacaoController].aAnotar()}?sigla=${mob.sigla}" 
-					style="background: #007bff; border-radius: 5px; width: 52px; height: 40px; color: white; text-align: center; padding-top: 8px;">Ok</a>
+				<button id="btnMarcarCancelar" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button id="btnMarcarGravar" type="button" class="btn btn-primary"
+					onclick="javascript: sbmtMarcar();">
+					<span id="btnMarcarGravar-spinner" class="spinner-border d-none" role="status"></span>
+					Gravar</button>
 			</div>
 		</div>
 	</div>
@@ -299,19 +269,33 @@
 	window.initdefinirMarcaModal = function() {
 	}
 
-	function sbmt() {
+	function sbmtMarcar() {
+		document.getElementById('btnMarcarGravar-spinner').classList.remove('d-none');
+		document.getElementById('btnMarcarGravar').disabled = true;
+		document.getElementById('btnMarcarCancelar').disabled = true;
 		var dtPlanejada = document.getElementById('planejada');
 		var dtLimite = document.getElementById('limite');
 		
-		if (!${podeRetroativa} && dtPlanejada != null)
-			if (!verifica_data(dtPlanejada,0,false,false))
+		if (!${podeRetroativa} && dtPlanejada != null) {
+			if (!verifica_data(dtPlanejada,0,false,false)) {
+				reestabeleceBotoes()
 				return;
-
-		if (!${podeRetroativa} && dtLimite != null)
-			if (!verifica_data(dtLimite,0,false,false))
+			}
+		}
+				
+		if (!${podeRetroativa} && dtLimite != null) {
+			if (!verifica_data(dtLimite,0,false,false)) {
+				reestabeleceBotoes()
 				return;
+			}
+		}
 		
 		document.getElementById('marcarForm').submit();
 	}
-	
+
+	function reestabeleceBotoes() {
+		document.getElementById('btnMarcarGravar-spinner').classList.add('d-none');
+		document.getElementById('btnMarcarGravar').disabled = false;
+		document.getElementById('btnMarcarCancelar').disabled = false;
+	}
 </script>

@@ -19,10 +19,11 @@
 package br.gov.jfrj.ldap;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.NoSuchAttributeException;
 import javax.naming.ldap.LdapContext;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -64,7 +65,7 @@ public interface ILdapDao {
 	public abstract void alterar(String dn, Attributes atributos)
 			throws AplicacaoException;
 
-	public abstract Attributes pesquisar(String dn) throws AplicacaoException;
+	public abstract Attributes pesquisar(String dn) throws AplicacaoException, NameNotFoundException;
 
 	public abstract void definirSenha(String dnUsuario, String senhaNova)
 			throws AplicacaoException;
@@ -151,7 +152,7 @@ public interface ILdapDao {
 	public abstract void alterarAtributo(String dn, String nomeAtributo,
 			Object valorAtributo) throws AplicacaoException;
 	
-	public abstract void excluirAtributo(String dn, String nomeAtributo) throws AplicacaoException;
+	public abstract void excluirAtributo(String dn, String nomeAtributo) throws AplicacaoException, NoSuchAttributeException;
 
 	public abstract LdapContext getContexto();
 

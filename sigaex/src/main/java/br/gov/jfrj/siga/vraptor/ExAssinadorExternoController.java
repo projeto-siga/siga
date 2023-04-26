@@ -233,7 +233,11 @@ public class ExAssinadorExternoController extends ExController {
 			
 			if (mov == null && !doc.isFinalizado()) {
 				DpPessoa cadastrante = obterCadastrante(null, mob, mov);
-				doc.setDtPrimeiraAssinatura(CpDao.getInstance().dt()); 
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				Date dataAtualSemTempo = sdf.parse(sdf.format(CpDao.getInstance().dt()));
+				doc.setDtPrimeiraAssinatura(dataAtualSemTempo); 
+				
 				Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);
 			} else {
 				DpPessoa cadastrante = obterCadastrante(null, mob, mov);
@@ -669,7 +673,8 @@ public class ExAssinadorExternoController extends ExController {
 	private String docSecret(ExDocumento doc) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(dateSecret(doc.getDtRegDoc()));
-		sb.append(doc.getCadastrante().getId());
+		if (doc.getCadastrante() != null)
+		    sb.append(doc.getCadastrante().getId());
 		return sb.toString();
 	}
 

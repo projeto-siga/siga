@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,6 +38,8 @@ import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
+
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ZERO;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
@@ -47,10 +50,16 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "     where u.nmLoginIdentidade = :nmUsuario"
 				+ "      and u.dpPessoa.cpfPessoa = pes.cpfPessoa"
 				+ "      and pes.sesbPessoa = :sesbPessoa"
-				+ "      and pes.dataFimPessoa is null"),
+				+ "      and pes.dataFimPessoa is null"
+				+ "		 and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
+		@NamedQuery(name = "consultarIdentidadeAtual", query = "select u from CpIdentidade u"
+				+ "     where u.nmLoginIdentidade = :nmUsuario"
+				+ "		 and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"
+				+ "		 and u.hisDtIni = (select max(p.hisDtIni) from CpIdentidade p where p.nmLoginIdentidade = :nmUsuario)"),
 		@NamedQuery(name = "consultarIdentidades", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "     where pes.idPessoaIni = :idPessoaIni"
-				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"),
+				+ "      and u.dpPessoa = pes" + "      and u.hisDtFim is null"
+				+ "      and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
 		@NamedQuery(name = "consultarIdentidadeCadastranteAtiva", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where ((u.nmLoginIdentidade = :nmUsuario and pes.sesbPessoa = :sesbPessoa and pes.sesbPessoa is not null) or "
 				+ " (pes.cpfPessoa is not null and pes.cpfPessoa <> :cpfZero and pes.cpfPessoa = :cpf)) "
@@ -65,13 +74,15 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp11 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp38) "),
+                + "or pes.situacaoFuncionalPessoa = :sfp31 "                
+                + "or pes.situacaoFuncionalPessoa = :sfp36 "                
+                + "or pes.situacaoFuncionalPessoa = :sfp38) "
+				+ "and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),
         @NamedQuery(name = "consultarIdentidadeAtualPelaInicial", query = "from CpIdentidade u "
 				+ "		where u.hisDtIni = "
 				+ "		(select max(p.hisDtIni) from CpIdentidade p where p.hisIdIni = :idIni)"
-				+ "		 and u.hisIdIni = :idIni"),				
+				+ "		 and u.hisIdIni = :idIni"
+				+ "      and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)"),				
 		@NamedQuery(name = "consultarIdentidadeCpfEmail", query = "select u from CpIdentidade u , DpPessoa pes "
 				+ "where (pes.cpfPessoa is not null and pes.cpfPessoa <> :cpfZero and pes.cpfPessoa = :cpf)"
 				+ "and pes.emailPessoa = :email "
@@ -87,8 +98,9 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "or pes.situacaoFuncionalPessoa = :sfp12 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp22 "
 				+ "or pes.situacaoFuncionalPessoa = :sfp31 "				
-				+ "or pes.situacaoFuncionalPessoa = :sfp36 "
-				+ "or pes.situacaoFuncionalPessoa = :sfp38)")})
+				+ "or pes.situacaoFuncionalPessoa = :sfp36 "				
+				+ "or pes.situacaoFuncionalPessoa = :sfp38) "
+				+ "and u.cpTipoIdentidade.idCpTpIdentidade in (:listaTipo)")})
 
 public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 
@@ -138,7 +150,16 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	
 	@Column(name = "PIN_IDENTIDADE")
 	private String pinIdentidade;
-
+	
+	@Column(name = "PIN_CONTADOR_TENTATIVA")
+	@Desconsiderar
+	private Integer pinContadorTentativa;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "HIS_ID_INI", insertable = false, updatable = false)
+	@Desconsiderar
+	private CpIdentidade identidadeInicial;
+	
 
 	/*
 	 * (non-Javadoc)
@@ -414,4 +435,29 @@ public abstract class AbstractCpIdentidade extends HistoricoAuditavelSuporte {
 	public void setPinIdentidade(String pinIdentidade) {
 		this.pinIdentidade = pinIdentidade;
 	}
+	
+	public Integer getPinContadorTentativa() {
+		return pinContadorTentativa;
+	}
+
+	/**
+	 * @param pinContadorTentativa
+	 *        Contador de tentativas malsucedidas e consecutivas de match com o PIN da identidade
+	 */
+	public void setPinContadorTentativa(Integer pinContadorTentativa) {
+		this.pinContadorTentativa = pinContadorTentativa;
+	}
+	
+	@PrePersist
+	private void aplicaDefaultPinContadorTentativa() {
+		if (pinContadorTentativa == null) {
+			pinContadorTentativa = INTEGER_ZERO;
+		}
+	}
+	
+
+	public CpIdentidade getIdentidadeInicial() {
+		return identidadeInicial;
+	}
+
 }

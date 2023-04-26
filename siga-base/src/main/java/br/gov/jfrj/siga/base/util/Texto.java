@@ -18,7 +18,6 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.base.util;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -239,6 +238,15 @@ public class Texto {
 	
 	public static String semQuebraDeLinha(String string) {
 		return string.replaceAll("[\\r\\n]+", " ");
+	}
+	
+	public static String removerQuebraDeLinhasExtras(String string) {
+		String retorno = string.replaceAll("\n\n", "\n");
+		if(retorno.contains("\n\n")) {
+			return removerQuebraDeLinhasExtras(retorno);
+		} else {
+			return retorno;
+		}
 	}
 	
 	public static String maximoCaracteres(String string, int max) {

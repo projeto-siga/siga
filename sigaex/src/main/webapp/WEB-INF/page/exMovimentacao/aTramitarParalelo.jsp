@@ -77,6 +77,10 @@
 										<siga:selecao propriedade="responsavel" tema="simple"
 											modulo="siga" />
 									</c:when>
+									<c:when test="${tipoResponsavel == 3}">
+										<siga:selecao propriedade="grupo" tema="simple"
+											modulo="siga" />
+									</c:when>
 								</c:choose>
 								</td>
 							</div>

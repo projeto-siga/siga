@@ -18,6 +18,7 @@
  ******************************************************************************/
 package br.gov.jfrj.ldap;
 
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttributes;
@@ -132,7 +133,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testDefinirSenha() throws AplicacaoException {
+	public void testDefinirSenha() throws AplicacaoException, NameNotFoundException  {
 		if (true)
 			return;
 		ldap.definirSenha(DN_USUARIO, PASSWORD2);
@@ -145,7 +146,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testAlterarSenha() throws AplicacaoException {
+	public void testAlterarSenha() throws AplicacaoException, NameNotFoundException  {
 		if (true)
 			return;
 		ldap.alterarSenha(DN_USUARIO, PASSWORD1, PASSWORD2);
@@ -191,7 +192,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testMover() throws AplicacaoException {
+	public void testMover() throws AplicacaoException, NameNotFoundException {
 		if (true)
 			return;
 		ldap.mover(DN_USUARIO, CN_USUARIO + "," + DN_GESTAO_IDENTIDADE);
@@ -210,7 +211,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testCriarUsuario() throws AplicacaoException {
+	public void testCriarUsuario() throws AplicacaoException, NameNotFoundException  {
 		if (true)
 			return;
 		String dn = "CN=" + "usuario1," + DN_GESTAO_IDENTIDADE;
@@ -221,7 +222,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testCriarContato() throws AplicacaoException {
+	public void testCriarContato() throws AplicacaoException, NameNotFoundException {
 		if (true)
 			return;
 		String dn = "CN=" + "contato1," + DN_GESTAO_IDENTIDADE;
@@ -231,7 +232,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testCriarGrupoDistribuicao() throws AplicacaoException {
+	public void testCriarGrupoDistribuicao() throws AplicacaoException, NameNotFoundException  {
 		if (true)
 			return;
 		String dn = "CN=" + "gd1," + DN_GESTAO_IDENTIDADE;
@@ -241,7 +242,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testCriarGrupoSeguranca() throws AplicacaoException {
+	public void testCriarGrupoSeguranca() throws AplicacaoException, NameNotFoundException  {
 		if (true)
 			return;
 		String dn = "CN=" + "gs1," + DN_GESTAO_IDENTIDADE;
@@ -251,7 +252,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	@Test
-	public void testCriarUnidadeOrganizacional() throws AplicacaoException {
+	public void testCriarUnidadeOrganizacional() throws AplicacaoException, NameNotFoundException  {
 		if (true)
 			return;
 		String dn = "OU=" + "ou1," + DN_GESTAO_IDENTIDADE;
@@ -261,7 +262,7 @@ public class LdapDaoTest extends TestCase{
 	}
 
 	private String dnToSamAccountName(String dnUsuario)
-			throws AplicacaoException {
+			throws AplicacaoException, NameNotFoundException  {
 		Attributes attrs = ldap.pesquisar(dnUsuario);
 
 		String siglaUsuario = null;

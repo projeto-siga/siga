@@ -32,6 +32,7 @@ import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.log.RequestExceptionLogger;
 import br.gov.jfrj.siga.cp.CpPapel;
 import br.gov.jfrj.siga.cp.CpTipoPapel;
 import br.gov.jfrj.siga.dp.CpOrgao;
@@ -57,8 +58,8 @@ public class SigaCpSinc {
 	// a rotina de sync está atribuindo um nível de dependencia estranho para
 	// renato (8)
 
-	private boolean modoLog = false;
-	private int maxSinc = -1;
+	protected boolean modoLog = false;
+	protected int maxSinc = -1;
 
 	private String destinatariosExtras = "";
 
@@ -873,11 +874,19 @@ public class SigaCpSinc {
 
 	StringBuilder sbLog = new StringBuilder();
 
-	public void log(String s) {
-	    System.out.println(s);
-		sbLog.append(s);
-		sbLog.append("\n");
-	}
+    public void log(String s) {
+        System.out.println(s);
+        sbLog.append(s);
+        sbLog.append("\n");
+    }
+
+    public void log(String s, Exception ex) {
+        System.out.println(s);
+        sbLog.append(s);
+        sbLog.append("\n");
+        sbLog.append(RequestExceptionLogger.simplificarStackTrace(ex).replace("\t", "    ").replace("\r", ""));
+        sbLog.append("\n");
+    }
 
 	public String logEnd() throws Exception {
 		return sbLog.toString();

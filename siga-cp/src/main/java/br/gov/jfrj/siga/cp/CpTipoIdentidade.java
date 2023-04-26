@@ -37,10 +37,14 @@ import br.gov.jfrj.siga.dp.dao.CpDao;
 public class CpTipoIdentidade extends AbstractCpTipoIdentidade {
 	public static final Integer FORMULARIO = new Integer(1);
 	public static final Integer CERTIFICADO = new Integer(2);
+	public static final Integer LOGIN_DOE = new Integer(3);
 	public boolean isTipoFormulario() {
 		return CpTipoIdentidade.FORMULARIO.equals(this.getIdCpTpIdentidade());
 	}
 	public boolean isTipoCertificado() {
 		return CpTipoIdentidade.CERTIFICADO.equals(this.getIdCpTpIdentidade());
+	}
+	public boolean isTipoLoginDOE() {
+		return CpTipoIdentidade.LOGIN_DOE.equals(this.getIdCpTpIdentidade());
 	}
 }

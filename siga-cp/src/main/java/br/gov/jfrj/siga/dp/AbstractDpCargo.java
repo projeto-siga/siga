@@ -86,7 +86,6 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable, Hi
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DT_FIM_CARGO", length = 19)
-    @Desconsiderar
 	private Date dataFimCargo;
 	
 	@Column(name = "SIGLA_CARGO", length = 30)
@@ -109,7 +108,6 @@ public abstract class AbstractDpCargo extends Objeto implements Serializable, Hi
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_ORGAO_USU", nullable = false)
-	@Desconsiderar
 	private CpOrgaoUsuario orgaoUsuario;
 
 	@ManyToOne(fetch=FetchType.LAZY)

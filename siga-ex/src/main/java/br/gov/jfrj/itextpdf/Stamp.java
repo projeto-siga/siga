@@ -47,130 +47,102 @@ import br.gov.jfrj.siga.base.SigaMessages;
 
 public class Stamp {
 	private static final String VALIDAR_ASSINATURA_URL = "/sigaex/app/validar-assinatura?pessoa=";
-	private static float QRCODE_LEFT_MARGIN_IN_CM = 3.0f;
+	private static float QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
 	private static float QRCODE_SIZE_IN_CM = 1.5f;
 	private static float BARCODE_HEIGHT_IN_CM = 2.0f;
 	private static int TEXT_TO_CIRCLE_INTERSPACE = 2;
 	private static int TEXT_HEIGHT = 5;
 	private static float SAFETY_MARGIN = 0.1f;
 	private static float CM_UNIT = 72.0f / 2.54f;
-	private static float PAGE_BORDER_IN_CM = 0.8f;
+	private static float PAGE_BORDER_IN_CM = 0.5f;
 	private static float STAMP_BORDER_IN_CM = 0.2f;
 
-	static {
-		if (SigaMessages.isSigaSP()) { // Adequa marcas para SP
-			QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
-			BARCODE_HEIGHT_IN_CM = 2.0f;
-			PAGE_BORDER_IN_CM = 0.5f;
-			STAMP_BORDER_IN_CM = 0.2f;
-		}
-
-	}
-
+	//Default Com Redimensionamento para folha A4
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
 			List<Long> idsAssinantes) throws DocumentException, IOException {
 
+		return stamp(abPdf, sigla, rascunho, copia, cancelado, semEfeito, internoProduzido, qrCode, mensagem,
+				paginaInicial, paginaFinal, cOmitirNumeracao, instancia, orgaoUsu, marcaDaguaDoModelo, idsAssinantes,
+				false);
+	}
+
+	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
+			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
+			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
+			List<Long> idsAssinantes, boolean tamanhoOriginal) throws DocumentException, IOException {
+			
 		if (idsAssinantes != null && idsAssinantes.size() > 0 && Prop.getBool("assinatura.estampar"))
 			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
 
 		PdfReader pdfIn = new PdfReader(abPdf);
-		Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
-		// final SimpleDateFormat sdf = new SimpleDateFormat(
-		// "EEE MMM dd HH:mm:ss zzz yyyy");
-		// doc.add(new Meta("creationdate", sdf.format(new Date(0L))));
-		try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
-			/*-- Alterado de PdfWriter p/ PdfCopy(Essa classe permite manter os "stamps" originais do arquivo importado) 
-			por Marcos(CMSP) em 21/02/19 --*/
-			// PdfCopy writer = new PdfCopy(doc, boA4);
-			/*-- Alerado de volta pois ficou desabilitado o redimensionamento do PDF de modo
-			 *   a que os códigos de barra 2D e 3D não ficassem por cima do texto. Por Renato em 25/04/2019 --*/
-			PdfWriter writer = PdfWriter.getInstance(doc, boA4);
-			doc.open();
-			PdfContentByte cb = writer.getDirectContent();
-
-			// Resize every page to A4 size
-			//
-			// double thetaRotation = 0.0;
-			for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
-				int rot = pdfIn.getPageRotation(i);
-				float left = pdfIn.getPageSize(i).getLeft();
-				float bottom = pdfIn.getPageSize(i).getBottom();
-				float top = pdfIn.getPageSize(i).getTop();
-				float right = pdfIn.getPageSize(i).getRight();
-
-				PdfImportedPage page = writer.getImportedPage(pdfIn, i);
-				float w = page.getWidth();
-				float h = page.getHeight();
-
-				// Logger.getRootLogger().error("----- dimensoes: " + rot + ", " + w
-				// + ", " + h);
-
-				doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate() : PageSize.A4);
-				doc.newPage();
-
-				cb.saveState();
-
-				if (rot != 0 && rot != 180) {
-					float swap = w;
-					w = h;
-					h = swap;
-				}
-
-				float pw = doc.getPageSize().getWidth();
-				float ph = doc.getPageSize().getHeight();
-				double scale = Math.min(pw / w, ph / h);
-
-				// do my transformations :
-				cb.transform(AffineTransform.getScaleInstance(scale, scale));
-
-				if (!internoProduzido) {
-					cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
-					cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
-				}
-
-				if (rot != 0) {
-					double theta = -rot * (Math.PI / 180);
-					if (rot == 180) {
-						cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
-					} else {
-						cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+		
+		if (!tamanhoOriginal) { 
+			Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
+			try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
+	
+				PdfWriter writer = PdfWriter.getInstance(doc, boA4);
+				doc.open();
+				PdfContentByte cb = writer.getDirectContent();
+				
+				// Resize every page to A4 size
+				for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
+					int rot = pdfIn.getPageRotation(i);
+					float left = pdfIn.getPageSize(i).getLeft();
+					float bottom = pdfIn.getPageSize(i).getBottom();
+					float top = pdfIn.getPageSize(i).getTop();
+					float right = pdfIn.getPageSize(i).getRight();
+	
+					PdfImportedPage page = writer.getImportedPage(pdfIn, i);
+					float w = page.getWidth();
+					float h = page.getHeight();
+	
+					doc.setPageSize((rot != 0 && rot != 180) ^ (w > h) ? PageSize.A4.rotate() : PageSize.A4);
+					doc.newPage();
+	
+					cb.saveState();
+	
+					if (rot != 0 && rot != 180) {
+						float swap = w;
+						w = h;
+						h = swap;
 					}
-					if (rot == 90) {
-						cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
-					} else if (rot == 270) {
-						cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+	
+					float pw = doc.getPageSize().getWidth();
+					float ph = doc.getPageSize().getHeight();
+					double scale = Math.min(pw / w, ph / h);
+	
+					// do my transformations :
+					cb.transform(AffineTransform.getScaleInstance(scale, scale));
+	
+					if (!internoProduzido) {
+						cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
+						cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
 					}
+	
+					if (rot != 0) {
+						double theta = -rot * (Math.PI / 180);
+						if (rot == 180) {
+							cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
+						} else {
+							cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+						}
+						if (rot == 90) {
+							cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
+						} else if (rot == 270) {
+							cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+						}
+					}
+	
+					// put the page
+					cb.addTemplate(page, 0, 0);
+					cb.restoreState();
 				}
-
-				// Logger.getRootLogger().error(
-				// "----- dimensoes: " + rot + ", " + w + ", " + h);
-				// Logger.getRootLogger().error("----- page: " + pw + ", " + ph);
-
-				// cb.transform(AffineTransform.getTranslateInstance(
-				// ((pw / scale) - w) / 2, ((ph / scale) - h) / 2));
-
-				// put the page
-				cb.addTemplate(page, 0, 0);
-				/*-- Adicionado devido ao PdfCopy - por Marcos(CMSP) em 21/02/19 --*/
-				// writer.addPage(page);
-
-				// draw a red rectangle at the page borders
-				//
-				// cb.saveState();
-				// cb.setColorStroke(Color.red);
-				// cb.rectangle(pdfIn.getPageSize(i).getLeft(), pdfIn.getPageSize(i)
-				// .getBottom(), pdfIn.getPageSize(i).getRight(), pdfIn
-				// .getPageSize(i).getTop());
-				// cb.stroke();
-				// cb.restoreState();
-
-				cb.restoreState();
+				doc.close();
+	
+				abPdf = boA4.toByteArray();
 			}
-			doc.close();
-
-			abPdf = boA4.toByteArray();
 		}
 
 		try (ByteArrayOutputStream bo2 = new ByteArrayOutputStream()) {
@@ -239,7 +211,7 @@ public class Stamp {
 				if (stream != null) {
 					byte[] ab = IOUtils.toByteArray(stream);
 					final Image logo = Image.getInstance(ab);
-//				
+			
 					logo.scaleToFit(image39.getHeight(), image39.getHeight());
 					logo.setAbsolutePosition(
 							r.getWidth() - image39.getHeight() + (STAMP_BORDER_IN_CM - PAGE_BORDER_IN_CM) * CM_UNIT,
@@ -268,8 +240,6 @@ public class Stamp {
 						over.addImage(logo);
 					}
 				}
-				// over.addImage(mask, mask.getScaledWidth() * 8, 0, 0,
-				// mask.getScaledHeight() * 8, 100, 450);
 
 				if (qrCode != null) {
 					java.awt.Image imgQRCode = createQRCodeImage(qrCode);

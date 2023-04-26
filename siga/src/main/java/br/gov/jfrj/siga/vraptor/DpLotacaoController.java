@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,7 +53,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 	public DpLotacaoController() {
 		super();
 	}
-
+ 
 	@Inject
 	public DpLotacaoController(HttpServletRequest request, Result result, CpDao dao, SigaObjects so, EntityManager em) {
 		super(request, result, dao, so, em);
@@ -212,6 +213,26 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		return resultado;
 	}
 
+	@Get
+	@Path("/app/lotacao/isSuspensa")
+	public void isSuspensa(String sigla, String matricula) {
+		if (matricula != null && !matricula.isEmpty()) {
+			DpPessoa pessoa = CpDao.getInstance().getPessoaFromSigla(matricula);
+			if (pessoa != null)
+				sigla = pessoa.getLotacao().getSiglaCompleta();
+		}
+
+		super.aSelecionar(sigla);
+		if (getSel() != null) {
+			try {
+				String isSuspensa = ( (DpLotacao) getSel() ).getIsSuspensa().toString();
+				result.use(Results.http()).body(isSuspensa);
+			} catch (Exception e) {
+				result.use(Results.status()).forbidden(e.getMessage());
+			}
+		}
+	}
+
 	@Get("app/lotacao/exibir")
 	public void exibi(String sigla) throws Exception {
 		StringBuilder sb = new StringBuilder();
@@ -238,10 +259,13 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			graphAcrescentarLotacao(sb, lotsub);
 		}
 	}
+	
 
 	@Get("app/lotacao/listar")
-	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome) throws Exception {
-
+	public void lista(Integer paramoffset, Long idOrgaoUsu, String nome, Boolean apenasAptasInativacao) throws Exception {
+		
+		result.include("podeInativarLotacaoLote", Cp.getInstance().getBL().podeInativarLotacaoLote(getTitular(),getLotaCadastrante()));
+		
 		if ("ZZ".equals(getTitular().getOrgaoUsuario().getSigla())) {
 			result.include("orgaosUsu", dao().listarOrgaosUsuarios());
 		} else {
@@ -250,6 +274,19 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			list.add(ou);
 			result.include("orgaosUsu", list);
 		}
+		
+		boolean paginaInicial = false;
+
+		if (apenasAptasInativacao == null) {
+			apenasAptasInativacao = false;
+		}
+		
+		result.include("maxIndices", 10);
+		result.include("itemPagina", 15);
+		result.include("quantidadeLista", 15);
+		
+
+		
 		if (idOrgaoUsu != null) {
 			DpLotacaoDaoFiltro dpLotacao = new DpLotacaoDaoFiltro();
 			if (paramoffset == null) {
@@ -258,21 +295,73 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			dpLotacao.setIdOrgaoUsu(idOrgaoUsu);
 			dpLotacao.setNome(nome);
 			dpLotacao.setBuscarFechadas(Boolean.TRUE);
-			setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15));  
-			result.include("itens", getItens());
-			result.include("tamanho", dao().consultarQuantidade(dpLotacao));
+			
+			if (apenasAptasInativacao) { //Inativação em Lote
+				
+				dpLotacao.setBuscarFechadas(Boolean.FALSE);
+				List<DpLotacao> consultaLotacaoAtivas = null;
+				List<DpLotacao> listaLotacaoAtivas = new ArrayList<DpLotacao>();
+				
+				if (paramoffset == 0) {
+					paginaInicial = true;
+					result.include("paginaInicial", paginaInicial);
+				}
+				
+				while (listaLotacaoAtivas.size() < 15) { //Navega nas páginas da query para manter uma listagem próxima à 15 itens por página
+					consultaLotacaoAtivas = CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15);
+					
+					if (consultaLotacaoAtivas.isEmpty()) {
+						break;
+					}
+					
+					removeLotacoesInaptaParaInativacao(consultaLotacaoAtivas); //mantém aptas na listagem
+					listaLotacaoAtivas.addAll(consultaLotacaoAtivas);
+					
+					paramoffset = paramoffset + 15;
+				}
+				
+				setItens(listaLotacaoAtivas); 
+				result.include("maxIndices", 0);
+				result.include("itemPagina", 15);
+				result.include("quantidadeLista", 30);
+				result.include("tamanho",  dao().consultarQuantidade(dpLotacao) );
+				
+			} else { //Listagem Normal
+				setItens(CpDao.getInstance().consultarPorFiltro(dpLotacao, paramoffset, 15)); 
+				result.include("tamanho", dao().consultarQuantidade(dpLotacao));
+			}
 
+			result.include("itens", getItens());
+			
 			result.include("idOrgaoUsu", idOrgaoUsu);
 			result.include("nome", nome);
+			result.include("apenasAptasInativacao", apenasAptasInativacao);
 
 			if (getItens().size() == 0)
 				result.include("mensagemPesquisa", "Nenhum resultado encontrado.");
+			
+			
+			//Fim da listagem de itens aptos para inativação em Lote
+			if (apenasAptasInativacao && !paginaInicial && getItens().size() == 0) 
+				result.include("mensagemPesquisa", "Não há mais registros aptos para inativação.");
 		}
 		setItemPagina(15);
 		result.include("currentPageNumber", calculaPaginaAtual(paramoffset));
 		result.include("temPermissaoParaExportarDados", temPermissaoParaExportarDados());
 	}
 
+	private void removeLotacoesInaptaParaInativacao(List<DpLotacao> listaLotacaoAtivas) throws Exception {
+		Iterator<DpLotacao> iterator = listaLotacaoAtivas.iterator();
+		while (iterator.hasNext()) {
+			DpLotacao lotacao = iterator.next();
+			try {
+				Cp.getInstance().getBL().podeInativarLotacao(lotacao,getTitular(),getLotaTitular());
+			} catch (AplicacaoException ex) {
+				iterator.remove();
+			}
+		}	
+	}
+	
 	@Post
 	@Path("app/lotacao/exportarCsv")
 	public Download exportarCsv(Long idOrgaoUsu, String nome) throws Exception {
@@ -403,36 +492,39 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 		Cp.getInstance().getBL().criarLotacao(getIdentidadeCadastrante(), getTitular(), getTitular().getLotacao(), id,
 				nmLotacao, idOrgaoUsu, siglaLotacao, situacao, isExternaLotacao, lotacaoPai, idLocalidade);
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, idOrgaoUsu, siglaLotacao,false);
 	}
-
-	@Transacional
-	@Post("/app/lotacao/ativarInativar")
-	public void ativarInativar(final Long id) throws Exception {
+		
+	@Get("/app/lotacao/ativar")
+	public void ativar(final Long id) throws Exception {
 		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 
-		// ativar
-		if (lotacao.getDataFimLotacao() != null && !"".equals(lotacao.getDataFimLotacao())) {
-			DpLotacao lotacaoNova = new DpLotacao();
-			Cp.getInstance().getBL().copiaLotacao(lotacao, lotacaoNova);
-			dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
-		} else {// inativar
-			Integer qtdePessoa = CpDao.getInstance().pessoasPorLotacao(id, Boolean.TRUE, Boolean.FALSE).size();
-			Integer qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
+		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular(), getLotaTitular())) {
+			result.include("lotacao",lotacao);
+		} 
+	}
+	
+	@Get("/app/lotacao/inativar")
+	public void inativar(final Long id) throws Exception {
+		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+		
+		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular(),getLotaTitular())) {
+			result.include("lotacao",lotacao);
+		}	
+	}
+	
+	@Transacional
+	@Post("/app/lotacao/inativarLote")
+	public void inativarLoteGravar(final List<Long> idLotacoesSelecionadas, final String motivo ) throws Exception {
+		
+		Long idOrgaoUsuarioParaRedirect = null;
+		for (Long id : idLotacoesSelecionadas) {
+			DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
 
-			if (qtdePessoa > 0 || qtdeDocumentoCriadosPosse > 0) {
-				throw new AplicacaoException("Inativação não permitida. Existem documentos e usuários vinculados nessa "
-						+ SigaMessages.getMessage("usuario.lotacao"), 0);
-			} else if (dao().listarLotacoesPorPai(lotacao).size() > 0) {
-				throw new AplicacaoException(
-						"Inativação não permitida. Está " + SigaMessages.getMessage("usuario.lotacao")
-								+ " é pai de outra " + SigaMessages.getMessage("usuario.lotacao"),
-						0);
-			} else {
-				Calendar calendar = new GregorianCalendar();
-				Date date = new Date();
-				calendar.setTime(date);
-				lotacao.setDataFimLotacao(calendar.getTime());
+			if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular(), getLotaTitular())) {
+
+				lotacao.setDataFimLotacao(dao.consultarDataEHoraDoServidor());
+				lotacao.setMotivoInativacao(motivo);
 
 				try {
 					dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
@@ -440,10 +532,53 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 					throw new AplicacaoException("Erro na gravação", 0, e);
 				}
 			}
+			idOrgaoUsuarioParaRedirect = lotacao.getIdOrgaoUsuario();
 		}
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, idOrgaoUsuarioParaRedirect, "",false);
 	}
+	
+	@Transacional
+	@Post("/app/lotacao/ativar_gravar")
+	public void ativarGravar(final Long id, final String motivo) throws Exception {	
+		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);
+		
+		if (Cp.getInstance().getBL().podeAtivarLotacao(lotacao, getTitular(), getLotaTitular())) {
+			DpLotacao lotacaoNova = new DpLotacao();
+			lotacao.setDataFimLotacao(null);
+			try {
+				Cp.getInstance().getBL().copiaLotacao(lotacao, lotacaoNova);
+				lotacao.setMotivoAtivacao(motivo);
+				
+				dao().gravarComHistorico(lotacaoNova, lotacao, null, getIdentidadeCadastrante());
+				
+				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "",false);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		}	
+		
+	}
+	
+	@Transacional
+	@Post("/app/lotacao/inativar_gravar")
+	public void inativarGravar(final Long id, final String motivo) throws Exception {
+		DpLotacao lotacao = dao().consultar(id, DpLotacao.class, false);		
 
+		if (Cp.getInstance().getBL().podeInativarLotacao(lotacao, getTitular(), getLotaTitular())) {
+
+			lotacao.setDataFimLotacao(dao.consultarDataEHoraDoServidor());
+			lotacao.setMotivoInativacao(motivo);
+
+			try {
+				dao().gravarComHistorico(lotacao, getIdentidadeCadastrante());
+				this.result.redirectTo(this).lista(0, lotacao.getIdOrgaoUsuario(), "",false);
+			} catch (final Exception e) {
+				throw new AplicacaoException("Erro na gravação", 0, e);
+			}
+		}
+
+	}
+	
 	@Transacional
 	@Post("/app/lotacao/suspender")
 	public void suspender(final Long id) throws Exception {
@@ -491,7 +626,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			Cp.getInstance().getBL().copiarPessoa(dpPessoa, pessoaNova);
 			dao().gravarComHistorico(pessoaNova, dpPessoa, data, getIdentidadeCadastrante());
 		}
-		this.result.redirectTo(this).lista(0, null, "");
+		this.result.redirectTo(this).lista(0, null, "",false);
 	}
 
 	@Get("/app/lotacao/carregarExcel")
@@ -578,25 +713,6 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
     protected List<DpLotacao> carregaLotacao(CpOrgaoUsuario orgaoUsuario) {
         CpOrgaoUsuario u = CpDao.getInstance().consultarOrgaoUsuarioPorId(orgaoUsuario.getIdOrgaoUsu());
         return (List<DpLotacao>) CpDao.getInstance().consultarLotacaoPorOrgao(u);
-    }
-
-
-    /**
-     * Consulta quantidade de documentos criados que estão em posse da lotação
-     *
-     * @param lotacao
-     * @return
-     */
-    private Integer consultarQtdeDocumentoCriadosPosse(DpLotacao lotacao) {
-
-        Integer qtdeDocumentoCriadosPosse;
-
-        if (Prop.getBool("/siga.lotacao.inativacao.marcadores.permitidos"))
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacaoECpMarca(lotacao.getIdInicial());
-        else
-            qtdeDocumentoCriadosPosse = dao().consultarQtdeDocCriadosPossePorDpLotacao(lotacao.getIdInicial());
-
-        return qtdeDocumentoCriadosPosse;
     }
 
 }

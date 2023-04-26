@@ -74,7 +74,7 @@ public class GcArquivo extends Objeto implements Serializable {
 		conteudo = html.getBytes(Charset.forName("utf-8"));
 	}
 
-	public String getConteudoTXT() throws IOException {
+	public String getConteudoTXT() {
 		return new String(conteudo, Charset.forName("utf-8"));
 	}
 

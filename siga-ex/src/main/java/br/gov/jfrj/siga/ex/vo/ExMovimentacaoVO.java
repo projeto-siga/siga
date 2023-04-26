@@ -26,6 +26,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.logic.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.auth0.jwt.JWTSigner;
@@ -46,19 +50,6 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
-import br.gov.jfrj.siga.ex.logic.ExEstaSemEfeito;
-import br.gov.jfrj.siga.ex.logic.ExMovimentacaoEstaCancelada;
-import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarAnexo;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarDespacho;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarMarcacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeCancelarVinculacaoPapel;
-import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnexo;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluirAnotacao;
-import br.gov.jfrj.siga.ex.logic.ExPodeExcluirCossignatario;
-import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 
@@ -513,7 +504,7 @@ public class ExMovimentacaoVO extends ExVO {
 				|| exTipoMovimentacao == ExTipoDeMovimentacao.ARQUIVAMENTO_PERMANENTE) {
 			if (!mov.isCancelada())
 				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
-						.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false")
+						.params("dtIni", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false")
 						.exp(new CpPodeSempre()).build());
 		}
 
@@ -528,12 +519,18 @@ public class ExMovimentacaoVO extends ExVO {
 			}
 			if (!mov.isCancelada())
 				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
-						.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false").pre(pre)
+						.params("dtIni", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false").pre(pre)
 						.exp(new CpPodeSempre()).build());
 		}
 
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO) {
 			addAcao(AcaoVO.builder().nome(mov.getNmArqMov()).nameSpace("/app/arquivo").acao("download").params("arquivo", mov.getReferenciaZIP())
+					.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS())
+					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
+		}
+		
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ENVIAR_PUBLICACAO_DOE || exTipoMovimentacao == ExTipoDeMovimentacao.CANCELAR_PUBLICACAO_DOE) {
+			addAcao(AcaoVO.builder().nome("RECIBO").nameSpace("/app/arquivo").acao("download").params("arquivo", mov.getReferenciaZIP())
 					.params("dt", mov.getDtRegMovDDMMYYYYHHMMSS())
 					.exp(new CpNaoENulo(mov.getNmArqMov(), "nome do arquivo")).build());
 		}
@@ -548,6 +545,32 @@ public class ExMovimentacaoVO extends ExVO {
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.ORDENACAO_ORIGINAL_DOCUMENTO) {								
 			addAcao(AcaoVO.builder().nome("Ver documento completo").nameSpace("/app/expediente/doc").acao("exibirProcesso").params("sigla", mov.getExMobil().getSigla()).pre("Documento completo reordenado para sua ordem original:")
 					.exp(new CpPodeSempre()).build());
+		}
+
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA) {
+			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.revogar.visualizacaoexterna"))
+					.nameSpace("/app/expediente/mov").acao("revogar_visualizacao_externa")
+					.params("sigla", mov.mob().getCodigoCompacto())
+					.params("idRef", mov.getIdMov().toString())
+					.exp(new ExPodeEnviarParaVisualizacaoExterna(mov.mob(), titular, lotaTitular))
+					.msgConfirmacao("Confirma a revogação da visualização externa?")
+					.build());
+		}
+
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA ||
+				exTipoMovimentacao == ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO) {
+			
+			CpToken cpToken = CpDao.getInstance()
+					.obterCpTokenPorTipoIdRef(CpToken.TOKEN_URLPERMANENTE, mov.getExDocumento().getIdDoc());
+			String url = Cp.getInstance().getBL()
+					.obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
+			
+			AcaoVO acaoVO = AcaoVO.builder().nome(mov.getExMobil().getSigla())
+					.url(url)
+					.exp(new CpPodeSempre())
+					.build();
+			
+			addAcao(acaoVO);
 		}
 		
 		if (descricao != null && descricao.equals(mov.getObs())) {

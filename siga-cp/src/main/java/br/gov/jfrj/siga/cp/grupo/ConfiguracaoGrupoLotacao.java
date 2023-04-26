@@ -89,7 +89,7 @@ public class ConfiguracaoGrupoLotacao extends ConfiguracaoGrupo {
 		if (getDpLotacao() == null) {
 			siglaConteudoConfiguracao = new String();
 		} else {
-			siglaConteudoConfiguracao =  getDpLotacao().getSiglaLotacao();
+			siglaConteudoConfiguracao =  getDpLotacao().getLotacaoAtual().getSiglaLotacao();
 		}
 		return siglaConteudoConfiguracao;
 	}
@@ -105,7 +105,7 @@ public class ConfiguracaoGrupoLotacao extends ConfiguracaoGrupo {
 		if (getDpLotacao() == null) {
 			idConteudoConfiguracao = new Long(-1);
 		} else {
-			idConteudoConfiguracao = getDpLotacao().getIdLotacao();
+			idConteudoConfiguracao = getDpLotacao().getLotacaoAtual().getIdLotacao();
 		}
 		return idConteudoConfiguracao;
 	}
@@ -121,7 +121,7 @@ public class ConfiguracaoGrupoLotacao extends ConfiguracaoGrupo {
 		if (getDpLotacao() == null) {
 			descricaoConteudoConfiguracao = new String();
 		} else {
-			descricaoConteudoConfiguracao =  getDpLotacao().getDescricao();
+			descricaoConteudoConfiguracao =  getDpLotacao().getLotacaoAtual().getDescricao();
 		} 
 		return descricaoConteudoConfiguracao;
 	}

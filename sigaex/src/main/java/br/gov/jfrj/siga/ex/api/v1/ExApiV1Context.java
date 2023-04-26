@@ -2,15 +2,20 @@ package br.gov.jfrj.siga.ex.api.v1;
 
 import static java.util.Objects.isNull;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 
-import com.crivano.swaggerservlet.ISwaggerRequest;
-import com.crivano.swaggerservlet.ISwaggerResponse;
-import com.crivano.swaggerservlet.SwaggerException;
+import br.gov.jfrj.siga.base.CurrentRequest;
+import br.gov.jfrj.siga.base.RequestInfo;
+import br.gov.jfrj.siga.ex.interceptor.UserRequestInterceptor;
+import br.gov.jfrj.siga.vraptor.TrackRequest;
+import com.crivano.swaggerservlet.*;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.context.ApiContextSupport;
@@ -78,8 +83,8 @@ public class ExApiV1Context extends ApiContextSupport {
 			}
 
 			if (mob.doc().isSemEfeito()) {
-				if (!mob.doc().getCadastrante().equals(titular) && !mob.doc().getSubscritor().equals(titular)
-						&& !isInteressado) {
+				if (mob.doc().getCadastrante() == null || (!mob.doc().getCadastrante().equals(titular) && !mob.doc().getSubscritor().equals(titular)
+						&& !isInteressado)) {
 					throw new AplicacaoException("Documento " + mob.getSigla() + " cancelado ");
 				}
 			} else {
@@ -166,4 +171,37 @@ public class ExApiV1Context extends ApiContextSupport {
 		return buscarEValidarMobil(sigla, req, resp, "Documento");
 	}
 
+	@Override
+	public void onTryEnd() throws Exception {
+		super.onTryEnd();
+
+		if (getCtx() != null && getCtx().getAction().getClass().isAnnotationPresent(TrackRequest.class)){
+			UserRequestInterceptor userRequestInterceptor;
+			try {
+				Method methodRun = getCtx().getAction().getClass()
+						.getMethod("run",
+								getCtx().getClazzRequest(),
+								getCtx().getClazzResponse(),
+								getCtx().getClazzContext());
+				
+				Parameter req = Arrays.stream(methodRun.getParameters())
+						.filter(p -> p.getType().equals(getCtx().getClazzRequest()))
+						.findFirst().get();
+				String sigla = req.getType().getField("sigla").get(getCtx().getReq()).toString();
+				
+				DpPessoa cadastrante = getCadastrante();
+				DpLotacao lotaCadastrante = getLotaCadastrante();
+				
+				userRequestInterceptor = new UserRequestInterceptor(
+						getCtx().getRequest(), 
+						sigla, 
+						getCtx().getActionName(),
+						getCadastrante(), getLotaCadastrante());
+				
+				userRequestInterceptor.log();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 }

@@ -143,7 +143,7 @@
 				<c:if test="${siga_mesaCarregaLotacao && !ehPublicoExterno}">
 					<c:set var="varLotacaoUnidade"><fmt:message key='usuario.lotacao'/></c:set>
 					<div id="radioBtn" class="btn-group mb-1">
-						<a class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
+						<a v-if="mostrarUsuario" class="btn btn-primary btn-sm" v-bind:class="exibeLota ? 'notActive' : 'active'" id="btnUser"  
 							accesskey="u" @click="carregarMesaUser('#btnUser');" 
 							title="Visualiza somente os documentos do Usuário">
 							<i class="fas fa-user my-1"></i>
@@ -157,13 +157,15 @@
 						</a>
 					</div>
 				</c:if>
-				<div class="input-group col-5 mb-1">
-					<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" @keyup.enter="recarregarMesa()" placeholder="Filtrar cód. ou descrição" v-model="filtro" @keyup.enter="getItensGrupo();">
-					<div class="input-group-append">
-						<button class="btn btn-secondary border-light" type="button" @click="recarregarMesa();"><i class="fas fa-search"></i></button>
+				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;FILTRO:Permitir usar o filtro de pesquisa')}">
+					<div class="input-group col-5 mb-1">
+						<input id="filtroExibidos" type="text" class="form-control p-1 input-sm" @keyup.enter="recarregarMesa()" placeholder="Filtrar cód. ou descrição" v-model="filtro" @keyup.enter="getItensGrupo();" />
+						<div class="input-group-append">
+							<button class="btn btn-secondary border-light" type="button" @click="recarregarMesa();"><i class="fas fa-search"></i></button>
+						</div>
 					</div>
-				</div>
-				<button type="button" class="btn btn-secondary btn-sm mb-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
+				</c:if>				
+				<button type="button" class="btn btn-secondary btn-sm mb-1 ml-1 mr-2" title="Recarregar Mesa" :class="{disabled: carregando}" @click="recarregarMesa();">
 					<i class="fas fa-sync-alt"></i>
 				</button>
 				<small id="ultima-atualizacao" class="my-auto d-none d-md-block fadein text-danger">
@@ -210,7 +212,7 @@
 									<i class="h5 mb-0" :class="g.grupoIcone"></i>
 									<span class="grupo-nome mr-3">{{g.grupoNome}}</span>
 									<small> 
-										<span class="badge badge-light btn-sm align-middle" :class="{disabled: exibeLota}">
+										<span v-if="mostrarUsuario" class="badge badge-light btn-sm align-middle" :class="{disabled: exibeLota}">
 											<small class="fas fa-user"></small>
 											<span class="badge badge-light">{{g.grupoCounterUser}}</span>
 										</span>
@@ -363,6 +365,7 @@
 		<div id="toastContainer" style="position: fixed; top: 135px; right: 0;z-index: 999999;"></div>
 	</div>
 	<script type="text/javascript">
+		const MOSTRAR_USUARIO = ${mostrarUsuario};
 		const ID_VISUALIZACAO = ${idVisualizacao};
 		$( document ).ready(function() {
 			initPopovers();
@@ -370,4 +373,4 @@
 	</script>
 </siga:pagina>
 <script src="/siga/bootstrap/4.6.0/js/bootstrap.bundle.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="/siga/javascript/mesa2.js?v=1646187984"></script>
+<script type="text/javascript" src="/siga/javascript/mesa2.js?v=1671250628"></script>

@@ -4,7 +4,7 @@
 }
 .text-size-5 {
 	font-size: 16px;
-	font-weight: 400;
+	font-weight: 400; 
 }
 .text-size-6 {
 	font-size: 14px;
@@ -240,8 +240,9 @@ a.doc-sign:hover {
     position: fixed;
     right: -320px;
     width: 350px;
-    top: 180px;
-    z-index: 100;	
+    top: 150px;
+    z-index: 1100;
+    font-size: 0.8em;
 }
 .btn-mesa-config {
 	width: 30px;
@@ -369,6 +370,9 @@ a.doc-sign:hover {
    	color: #555555!important;
 }
 
+.select2-container--bootstrap .select2-selection--single {
+   	height: 2.3rem !important;
+}
 
 /*
 ######################

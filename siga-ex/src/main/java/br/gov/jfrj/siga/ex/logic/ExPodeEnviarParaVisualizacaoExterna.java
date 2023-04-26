@@ -5,6 +5,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import com.crivano.jlogic.*;
 
 public class ExPodeEnviarParaVisualizacaoExterna extends CompositeExpressionSupport {
@@ -39,9 +40,10 @@ public class ExPodeEnviarParaVisualizacaoExterna extends CompositeExpressionSupp
 
                 new ExPodeAcessarDocumento(mob, titular, lotaTitular),
 
-                new ExPodePorConfiguracao(titular, lotaTitular)
-                    .withIdTpConf(ExTipoDeConfiguracao.VISUALIZACAO_EXTERNA_DOCUMENTOS)
-                    .withCpOrgaoUsu(mob.getDoc().getOrgaoUsuario())
+                new ExPodeMovimentarPorConfiguracao(
+                        ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA,
+                        titular, lotaTitular
+                )
         );
     }
 }

@@ -24,6 +24,7 @@ public class DocumentosSiglaGerarLinkPublicoPost implements IExApiV1.IDocumentos
     @Override
     public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
         DpPessoa cadastrante = ctx.getCadastrante();
+        DpLotacao lotaCadastrante = ctx.getLotaCadastrante();
         DpPessoa titular = ctx.getTitular();
         DpLotacao lotaTitular = ctx.getLotaTitular();
 
@@ -45,18 +46,21 @@ public class DocumentosSiglaGerarLinkPublicoPost implements IExApiV1.IDocumentos
 
         Date dtMov = ExDao.getInstance().dt();
 
-        /** Gera o link público **/
+        /* Gera o link público */
         CpToken cpToken = Cp.getInstance().getBL().gerarUrlPermanente(mob.getDoc().getIdDoc());
         String link = Cp.getInstance().getBL().obterURLPermanente(cpToken.getIdTpToken().toString(), cpToken.getToken());
 
-        /** Redefinição do nível de acesso para público **/
+        /* Redefinição do nível de acesso para público */
         ExNivelAcesso nivelAcessoPublico = ExDao.getInstance().consultar(ExNivelAcesso.ID_PUBLICO, ExNivelAcesso.class, false);
         if (mob.getDoc().getExNivelAcessoAtual() != nivelAcessoPublico) {
             Ex.getInstance().getBL().redefinirNivelAcesso(cadastrante, lotaTitular, mob.getDoc(), dtMov, lotaTitular,
                     cadastrante, cadastrante, cadastrante, null, nivelAcessoPublico);
         }
 
-        Ex.getInstance().getBL().gravarMovimentacaoLinkPublico(cadastrante, titular, lotaTitular, mob);
+        /* Grava movimentação com tipo Gerar Link Publico */
+        Ex.getInstance().getBL().gravarNovaMovimentacao(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO,
+                cadastrante, lotaCadastrante, mob, dtMov, null, null,
+                null, null, null, "Gerado link público");
 
         resp.link = link;
 

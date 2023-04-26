@@ -73,6 +73,7 @@ public class ModeloController extends SigaController {
 
 	@Transacional
 	@Post("/app/modelo/gravar")
+	@RequestParamsNotCheck
 	public void gravar(Integer id, String conteudo) throws Exception {
 		assertAcesso("FE:Ferramentas;MODEDITAR:Editar modelos");
 

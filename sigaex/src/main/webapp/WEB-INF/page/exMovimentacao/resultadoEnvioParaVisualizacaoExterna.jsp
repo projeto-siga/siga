@@ -49,20 +49,10 @@
                     <div class="p-3 mb-2 bg-dark text-white text-center" id="bg"><h4><b>Código de Visualiza&ccedil;&atilde;o Externa do Documento</b></h4></div>
                 </div>
             </div>
-            <br>
-            <br>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group text-center">
                         <label>N&uacute;mero do Documento: <b>${sigla}</b></label>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group text-center">
-                        <label>C&oacute;digo de acesso ao documento:</label>
-                        <a href="${url}" target="_blank" class="link-reduzido">${cod}</a>
                     </div>
                 </div>
             </div>
@@ -81,8 +71,6 @@
                         <label>${mensagem}</label>
                         <br/>
                             ${descrMov}
-                        <br/>
-                            ${dest}
                     </div>
                 </div>
             </div>

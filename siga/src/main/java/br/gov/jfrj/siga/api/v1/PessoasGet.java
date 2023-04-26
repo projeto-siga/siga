@@ -10,12 +10,17 @@ import com.crivano.swaggerservlet.SwaggerException;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Cargo;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.FuncaoConfianca;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasGet;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.Localidade;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Lotacao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Orgao;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.Pessoa;
+import br.gov.jfrj.siga.api.v1.ISigaApiV1.Uf;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.dp.CpLocalidade;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpCargo;
 import br.gov.jfrj.siga.dp.DpFuncaoConfianca;
@@ -27,29 +32,40 @@ import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 public class PessoasGet implements IPessoasGet {
 	@Override
 	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
-		if (((req.cpf != null ? 1 : 0) + (req.texto != null ? 1 : 0) + (req.idPessoaIni != null ? 1 : 0)) > 1) {
+		if (((req.cpf != null ? 1 : 0) + (req.texto != null ? 1 : 0) 
+				+ (req.idPessoaIni != null ? 1 : 0) + (req.emailQuery != null ? 1 : 0)) > 1) {
 			throw new AplicacaoException("Pesquisa permitida somente por um dos argumentos.");
 		}
+		
+		Boolean exibirDadosSensiveis = Boolean.valueOf(Cp.getInstance().getConf().
+				podeUtilizarServicoPorConfiguracao(ctx.getTitular(), ctx.getTitular().getLotacao(), 
+						"SIGA:Sistema Integrado de Gestão Administrativa;WS_REST: Acesso aos webservices REST;DADOS_SENSIVEIS: Acesso a dados pessoais sensíveis"));
+
 
 		if (req.cpf != null && !req.cpf.isEmpty()) {
-			resp.list = pesquisarPorCpf(req, resp);
+			resp.list = pesquisarPorCpf(req, resp, exibirDadosSensiveis);
 			return;
 		}
 
 		if (req.texto != null && !req.texto.isEmpty()) {
-			resp.list = pesquisarPorTexto(req, resp);
+			resp.list = pesquisarPorTexto(req, resp, exibirDadosSensiveis);
 			return;
 		}
 
 		if (req.idPessoaIni != null && !req.idPessoaIni.isEmpty()) {
-			resp.list = pesquisarPessoaAtualPorIdIni(req, resp);
+			resp.list = pesquisarPessoaAtualPorIdIni(req, resp, exibirDadosSensiveis);
+			return;
+		}
+
+		if (req.emailQuery != null && !req.emailQuery.isEmpty()) {
+			resp.list = pesquisarPorEmail(req, resp, exibirDadosSensiveis);
 			return;
 		}
 
 		throw new AplicacaoException("Não foi fornecido nenhum parâmetro.");
 	}
 
-	private List<Pessoa> pesquisarPessoaAtualPorIdIni(Request req, Response resp) throws SwaggerException {
+	private List<Pessoa> pesquisarPessoaAtualPorIdIni(Request req, Response resp, Boolean exibirDadosSensiveis) throws SwaggerException {
 		try {
 			// TODO: ver se precisa de outros parametros listarPessoa
 			List<Pessoa> resultado = new ArrayList<>();
@@ -58,7 +74,7 @@ public class PessoasGet implements IPessoasGet {
 
 			DpPessoa pes = CpDao.getInstance().obterPessoaAtual(pessoa);
 
-			resultado.add(pessoaToResultadoPesquisa(pes));
+			resultado.add(pessoaToResultadoPesquisa(pes, exibirDadosSensiveis));
 			return resultado;
 
 		} catch (Exception e) {
@@ -67,7 +83,7 @@ public class PessoasGet implements IPessoasGet {
 		}
 	}
 
-	private List<Pessoa> pesquisarPorTexto(Request req, Response resp) throws SwaggerException {
+	private List<Pessoa> pesquisarPorTexto(Request req, Response resp, Boolean exibirDadosSensiveis) throws SwaggerException {
 		final DpPessoaDaoFiltro flt = new DpPessoaDaoFiltro();
 		flt.setNome(Texto.removeAcentoMaiusculas(req.texto));
 		List<DpPessoa> l = CpDao.getInstance().consultarPorFiltro(flt);
@@ -75,10 +91,10 @@ public class PessoasGet implements IPessoasGet {
 			throw new SwaggerException("Nenhuma pessoa foi encontrada contendo o texto informado.", 404, null, req,
 					resp, null);
 
-		return l.stream().map(this::pessoaToResultadoPesquisa).collect(Collectors.toList());
+		return l.stream().map(pessoa -> this.pessoaToResultadoPesquisa(pessoa, exibirDadosSensiveis)).collect(Collectors.toList());
 	}
 
-	private List<Pessoa> pesquisarPorCpf(Request req, Response resp) throws Exception {
+	private List<Pessoa> pesquisarPorCpf(Request req, Response resp, Boolean exibirDadosSensiveis) throws Exception {
 		String cpf = req.cpf;
 		List<Pessoa> resultado = new ArrayList<>();
 		try {
@@ -86,7 +102,7 @@ public class PessoasGet implements IPessoasGet {
 				List<CpIdentidade> lista = new CpDao().consultaIdentidadesCadastrante(cpf, Boolean.TRUE);
 				if (!lista.isEmpty()) {
 					for (CpIdentidade ident : lista) {
-						resultado.add(identidadeToResultadoPesquisa(ident));
+						resultado.add(identidadeToResultadoPesquisa(ident, exibirDadosSensiveis));
 					}
 				} else {
 					throw new SwaggerException("Nenhuma pessoa foi encontrada para o CPF informado.", 404, null, req,
@@ -102,15 +118,34 @@ public class PessoasGet implements IPessoasGet {
 		return resultado;
 	}
 
-	private Pessoa identidadeToResultadoPesquisa(CpIdentidade identidade) {
+	private List<Pessoa> pesquisarPorEmail(Request req, Response resp, Boolean exibirDadosSensiveis) throws Exception {
+		String email = req.emailQuery;
+		try {
+			DpPessoaDaoFiltro dpPessoaFiltro = new DpPessoaDaoFiltro();
+			dpPessoaFiltro.setNome("");
+			dpPessoaFiltro.setEmail(email);
+			List<DpPessoa> l = new CpDao().consultarPorFiltro(dpPessoaFiltro);
+			if (l.isEmpty())
+				throw new SwaggerException("Nenhum e-mail foi encontrado contendo as palavras informadas.", 404, null, req,
+							resp, null);
+
+			return l.stream().map(pessoa -> this.pessoaToResultadoPesquisa(pessoa, exibirDadosSensiveis)).collect(Collectors.toList());
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+	
+	private Pessoa identidadeToResultadoPesquisa(CpIdentidade identidade, Boolean exibirDadosSensiveis) {
 		DpPessoa p = identidade.getPessoaAtual();
-		return pessoaToResultadoPesquisa(p);
+		return pessoaToResultadoPesquisa(p, exibirDadosSensiveis);
 	}
 
-	private Pessoa pessoaToResultadoPesquisa(DpPessoa p) {
+	private Pessoa pessoaToResultadoPesquisa(DpPessoa p, Boolean exibirDadosSensiveis) {
 		Pessoa pessoa = new Pessoa();
 		Orgao orgao = new Orgao();
 		Lotacao lotacao = new Lotacao();
+		Localidade localidade = new Localidade();
 		Cargo cargo = new Cargo();
 		FuncaoConfianca funcao = new FuncaoConfianca();
 		// Pessoa
@@ -118,6 +153,11 @@ public class PessoasGet implements IPessoasGet {
 		pessoa.sigla = p.getSiglaCompleta();
 		pessoa.nome = p.getNomePessoa();
 		pessoa.isExternaPessoa = p.isUsuarioExterno();
+		pessoa.dataInicioPessoa = p.getDataInicioPessoa();
+		
+		if(exibirDadosSensiveis) {
+			pessoa.email = p.getEmailPessoaAtual();
+		}
 
 		// Orgao Pessoa
 		CpOrgaoUsuario o = p.getOrgaoUsuario();
@@ -131,6 +171,19 @@ public class PessoasGet implements IPessoasGet {
 		lotacao.idLotacaoIni = l.getIdLotacaoIni().toString();
 		lotacao.nome = l.getNomeLotacao();
 		lotacao.sigla = l.getSigla();
+		
+		// Localidade
+		CpLocalidade loc = l.getLocalidade();
+		if (loc != null) {
+			localidade.idLocalidade = loc.getId().toString();
+			localidade.nome = loc.getNmLocalidade();
+			Uf uf = new Uf();
+			uf.idUf = loc.getUF().getIdUF().toString();
+			uf.nomeUf = loc.getUF().getNmUF();
+			localidade.uf = uf;
+			lotacao.localidade = localidade;
+		}
+		
 		lotacao.orgao = orgao;
 
 		// Cargo Pessoa

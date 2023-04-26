@@ -1,5 +1,8 @@
 package br.gov.jfrj.siga.cp.model.enm;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import br.gov.jfrj.siga.cp.converter.IEnumWithId;
 
 public enum CpServicosNotificacaoPorEmail {
@@ -14,7 +17,7 @@ public enum CpServicosNotificacaoPorEmail {
 			"Será enviado um e-mail quando um documento for tramitado para o seu usuário."),
 	COSSIG ("Fui incluído como cossignatário de um documento", SIGACEMAIL.getSigla() + "-" + "COSSIG", SIGACEMAIL.getChave() + ";" + "COSSIG:Fui incluído como cossignatário de um documento", true, 
 			"Será enviado um e-mail quando o seu usuário for incluído como cossignatário de algum documento assinado."),
-	RESPASS ("Fui incluído como responsável pela assinatura", SIGACEMAIL.getSigla() + "-" + "RESPASS", SIGACEMAIL.getChave() + ";" + "RESPASSI:Fui incluído como responsável pela assinatura", true, 
+	RESPASS ("Fui incluído como responsável pela assinatura", SIGACEMAIL.getSigla() + "-" + "RESPASSI", SIGACEMAIL.getChave() + ";" + "RESPASSI:Fui incluído como responsável pela assinatura", true, 
 			"Será enviado um e-mail quando o seu usuário for adicionado como responsável pela assinatura de um documento finalizado."),
 	EMAILALT ("Meu email foi alterado", SIGACEMAIL.getSigla() + "EMAILALT", "", false, 
 			"Será enviado um e-mail quando seu e-mail for alterado."),
@@ -67,5 +70,12 @@ public enum CpServicosNotificacaoPorEmail {
 	public static CpSituacaoDeConfiguracaoEnum getById(Integer id) {
 		return IEnumWithId.getEnumFromId(id, CpSituacaoDeConfiguracaoEnum.class);
 	}
+	
+	
+    public static Optional<CpServicosNotificacaoPorEmail> getBySigla(String sigla) {
+        return Arrays.stream(CpServicosNotificacaoPorEmail.values())
+            .filter(servico -> servico.sigla.equals(sigla))
+            .findFirst();
+    }
 	
 }

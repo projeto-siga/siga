@@ -3,7 +3,7 @@ package br.gov.jfrj.siga.base;
 import java.io.IOException;
 
 import org.jsoup.Jsoup;
-import org.jsoup.helper.StringUtil;
+import org.jsoup.internal.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -37,10 +37,21 @@ public class HtmlToPlainText {
 			return null;
 		return s.trim();
 	}
+	
+	public String getPlainText(Element element, int maxWidth) {
+		FormattingVisitor formatter = new FormattingVisitor();
+		formatter.maxWidth = maxWidth;
+		NodeTraversor.traverse(formatter, element);
+		String s = formatter.toString();
+		if (s == null || s.trim().length() == 0)
+			return null;
+		return s.trim();
+	}
+
 
 	// the formatting rules, implemented in a breadth-first DOM traverse
 	private class FormattingVisitor implements NodeVisitor {
-		private static final int maxWidth = 80;
+		private int maxWidth = 80;
 		private int width = 0;
 		private StringBuilder accum = new StringBuilder(); // holds the
 															// accumulated text
@@ -81,7 +92,7 @@ public class HtmlToPlainText {
 							accum.substring(accum.length() - 1), " ", "\n")))
 				return; // don't accumulate long runs of empty spaces
 
-			if (text.length() + width > maxWidth) { // won't fit, needs to wrap
+			if (text.length() + width > maxWidth && maxWidth != 0) { // won't fit, needs to wrap
 				String words[] = text.split("\\s+");
 				for (int i = 0; i < words.length; i++) {
 					String word = words[i];

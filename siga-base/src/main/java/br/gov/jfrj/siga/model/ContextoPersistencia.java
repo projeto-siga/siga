@@ -9,10 +9,19 @@ import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 
 public class ContextoPersistencia {
 
-	private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<EntityManager>();
-	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<String>();
-	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<Date>();
-	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<UsuarioDeSistemaEnum>();
+    private final static ThreadLocal<EntityManager> emByThread = new ThreadLocal<>();
+	private final static ThreadLocal<String> userPrincipalByThread = new ThreadLocal<>();
+	private final static ThreadLocal<Date> dataEHoraDoServidor = new ThreadLocal<>();
+	private final static ThreadLocal<UsuarioDeSistemaEnum> usuarioDeSistema = new ThreadLocal<>();
+	
+	
+   public static void upgradeToTransactional() {
+        EntityTransaction transaction = em().getTransaction();
+        if (!transaction.isActive()) {
+            // System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
+            transaction.begin();
+        }
+    }
 	
 	static public void setEntityManager(EntityManager em) {
 		emByThread.set(em);
@@ -97,8 +106,5 @@ public class ContextoPersistencia {
 		removeUserPrincipal();
 		setDt(null);
 	}
-	
-	
-	
 
 }

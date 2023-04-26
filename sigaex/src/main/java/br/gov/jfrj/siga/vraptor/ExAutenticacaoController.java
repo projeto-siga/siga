@@ -210,7 +210,7 @@ public class ExAutenticacaoController extends ExController {
 	@Get("/public/app/arquivoAutenticado_stream")
 	public Download arquivoAutenticado_stream(final String jwt,
 			final boolean assinado, final Long idMov,
-			final String certificadoB64) throws Exception {
+			final String certificadoB64, boolean tamanhoOriginal) throws Exception {
 
 		if (jwt == null) {
 			setDefaultResults();
@@ -234,7 +234,7 @@ public class ExAutenticacaoController extends ExController {
 			case ASSINATURA_MOVIMENTACAO_COM_SENHA:
 				fileName = arq.getReferencia() + "_" + mov.getIdMov() + ".jwt";
 				contentType = "application/jwt";
-				if (mov.getAuditHash() == null)
+				if (mov.getAuditHash() == null || mov.getDtMov().before(Prop.getData("data.validar.assinatura.com.senha")))
 					throw new AplicacaoException(
 							"Esta é uma assinatura digital com login e senha e não há nenhum artefato comprobatório disponível para download.");
 				bytes = mov.getAuditHash().getBytes(StandardCharsets.UTF_8);
@@ -251,9 +251,9 @@ public class ExAutenticacaoController extends ExController {
 		} else {
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";
-
+			
 			if (assinado)
-				bytes = Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(n);
+				bytes = Ex.getInstance().getBL().obterPdfPorNumeroAssinatura(n, tamanhoOriginal);
 			else
 				bytes = arq.getPdf();
 		}

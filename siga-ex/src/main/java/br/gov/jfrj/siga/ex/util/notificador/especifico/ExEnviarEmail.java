@@ -10,5 +10,7 @@ public interface ExEnviarEmail {
 	public void enviarAoTramitarDocMarcado(DpPessoa pessoaDest, DpPessoa titular, String sigla, String marcador);
 	public void enviarAoResponsavelPelaAssinatura(DpPessoa pessoaDest, DpPessoa titular, String sigla);
 	public void enviarAoTramitarDocParaUsuario(DpPessoa pessoaDest, DpPessoa titular, String sigla);
+	public void enviarAoDestinatarioExterno(String nomeDestinatario, String emailDestinatario,
+											String siglaDoc, String numeroReferencia, String cod, String url);
 	
 }

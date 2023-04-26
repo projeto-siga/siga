@@ -178,7 +178,7 @@
 
 		redimensionar();
 		resize();
-	}				
+	}
 </script>
 
 <!-- main content bootstrap -->
@@ -262,6 +262,12 @@
 								PDF <u>s</u>em marcas - <a id="pdfsemmarcaslink" accesskey="b"> a<u>b</u>rir</a>
 							</input>
 							</span>
+							<span class="pl-2"></span>			
+							<span style="white-space: nowrap;">
+							<input type="radio" id="radioPDFTamanhoOriginal" name="formato" accesskey="s" value="pdftamanhooriginal" onclick="exibir(htmlAtual,pdfAtual,'');">
+								PDF Tamanho Original - <a id="pdftamanhooriginallink" accesskey="b"> a<u>b</u>rir</a>
+							</input>
+							</span>
 						</div>
 					</div>
 				</c:if>
@@ -288,7 +294,7 @@
 							</c:if>
 						</span>		
 						<c:if test="${mob.doc.podeReordenar()}">				
-							<div class="menu-ordenacao"">
+							<div class="menu-ordenacao">
 								Clique e arraste os itens tracejados para reordená-los<br />							
 								<form action="${pageContext.request.contextPath}/app/expediente/doc/reordenar" id="formReordenarDocs" class="form" method="POST">									
 									<input type="hidden" name="idDocumentos" id="inputHiddenIdDocs" />													
@@ -421,24 +427,28 @@
 				<div id="linhaBtn" class="mb-2">						
 					<div class="input-group d-inline mb-2">						
 						<div id="radioBtn" class="btn-group">
-							<a class="btn btn-primary btn-sm active" data-toggle="formato" data-title="html" id="radioHTML" name="formato" value="html" accesskey="h" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'');">
+							<a class="btn btn-primary btn-sm active" data-toggle="formato" data-title="html" id="radioHTML" name="formato" value="html" accesskey="h" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,''); trackRequest('${sigla}','HTML');">
 								<u>H</u>TML
 							</a>
-							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdf" id="radioPDF" name="formato" value="pdf" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'');">
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdf" id="radioPDF" name="formato" value="pdf" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,''); trackRequest('${sigla}','PDF');">
 	<!--  									<a id="pdflink" accesskey="a"> -->
 										<u>P</u>DF
 	<!-- 									</a> -->
 							</a>
-							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdfsemmarcas" id="radioPDFSemMarcas" name="pdfsemmarcas" value="pdfsemmarcas" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'semmarcas/');">
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdfsemmarcas" id="radioPDFSemMarcas" name="pdfsemmarcas" value="pdfsemmarcas" accesskey="p" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,'semmarcas/'); trackRequest('${sigla}','PDF Sem Marcas');">
 										PDF Sem Marcas
+							</a>
+							<a class="btn btn-primary btn-sm notActive" data-toggle="formato" data-title="pdftamanhooriginal" id="radioPDFTamanhoOriginal" name="pdftamanhooriginal" value="pdftamanhooriginal" accesskey="r" onclick="toggleBotaoHtmlPdf($(this)); exibir(htmlAtual,pdfAtual,''); trackRequest('${sigla}','PDF Sem Redimensionamento');">
+								PDF Tamanho Original
 							</a>
 						</div>
 						<a class="btn-btn-primary btn-sm d-none" id="pdflink" accesskey="a"><u>a</u>brir PDF</a>
 						<a class="btn-btn-primary btn-sm d-none" id="pdfsemmarcaslink" accesskey="b">a<u>b</u>rir PDF</a>
+						<a class="btn-btn-primary btn-sm d-none" id="pdftamanhooriginallink">abrir PDF</a>
 						<input type="hidden" name="formato" id="radio" value="html">
 					</div>
 					<button type="button" class="btn btn-secondary btn-sm" id="TelaCheia" data-toggle="button" aria-pressed="false" autocomplete="off"
-						onclick="javascript: telaCheia(this);">
+						onclick="javascript: telaCheia(this); javascript: trackRequest('${sigla}','Tela Cheia');">
 						<u>T</u>ela Cheia
 					</button>
 				</div>
@@ -462,6 +472,7 @@
 			//se exibindo documentos reordenados, não permite visualização PDF						
 			$('#radioPDF').attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title', 'Indisponível enquanto documento estiver reordenado').removeAttr('onclick').css({'cursor':'not-allowed', 'color':'rgba(0, 0, 0, 0.3)', 'border':'1px solid rgba(0, 0, 0, 0.3)'});		
 			$('#radioPDFSemMarcas').attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title', 'Indisponível enquanto documento estiver reordenado').removeAttr('onclick').css({'cursor':'not-allowed', 'color':'rgba(0, 0, 0, 0.3)', 'border':'1px solid rgba(0, 0, 0, 0.3)'});
+			$('#radioPDFTamanhoOriginal').attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title', 'Indisponível enquanto documento estiver reordenado').removeAttr('onclick').css({'cursor':'not-allowed', 'color':'rgba(0, 0, 0, 0.3)', 'border':'1px solid rgba(0, 0, 0, 0.3)'});
 		});
 	</script>
 </c:if>
@@ -523,17 +534,26 @@
 		if ('${siga_cliente}' == 'GOVSP') {
 			document.getElementById('pdflink').href = path + refPDF + '&sigla=${sigla}';
 			
+			//sem marcas
 			if ($('#radioPDFSemMarcas').hasClass('active')) {
-				document.getElementById('pdfsemmarcaslink').href = path + refPDF
-					+ "&semmarcas=1";
+				document.getElementById('pdfsemmarcaslink').href = path + refPDF + "&semmarcas=1";
+			//com marcas sem redimensionamento
+			} else if ($('#radioPDFTamanhoOriginal').hasClass('active')) {
+				document.getElementById('pdftamanhooriginallink').href = path + refPDF + "&tamanhoOriginal=true";
 			}
+			//com marcas
 		} else {
 			document.getElementById('pdflink').href = path + refPDF;
 		}
 		
+		//sem marcas
 		if (document.getElementById('radioPDFSemMarcas') != null) {
-			document.getElementById('pdfsemmarcaslink').href = path + refPDF
-					+ "&semmarcas=1";
+			document.getElementById('pdfsemmarcaslink').href = path + refPDF + "&semmarcas=1";
+		}
+		
+		//com marcas sem redimensionamento
+		if (document.getElementById('radioPDFTamanhoOriginal') != null) {
+			document.getElementById('pdftamanhooriginallink').href = path + refPDF + "&tamanhoOriginal=true";
 		}
 	}
 
@@ -556,8 +576,11 @@
 			var refSiglaDocPrincipal = '&sigla=${sigla}';
 			
 			if ($('#radioHTML').hasClass('active') && refHTML != '') {
+				
 				$('#pdflink').addClass('d-none');
 				$('#pdfsemmarcaslink').addClass('d-none');
+				$('#pdftamanhooriginallink').addClass('d-none');
+				
 				ifr.src = path + refHTML + refSiglaDocPrincipal;
 				ifrp.style.border = "0px solid black";
 				ifrp.style.borderBottom = "0px solid black";
@@ -568,11 +591,24 @@
 			} else {
 				if ($('#radioPDFSemMarcas').hasClass('active')) {
 					$('#pdfsemmarcaslink').removeClass('d-none');
+					
 					$('#pdflink').addClass('d-none');
+					$('#pdftamanhooriginallink').addClass('d-none');
+
 					ifr.src = path + refPDF + "&semmarcas=1";
+				} else if ($('#radioPDFTamanhoOriginal').hasClass('active')) {
+						$('#pdftamanhooriginallink').removeClass('d-none');
+						
+						$('#pdflink').addClass('d-none');
+						$('#pdfsemmarcaslink').addClass('d-none');
+
+						ifr.src = path + refPDF + "&tamanhoOriginal=true";
 				} else {
 					$('#pdflink').removeClass('d-none');
+					
 					$('#pdfsemmarcaslink').addClass('d-none');
+					$('#pdftamanhooriginallink').addClass('d-none');
+					
 					ifr.src = path + refPDF + refSiglaDocPrincipal;
 				}
 				
@@ -598,6 +634,8 @@
 			} else {
 				if (document.getElementById('radioPDFSemMarcas').checked)
 					ifr.src = path + refPDF + "&semmarcas=1"
+				else if (document.getElementById('radioPDFTamanhoOriginal').checked)
+						ifr.src = path + refPDF + "&tamanhoOriginal=true"
 				else
 					ifr.src = path + refPDF;
 				

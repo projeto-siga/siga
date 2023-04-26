@@ -57,6 +57,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 @Controller
 public class ExMesa2Controller extends ExController {
 	private static final String ACESSO_MESA2BETA = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;BETA:Utilizar versão beta";
+	private static final String PERMITE_FILTRO = "SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;MESA2:Mesa Versão 2;FILTRO:Permitir usar o filtro de pesquisa";
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -81,7 +82,7 @@ public class ExMesa2Controller extends ExController {
 		
 		result.include("ehPublicoExterno", AcessoConsulta.ehPublicoExterno(getTitular()));
 		try {
-			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getTitular().getLotacao(),
+			result.include("podeNovoDocumento", Cp.getInstance().getConf().podePorConfiguracao(getTitular(), getLotaTitular(),
 					ExTipoDeConfiguracao.CRIAR_NOVO_EXTERNO));
 		} catch (Exception e) {
 			throw e;
@@ -106,6 +107,15 @@ public class ExMesa2Controller extends ExController {
 		} else {
 			result.include("idVisualizacao", 0);
 		}
+		
+		if( !getLotaTitular().equivale(getCadastrante().getLotacao()) &&
+				getTitular().equivale(getCadastrante())) {
+			// É substituição de lotação
+			result.include("mostrarUsuario", false);
+		} else {
+			result.include("mostrarUsuario", true);
+		}
+		
 		if (msg != null) {
 			result.include("mensagemCabec", msg);
 			result.include("msgCabecClass", "alert-info fade-close");
@@ -147,16 +157,24 @@ public class ExMesa2Controller extends ExController {
 					.setStatusCode(200);				
 				return;
 			}
+			if(filtro != null && !"".equals(filtro) 
+					&& !Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(
+							getTitular(), getLotaTitular(),	PERMITE_FILTRO)) {
+					result.use(Results.http()).addHeader("Content-Type", "text/plain")
+					.body("Usuário não autorizado a utilizar o filtro de pesquisa.")
+					.setStatusCode(200);
+				return;
+			}
 			if(idVisualizacao != null && !idVisualizacao.equals(Long.valueOf(0)) 
 					&& Cp.getInstance().getConf().podePorConfiguracao
 						(getCadastrante(), 
 						 getCadastrante().getLotacao(), 
 						 ExTipoDeConfiguracao.DELEGAR_VISUALIZACAO)) {
 				DpVisualizacao vis = dao().consultar(idVisualizacao, DpVisualizacao.class, false);
-				g = Mesa2.getMesa(contar, qtd, offset, vis.getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
+				g = Mesa2.getMesa(contar, qtd, offset, vis.getTitular(), vis.getTitular().getLotacao(), selGrupos,	exibeLotacao, trazerAnotacoes, 
 						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
 			} else {
-				g = Mesa2.getMesa(contar, qtd, offset, getTitular(), selGrupos,	exibeLotacao, trazerAnotacoes, 
+				g = Mesa2.getMesa(contar, qtd, offset, getTitular(), getLotaTitular(), selGrupos, exibeLotacao, trazerAnotacoes, 
 						trazerComposto, ordemCrescenteData, usuarioPosse, marcasAIgnorar, filtro);
 			}
 	

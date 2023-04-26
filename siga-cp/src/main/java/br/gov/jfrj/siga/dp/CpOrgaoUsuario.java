@@ -26,6 +26,7 @@ package br.gov.jfrj.siga.dp;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Cacheable;
@@ -42,6 +43,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpConvertableEntity;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -54,7 +57,6 @@ import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "corporativo.cp_orgao_usuario")
-@Immutable
 @Cacheable
 @Cache(region = CpDao.CACHE_CORPORATIVO, usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
@@ -65,26 +67,8 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 	@Formula(value = "REMOVE_ACENTO(NM_ORGAO_USU)")
 	private String nmOrgaoAI;
 
-	@Column(name = "HIS_DT_INI")
-	@Desconsiderar
-	private Date hisDtIni;
-
-	@Column(name = "HIS_DT_FIM")
-	@Desconsiderar
-	private Date hisDtFim;
-
-	@Desconsiderar
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_INI")
-	private CpIdentidade hisIdcIni;
-
-	@Desconsiderar
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "HIS_IDC_FIM")
-	private CpIdentidade hisIdcFim;
-
-	@Column(name = "HIS_ATIVO")
-	private Integer hisAtivo;
+	private static List<String> listaOrgaosPermitidosHcp;
+	private static Boolean isArmazenamentoBlob;
 
 	public CpOrgaoUsuario() {
 		super();
@@ -144,26 +128,6 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 		this.nmOrgaoAI = nmOrgaoAI;
 	}
 
-	public Date getHisDtIni() {
-		return hisDtIni;
-	}
-
-	public Date getHisDtFim() {
-		return hisDtFim;
-	}
-
-	public CpIdentidade getHisIdcIni() {
-		return hisIdcIni;
-	}
-
-	public CpIdentidade getHisIdcFim() {
-		return hisIdcFim;
-	}
-
-	public Integer getHisAtivo() {
-		return hisAtivo;
-	}
-
 	public boolean equivale(Object other) {
 		if (other == null)
 			return false;
@@ -182,9 +146,70 @@ public class CpOrgaoUsuario extends AbstractCpOrgaoUsuario implements
 
 	@PrePersist
 	private void inserirComoAtivo() {
-		if(Objects.isNull(hisAtivo)) {
-			hisAtivo = 1;
+		if(Objects.isNull(getAtivo())) {
+			setAtivo(1);
 		}
 	}
 
+	public boolean podeGravarHcp() {
+		if (isArmazenamentoBlob == null)
+				isArmazenamentoBlob = CpArquivoTipoArmazenamentoEnum.BLOB.equals(
+						CpArquivoTipoArmazenamentoEnum.valueOf(Prop.get("/siga.armazenamento.arquivo.tipo")));
+		
+		if (listaOrgaosPermitidosHcp == null)
+			listaOrgaosPermitidosHcp = Prop.getList("/siga.armazenamento.orgaos");
+		if ("*".equals(listaOrgaosPermitidosHcp.get(0)))
+			return true;
+		final String sigla = this.getSigla();
+		if(listaOrgaosPermitidosHcp.stream().anyMatch(siglaFiltro -> siglaFiltro.equals(sigla)) )
+			return true;
+		return false;
+	}
+	
+	@Override
+	public Long getHisIdIni() {
+		return getIdOrgaoUsuIni();
+	}
+	
+	public Long getIdInicial() {
+		return getIdOrgaoUsuIni();
+	}
+	
+	@Override
+	public void setHisAtivo(Integer hisAtivo) {
+		setAtivo(hisAtivo);
+	}
+	
+	@Override
+	public void setHisIdIni(Long hisIdIni) {
+		setIdOrgaoUsuIni(hisIdIni);
+		
+	}
+
+	public void setId(Long id) {
+		setIdOrgaoUsu(id);
+	}
+	
+	@Override
+	public Integer getHisAtivo() {
+		return getHisDtFim() != null ? 1 : 0;
+	}
+	
+	@Override
+	public Date getHisDtFim() {
+		return getDtFim();
+	}
+	
+	@Override
+	public void setHisDtFim(Date hisDtFim) {
+		setDtFim(hisDtFim);
+	}
+	
+	public CpOrgaoUsuario getOrgaoUsuarioAtual() {
+
+		if (this.getDtFim() != null)
+			return CpDao.getInstance().consultarOrgaoAtual(this);
+
+		return this;
+	}
 }

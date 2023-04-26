@@ -264,16 +264,6 @@ public class ExMobilVO extends ExVO {
 			}
 		}
 
-		if (!mob.getExDocumento().isPendenteDeAssinatura()) {
-			if (mob.getExDocumento().getExFormaDocumento().getId() == 107L)
-				pendenciaProximoModelo = 110L;
-			else if (mob.getExDocumento().getExFormaDocumento().getId() == 110L)
-				pendenciaProximoModelo = 111L;
-			else if (mob.getExDocumento().getExFormaDocumento().getId() == 111L)
-				pendenciaProximoModelo = 112L;
-		}
-
-
 		// Calcula o tempo que o documento ficou em cada uma das lotações por
 		// onde ele passou.
 		ExMovimentacaoVO movVOIni = null;
@@ -384,11 +374,25 @@ public class ExMobilVO extends ExVO {
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 
 		if (!mob.isGeral()) {
-			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie")).descr("Exibe um índice de todos os documentos juntados.").icone("folder").nameSpace("/app/expediente/doc").acao("exibirProcesso")
-					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 
-			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao")).descr("Apresenta a versão em PDF do documento para fins de impressão.").icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
-					.params("sigla", mob.getCodigoCompacto()).params("popup", "true").params("arquivo", mob.getReferenciaPDF()).exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie"))
+					.descr("Exibe um índice de todos os documentos juntados.")
+					.icone("folder")
+					.nameSpace("/app/expediente/doc")
+					.acao("exibirProcesso")
+					.params("sigla", mob.getCodigoCompacto())
+					.params("nomeAcao", SigaMessages.getMessage("documento.ver.dossie"))
+					.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular))
+					.classe("once")
+					.build());
+
+			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.impressao"))
+					.descr("Apresenta a versão em PDF do documento para fins de impressão.")
+					.icone(SigaMessages.getMessage("icon.ver.impressao")).nameSpace("/app/arquivo").acao("exibir")
+					.params("sigla", mob.getCodigoCompacto()).params("popup", "true")
+					.params("arquivo", mob.getReferenciaPDF())
+					.params("nomeAcao", SigaMessages.getMessage("documento.ver.impressao"))
+					.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 
 			addAcao(AcaoVO.builder().nome("Incluir _Documento").descr("Cria um novo documento que será posteriormente juntado ao documento corrente.").icone("page_white_add").nameSpace("/app/expediente/doc").acao("editar")
 					.params("mobilPaiSel.sigla", mob.getCodigoCompacto()).params("criandoAnexo", "true").exp(new ExPodeIncluirDocumento(mob, titular, lotaTitular)).build());
@@ -422,9 +426,15 @@ public class ExMobilVO extends ExVO {
 			addAcao(AcaoVO.builder().nome("_Anotar").descr("Acrescentar uma movimentação de anotação ao documento. As anotações podem ser excluídas a qualquer momento.").icone("note_add").acao("/app/expediente/mov/anotar")
 					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
 		} else {
-			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add").modal("anotacaoObservacaoModal")
+			addAcao(AcaoVO.builder().nome("_Anotar").icone("note_add")
+					.msgConfirmacao("ATENÇÃO: Anotações cadastradas não constituem o documento,"
+							+ " são apenas  lembretes ou avisos " 
+							+ "	para os usuários com acesso ao documento, podendo ser "
+							+ "	excluídas a qualquer tempo.")
+					.nameSpace("/app/expediente/mov").acao("anotar")
 					.descr("Insere uma pequena observação ao documento. A anotação será exibida nas movimentações do documento, podendo ser excluída a qualquer tempo pela pessoa que a criou.")
-					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular))
+					.build());
 		}
 
 		addAcao(AcaoVO.builder().nome("Definir " + SigaMessages.getMessage("documento.marca")).descr("Marcar o documento com um dos marcadores disponíveis para facilitar a localização futura.").icone("folder_star").modal("definirMarcaModal")
@@ -459,9 +469,14 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("Avaliar").descr("Alterar a classificação documental por efeito de uma avaliação.").icone("table").nameSpace("/app/expediente/mov").acao("avaliar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAvaliar(mob, titular, lotaTitular)).build());
 
-		addAcao(AcaoVO.builder().nome("So_brestar").descr("Deixar o documento em estado de sobrestamento, enquando aguarda algum evento.").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("sobrestar_gravar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSobrestar(mob, titular, lotaTitular)).classe("once").build());
-
+		if (!Prop.isGovSP()) {
+			addAcao(AcaoVO.builder().nome("So_brestar").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("sobrestar_gravar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSobrestar(mob, titular, lotaTitular)).classe("once").build());
+		} else {
+			addAcao(AcaoVO.builder().nome("So_brestar").msgConfirmacao("Você deseja SOBRESTAR este documento?").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("sobrestar_gravar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeSobrestar(mob, titular, lotaTitular)).classe("once").build());
+		}
+		
 		addAcao(AcaoVO.builder().nome("Recolher ao Arq. Permanente").descr("Recolhe o documento ao Arquivo Permanente.").icone("building_add").nameSpace("/app/expediente/mov").acao("arquivar_permanente_gravar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeExibirBotaoDeArquivarPermanente(mob, titular, lotaTitular)).classe("once").build());
 
@@ -474,14 +489,11 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("Desarq. Intermediário").descr("Desarquiva o documento do Arquivo Intermediário.").icone("package_delete").nameSpace("/app/expediente/mov").acao("desarquivar_intermediario_gravar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeExibirBotaoDeDesarquivarIntermediario(mob, titular, lotaTitular)).classe("once").build());
 
-		addAcao(AcaoVO.builder().nome("Deso_brestar").descr("Cancela o estado de sobrestamento do documento, retomando o trâmite.").icone("hourglass_delete").nameSpace("/app/expediente/mov").acao("desobrestar_gravar")
+		addAcao(AcaoVO.builder().nome("Desso_brestar").descr("Cancela o estado de sobrestamento do documento, retomando o trâmite.").icone("hourglass_delete").nameSpace("/app/expediente/mov").acao("desobrestar_gravar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDessobrestar(mob, titular, lotaTitular)).classe("once").build());
 
 		addAcao(AcaoVO.builder().nome("_Juntar").descr("Junta o documento a um documento pai, formando ou complementando um dossiê.").icone("page_white_go").nameSpace("/app/expediente/mov").acao("juntar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeJuntar(mob, titular, lotaTitular)).classe("once").build());
-
-		addAcao(AcaoVO.builder().nome("Vi_ncular").descr("Relaciona este documento a um outro documento.").icone("page_find").nameSpace("/app/expediente/mov").acao("referenciar")
-				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReferenciar(mob, titular, lotaTitular)).build());
 
 		addAcao(AcaoVO.builder().nome("Apensar").descr("Agrupa este documento a um outro documento para fins de trâmite e aquivamento.").icone("link_add").nameSpace("/app/expediente/mov").acao("apensar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeApensar(mob, titular, lotaTitular)).classe("once").build());
@@ -508,6 +520,7 @@ public class ExMobilVO extends ExVO {
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ENVIO_SIAFEM);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
 			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA);
+			listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ORDEM_ASSINATURA);
 			
 			if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getExTipoMovimentacao())) {
 				addAcao(AcaoVO.builder().nome("Desfa_zer "

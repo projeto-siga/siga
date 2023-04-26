@@ -1,14 +1,18 @@
 var newwindow = '';
 
-function testpdf(x) {
+function testpdf(x, tamanhoMaximo) {
 	var inputFile = $('#arquivo');
 	var tamanhoArquivo = parseInt(inputFile[0].files[0].size);
 	
 	inputFile.parent().find('label[for=arquivo]').html('<i class="far fa-file-pdf"></i>&nbsp;&nbsp;'.concat(inputFile[0].files[0].name));
 	inputFile.attr('title', 'arquivo selecionado: '.concat(inputFile[0].files[0].name));
 	
-    if(tamanhoArquivo > 10485760){
-    	var mensagem = 'Tamanho do arquivo excede o permitido (10MB)';
+	var tamMax = 10485760;
+	if (tamanhoMaximo)
+		tamMax = tamanhoMaximo;
+	
+    if(tamanhoArquivo > tamMax){
+    	var mensagem = 'Tamanho do arquivo excede o permitido (' + Math.round(tamMax/1024/1024) + 'MB)';
     	aplicarErro(inputFile, mensagem);    	    	
         sigaModal.alerta(mensagem).focus(document.getElementById("arquivo"));
         return false;
@@ -70,17 +74,41 @@ function popitup(url) {
 		winUp = 100;
 	}
 	
+	//Redimensionamento da janela pop up apenas para a opção de download de formato livre 
+	if(nameWindow.indexOf("downloadFormatoLivre") > -1){
+		popW = 450;
+		popH = 450;
+		winleft = 100;
+		winUp = 100;
+	}
+	
 	winProp = 'width=' + popW + ',height=' + popH + ',left=' + winleft
 	+ ',top=' + winUp + ',scrollbars=yes,resizable';
 	
+	const sigla = new URLSearchParams(url).get('sigla');
 	if(url.includes("/sigaex/app/arquivo/exibir?")) {
 		url = montarUrlDocPDF (url, document.getElementById("visualizador").value);
 	}
+
 	newwindow = window.open(url, nameWindow, winProp);
+	newwindow.addEventListener('click', function (e) {
+		if (e.target.id == 'print' || e.target.id == 'download') {
+			trackRequest(sigla, e.target.title);
+		}
+	});
 
 	if (window.focus) {
 		newwindow.focus()
 	}
+}
+
+function trackRequest(sigla, acao) {
+	let url;
+	url = "/sigaex/app/expediente/doc/registrar_requisicao_usuario?sigla=" + sigla + "&nomeAcao=" + acao;
+	$.ajax({
+		type: "GET",
+		url: url
+	});
 }
 
 function montarUrlDocPDF(url, visualizador) {
@@ -1654,6 +1682,21 @@ var sigaModal = {
 				return (typeof modal.data('bs.modal') !== 'undefined' && modal.data('bs.modal')._isShown);				
 			}
 		},
+		reabilitarBotaoAposFecharModal: function(idModal,botaoASerHabilitado) {
+		
+			if (idModal) {
+				var modal = $('#'.concat(idModal));
+				var botao = $('#'.concat(botaoASerHabilitado));
+				
+				if (botao.length > 0) {
+					modal.on('hidden.bs.modal', function (e) {
+						botao[0].disabled = false;			
+					});
+				}	
+			}
+
+		
+		},
 		obterCabecalhoPadrao: function(tituloADireita) {
 			if (typeof uriLogoSiga !== 'undefined') {
 				var detalheEsquerda = uriLogoSiga ? '<div class="col-6  p-0"><img src="' + uriLogoSiga + '" class="siga-modal__logo" alt="logo siga"></div>' : '<h5 class="modal-title">Siga</h5>';
@@ -1893,4 +1936,4 @@ function passwordStrength(password,metodo) {
 
 		document.getElementById('passwordDescription' + metodo).innerHTML = desc[score];
 		document.getElementById('passwordStrength' + metodo).className = "strength" + score;
-	}
+}

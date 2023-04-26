@@ -107,7 +107,7 @@ public class LdapProperties {
 		try {
 			return Prop.getBool("/siga.ldap.modo.escrita");
 		} catch (Exception e) {
-			throw new AplicacaoException("Erro ao obter a propriedade modo_escrita", 9, e);
+			throw new AplicacaoException("Erro ao obter a propriedade siga.ldap.modo.escrita", 9, e);
 		}
 	}
 

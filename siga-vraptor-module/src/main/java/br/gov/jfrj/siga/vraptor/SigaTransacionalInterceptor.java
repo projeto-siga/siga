@@ -43,6 +43,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 
 	private final static ThreadLocal<SigaTransacionalInterceptor> current = new ThreadLocal<SigaTransacionalInterceptor>();
 
+	
 	/**
 	 * @deprecated CDI eyes only.
 	 */

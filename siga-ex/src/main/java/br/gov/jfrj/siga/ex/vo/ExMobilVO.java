@@ -264,16 +264,6 @@ public class ExMobilVO extends ExVO {
 			}
 		}
 
-		if (!mob.getExDocumento().isPendenteDeAssinatura()) {
-			if (mob.getExDocumento().getExFormaDocumento().getId() == 107L)
-				pendenciaProximoModelo = 110L;
-			else if (mob.getExDocumento().getExFormaDocumento().getId() == 110L)
-				pendenciaProximoModelo = 111L;
-			else if (mob.getExDocumento().getExFormaDocumento().getId() == 111L)
-				pendenciaProximoModelo = 112L;
-		}
-
-
 		// Calcula o tempo que o documento ficou em cada uma das lotações por
 		// onde ele passou.
 		ExMovimentacaoVO movVOIni = null;

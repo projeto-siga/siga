@@ -113,10 +113,29 @@ public class DiariasDaJusticaFederal {
         }
 
         public static TipoDeDiariaEnum find(String s) {
-//			if (valueOf(s) != null)
-//				return valueOf(s);
+//          if (valueOf(s) != null)
+//              return valueOf(s);
 
             for (TipoDeDiariaEnum i : values())
+                if (i.descr.equals(s))
+                    return i;
+            return null;
+        }
+
+    }
+
+    public enum TipoDeTransporteParaEmbarqueEDestinoEnum {
+        COM_ADICIONAL_DE_DESLOCAMENTO("Com Adicional de Deslocamento"), SEM_ADICIONAL_DE_DESLOCAMENTO("Sem Adicional de Deslocamento"), VEICULO_OFICIAL("Veículo Oficial");
+
+        String descr;
+
+        TipoDeTransporteParaEmbarqueEDestinoEnum(String descr) {
+            this.descr = descr;
+        }
+
+        public static TipoDeTransporteParaEmbarqueEDestinoEnum find(String s) {
+
+            for (TipoDeTransporteParaEmbarqueEDestinoEnum i : values())
                 if (i.descr.equals(s))
                     return i;
             return null;
@@ -128,8 +147,8 @@ public class DiariasDaJusticaFederal {
         public LocalDate dataInicio;
         public LocalDate dataTermino;
         public String trecho;
-        public boolean carroOficialAteOEmbarque;
-        public boolean carroOficialAteODestino;
+        public TipoDeTransporteParaEmbarqueEDestinoEnum transporteEmbarque;
+        public TipoDeTransporteParaEmbarqueEDestinoEnum transporteDesembarque;
         public boolean semDespesasDeHospedagem;
 
         public String getData() {
@@ -144,12 +163,12 @@ public class DiariasDaJusticaFederal {
             return trecho;
         }
 
-        public boolean isCarroOficialAteODestino() {
-            return carroOficialAteODestino;
+        public TipoDeTransporteParaEmbarqueEDestinoEnum getTransporteEmbarque() {
+            return transporteEmbarque;
         }
 
-        public boolean isCarroOficialAteOEmbarque() {
-            return carroOficialAteOEmbarque;
+        public TipoDeTransporteParaEmbarqueEDestinoEnum getTransporteDesembarque() {
+            return transporteDesembarque;
         }
 
         public boolean isSemDespesasDeHospedagem() {
@@ -366,9 +385,9 @@ public class DiariasDaJusticaFederal {
 //					§ 2º Não será devido o adicional de transporte de que cuida este artigo
 //					para os deslocamentos de embarque e/ou desembarque que tenham sido realizados
 //					com utilização de veículo oficial. 
-                        if (!trecho.carroOficialAteOEmbarque)
+                        if (trecho.transporteEmbarque == TipoDeTransporteParaEmbarqueEDestinoEnum.COM_ADICIONAL_DE_DESLOCAMENTO)
                             dia.acrescimoDeDeslocamento += diariaParaCalculoDoDeslocamento * 0.20;
-                        if (!trecho.carroOficialAteODestino)
+                        if (trecho.transporteDesembarque == TipoDeTransporteParaEmbarqueEDestinoEnum.COM_ADICIONAL_DE_DESLOCAMENTO)
                             dia.acrescimoDeDeslocamento += diariaParaCalculoDoDeslocamento * 0.20;
                         dia.acrescimoDeDeslocamento = floor(dia.acrescimoDeDeslocamento);
                     }

@@ -8996,8 +8996,8 @@ public class ExBL extends CpBL {
 				movArquivamentoNova.setExMovimentacaoRef(movArquivadaACancelar);
 				movArquivamentoNova.setLotaResp(lotaDestinoFinal);
 				movArquivamentoNova.setResp(null);
-				movArquivamentoNova.setSubscritor(null);
-				movArquivamentoNova.setLotaSubscritor(null);
+				movArquivamentoNova.setSubscritor(cadastrante);
+				movArquivamentoNova.setLotaSubscritor(lotaCadastrante);
 				
 				//movArquivamentoNova.setDtIniMov(movArquivadaACancelar.getDtIniMov());
 				movArquivamentoNova.setLotaDestinoFinal(lotaDestinoFinal);

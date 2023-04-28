@@ -2023,6 +2023,7 @@ public class ExDocumentoController extends ExController {
 		
 	}
 
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/prever")
 	public void preve(final ExDocumentoDTO exDocumentoDTO, final String[] vars)
 			throws IllegalAccessException, InvocationTargetException,

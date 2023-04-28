@@ -3423,6 +3423,14 @@ Pede deferimento.</span><br/><br/><br/>
         [#if !(func.contains(fecho!'','.')) && !(func.contains(fecho!'',','))]
             [#assign virgula ="," /]
         [/#if]
+        [#if !orgao_dest?? && doc.lotaDestinatario??]
+            [#assign orgao_dest = doc.lotaDestinatario.descricao /]
+        [/#if]
+        [#if orgao_dest?? && doc.lotaDestinatario??]
+            [#if !(especificarOrgao?? && especificarOrgao == 'Sim')]
+                [#assign orgao_dest = doc.lotaDestinatario.descricao /]
+            [/#if]
+        [/#if]
         [@estiloBrasaoCentralizado tipo=_tipo tamanhoLetra=tl formatarOrgao=true]
             <table width="100%" border="0" cellpadding="2" cellspacing="0" bgcolor="#FFFFFF">
                 <tr>
@@ -4976,8 +4984,9 @@ ${texto}
     		[#local c = (_group_count[depend]!0) + 1 /]
     		[#assign _group_count = _group_count + {depend: c} /]
 		    [#local id = (depend=="")?string("", "div-" + c + "-" + depend)] 
+	    	[#local dependClasses][#list depend?split(";") as x] depend-on-${x}[/#list][/#local]
     	[/#if]
-	    [@division id=id depend=depend suppressIndependent=true atts={'class': 'row'}]
+	    [@division id=id depend=depend suppressIndependent=true atts={'class': 'row' + dependClasses!}]
 	    	[#if title?? && title != '']<h5 class="col-12">${title}</h5>[/#if]
 	    	[#if info?? && info != '']<div class="col-12"><p class="alert alert-info mb-1">${info}</p></div>[/#if]
 	    	[#if warning?? && warning != '']<div class="col-12"><p class="alert alert-warning mb-1">${warning}</p></div>[/#if]
@@ -5023,6 +5032,21 @@ ${texto}
 [#macro interview]
 	[#assign _scope='interview']
 	[@entrevista]
+		<script>
+			if (!window._refreshModelIfNeeded) {
+				window._refreshModelIfNeeded = true;
+				var sbmtSave = window.sbmt; 
+				window.sbmt = function(id) {
+					if (!id) {
+						sbmtSave();
+					} else {
+						if($(".depend-on-" + id).length > 0) {
+							sbmtSave(id);
+						}
+					}
+				};
+			}
+		</script>
 		<div class="row">
 		[#nested/]
 		</div>
@@ -5290,10 +5314,13 @@ Exemplos de utilização:
    	[#local idAjax = "" /]
 	[#if refresh?is_string]
     	[#local idAjax = refresh /]
-    	[#local refresh = true /]
+		[#assign refresh_js]sbmt('${idAjax}');[/#assign]
+	[#elseif refresh==true]
+		[#assign refresh_js]sbmt('');[/#assign]
+	[#else]
+		[#assign refresh_js]sbmt('${var}');[/#assign]
     [/#if]
-	[#assign refresh_js][#if refresh]sbmt([#if idAjax != ""]'${idAjax}'[/#if]);[/#if][/#assign]
-	[#assign refresh_inc][#if refresh] onchange="javascript: ${refresh_js}"[/#if][/#assign]
+	[#assign refresh_inc] onchange="javascript: ${refresh_js}"[/#assign]
 
 	[#local attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#local]
 
@@ -5352,7 +5379,7 @@ Exemplos de utilização:
     	[#local negrito = "font-weight:bold"]
     	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
     [/#if]
-
+    
     [#if !gerar_formulario!false]    	
 		<div class="form-group ${col} mb-2">
 			[#if title?has_content && kind != "checkbox" && kind != "radio" ]    			
@@ -5403,6 +5430,7 @@ Exemplos de utilização:
 			[#elseif kind == "checkbox"]
 				<input type="hidden" id="${var}" name="${var}" value="${v}" />
 				<div class="form-check">
+					### ${refresh_js!'vazio'}
 					<input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="${value}"
 						[#if v==value]checked[/#if] 
 						onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${value}'; else document.getElementById('${var}').value = '${default}'; ${onclique!}; ${refresh_js!}" [#if id == ""]data-criar-id="true"[/#if]/> 
@@ -5794,18 +5822,18 @@ Exemplos de utilização:
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="pessoa" titulo=title var=var reler=refresh idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="pessoa" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
 			[#elseif kind == "lotacao"]
-				[@field_selectable tipo="lotacao" titulo=title var=var reler=refresh relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="lotacao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
 			[#elseif kind == "cossignatario"]
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="cosignatario" titulo=title var=var reler=refresh idAjax=idAjax relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="cosignatario" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
 			[#elseif kind == "funcao"]
-				[@field_selectable tipo="funcao" titulo=title var=var reler=refresh relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
 			[#elseif kind == "documento"]
-			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var reler=refresh relertab=relertab paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
 			[/#if]
 		        [#if required]            		    
 			   		<div class="invalid-feedback invalid-feedback-${var}${suffix!}">Preenchimento obrigatório</div>
@@ -5817,7 +5845,7 @@ Exemplos de utilização:
 		[/#if]
 [/#macro]
 
-[#macro field_selectable titulo var tipo reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" modulo="" col="" hint=""]
+[#macro field_selectable titulo var tipo refresh_js="" default="" obrigatorio=false paramList="" modulo="" col="" hint=""]
     [#assign tipoSel = "_" + tipo /]
 
     [#assign varName = var + tipoSel + "Sel.id" /]    
@@ -5836,13 +5864,13 @@ Exemplos de utilização:
     <input type="hidden" name="obrigatorios" value="${varName}" />	    
 
     [#if !gerar_formulario!false]
-        [@field_selectable_box titulo=titulo var=var tipo=tipo reler=reler idAjax=idAjax relertab=relertab paramList=paramList modulo=modulo col=col hint=hint /]	        
+        [@field_selectable_box titulo=titulo var=var tipo=tipo refresh_js=refresh_js paramList=paramList modulo=modulo col=col hint=hint /]	        
     [#else]
     <span class="valor">[#if vSigla??]${vSigla} - [/#if]${vDescricao}</span>
     [/#if]
 [/#macro]
 
-[#macro field_selectable_box titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false reler=false idAjax="" default="" obrigatorio=false relertab="" paramList="" grande=false col="" hint=""]
+[#macro field_selectable_box titulo var tipo="" idInicial="" siglaInicial="" descricaoInicial="" modulo="" desativar=false buscar=true ocultarDescricao=false refresh_js="" default="" obrigatorio=false paramList="" grande=false col="" hint=""]
     [#local larguraPopup = 600 /]
     [#local alturaPopup =400 /]
     [#local tipoSel = "_" + tipo /]
@@ -5874,11 +5902,11 @@ Exemplos de utilização:
             }
         [/#if]
         document.getElementsByName('${var}${tipoSel}Sel.sigla')[0].value = sigla;
-        [#if reler]
+        [#if refresh_js?has_content]
                     //window.alert("vou reler tudo!");
             document.getElementsByName('req${var}${tipoSel}Sel')[0].value = "sim";
             document.getElementById('alterouSel').value='${var}';
-            sbmt([#if idAjax != ""]'${idAjax}'[/#if]);
+            ${refresh_js}
         [/#if]
     }
      

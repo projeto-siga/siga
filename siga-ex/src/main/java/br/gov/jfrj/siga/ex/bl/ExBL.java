@@ -1607,13 +1607,13 @@ public class ExBL extends CpBL {
 	public boolean deveTramitarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
 				titular, lotaTitular, ExTipoDeConfiguracao.TRAMITE_AUTOMATICO);
-		return idSit != null && idSit.isDefaultOuObrigatoria();
+		return idSit != null && idSit.isAutomaticoOuObrigatoria();
 	}
 
 	public boolean deveJuntarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
 				titular, lotaTitular, ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
-		return idSit != null && idSit.isDefaultOuObrigatoria();
+		return idSit != null && idSit.isAutomaticoOuObrigatoria();
 	}
 
 	public String assinarDocumento(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,

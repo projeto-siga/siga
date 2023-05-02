@@ -2969,12 +2969,16 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true exibeRodapeEnderecamento=false]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false omitirCabecalho=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true exibeRodapeEnderecamento=false]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
-    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [#if !omitirCabecalho]
+    	[@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [/#if]
     [/@primeiroCabecalho]
     [@cabecalho]
-    [@cabecalhoCentralizado orgaoCabecalho/]
+    [#if !omitirCabecalho]
+	    [@cabecalhoCentralizado orgaoCabecalho/]
+    [/#if]
     [/@cabecalho]
     [@letra tamanhoLetra]
         [#if !numeracaoCentralizada]
@@ -3057,7 +3061,6 @@ Pede deferimento.</span><br/><br/><br/>
    [#if exibeRodapeEnderecamento]
    		[@rodapeEnderecamento/]
    [/#if]
-  
 [/#macro]
 
 [#macro processo]
@@ -4976,7 +4979,7 @@ ${texto}
     [/#if]
 [/#macro]
 
-[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={}]
+[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={} innerGroup=false]
     [#if !hidden]
     	</div>
     	[#local id=""/]
@@ -4986,6 +4989,7 @@ ${texto}
 		    [#local id = (depend=="")?string("", "div-" + c + "-" + depend)] 
 	    	[#local dependClasses][#list depend?split(";") as x] depend-on-${x}[/#list][/#local]
     	[/#if]
+        [#if innerGroup]<div class="col col-12">[/#if]
 	    [@division id=id depend=depend suppressIndependent=true atts={'class': 'row' + dependClasses!}]
 	    	[#if title?? && title != '']<h5 class="col-12">${title}</h5>[/#if]
 	    	[#if info?? && info != '']<div class="col-12"><p class="alert alert-info mb-1">${info}</p></div>[/#if]
@@ -4993,8 +4997,13 @@ ${texto}
 	    	[#if danger?? && danger != '']<div class="col-12"><p class="alert alert-danger mb-1">${danger}</p></div>[/#if]
 			[#nested]
 	    [/@division]
+        [#if innerGroup]</div>[/#if]
 	    <div class="row">
     [/#if]
+[/#macro]
+
+[#macro row_break]
+	<div class="w-100"></div>
 [/#macro]
 
 [#macro if expr depend='']
@@ -5082,8 +5091,13 @@ ${texto}
   			[#case "solicitacao"]
 				[@solicitacao tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"FORMULÁRIO") assunto=(_assunto!"")/]
       			[#break]
+  			[#case "pagina_em_branco"]
+                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!true) incluirMioloDJE=(_incluirMioloDJE!false) omitirCabecalho=true omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
+				    ${document_content!}
+                [/@estiloBrasaoCentralizado]
+      			[#break]
   			[#default]
-                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!false) incluirMioloDJE=(_incluirMioloDJE!false) omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
+                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!false) incluirMioloDJE=(_incluirMioloDJE!false) omitirCabecalho=(_omitirCabecalho!false) omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
 				    ${document_content!}
                 [/@estiloBrasaoCentralizado]
   		[/#switch]
@@ -5091,6 +5105,7 @@ ${texto}
 [/#macro]
 
 [#macro description]
+	[#assign _scope='description']
 	[@descricao]
 		[#nested]
 	[/@descricao]
@@ -5152,7 +5167,7 @@ ${texto}
 
 [#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true sensitivity=""][#compress]
 	[#if document]
-		<span style="color: ${VALUE_COLOR};">
+    	[#if _scope != 'description']<span style="color: ${VALUE_COLOR};">[/#if][#compress]
 			[#if kind == ""][#local kind = infer_type(var, opcoes) /][/#if]
 		    [#if kind == "oculto"]
 		    [#elseif kind == "checkbox"]
@@ -5188,7 +5203,7 @@ ${texto}
 			[#else]
 				${(.vars[var+index])!}
 			[/#if]
-		</span>
+    	[/#compress][#if _scope != 'description']</span>[/#if]
 	[/#if]
 [/#compress][/#macro]
 
@@ -5337,8 +5352,9 @@ Exemplos de utilização:
     
 	[#-- tipo oculto não deve gerar nem o grupo --]
 	[#if kind=="checkbox"]
-		[#local value=(value == "")?string("Sim", value) /]
-		[#local default=(default == "")?string("Não", default) /]
+		[#local checkedValue=(value == "")?string("Sim", value) /]
+		[#local uncheckedValue=(default == "")?string("Não", default) /]
+		[#local default=uncheckedValue /]
 		[#local suffix="_chk" /]
     [/#if]
 	
@@ -5430,10 +5446,9 @@ Exemplos de utilização:
 			[#elseif kind == "checkbox"]
 				<input type="hidden" id="${var}" name="${var}" value="${v}" />
 				<div class="form-check">
-					### ${refresh_js!'vazio'}
-					<input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="${value}"
-						[#if v==value]checked[/#if] 
-						onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${value}'; else document.getElementById('${var}').value = '${default}'; ${onclique!}; ${refresh_js!}" [#if id == ""]data-criar-id="true"[/#if]/> 
+					<input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" 
+						[#if v==checkedValue]checked[/#if] 
+						onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${checkedValue}'; else document.getElementById('${var}').value = '${uncheckedValue}'; ${onclique!}; ${refresh_js!}" [#if id == ""]data-criar-id="true"[/#if]/> 
 					<label title="campo: ${var}" class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${title!""}</label>
 				</div>		
 			[#elseif kind == "radio"]
@@ -5993,3 +6008,4 @@ Exemplos de utilização:
         [/#if]
     </script>
 [/#macro]
+

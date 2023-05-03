@@ -1530,7 +1530,9 @@ CKEDITOR.replace( '${var}',
     [#if v != ""]
        [#local v = exbl.canonicalizarHtml(v, false, true, false, true) aux=v /]        
 	[#else]
-        [#local aux="" v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
+		[#if !default?has_content]
+        	[#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>' aux=v /]
+        [/#if]
 	[/#if]
 
         <div>
@@ -1545,8 +1547,8 @@ CKEDITOR.replace( '${var}',
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
 		[#else]
-			[#if aux != ""]            
-      		 	<textarea id="${var}" name="${var}" class="editor">${v?html}</textarea>
+			[#if aux??]            
+      		 	<textarea id="${var}" name="${var}" class="editor">${aux?html}</textarea>
 			[#else]
        			<textarea id="${var}" name="${var}" class="editor"> ${default!}</textarea>
 			[/#if]

@@ -1861,14 +1861,16 @@ CKEDITOR.replace( '${var}',
     [/#if]
 [/#macro]
 
-[#macro memo var titulo colunas linhas reler=false obrigatorio=false default=""]
-        [#if reler == true]
-                [#local jreler = " onchange=\"javascript: sbmt();\""]
-        [/#if]
+[#macro memo var titulo colunas linhas reler=false obrigatorio=false default="" atts={}]
+    [#if reler == true]
+        [#local jreler = " onchange=\"javascript: sbmt();\""]
+    [/#if]
 
-        [#local v = .vars[var]!default]
+    [#local v = .vars[var]!default]
 
-	<div class="form-group" style="margin-bottom:0">
+	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+		
+    <div class="form-group" style="margin-bottom:0">
         <input type="hidden" name="vars" value="${var}" />
 
         [#if (alerta!"Não") = 'Sim' && v = ""]
@@ -1889,7 +1891,7 @@ CKEDITOR.replace( '${var}',
         [/#if]
 
         [#if !gerar_formulario!false]
-        	<textarea id="${var}" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;" class="form-control">${v}</textarea>
+        	<textarea id="${var}" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} ${attsHtml} style="width:100%;" class="form-control">${v}</textarea>
         	<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
         [#else]
             <span class="valor">${v}</span>

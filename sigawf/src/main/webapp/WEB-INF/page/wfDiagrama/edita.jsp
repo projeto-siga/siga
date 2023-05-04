@@ -248,7 +248,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									ng-model="tarefaItem.titulo" name="titulo" ng-required="true"
 									id="titulo" type="text" class="form-control"></section>
 								<section
-									ng-show="tarefaItem.tipo != 'FORMULARIO' && tarefaItem.tipo != 'DECISAO'"
+									ng-show="(tarefaItem.tipo != 'FORMULARIO' && tarefaItem.tipo != 'DECISAO') || (tarefaItem.tipo == 'FORMULARIO' && (tarefaItem.desvio||[]).length == 0)"
 									class="col col-12 col-md-2 col-lg-2 form-group"> <label
 									for="depois" title="" class="label mb-0">Depois</label> <select
 									ng-selected="desvioItem.tarefa" ng-model="tarefaItem.depois"

@@ -149,7 +149,9 @@ public class SolicitacaoController extends SrController {
 
 	@Transacional
 	@Path("/gravarPermissaoUsoLista")
-	public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
+	public void gravarPermissaoUsoLista(SrConfiguracao permissao, SrLista listaPrioridade, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
+		permissao.setListaPrioridade(listaPrioridade);
+		permissao.setTipoPermissaoSet(tipoPermissaoSet);
 		permissao.salvarComoPermissaoUsoLista();
 		result.use(Results.http()).body(permissao.toVO().toJson());
 	}

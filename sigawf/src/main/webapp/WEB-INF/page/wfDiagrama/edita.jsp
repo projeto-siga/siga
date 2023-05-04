@@ -31,6 +31,22 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 	<script src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
 
 	<script src="/siga/javascript/angucomplete-alt/angucomplete-alt.js"></script>
+	
+	<style>
+		.taskrow:target {
+		    animation-name: blink;
+		    animation-direction: normal;
+		    animation-duration: 2.0s;
+		    animation-iteration-count: 1;
+		    animation-timing-function: ease;
+		}
+		@keyframes blink {
+		    0% { background-color: rgba(255,193,7,0.0); }
+		    10% { background-color: rgba(255,193,7,0.9); }
+		    60% { background-color: rgba(255,193,7,0.9); }
+		    100% { background-color: rgba(255,193,7,0.0); }
+		}
+	</style>
 
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
 		<h2>
@@ -139,7 +155,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 
 		<fieldset title="Tarefas">
 			<div class="row">
-				<div class="col col-12 col-md-8">
+				<div class="col col-12 {{(data.workflow.tarefa || []).length <= 8 ? 'col-md-8' : 'col-md-12'}}">
 					<header class="form-group juia">
 					<div class="row align-items-center">
 						<div class="col col-auto">Tarefas</div>
@@ -152,9 +168,9 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 						</div>
 					</div>
 					</header>
-					<div ng-repeat="tarefaItem in data.workflow.tarefa" class="row">
+					<div ng-repeat="tarefaItem in data.workflow.tarefa" class="row taskrow" id="tarefa-{{$index + 1}}">
 						<div class="col col-auto">
-							<section> <label class="label mb-0" for="ddm">&nbsp;</label>
+							<section><label class="label mb-0" for="ddm">&nbsp;</label>
 							<div id="ddm" role="group" class="form-controlx btn-group"
 								style="padding: 0 !important; display: block;">
 								<div role="group" class="btn-group dropright">
@@ -194,10 +210,10 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <select
 									ng-model="tarefaItem.tipo" ng-required="true"
-									class="form-control"><option value="FORMULARIO">Formulário</option>
-									<option value="DECISAO">Decisão</option>
-									<option value="EMAIL">E-mail</option>
-									<option value="EXECUTAR">Executar</option>
+									class="form-control"><option value="FORMULARIO">Tarefa de Usuário</option>
+									<option value="DECISAO">Desvio Automático</option>
+									<option value="EMAIL">Enviar E-mail Automático</option>
+									<option value="EXECUTAR">Stript</option>
 									<option value="SUBPROCEDIMENTO">Iniciar Procedimento</option>
 									<option value="CRIAR_DOCUMENTO">Criar Documento</option>
 									<optgroup label="{{getPrincipalNome()}}"
@@ -232,7 +248,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									ng-model="tarefaItem.titulo" name="titulo" ng-required="true"
 									id="titulo" type="text" class="form-control"></section>
 								<section
-									ng-show="tarefaItem.tipo != 'FORMULARIO' && tarefaItem.tipo != 'DECISAO'"
+									ng-show="(tarefaItem.tipo != 'FORMULARIO' && tarefaItem.tipo != 'DECISAO') || (tarefaItem.tipo == 'FORMULARIO' && (tarefaItem.desvio||[]).length == 0)"
 									class="col col-12 col-md-2 col-lg-2 form-group"> <label
 									for="depois" title="" class="label mb-0">Depois</label> <select
 									ng-selected="desvioItem.tarefa" ng-model="tarefaItem.depois"
@@ -604,7 +620,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				</div>
 				<div
 					ng-show="data.workflow.tarefa &amp;&amp; data.workflow.tarefa.length > 0"
-					class="col col-12 col-md-4">
+					class="col col-12 {{(data.workflow.tarefa || []).length <= 8 ? 'col-md-4' : 'col-md-12'}}">
 					<header class="juia form-group">
 					<div class="row align-items-center"></div>
 					<div class="col col-auto">Workflow</div>

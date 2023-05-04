@@ -31,6 +31,22 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 	<script src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
 
 	<script src="/siga/javascript/angucomplete-alt/angucomplete-alt.js"></script>
+	
+	<style>
+		.taskrow:target {
+		    animation-name: blink;
+		    animation-direction: normal;
+		    animation-duration: 2.0s;
+		    animation-iteration-count: 1;
+		    animation-timing-function: ease;
+		}
+		@keyframes blink {
+		    0% { background-color: rgba(255,193,7,0.0); }
+		    10% { background-color: rgba(255,193,7,0.9); }
+		    60% { background-color: rgba(255,193,7,0.9); }
+		    100% { background-color: rgba(255,193,7,0.0); }
+		}
+	</style>
 
 	<div class="container-fluid content" ng-app="app" ng-controller="ctrl">
 		<h2>
@@ -152,9 +168,9 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 						</div>
 					</div>
 					</header>
-					<div ng-repeat="tarefaItem in data.workflow.tarefa" class="row">
+					<div ng-repeat="tarefaItem in data.workflow.tarefa" class="row taskrow" id="tarefa-{{$index + 1}}">
 						<div class="col col-auto">
-							<section> <label class="label mb-0" for="ddm">&nbsp;</label>
+							<section><label class="label mb-0" for="ddm">&nbsp;</label>
 							<div id="ddm" role="group" class="form-controlx btn-group"
 								style="padding: 0 !important; display: block;">
 								<div role="group" class="btn-group dropright">

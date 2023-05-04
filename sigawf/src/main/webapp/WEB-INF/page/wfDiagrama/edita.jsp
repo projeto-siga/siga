@@ -139,7 +139,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 
 		<fieldset title="Tarefas">
 			<div class="row">
-				<div class="col col-12 col-md-8">
+				<div class="col col-12 {{(data.workflow.tarefa || []).length <= 8 ? 'col-md-8' : 'col-md-12'}}">
 					<header class="form-group juia">
 					<div class="row align-items-center">
 						<div class="col col-auto">Tarefas</div>
@@ -604,7 +604,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				</div>
 				<div
 					ng-show="data.workflow.tarefa &amp;&amp; data.workflow.tarefa.length > 0"
-					class="col col-12 col-md-4">
+					class="col col-12 {{(data.workflow.tarefa || []).length <= 8 ? 'col-md-4' : 'col-md-12'}}">
 					<header class="juia form-group">
 					<div class="row align-items-center"></div>
 					<div class="col col-auto">Workflow</div>

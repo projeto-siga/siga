@@ -51,6 +51,9 @@ public class AutenticadorJwtCookie implements Autenticador {
             SignatureException, SigaJwtInvalidException, SigaJwtProviderException, IOException, JWTVerifyException {
         String token = extrairAuthorization(req);
         Map<String, Object> decodedToken = validarToken(token);
+        String principal = (String) decodedToken.get("sub");
+        if (principal == null)
+            throw new SigaJwtInvalidException("Tipo de Token Inválido para autenticação");
         final long now = System.currentTimeMillis() / 1000L;
         if ((Integer) decodedToken.get("exp") < now + Autenticador.TIME_TO_RENEW_IN_S) {
             String tokenNew = renovarToken(token);
@@ -58,7 +61,7 @@ public class AutenticadorJwtCookie implements Autenticador {
             Cookie cookie = buildCookie(tokenNew);
             addCookie(req, resp, cookie);
         }
-        return (String) decodedToken.get("sub");
+        return principal;
     }
 
     @Override

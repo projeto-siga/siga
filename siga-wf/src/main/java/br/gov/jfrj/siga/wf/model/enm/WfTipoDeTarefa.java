@@ -35,13 +35,13 @@ public enum WfTipoDeTarefa implements TaskKind {
 	//
 	AUTUAR_DOCUMENTO("Autuar Documento", "rectangle", "Autuar", WfTarefaDocAutuar.class, true, false, false, false),
 	//
-	FORMULARIO("Formulário", "tab", null, WfTarefaFormulario.class, true, true, true, true),
+	FORMULARIO("Tarefa de Usuário", "tab", null, WfTarefaFormulario.class, true, true, true, true),
 	//
-	DECISAO("Decisão", "diamond", null, TaskDecision.class, false, true, false, true),
+	DECISAO("Desvio Automático", "diamond", null, TaskDecision.class, false, true, false, true),
 	//
-	EXECUTAR("Executar", "rectangle", null, TaskEval.class, false, true, true, false),
+	EXECUTAR("Script", "rectangle", null, TaskEval.class, false, true, true, false),
 	//
-	EMAIL("Email", "folder", null, TaskEmail.class, true, true, false, false),
+	EMAIL("Enviar E-mail Automático", "folder", null, TaskEmail.class, true, true, false, false),
 	//
 	SUBPROCEDIMENTO("Subprocedimento", "rectangle", "Subprocedimento", WfTarefaSubprocedimento.class, false, true, false, false),
 	//

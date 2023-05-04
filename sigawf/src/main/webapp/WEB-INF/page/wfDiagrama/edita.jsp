@@ -194,10 +194,10 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <select
 									ng-model="tarefaItem.tipo" ng-required="true"
-									class="form-control"><option value="FORMULARIO">Formulário</option>
-									<option value="DECISAO">Decisão</option>
-									<option value="EMAIL">E-mail</option>
-									<option value="EXECUTAR">Executar</option>
+									class="form-control"><option value="FORMULARIO">Tarefa de Usuário</option>
+									<option value="DECISAO">Desvio Automático</option>
+									<option value="EMAIL">Enviar E-mail Automático</option>
+									<option value="EXECUTAR">Stript</option>
 									<option value="SUBPROCEDIMENTO">Iniciar Procedimento</option>
 									<option value="CRIAR_DOCUMENTO">Criar Documento</option>
 									<optgroup label="{{getPrincipalNome()}}"

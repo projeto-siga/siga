@@ -8,6 +8,7 @@ import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import com.auth0.jwt.JWTExpiredException;
 import com.auth0.jwt.JWTVerifyException;
 
@@ -50,6 +52,10 @@ public class AuthJwtFormFilter implements Filter {
 		if (token == null) {
 			throw new SigaJwtInvalidException("Token inválido");
 		}
+
+		Optional.ofNullable(SigaUtil.verifyGetJwtToken(token).get("sub"))
+				.orElseThrow(() -> new SigaJwtInvalidException("Tipo de Token Inválido para autenticação"));
+
 		SigaJwtProvider provider = getProvider();
 		return provider.validarToken(token);
 	}

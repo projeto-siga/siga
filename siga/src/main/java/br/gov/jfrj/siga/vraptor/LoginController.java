@@ -40,6 +40,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
@@ -269,10 +270,8 @@ public class LoginController extends SigaController {
 		}								
 
 		if (!StringUtils.isEmpty(senhaAtual)) {
-			final String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
-			if (!hashAtual.equals(identidade.getDscSenhaIdentidade())) {
-				usuario.enviarErro("senhaAtual", "Senha atual está incorreta");
-			}			
+		    if (!ValidadorDeSenhaFabrica.getInstance().validarSenha(identidade, senhaAtual))
+		        usuario.enviarErro("senhaAtual", "Senha atual está incorreta");
 		} else {
 			usuario.enviarErro("senhaAtual", "Favor informar a senha atual");			
 		}

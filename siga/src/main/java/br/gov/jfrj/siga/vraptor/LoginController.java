@@ -66,7 +66,7 @@ public class LoginController extends SigaController {
 
 	@Transacional
 	@Get("public/app/login")
-	public void login(String cont) throws IOException {
+	public void login(String cont, String mensagem) throws IOException {
 		Map<String, String> manifest = new HashMap<>();
 		try (InputStream is = context.getResourceAsStream("/META-INF/VERSION.MF")) {
 			String m = convertStreamToString(is); 
@@ -84,6 +84,8 @@ public class LoginController extends SigaController {
 		final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar c = Calendar.getInstance();
 		
+		if (mensagem != null)
+		    result.include("loginMensagem", mensagem);
 		result.include("fAviso", "21-11-2019".equals(df.format(c.getTime())));
 		result.include("avisoMensagem", "Prezado usuário, o sistema SP Sem Papel passa por instabilidade e a equipe técnica está trabalhando para solucionar o mais rápido possível, assim que restabelecido essa mensagem sairá do ar.");
 		result.include("versao", manifest.get("Siga-Versao"));
@@ -121,7 +123,7 @@ public class LoginController extends SigaController {
 			if (isSenhaUsuarioExpirada(usuarioLogado)) {
 				result.include("isSenhaUsuarioExpirada", true);
 				result.include("loginUsuario", username);
-				result.forwardTo(this).login(cont);				
+				result.forwardTo(this).login(cont, null);				
 			} else {
 				gravaCookieComToken(username, cont);
 				result.include("isPinNotDefined", true);
@@ -131,7 +133,7 @@ public class LoginController extends SigaController {
 				result.include("loginMensagem", SigaMessages.getMessage("usuario.falhaautenticacao")); 
 			else
 				result.include("loginMensagem", e.getMessage());
-			result.forwardTo(this).login(cont);
+			result.forwardTo(this).login(cont, null);
 		}
 	}
 
@@ -337,7 +339,7 @@ public class LoginController extends SigaController {
 				
 			} catch(AplicacaoException a){
 				result.include("loginMensagem", a.getMessage());		
-				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
+				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login", null);
 			}catch(Exception e){
 				throw new AplicacaoException("Não foi possivel acessar o LoginSP." );
 		}

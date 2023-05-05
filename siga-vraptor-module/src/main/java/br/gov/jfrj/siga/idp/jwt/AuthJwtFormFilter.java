@@ -104,20 +104,16 @@ public class AuthJwtFormFilter implements Filter {
 		}
 
 		// Envia Mensagem para Tela de Login
-		HttpSession session = req.getSession(false);
-		if (session != null) {
-			session.setAttribute("loginMensagem",
-					(e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)
-							? SigaMessages.getMessage("login.erro.jwt")
-							: "");
-		}
+		String mensagem = (e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)
+			? "&mensagem=" + URLEncoder.encode(SigaMessages.getMessage("login.erro.jwt"), "UTF-8")
+			: "";
 
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
 		String base = Prop.get("/siga.base.url");
 		if (base != null && base.startsWith("https:") && cont.startsWith("http:"))
 			cont = "https" + cont.substring(4);
 
-		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8"));
+		resp.sendRedirect("/siga/public/app/login?cont=" + URLEncoder.encode(cont, "UTF-8") + mensagem);
 	}
 
 	private void informarAutenticacaoInvalida(HttpServletResponse resp, Exception e) throws IOException {

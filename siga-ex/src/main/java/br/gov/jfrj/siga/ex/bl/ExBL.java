@@ -113,6 +113,7 @@ import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
+import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -2011,8 +2012,7 @@ public class ExBL extends CpBL {
 				
 				senhaValida = Cp.getInstance().getBL().validaPinIdentidade(senhaSubscritor, id);
 			} else {
-				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
-				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			    senhaValida = ValidadorDeSenhaFabrica.getInstance().validarSenha(id, senhaSubscritor);
 			}
 
 			if (!senhaValida) {
@@ -2261,8 +2261,7 @@ public class ExBL extends CpBL {
 				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
 				senhaValida = id.getPinIdentidade().equals(hashAtual);
 			} else {
-				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
-				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			    senhaValida = ValidadorDeSenhaFabrica.getInstance().validarSenha(id, senhaSubscritor);
 			}
 
 			if (!senhaValida) {

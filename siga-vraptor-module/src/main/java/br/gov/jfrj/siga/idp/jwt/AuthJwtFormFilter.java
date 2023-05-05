@@ -3,6 +3,10 @@ package br.gov.jfrj.siga.idp.jwt;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.security.SignatureException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.gov.jfrj.siga.cp.util.SigaUtil;
 import com.auth0.jwt.JWTExpiredException;
 import com.auth0.jwt.JWTVerifyException;
 

@@ -34,7 +34,7 @@ public class Prop {
 	    // Os segredos que assinam os tokens JWT não devem ser iguais
 	    //
 	    if (nome != null && (nome.contains("jwt.secret") || nome.contains("autenticacao.senha")) 
-	            && get("/siga.jwt.secret").equals(get("/siga.autenticacao.senha")))
+	            && provider.getProp("/siga.jwt.secret").equals(provider.getProp("/siga.autenticacao.senha")))
 	        throw new RuntimeException("Parâmetros siga.jwt.secret e siga.autenticacao.senha não podem ser iguais.");
 	    
 		return provider.getProp(nome);

@@ -179,7 +179,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.jwt.cookie.name", "siga-jwt-auth");
 		provider.addPublicProperty("/siga.jwt.cookie.domain", null);
 		provider.addPrivateProperty("/siga.jwt.secret");
-		provider.addPrivateProperty("/siga.autenticacao.senha", provider.getProp("/siga.jwt.secret"));
+		provider.addPrivateProperty("/siga.autenticacao.senha", new StringBuffer(provider.getProp("/siga.jwt.secret")).reverse().toString());
 		provider.addPublicProperty("/siga.jwt.token.ttl", "3600");
 		provider.addPublicProperty("/siga.local", null);
 		provider.addPublicProperty("/siga.uf.padrao", null);

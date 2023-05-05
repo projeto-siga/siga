@@ -213,7 +213,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="form-control"><option value="FORMULARIO">Tarefa de Usuário</option>
 									<option value="DECISAO">Desvio Automático</option>
 									<option value="EMAIL">Enviar E-mail Automático</option>
-									<option value="EXECUTAR">Stript</option>
+									<option value="EXECUTAR">Script</option>
 									<option value="SUBPROCEDIMENTO">Iniciar Procedimento</option>
 									<option value="CRIAR_DOCUMENTO">Criar Documento</option>
 									<optgroup label="{{getPrincipalNome()}}"

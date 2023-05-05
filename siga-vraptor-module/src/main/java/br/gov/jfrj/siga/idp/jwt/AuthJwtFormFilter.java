@@ -104,9 +104,13 @@ public class AuthJwtFormFilter implements Filter {
 		}
 
 		// Envia Mensagem para Tela de Login
-		String mensagem = (e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)
-			? "&mensagem=" + URLEncoder.encode(SigaMessages.getMessage("login.erro.jwt"), "UTF-8")
-			: "";
+		String mensagem = "";
+		if (e.getClass() != SigaJwtInvalidException.class && e.getClass() != JWTExpiredException.class)
+			mensagem = URLEncoder.encode(SigaMessages.getMessage("login.erro.jwt"), "UTF-8");
+		else 
+		    mensagem = e.getLocalizedMessage();
+		if (!mensagem.isEmpty())
+		    mensagem = "&mensagem=" + URLEncoder.encode(mensagem, "UTF-8");
 
 		String cont = req.getRequestURL() + (req.getQueryString() != null ? "?" + req.getQueryString() : "");
 		String base = Prop.get("/siga.base.url");

@@ -15,6 +15,8 @@ public interface Autenticador {
                                                               // expirar
 
     static final String PROVIDER_ISSUER = "sigaidp";
+    static final String TOKEN_TYPE_KEY = "typ";
+    static final String TOKEN_TYPE_VALUE = "auth";
     static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora
 
     String criarCookie(HttpServletRequest req, HttpServletResponse resp, String principal) throws Exception;

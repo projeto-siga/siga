@@ -160,10 +160,6 @@ public class LoginController extends SigaController {
 		}
 	}
 
-	private String extrairAuthorization(HttpServletRequest request) {
-		return request.getHeader("Authorization").replaceAll(".* ", "").trim();
-	}
-
 	@Get("app/swapUser")
 	@Transacional
 	public void authSwap(String username, String cont) throws IOException {
@@ -212,25 +208,6 @@ public class LoginController extends SigaController {
 		} else
 			result.redirectTo("/");
 	}
-	
-	private Integer extrairTTL(HttpServletRequest request) throws Exception {
-		String opcoes = request.getHeader("Jwt-Options");
-		if (opcoes != null) {
-			Integer ttl = new JSONObject(opcoes).optInt("ttl");
-			ttl = ttl > 0 ? ttl : null;
-			return ttl;
-		}
-
-		return null;
-	}
-
-	private String extrairPermissoes(HttpServletRequest request) throws Exception {
-		String opcoes = request.getHeader("Jwt-Options");
-		if (opcoes != null) {
-			return new JSONObject(opcoes).optString("perm");
-		}
-		return null;
-	}	
 	
 	@Consumes("application/json")
 	@Post("public/app/login/novaSenha")

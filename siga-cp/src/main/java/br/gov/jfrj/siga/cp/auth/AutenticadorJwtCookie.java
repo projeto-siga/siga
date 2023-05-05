@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -33,13 +34,17 @@ public class AutenticadorJwtCookie implements Autenticador {
     @Override
     public String criarCookie(HttpServletRequest req, HttpServletResponse resp, String principal) throws Exception {
         SigaJwtProvider provider = getProvider(extrairModulo(req));
-        String token = provider.criarToken(principal, null, null, Autenticador.TIME_TO_EXPIRE_IN_S);
-        
+
+        Map<String, Object> claimsMap = new HashMap<>();
+        claimsMap.put(Autenticador.TOKEN_TYPE_VALUE, Autenticador.TOKEN_TYPE_VALUE);
+
+        String token = provider.criarToken(principal, null, claimsMap, Autenticador.TIME_TO_EXPIRE_IN_S);
+
         Map<String, Object> decodedToken = validarToken(token);
         Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
                 (String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
                 (Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(req));
-        
+
         Cookie cookie = buildCookie(token);
         addCookie(req, resp, cookie);
         return token;
@@ -53,7 +58,10 @@ public class AutenticadorJwtCookie implements Autenticador {
         Map<String, Object> decodedToken = validarToken(token);
         String principal = (String) decodedToken.get("sub");
         if (principal == null)
-            throw new SigaJwtInvalidException("Tipo de Token Inválido para autenticação");
+            throw new SigaJwtInvalidException("Token inválido para autenticação");
+        String typ = (String) decodedToken.get(Autenticador.TOKEN_TYPE_VALUE);
+        if (!Autenticador.TOKEN_TYPE_VALUE.equals(typ))
+            throw new SigaJwtInvalidException("Tipo de token inválido para autenticação");
         final long now = System.currentTimeMillis() / 1000L;
         if ((Integer) decodedToken.get("exp") < now + Autenticador.TIME_TO_RENEW_IN_S) {
             String tokenNew = renovarToken(token);
@@ -124,7 +132,7 @@ public class AutenticadorJwtCookie implements Autenticador {
             throws IllegalArgumentException, SigaJwtInvalidException, SigaJwtProviderException, InvalidKeyException,
             NoSuchAlgorithmException, IllegalStateException, SignatureException, IOException, JWTVerifyException {
         if (token == null) {
-            throw new SigaJwtInvalidException("Token inválido");
+            throw new SigaJwtInvalidException("");
         }
         SigaJwtProvider provider = getProvider(null);
         return provider.validarToken(token);
@@ -134,7 +142,7 @@ public class AutenticadorJwtCookie implements Autenticador {
             throws IllegalArgumentException, SigaJwtProviderException, InvalidKeyException, NoSuchAlgorithmException,
             IllegalStateException, SignatureException, IOException, JWTVerifyException {
         if (token == null) {
-            throw new RuntimeException("Token inválido");
+            throw new RuntimeException("");
         }
         SigaJwtProvider provider = getProvider(null);
         return provider.renovarToken(token, TIME_TO_EXPIRE_IN_S);

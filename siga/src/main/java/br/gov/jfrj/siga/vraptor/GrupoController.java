@@ -467,10 +467,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 		if (lot == null) {
 			throw new AplicacaoException("A unidade deve ser definida!");
 		} else {
-			dao().iniciarTransacao();
-			CpTipoDeConfiguracao tpConf = dao().consultar(
-					CpTipoDeConfiguracao.GERENCIAR_GRUPO,
-					CpTipoDeConfiguracao.class, false);
+			CpTipoDeConfiguracao tpConf = CpTipoDeConfiguracao.GERENCIAR_GRUPO;
 			CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.PODE;
 
 			CpConfiguracao conf = new CpConfiguracao();
@@ -480,8 +477,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			conf.setCpGrupo(daoGrupo(idCpGrupo));
 			conf.setHisDtIni(dao().consultarDataEHoraDoServidor());
 			dao().gravarComHistorico(conf, getIdentidadeCadastrante());
-			setIdCpGrupo(idCpGrupo);
-			dao().commitTransacao();
+			setIdCpGrupo(idCpGrupo);			
 		}
 
 	}

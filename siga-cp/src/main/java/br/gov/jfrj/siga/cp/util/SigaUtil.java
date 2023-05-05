@@ -209,6 +209,7 @@ public class SigaUtil {
 		claims.put("iat", iat);
 
 		claims.put("tipo", tipo);
+		claims.put("sub", sub);
 		
 		jwt = signer.sign(claims);
 

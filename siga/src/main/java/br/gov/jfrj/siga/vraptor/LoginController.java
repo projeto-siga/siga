@@ -15,10 +15,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -35,18 +33,15 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
-import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
-import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
-import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 @Controller
@@ -141,7 +136,7 @@ public class LoginController extends SigaController {
 	}
 
 	@Get("public/app/logout")
-	public void logout() {
+	public void logout() throws Exception {
 		/*
 		 * Interrompe a sessão local com SSO
 		 */
@@ -149,7 +144,7 @@ public class LoginController extends SigaController {
 				
 		request.getSession(false);
 
-		AuthJwtFormFilter.addCookie(request, response, AuthJwtFormFilter.buildEraseCookie());
+		AutenticadorFabrica.getInstance().removerCookie(getRequest(), getResponse());
 		
 		result.redirectTo("/");					
 		
@@ -202,19 +197,7 @@ public class LoginController extends SigaController {
 	}
 
 	private void gravaCookieComToken(String username, String cont) throws Exception {
-		String modulo = SigaJwtBL.extrairModulo(request);
-		SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
-
-		String token = jwtBL.criarToken(username, null, null, null);
-
-		Map<String, Object> decodedToken = jwtBL.validarToken(token);
-		Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
-				(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
-				(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
-
-		Cookie cookie = AuthJwtFormFilter.buildCookie(token);
-
-		AuthJwtFormFilter.addCookie(request, response, cookie);
+	    String token = AutenticadorFabrica.getInstance().criarCookie(request, response, username);
 
 		if (cont != null) {
 			if (cont.contains("?"))

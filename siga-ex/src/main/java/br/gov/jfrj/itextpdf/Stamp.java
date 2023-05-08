@@ -421,7 +421,7 @@ public class Stamp {
 				StringBuilder str = new StringBuilder();
 				//print 2 assinaturas
 				str.append(mensagem.substring(assinaturas.get(1), assinaturas.get(3)));
-				str.append("\n +" + (assinaturas.size() - (mensagem.substring(assinaturas.get(assinaturas.size())).contains("Documento Nº:") ? 3 : 2)) + " pessoas (Vide última página)");
+				str.append("\n +" + (assinaturas.size() - (mensagem.substring(assinaturas.get(assinaturas.size())).contains("Documento Nº:") ? 3 : 2)) + " pessoas (Vide última página) \n");
 				str.append(mensagem.substring(assinaturas.get(assinaturas.size())));
 				return str.toString();
 			}

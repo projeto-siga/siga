@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -18,26 +19,30 @@ import br.gov.jfrj.siga.cp.util.SigaFlyway;
 @ApplicationScoped
 public class GcStarter {
 
-	private final static org.jboss.logging.Logger log = Logger.getLogger(GcStarter.class);
-	public static EntityManagerFactory emf;
+    private final static org.jboss.logging.Logger log = Logger.getLogger(GcStarter.class);
+    public static EntityManagerFactory emf;
 
-	@PostConstruct
-	public void init() {
-		log.info("INICIANDO SIGAGC.WAR");
-		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
+    @Inject
+    public void setEM(EntityManagerFactory factory) {
+        emf = factory;
+    }
 
-		emf = Persistence.createEntityManagerFactory("default");
-		new MigrationThread().start();
-	}
+    @PostConstruct
+    public void init() {
+        log.info("INICIANDO SIGAGC.WAR");
+        CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 
-	public static class MigrationThread extends Thread {
-		public void run() {
-			try {
-				SigaFlyway.migrate("java:/jboss/datasources/SigaGcDS", "classpath:db/mysql/sigagc", true);
-			} catch (NamingException e) {
-				log.error("Erro na migração do banco", e);
-				SigaFlyway.stopJBoss();
-			}
-		}
-	}
+        new MigrationThread().start();
+    }
+
+    public static class MigrationThread extends Thread {
+        public void run() {
+            try {
+                SigaFlyway.migrate("java:/jboss/datasources/SigaGcDS", "classpath:db/mysql/sigagc", true);
+            } catch (NamingException e) {
+                log.error("Erro na migração do banco", e);
+                SigaFlyway.stopJBoss();
+            }
+        }
+    }
 }

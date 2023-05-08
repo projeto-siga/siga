@@ -126,7 +126,6 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
@@ -1635,8 +1634,10 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 
-		} catch (final Throwable t) {
-			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
+        } catch (final AplicacaoException t) {
+            throw t;
+        } catch (final Throwable t) {
+            throw new RuntimeException("Erro ao finalizar documento", t);
 		}
 
 		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
@@ -2022,6 +2023,7 @@ public class ExDocumentoController extends ExController {
 		
 	}
 
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/prever")
 	public void preve(final ExDocumentoDTO exDocumentoDTO, final String[] vars)
 			throws IllegalAccessException, InvocationTargetException,

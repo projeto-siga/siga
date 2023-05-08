@@ -5,9 +5,9 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.jboss.logging.Logger;
 
@@ -23,33 +23,39 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
 @TransactionManagement(value = TransactionManagementType.BEAN)
 public class WfStarter {
 
-	private final static org.jboss.logging.Logger log = Logger.getLogger(WfStarter.class);
-	public static EntityManagerFactory emf;
 
-	@PostConstruct
-	public void init() {
-		log.info("INICIANDO SIGAWF.WAR");
-		
+    private final static org.jboss.logging.Logger log = Logger.getLogger(WfStarter.class);
+    public static EntityManagerFactory emf;
+
+    @Inject
+    public void setEM(EntityManagerFactory factory) {
+        emf = factory;
+    }
+
+    @PostConstruct
+    public void init() {
+        log.info("INICIANDO SIGAWF.WAR");
+        
 		SigaVersion.loadSigaVersion();
 		log.info("SIGAWF Versão: v" + SigaVersion.SIGA_VERSION);
 		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
 		
-		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
-		CpTipoDeConfiguracao.mapear(WfTipoDeConfiguracao.values());
+        CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
+        CpTipoDeConfiguracao.mapear(WfTipoDeConfiguracao.values());
 
-		emf = Persistence.createEntityManagerFactory("default");
-		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_WF);
-		new MigrationThread().start();
-	}
+        Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA_WF);
+        new MigrationThread().start();
+    }
 
-	public static class MigrationThread extends Thread {
-		public void run() {
-			try {
-				SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "classpath:db/mysql/sigawf", true);
-			} catch (NamingException e) {
-				log.error("Erro na migração do banco", e);
-				SigaFlyway.stopJBoss();
-			}
-		}
-	}
+    public static class MigrationThread extends Thread {
+        public void run() {
+            try {
+                SigaFlyway.migrate("java:/jboss/datasources/SigaWfDS", "classpath:db/mysql/sigawf", true);
+            } catch (NamingException e) {
+                log.error("Erro na migração do banco", e);
+                SigaFlyway.stopJBoss();
+            }
+        }
+    }
+
 }

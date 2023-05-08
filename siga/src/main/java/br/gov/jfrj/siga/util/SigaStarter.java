@@ -5,6 +5,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -23,27 +24,31 @@ import br.gov.jfrj.siga.cp.util.SigaFlyway;
 @TransactionManagement(value = TransactionManagementType.BEAN)
 public class SigaStarter {
 
-	private final static org.jboss.logging.Logger log = Logger.getLogger(SigaStarter.class);
-	public static EntityManagerFactory emf;
+    private final static org.jboss.logging.Logger log = Logger.getLogger(SigaStarter.class);
+    public static EntityManagerFactory emf;
 
-	@PostConstruct
-	public void init() {
-		log.info("INICIANDO SIGA.WAR");
-		
+    @Inject
+    public void setEM(EntityManagerFactory factory) {
+        emf = factory;
+    }
+
+    @PostConstruct
+    public void init() {
+        log.info("INICIANDO SIGA.WAR");
+        
 		SigaVersion.loadSigaVersion();
 		log.info("SIGA Versão: v" + SigaVersion.SIGA_VERSION);
 		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
 		
-		
-		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
-		
-		try {
-			SigaFlyway.migrate("java:/jboss/datasources/SigaCpDS", "classpath:db/mysql/sigacp", false);
-		} catch (NamingException e) {
-			throw new RuntimeException(e);
-		}
-		SigaApiV1Servlet.migrationComplete = true;
-		emf = Persistence.createEntityManagerFactory("default");
-		Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA);
-	}
+        CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
+
+        try {
+            SigaFlyway.migrate("java:/jboss/datasources/SigaCpDS", "classpath:db/mysql/sigacp", false);
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
+        SigaApiV1Servlet.migrationComplete = true;
+        // emf = Persistence.createEntityManagerFactory("default");
+        Service.setUsuarioDeSistema(UsuarioDeSistemaEnum.SIGA);
+    }
 }

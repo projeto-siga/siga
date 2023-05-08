@@ -104,7 +104,7 @@
 				<c:if
 					test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;TRARQ: Transferência de Documentos Arquivados')}">
 						<li><a class="dropdown-item"
-								href="/sigaex/app/expediente/mov/transferir_doc_arquivado_lote">Transferência</a>
+								href="/sigaex/app/expediente/mov/transferir_doc_arquivado_lote">Transferência de Docs. Arquivado</a>
 						</li>
 				</c:if>
 			</c:catch>

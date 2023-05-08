@@ -36,15 +36,18 @@ public class ContextoPersistencia {
             return;
         for (AfterCommit ac : acs)
             ac.run();
+        afterCommit.remove();
 	}
 	
 	
-   public static void upgradeToTransactional() {
+   public static boolean upgradeToTransactional() {
         EntityTransaction transaction = em().getTransaction();
         if (!transaction.isActive()) {
             // System.out.println("*** UPGRADE para Transacional - " + thiz.method.toString());
             transaction.begin();
+            return true;
         }
+        return false;
     }
 	
 	static public void setEntityManager(EntityManager em) {
@@ -63,34 +66,44 @@ public class ContextoPersistencia {
 		return em;
 	}
 
-	static public void flushTransaction() {
+	static public boolean flushTransaction() {
 		if (em().getTransaction() != null && em().getTransaction().isActive()) {
 			em().flush();
 			em().getTransaction().commit();
+            runAfterCommit();
 			em().getTransaction().begin();
+			return true;
 		}
+		return false;
 	}
 	
-	static public void flushTransactionAndDowngradeToNonTransactional() {
+	static public boolean flushTransactionAndDowngradeToNonTransactional() {
 		if (em().getTransaction() != null && em().getTransaction().isActive()) {
 			em().flush();
 			em().getTransaction().commit();
+			runAfterCommit();
+			return true;
 		}
+		return false;
 	}
 	
-	public static void begin() {
+	public static boolean begin() {
 		EntityTransaction transaction = em().getTransaction();
 		if (transaction != null && !transaction.isActive()) {
 			transaction.begin();
+			return true;
 		}
+		return false;
 	}
 
-	public static void commit() {
+	public static boolean commit() {
 		EntityTransaction transaction = em().getTransaction();
 		if (transaction != null && transaction.isActive()) {
 			transaction.commit();
-			System.out.println(transaction.isActive());
+//			System.out.println(transaction.isActive());
+			return true;
 		}
+		return false;
  	}
 	
 	static public void setUserPrincipal(String userPrincipal) {

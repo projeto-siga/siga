@@ -1,7 +1,9 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <div>
-	<c:set var="td" value="${pi.definicaoDeTarefaCorrente}" scope="request"/>
+	<c:if test="${empty td}">
+		<c:set var="td" value="${pi.definicaoDeTarefaCorrente}" scope="request"/>
+	</c:if>
 	<c:set var="msgAviso" value="${pi.getMsgAviso(titular, lotaTitular)}" />
 	<c:set var="desabilitarFormulario" value="${pi.isDesabilitarFormulario(titular, lotaTitular)}" />
 	<c:if

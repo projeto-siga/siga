@@ -3637,7 +3637,7 @@ public class ExMovimentacaoController extends ExController {
 
 			ExMobil mobilJuntado = mob.getExMobilPai();
 			if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
-				cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null, null,
+				cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null,
 						null, Boolean.FALSE);
 				return;
 			}
@@ -3749,16 +3749,14 @@ public class ExMovimentacaoController extends ExController {
 
 	@Transacional
 	@Post("/app/expediente/mov/cancelar_juntada_gravar")
-	public void cancelarJuntadaGravar(Integer postback, String sigla,
-			String dtMovString, String descrMov, DpPessoaSelecao subscritorSel,
+	public void cancelarJuntadaGravar(Integer postback, String sigla, String descrMov, DpPessoaSelecao subscritorSel,
 			DpPessoaSelecao titularSel, boolean substituicao) throws Exception {
 
 		this.setPostback(postback);
 		
 		try {
-			if (dtMovString != null && !Data.validaDDMMYYYY(dtMovString)) { 
-				throw new RegraNegocioException("Data inválida. Deve estar no formato DD/MM/AAAA e o ano deve estar neste século.");
-			}
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			String dtMovString = sdf.format(dao().dt());
 			
 			ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
 					.setDtMovString(dtMovString).setSubstituicao(substituicao)

@@ -37,6 +37,10 @@ public class DocTest extends AuthTest {
         contemMarca(idMarcador, null, lotacao);
     }
 
+    public static void contemMarca(CpMarcadorEnum idMarcador) {
+        contemMarca(idMarcador, null, null);
+    }
+
     public static void contemAcao(String acao, Boolean pode) {
         Consultar.contemAcao(tlResp.get(), acao, pode);
     }

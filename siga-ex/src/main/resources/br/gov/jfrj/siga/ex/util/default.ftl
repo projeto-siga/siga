@@ -2828,6 +2828,9 @@ Pede deferimento.</span><br/><br/><br/>
 	        [@fimSubscritor]${(pessoaVO.subscritor.idPessoa)}[/@fimSubscritor]
     	[/#if]
 	[/#list]
+	[#if incluirAssinaturaBIE == true]
+   		<!-- FIM ASSINATURA -->
+	[/#if]
 [/#macro]
 
 [#macro assinaturaMovCentro formatarOrgao=false]

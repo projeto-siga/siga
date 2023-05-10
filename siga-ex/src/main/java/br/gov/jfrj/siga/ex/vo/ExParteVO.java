@@ -71,7 +71,7 @@ public class ExParteVO {
 
 	public ExParteVO(DpLotacao lota) {
 		sigla = lota.getSigla();
-		siglaAmpliada = lota.getSiglaAmpliada();
+		siglaAmpliada = lota.getSiglaCompleta();
 		descricao = lota.getDescricao();
 		descricaoAmpliada = lota.getDescricaoAmpliada();
 		iniciais = lota.getIniciais();
@@ -80,7 +80,7 @@ public class ExParteVO {
 
 	public ExParteVO(DpPessoa pess) {
 		sigla = pess.getSigla();
-		siglaAmpliada = pess.getSigla();
+		siglaAmpliada = pess.getSiglaCompleta();
 		descricao = pess.getDescricao();
 		descricaoAmpliada = pess.getDescricao();
 		iniciais = pess.getIniciais();

@@ -6,16 +6,21 @@ import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.ex.api.v1.DocTest;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import io.restassured.response.ValidatableResponse;
 
 public class IncluirDocumento extends DocTest {
 
     public static String incluirDocumentoTemporario(Pessoa pessoa, String siglaPai) {
+        return incluirDocumentoTemporario(pessoa, siglaPai, pessoa);
+    }
+
+    public static String incluirDocumentoTemporario(Pessoa pessoa, String siglaPai, Pessoa pessoaSubscritor) {
         ValidatableResponse resp = givenFor(pessoa)
 
                 .param("siglamobilpai", siglaPai)
                 .param("modelo", "Despacho")
-                .param("subscritor", pessoa.name())
+                .param("subscritor", pessoaSubscritor.name())
                 .param("texto_padrao", "Autorizo.")
                 .param("classificacao", "00.01.01.01")
 
@@ -32,6 +37,14 @@ public class IncluirDocumento extends DocTest {
     public static String incluirDespacho(Pessoa pessoa, String siglaPai) {
         String siglaTmp = incluirDocumentoTemporario(pessoa, siglaPai);
         String sigla = AssinarComSenha.assinarComSenha(pessoa, siglaTmp);
+        sigla += "A";
+        return sigla;
+    }
+
+    public static String incluirDespachoAssinadoPorOutraPessoa(Pessoa pessoa, String siglaPai,
+            Pessoa pessoaSubscritor) {
+        String siglaTmp = incluirDocumentoTemporario(pessoa, siglaPai, pessoaSubscritor);
+        String sigla = AssinarComSenha.assinarComSenha(pessoaSubscritor, siglaTmp);
         sigla += "A";
         return sigla;
     }
@@ -65,4 +78,17 @@ public class IncluirDocumento extends DocTest {
         contemAcao("assinar", false);
         contemAcao("cancelar_juntada", true);
     }
+
+    @Test
+    public void test_IncluirDespachoAssinadoPorOutraPessoa_OK() {
+        String siglaPai = Criar.criarMemorando(Pessoa.ZZ99999);
+        String sigla = incluirDespachoAssinadoPorOutraPessoa(Pessoa.ZZ99999, siglaPai, Pessoa.ZZ99998);
+
+        consultar(Pessoa.ZZ99999, sigla);
+        contemMarca(CpMarcadorEnum.JUNTADO);
+        contemAcao("assinar", false);
+        contemAcao("cancelar_juntada", true);
+        contemMovimentacao(ExTipoDeMovimentacao.JUNTADA, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
+    }
+
 }

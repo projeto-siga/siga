@@ -51,7 +51,6 @@ import br.gov.jfrj.siga.base.SigaMessages;
 
 public class Stamp {
 	private static final String VALIDAR_ASSINATURA_URL = "/sigaex/app/validar-assinatura?pessoa=";
-	private static final boolean EXIBICAO_TODAS_ASS_SOMENTE_ULT_PAG_DOC_PDF = Prop.getBool("/siga.exibicao.todas.assinaturas.somente.ultima.pagina.documentos.pdf");
 	private static float QRCODE_LEFT_MARGIN_IN_CM = 0.6f;
 	private static float QRCODE_SIZE_IN_CM = 1.5f;
 	private static float BARCODE_HEIGHT_IN_CM = 2.0f;
@@ -264,7 +263,7 @@ public class Stamp {
 				}
 
 				if (mensagem != null) {
-					String msg = i == n ? mensagem : gerarReducaoAssinaturas(mensagem);
+					String msg = gerarReducaoAssinaturas(mensagem);
 					PdfPTable table = new PdfPTable(1);
 					table.setTotalWidth(r.getWidth() - image39.getHeight() - (QRCODE_LEFT_MARGIN_IN_CM
 							+ QRCODE_SIZE_IN_CM + 4 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT);
@@ -407,7 +406,7 @@ public class Stamp {
 	
 	private static String gerarReducaoAssinaturas(String mensagem) {
 		Pattern pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b");
-		if (EXIBICAO_TODAS_ASS_SOMENTE_ULT_PAG_DOC_PDF && pattern.matcher(mensagem).find()) {
+		if (true && pattern.matcher(mensagem).find()) {
 			pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b|(,| e )|(\\bDocumento Nº: \\b)");
 	        Matcher mm = pattern.matcher(mensagem);
 			
@@ -421,7 +420,8 @@ public class Stamp {
 				StringBuilder str = new StringBuilder();
 				//print 2 assinaturas
 				str.append(mensagem.substring(assinaturas.get(1), assinaturas.get(3)));
-				str.append("\n +" + (assinaturas.size() - (mensagem.substring(assinaturas.get(assinaturas.size())).contains("Documento Nº:") ? 3 : 2)) + " pessoas (Vide última página) \n");
+				str.append(" +" + (assinaturas.size() - (mensagem.substring(assinaturas.get(assinaturas.size())).contains("Documento Nº:") ? 3 : 2)) 
+									+ " Pessoas - Para verificar todas as assinaturas consulte o link de autenticação. \n");
 				str.append(mensagem.substring(assinaturas.get(assinaturas.size())));
 				return str.toString();
 			}

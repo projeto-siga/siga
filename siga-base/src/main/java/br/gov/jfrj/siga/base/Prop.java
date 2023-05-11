@@ -370,9 +370,5 @@ public class Prop {
 		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax", null);
 		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.quantidade.documentos", null);
 		
-		/* Configuração para exibicao de todas as assinaturas somente na ultima pagina do documento em PDF,
-		 * caso o mesmo exceda 2 assinaturas */
-		provider.addPublicProperty("/siga.exibicao.todas.assinaturas.somente.ultima.pagina.documentos.pdf", "false");
-		
 	}
 }

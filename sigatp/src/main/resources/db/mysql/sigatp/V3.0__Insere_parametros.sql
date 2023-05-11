@@ -23,4 +23,4 @@ values
 insert into sigatp.parametro 
 	(id, nomeparametro, valorparametro, datainicio, descricao, id_orgao_usu) 
 values 
-	(52, 'total.dias.pesquisa', '15', current_timestamp, 'Numero de dias para pesquisar requisicoes ou missoes TRF.', 3);	
+	(52, 'total.dias.pesquisa', '15', current_timestamp, 'Numero de dias para pesquisar requisicoes ou missoes TRF.', 999999999);	

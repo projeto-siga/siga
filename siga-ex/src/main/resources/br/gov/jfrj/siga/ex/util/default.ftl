@@ -5143,7 +5143,9 @@ ${texto}
 [/#macro]
 
 [#function infer_type var opcoes=""]
-	[#if var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	[#if opcoes?has_content]
+    	[#return "selecao"]
+    [#elseif var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "cpf"]
 	[#elseif var?matches("^cnpj([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "cnpj"]
@@ -5169,8 +5171,6 @@ ${texto}
     	[#return "documento"]
 	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "funcao"]
-    [#elseif opcoes?has_content]
-    	[#return "selecao"]
     [#else]
     	[#return "texto"]
     [/#if]
@@ -5375,7 +5375,7 @@ Exemplos de utilização:
 		[#if kind=="documento"]
 			[#local selectTipo = 'expediente' /]
 		[/#if]
-	    [#assign suffix = "_" + selectTipo + "Sel.sigla" /]
+	    [#local suffix = "_" + selectTipo + "Sel.sigla" /]
     [/#if]
 	
 	[#-- trata cpf e cnpj --]
@@ -5856,18 +5856,18 @@ Exemplos de utilização:
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="pessoa" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="pessoa" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "lotacao"]
-				[@field_selectable tipo="lotacao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="lotacao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "cossignatario"]
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="cosignatario" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="cosignatario" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "funcao"]
-				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "documento"]
-			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[/#if]
 		        [#if required]            		    
 			   		<div class="invalid-feedback invalid-feedback-${var}${suffix!}">Preenchimento obrigatório</div>
@@ -5893,9 +5893,6 @@ Exemplos de utilização:
     [#assign varName = var + tipoSel + "Sel.descricao" /]
     [#local vDescricao = .vars[varName]!default]
     <input type="hidden" name="vars" value="${varName}" />
-
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
-    <input type="hidden" name="obrigatorios" value="${varName}" />	    
 
     [#if !gerar_formulario!false]
         [@field_selectable_box titulo=titulo var=var tipo=tipo refresh_js=refresh_js paramList=paramList modulo=modulo col=col hint=hint /]	        

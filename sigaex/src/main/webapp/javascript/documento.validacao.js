@@ -252,8 +252,9 @@ function aplicarMensagemErro(elemento, mensagem) {
 }
 
 function obterLabel(elemento) {
-	
-	var fieldName = elemento.attr('name').replace(/_[A-Za-z0-9_]+Sel\.sigla$/, "");
+	var elementoName = elemento.attr('name');
+	if (!elementoName) return;
+	var fieldName = elementoName.replace(/_[A-Za-z0-9_]+Sel\.sigla$/, "");
 	var tituloLabel = $('label[for="' + fieldName + '"]');
 	
 	if (tituloLabel.length == 0) {

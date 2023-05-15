@@ -1671,7 +1671,20 @@ public class ExDao extends CpDao {
 	public Date getServerDateTime() {
 		return null;
 	}
+	public List<ExModelo> listarModelosAnterioresIdAndHisDtFim(final Long idInicial) {
+		List<ExModelo> lista = null;
 
+		if (idInicial != null) {
+			Query q = em()
+					.createQuery(
+							"select m.idMod, m.hisDtFim from ExModelo m where m.hisIdIni = :idInicial and  m.hisDtFim is not null "
+									+ " order by m.hisDtFim desc ");
+
+			q.setParameter("idInicial",idInicial);
+			lista  = q.getResultList();
+		}
+		return lista;
+	}
 	public List<ExModelo> listarTodosModelosOrdenarPorNome(
 			ExTipoDocumento tipo, String script) {
 		Query q = null;

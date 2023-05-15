@@ -7,12 +7,9 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
-<link rel="stylesheet" href="/siga/javascript/select2/select2.css"
-	type="text/css" media="screen, projection" />
-<link rel="stylesheet"
-	href="/siga/javascript/select2/select2-bootstrap.css" type="text/css"
-	media="screen, projection" />
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css" />
 <link rel="stylesheet" href="/siga/codemirror/theme/default.css" />
 
@@ -52,6 +49,10 @@
 	<script src="/siga/codemirror/mode/css/css.js"></script>
 	<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
+	<link rel=stylesheet href="/siga/codemirror_merge/addon/merge/merge.css">
+	<script src="/siga/codemirror_merge/addon/merge/dep/diff_match_patch.js"></script>
+	<script src="/siga/codemirror_merge/addon/merge/merge.js"></script>
+
 
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -130,14 +131,13 @@
 							<div class="form-group">
 								<label for="extensoesArquivo">Extensões permitidas para o arquivo capturado de formato livre</label> <select
 									class="form-control siga-select2" id="extensoesArquivo" name="extensoesArquivo[]"
-									multiple="" data-maximum-selection-length="20">
+									multiple="">
 									<c:forEach items="${listaExtensoes}" var="item">
 										<option value="${item}"
 												${fn:contains(extensoesArquivo, item) ? 'selected' : ''}
 										><div>${item}</div></option>
 									</c:forEach>
 								</select>
-								<small>Escolha até 20 extensões de arquivo</small>
 							</div>
 						</div>
 					</div>
@@ -193,6 +193,81 @@
 								</siga:escolha>
 							</div>
 						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<p>
+								<a class="btn btn-primary" data-toggle="collapse" href="#collapseComparacao" role="button" aria-expanded="false" aria-controls="collapseComparacao">
+									Comparar Versões
+								</a>
+							</p>
+							<div class="collapse show" id="collapseComparacao">
+								<h2>Diferenças</h2>
+								<div class="form-group">
+									<label><b>Versões</b></label>
+									<select id="versao" name="versao" value="${modeloVersao}" class="custom-select">
+										<option value="${id}">[Versão Atual]</option>
+										<c:forEach var="item" items="${listaModeloHistorico}">
+											<option value="${item[0]}">${item[1]}</option>
+										</c:forEach>
+									</select>
+								</div>
+								<div id=view></div>
+							</div>
+							<br>
+							<script>
+								function setConteudoModeloSelecionado(item) {
+									if(item.id !== undefined && item.id === 'conteudoModeloSelecionado' ) dv.rightOriginal().setValue($(item).val());
+								}
+
+								function abrirNovoModelo(item) {
+									if(item.id !== undefined && item.id === 'novoIdModelo' && $(item).val() !== '')
+										window.location.href = window.location.origin+'/sigaex/app/modelo/editar?id='+$(item).val();
+								}
+
+
+								$('#versao').on('change', function() {
+									$.ajax({
+										url:'/sigaex/app/modelo/editar',
+										type: "GET",
+										data: { idModeloVersao: this.value },
+										success: function(data) {
+											Array.from($(data)).forEach(setConteudoModeloSelecionado)
+										}
+									});
+								});
+
+								var value, orig1, orig2, dv, hilight= true;
+								function initUI(panes) {
+									if (value == null) return;
+									var target = document.getElementById("view");
+									target.innerHTML = "";
+									dv = CodeMirror.MergeView(target, {
+										value: value,
+										origLeft: panes == 3 ? orig1 : null,
+										orig: orig2,
+										lineNumbers: true,
+										mode: "freemarker",
+										highlightDifferences: hilight
+
+									});
+								}
+
+								function toggleDifferences() {
+									dv.setShowDifferences(hilight = !hilight);
+								}
+
+								window.onload = function() {
+									value = document.getElementById("conteudo").value;
+									orig1 = value;
+									orig2 = value;
+									initUI(2);
+									$("#collapseComparacao").removeClass("show");
+								};
+
+							</script>
+						</div>
+
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
@@ -275,8 +350,30 @@
 	<script type="text/javascript"
 		src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
-
 	<script type="text/javascript">
+
+		function getDocHeight(element) {
+
+			return Math.max(
+					element.scrollHeight, element.offsetHeight, element.clientHeight
+			);
+		}
+
+		function KeyPress(e) {
+			var evtobj = window.event? event : e
+
+			if (evtobj.keyCode === 36 && evtobj.ctrlKey)
+			{
+				window.scrollTo(0, 600)
+			}
+			if (evtobj.keyCode === 35 && evtobj.ctrlKey)
+			{
+				window.scrollTo(0, getDocHeight(document.querySelectorAll('div[class="CodeMirror-code"]')[0].parentElement)+600);
+			}
+		}
+		document.getElementById("template/freemarker").addEventListener('keydown', KeyPress)
+
+
 		var editor = null;
 		function sbmt() {
 			frm.action='/modelo/editar';
@@ -291,6 +388,7 @@
 			span.style.display="";
 			if (editor == null && id.value == "template/freemarker") {
 				editor = CodeMirror.fromTextArea(document.getElementById("conteudo"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, firstLineNumber: 4, electricChars: false, smartIndent: false, viewportMargin: Infinity});
+				editor.setOption("theme","darcula");
 			}
 		}
 		
@@ -370,6 +468,9 @@
 				                    complete: function() {
 				                    	$.unblockUI();
 					                },
+									success: function(data){
+										Array.from($(data)).forEach(abrirNovoModelo);
+									},
 			                        error: function(data) {
 			                            alert("Erro gravando as alterações!");
 			                        }
@@ -416,5 +517,9 @@
 						$("#extensoesArquivo").prop("disabled", true);
 				}
 	</script>
+	<input type="hidden" id="novoIdModelo" value="${novoIdModelo}"/>
+	<textarea id="conteudoModeloSelecionado" style="display:none;" cols="1" rows="1"
+			  name="conteudoModeloSelecionado" class="form-control"><c:out value="${conteudoModelo}"
+														  default="" /></textarea>
 
 </siga:pagina>

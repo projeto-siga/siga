@@ -5361,12 +5361,21 @@ Exemplos de utilização:
         [#return]
     [/#if]
     
-	[#-- tipo oculto não deve gerar nem o grupo --]
+	[#-- tipo checkbox --]
 	[#if kind=="checkbox"]
 		[#local checkedValue=(value == "")?string("Sim", value) /]
 		[#local uncheckedValue=(default == "")?string("Não", default) /]
 		[#local default=uncheckedValue /]
 		[#local suffix="_chk" /]
+    [/#if]
+    
+	[#-- tipo selecionavel --]
+	[#if kind=="pessoa" || kind=="lotacao" || kind=="cossignatario" || kind=="funcao" || kind=="documento"]
+		[#local selectTipo = kind /]
+		[#if kind=="documento"]
+			[#local selectTipo = 'expediente' /]
+		[/#if]
+	    [#assign suffix = "_" + selectTipo + "Sel.sigla" /]
     [/#if]
 	
 	[#-- trata cpf e cnpj --]
@@ -5393,22 +5402,21 @@ Exemplos de utilização:
 		[#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
 		[@inlineTemplate/] 
     [/#if]
-
-	[#if (alerta!"Não") = 'Sim' && v = ""]
+    
+	[#if (alerta!"Não") == 'Sim' && v == ""]
 	    [#list obrigatorios?split(",") as campo]
-    	     [#if campo == var]
+    	     [#if campo == var + suffix!""]
         		[#local vermelho = "color:red"]
              [/#if]
         [/#list]
     [/#if]
 
-    [#if required]
-    	[#local negrito = "font-weight:bold"]
-    	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
-    [/#if]
-    
     [#if !gerar_formulario!false]    	
 		<div class="form-group ${col} mb-2">
+		    [#if required]
+		    	[#local negrito = "font-weight:bold"]
+		    	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
+		    [/#if]
 			[#if title?has_content && kind != "checkbox" && kind != "radio" ]    			
 				<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${title}</label>
 			[/#if]
@@ -5876,9 +5884,9 @@ Exemplos de utilização:
 
     [#assign varName = var + tipoSel + "Sel.id" /]    
     [#local vId = .vars[varName]!default]
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
     <input type="hidden" name="vars" value="${varName}" />
-
+    
+    [#assign varName = var + tipoSel + "Sel.sigla" /]
     [#local vSigla = .vars[varName]!default]
     <input type="hidden" name="vars" value="${varName}" />
 

@@ -149,7 +149,9 @@ public class SolicitacaoController extends SrController {
 
 	@Transacional
 	@Path("/gravarPermissaoUsoLista")
-	public void gravarPermissaoUsoLista(SrConfiguracao permissao) throws Exception {
+	public void gravarPermissaoUsoLista(SrConfiguracao permissao, SrLista listaPrioridade, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
+		permissao.setListaPrioridade(listaPrioridade);
+		permissao.setTipoPermissaoSet(tipoPermissaoSet);
 		permissao.salvarComoPermissaoUsoLista();
 		result.use(Results.http()).body(permissao.toVO().toJson());
 	}
@@ -1062,6 +1064,13 @@ public class SolicitacaoController extends SrController {
 				.selecionar(solicitacao.getCodigo());
 
 		if (criaFilha) {
+			
+			if ((solicitacao.getIdSolicitacao() == null) && solicitacao.getItemConfiguracao().getTituloItemConfiguracao()
+					.toLowerCase().startsWith("serviço interno")) {
+				solicitacao.setAtendenteNaoDesignado(getTitular().getLotacao().getLotacaoAtual());
+				atendenteNaoDesignado = getTitular().getLotacao().getLotacaoAtual();
+			}
+			
 			SrSolicitacao filha = solicitacaoEntity.escalonarCriandoFilha(getCadastrante(),
 					getCadastrante().getLotacao(), getTitular(), getLotaTitular(), solicitacao.getItemConfiguracao(),
 					solicitacao.getAcao(), solicitacao.getDesignacao(), atendenteNaoDesignado, fechadoAuto, descricao,

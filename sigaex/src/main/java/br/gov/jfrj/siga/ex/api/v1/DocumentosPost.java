@@ -371,7 +371,7 @@ public class DocumentosPost implements IDocumentosPost {
 
 		if (doc.getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante,
 				cadastrante.getLotacao(), doc.getExMobilPai())) {
-			exBL.copiarRestringir(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(), cadastrante,
+			exBL.herdaRestricaoAcessoDocumentoPai(doc.getMobilGeral(), doc.getExMobilPai().getDoc().getMobilGeral(), cadastrante,
 					ctx.getTitular(), doc.getData());
 		}
 
@@ -380,7 +380,8 @@ public class DocumentosPost implements IDocumentosPost {
 						|| doc.getExTipoDocumento().getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_EXTERNO_CAPTURADO)
 				&& (exBL.getConf().podePorConfiguracao(ctx.getTitular(), ctx.getLotaTitular(),
 						ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
-			exBL.finalizar(cadastrante, ctx.getLotaTitular(), doc);
+			exBL.finalizar(cadastrante, ctx.getLotaCadastrante(), 
+					ctx.getTitular(), ctx.getLotaTitular(), doc); 
 
 		try {
 			exBL.incluirCosignatariosAutomaticamente(cadastrante, ctx.getLotaTitular(), doc);

@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -19,28 +20,32 @@ import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
 @ApplicationScoped
 public class SrStarter {
 
-	private final static org.jboss.logging.Logger log = Logger.getLogger(SrStarter.class);
+    private final static org.jboss.logging.Logger log = Logger.getLogger(SrStarter.class);
 
-	public static EntityManagerFactory emf;
+    public static EntityManagerFactory emf;
 
-	@PostConstruct
-	public void init() {
-		log.info("INICIANDO SIGASR.WAR");
-		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
-		CpTipoDeConfiguracao.mapear(SrTipoDeConfiguracao.values());
+    @Inject
+    public void setEM(EntityManagerFactory factory) {
+        emf = factory;
+    }
 
-		emf = Persistence.createEntityManagerFactory("default");
-		new MigrationThread().start();
-	}
+    @PostConstruct
+    public void init() {
+        log.info("INICIANDO SIGASR.WAR");
+        CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
+        CpTipoDeConfiguracao.mapear(SrTipoDeConfiguracao.values());
 
-	public static class MigrationThread extends Thread {
-		public void run() {
-			try {
-				SigaFlyway.migrate("java:/jboss/datasources/SigaServicosDS", "classpath:db/mysql/sigasr", true);
-			} catch (NamingException e) {
-				log.error("Erro na migração do banco", e);
-				SigaFlyway.stopJBoss();
-			}
-		}
-	}
+        new MigrationThread().start();
+    }
+
+    public static class MigrationThread extends Thread {
+        public void run() {
+            try {
+                SigaFlyway.migrate("java:/jboss/datasources/SigaServicosDS", "classpath:db/mysql/sigasr", true);
+            } catch (NamingException e) {
+                log.error("Erro na migração do banco", e);
+                SigaFlyway.stopJBoss();
+            }
+        }
+    }
 }

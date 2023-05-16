@@ -2,70 +2,72 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 
-
 <siga:pagina titulo="Equipes">
-	
+
 	<jsp:include page="../main.jsp"></jsp:include>
-	
-	<style>
-	.ui-widget-header {
-		border: 1px solid #365b6d;
-		background: #365b6d;
-	}
-	</style>
-	
+
+	<script src="/sigasr/javascripts/moment.js"></script>
 	<script src="/sigasr/javascripts/jquery.dataTables.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.serializejson.min.js"></script>
 	<script src="/sigasr/javascripts/jquery.populate.js"></script>
-	<script src="/sigasr/javascripts/base-service.js"></script>
-	
-	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
 	<script src="/sigasr/javascripts/jquery.maskedinput.min.js"></script>
+	<script src="/sigasr/javascripts/detalhe-tabela.js"></script>
+	<script src="/sigasr/javascripts/base-service.js"></script>
 	<script src="/sigasr/javascripts/jquery.validate.min.js"></script>
 	<script src="/sigasr/javascripts/language/messages_pt_BR.min.js"></script>
-	<script src="/sigasr/javascripts/moment.js"></script>
-	
-	
-	
-	<div class="gt-bd clearfix">
-	    <input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario" value='${lotacaoUsuario.toJson()}'/>
-		<div class="gt-content">
-			<h2>Pesquisa de Equipes</h2>
-			<!-- content bomex -->
-			<div class="gt-content-box gt-for-table dataTables_div">
-				<table id="equipes_table" class="gt-table display">
+
+	<div class="container-fluid mb-2">
+		<input type="hidden" id="lotacaoUsuario" name="lotacaoUsuario"
+			value='${lotacaoUsuario.toJson()}' />
+		<h2>Pesquisa de Equipes</h2>
+		<div class="card card-body mb-2">
+			<div class="table-responsive">
+				<table id="equipes_table">
 					<thead>
 						<tr>
-							<th style="font-weight: bold;">Sigla</th>
+							<th>Sigla</th>
 							<th>Lotação</th>
 						</tr>
-					</thead>	
+					</thead>
 					<tbody>
 						<c:forEach items="${listaEquipe}" var="equipe">
-							<tr <c:if test="${equipe.podeEditar(lotaTitular, cadastrante)}">
-									onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')" style="cursor: pointer;"</c:if>
+							<tr
+								<c:if test="${equipe.podeEditar(lotaTitular, cadastrante)}">onclick="equipeService.editar($(this).data('json'), 'Alterar Equipe')" style="cursor: pointer;"</c:if>
 								data-json-id="${equipe.idEquipe}" data-json='${equipe.toJson()}'>
-								<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									${equipe.lotacaoEquipe.sigla}
-								</td>
-								<td class="gt-celula-nowrap" style="font-size: 13px; border-bottom: 1px solid #ccc !important; padding: 7px 10px;">
-									${equipe.lotacaoEquipe.descricao}
-								</td>
+								<td>${equipe.lotacaoEquipe.sigla}</td>
+								<td>${equipe.lotacaoEquipe.descricao}</td>
 							</tr>
 						</c:forEach>
 					</tbody>
 				</table>
+				<a onclick="equipeService.cadastrar('Incluir Equipe')"
+					class="btn btn-primary" style="color: #fff">Incluir</a>
 			</div>
-			<div class="gt-table-buttons">
-				<a onclick="equipeService.cadastrar('Incluir Equipe')" class="gt-btn-medium gt-btn-left">Incluir</a>
+
+			<div class="gt-content-box" id="modal-error" style="display: none;">
+				<table width="100%">
+					<tr>
+						<td align="center" valign="middle">
+							<table class="form" width="50%">
+								<tr>
+									<td style="text-align: center; padding-top: 10px;">
+										<h3></h3>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>
-	
-	<sigasr:modal nome="equipe" titulo="Cadastrar Equipe">
+
+	<sigasr:modal nome="equipe" titulo="Cadastrar Equipe" largura="80%">
 		<div id="divEditarEquipeForm"><jsp:include page="editar.jsp"></jsp:include></div>
 	</sigasr:modal>
+
 </siga:pagina>
+
 
 <script type="text/javascript">
 	var opts = {

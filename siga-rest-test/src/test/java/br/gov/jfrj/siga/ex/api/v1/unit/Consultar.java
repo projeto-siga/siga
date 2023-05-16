@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.ex.api.v1.DocTest;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import io.restassured.response.ValidatableResponse;
 
 public class Consultar extends DocTest {
@@ -40,23 +41,23 @@ public class Consultar extends DocTest {
 
     public static void contemMarca(ValidatableResponse resp, CpMarcadorEnum idMarcador, Pessoa pessoa,
             Lotacao lotacao) {
-        try {
-            if (pessoa == null)
-                if (lotacao == null)
-                    resp.body("marcas.findAll {it.idMarcador == " + idMarcador.getId()
-                            + " && it.idPessoaIni == null && it.idLotacaoIni == null}.id", not(empty()));
-                else
-                    resp.body("marcas.findAll {it.idMarcador == " + idMarcador.getId()
-                            + " && it.idPessoaIni == null && it.idLotacaoIni == "
-                            + lotacao.getId() + "}.id", not(empty()));
-            else if (lotacao == null)
-                resp.body("marcas.findAll {it.idMarcador == " + idMarcador.getId() + " && it.idPessoaIni == "
-                        + pessoa.getId() + " && it.idLotacaoIni == null}.id", not(empty()));
 
-            else
-                resp.body("marcas.findAll {it.idMarcador == " + idMarcador.getId() + " && it.idPessoaIni == "
-                        + pessoa.getId() + " && it.idLotacaoIni == "
-                        + lotacao.getId() + "}.id", not(empty()));
+        String s = "marcas.findAll {it.idMarcador == " + idMarcador.getId();
+
+        if (pessoa == null)
+            s += " && it.idPessoaIni == null";
+        else
+            s += " && it.idPessoaIni == " + pessoa.getId();
+
+        if (lotacao == null)
+            s += " && it.idLotacaoIni == null";
+        else
+            s += " && it.idLotacaoIni == " + lotacao.getId();
+
+        s += "}.id";
+
+        try {
+            resp.body(s, not(empty()));
         } catch (AssertionError e) {
             throw new AssertionError(
                     "Não encontrei marca " + idMarcador.name() + " com pessoa "
@@ -80,6 +81,34 @@ public class Consultar extends DocTest {
         } catch (AssertionError e) {
             throw new AssertionError(
                     "Não encontrei ação " + acao + " com pode == " + pode);
+        }
+    }
+
+    public static void contemMovimentacao(ValidatableResponse resp, ExTipoDeMovimentacao idTipoDeMovimentacao,
+            Pessoa pessoaCadastrante,
+            Lotacao lotacaoCadastrante) {
+
+        String s = "mobs[0].movs.findAll {it.exTipoMovimentacao == '" + idTipoDeMovimentacao.name() + "'";
+
+        if (pessoaCadastrante == null)
+            s += " && it.parte.cadastrante.siglaAmpliada == null";
+        else
+            s += " && it.parte.cadastrante.siglaAmpliada == '" + pessoaCadastrante.name() + "'";
+
+        if (lotacaoCadastrante == null)
+            s += " && it.parte.lotaCadastrante.siglaAmpliada == null";
+        else
+            s += " && it.parte.lotaCadastrante.siglaAmpliada == '" + lotacaoCadastrante.name() + "'";
+
+        s += "}.idMov";
+
+        try {
+            resp.body(s, not(empty()));
+        } catch (AssertionError e) {
+            throw new AssertionError(
+                    "Não encontrei movimentação " + idTipoDeMovimentacao.name() + " com cadastrante "
+                            + (pessoaCadastrante == null ? "nula" : pessoaCadastrante.name()) + " e lotação cadastrante "
+                            + (lotacaoCadastrante == null ? "nula" : lotacaoCadastrante.name()));
         }
     }
 

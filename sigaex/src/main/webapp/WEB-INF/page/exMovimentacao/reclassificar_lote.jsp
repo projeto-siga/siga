@@ -11,14 +11,17 @@
           media="screen, projection"/>
 
     <c:set var="thead_color" value="${thead_color}" scope="session"/>
-    
+
     <div class="container-fluid">
         <div class="card bg-light mb-3">
             <div class="card-header">
                 <h5>Reclassifica&ccedil;&atilde;o em Lote</h5>
             </div>
             <div class="card-body">
-                <form name="frm" id="frm" class="form" method="post" action="reclassificar_lote_gravar" theme="simple">
+                <form name="frm" id="frm" class="form" method="post" action="listar_docs_reclassificados"
+                      theme="simple">
+                    <input type="hidden" name="siglasDocumentosReclassificados" value=""/>
+                    <input type="hidden" name="errosDocumentosNaoReclassificadosJson" value=""/>
                     <div class="row">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -130,17 +133,24 @@
                     Sim</a>
             </div>
         </siga:siga-modal>
+        <siga:siga-modal id="progressModal" exibirRodape="false" centralizar="true" tamanhoGrande="true"
+                         tituloADireita="Reclassifica&ccedil;&atilde;o em lote" linkBotaoDeAcao="#"
+                         botaoFecharNoCabecalho="false">
+            <div class="modal-body">
+                <div id="progressbar-ad"></div>
+            </div>
+        </siga:siga-modal>
     </div>
     <script type="text/javascript">
         function listarDocumentosParaReclassificarEmLote(offset) {
             sigaSpinner.mostrar();
 
             let selectIdLotacao = document.getElementById('selectLotacao').value;
-            let siglaClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_sigla').value;
+            let selectIdClassificacaoAtual = document.getElementById('formulario_classificacaoAtualSel_id').value;
             offset = offset == null ? 0 : offset;
 
-            let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?siglaClassificacao='
-                + siglaClassificacaoAtual + '&dpLotacaoSelecao=' + selectIdLotacao + '&offset=' + offset;
+            let url = '/sigaex/app/expediente/doc/listar_docs_para_reclassificar_lote?classificacaoSelecao='
+                + selectIdClassificacaoAtual + '&dpLotacaoSelecao=' + selectIdLotacao + '&offset=' + offset;
 
             $.ajax({
                 url: url,
@@ -203,10 +213,141 @@
         }
 
         function confirmar() {
-            sigaSpinner.mostrar();
             document.getElementById("btnOk").disabled = true;
             sigaModal.fechar('confirmacaoModal');
+            enviarParaReclassificarLote();
+        }
+
+        let siglasDocumentosReclassificados = [];
+        let errosDocumentosNaoReclassificadosMap = new Map();
+
+        function enviarParaReclassificarLote() {
+
+            let novaClassificacao = document.getElementById('formulario_classificacaoNovaSel_sigla').value;
+            let motivo = document.getElementById('motivo').value;
+            let responsavel = document.getElementById('formulario_subscritorSel_sigla').value;
+            let titular = document.getElementById('formulario_titularSel_sigla').value;
+
+            let dtMovString = document.getElementsByName('dtMovString')[0].value;
+            if(dtMovString.trim() !== ""){
+                dtMovString = formataDataString(dtMovString);
+            }
+
+            process.push(function () {
+                $('#progressModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
+
+            Array.from($(".chkDocumento:checkbox").filter(":checked")).forEach(
+                chk => {
+                    process.push(function () {
+                        let siglaCodigoCompacto = chk.value.replaceAll('-', '').replaceAll('/', '');
+                        return reclassificarPost(siglaCodigoCompacto, novaClassificacao, motivo, dtMovString,
+                            responsavel, titular);
+                    });
+                    process.push(function () {
+                        chk.checked = false;
+                    });
+                }
+            );
+
+            process.push(function () {
+                sigaModal.fechar('progressModal');
+                sigaSpinner.mostrar();
+                enviarParaListagemDocumentosReclassificados();
+            });
+
+            process.run();
+        }
+
+        function reclassificarPost(documentoSelSigla, novaClassificacao, motivo, dtMovString, responsavel, titular) {
+            $.ajax({
+                url: '/sigaex/api/v1/documentos/' + documentoSelSigla + '/reclassificar',
+                type: 'POST',
+                async: false,
+                data: {
+                    sigla: documentoSelSigla,
+                    novaClassificacao: novaClassificacao,
+                    motivo: motivo,
+                    data: dtMovString,
+                    responsavel: responsavel,
+                    titular: titular
+                },
+                dataType: 'json',
+                success: function () {
+                    siglasDocumentosReclassificados.push(documentoSelSigla);
+                },
+                error: function (response) {
+                    errosDocumentosNaoReclassificadosMap.set(documentoSelSigla, response.responseJSON.errormsg);
+                }
+            });
+        }
+
+        function enviarParaListagemDocumentosReclassificados() {
+            document.getElementsByName('siglasDocumentosReclassificados')[0].value = siglasDocumentosReclassificados;
+
+            let errosDocumentosNaoReclassificadosJson = JSON.stringify(Object.fromEntries(errosDocumentosNaoReclassificadosMap));
+            document.getElementsByName('errosDocumentosNaoReclassificadosJson')[0].value = errosDocumentosNaoReclassificadosJson;
+
             document.frm.submit();
+        }
+
+        let process = {
+            steps: [],
+            index: 0,
+            title: "Executando a reclassificação em lote dos documentos selecionados",
+            errormsg: "Não foi possível completar a operação",
+            urlRedirect: null,
+            reset: function () {
+                this.steps = [];
+                this.index = 0;
+            },
+            push: function (x) {
+                this.steps.push(x);
+            },
+            run: function () {
+                this.progressbar = $('#progressbar-ad').progressbar();
+                this.nextStep();
+            },
+            finalize: function () {
+            },
+            nextStep: function () {
+                if (typeof this.steps[this.index] == 'string')
+                    eval(this.steps[this.index++]);
+                else {
+                    let ret = this.steps[this.index++]();
+                    if ((typeof ret == 'string') && ret != "OK") {
+                        this.finalize();
+                        return;
+                    }
+                }
+
+                this.progressbar.progressbar("value",
+                    100 * (this.index / this.steps.length));
+
+                if (this.index != this.steps.length) {
+                    let me = this;
+                    window.setTimeout(function () {
+                        me.nextStep();
+                    }, 100);
+                } else {
+                    this.finalize();
+                }
+            }
+        };
+
+        function formataDataString(data) {
+            data = data.replaceAll('/', '');
+
+            let dia = data.substring(0, 2);
+            let mes = data.substring(2, 4);
+            let ano = data.substring(4, data.length);
+
+            const dataFormatada = new Date(ano, mes-1, dia).toISOString().split('T')[0];
+
+            return dataFormatada;
         }
 
     </script>

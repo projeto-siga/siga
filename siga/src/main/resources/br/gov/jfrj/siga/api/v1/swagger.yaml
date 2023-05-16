@@ -37,6 +37,10 @@ tags:
     description: Consulta nos Cadastros
   - name: PIN
     description: API para Criação, Troca e Reset de PIN
+  - name: painel
+    description: Consulta em Marcas e Listagem
+  - name: armazenamento
+    description: Operações de Migração de Storage
   - name: utils
     description: Utilitários
     
@@ -358,6 +362,32 @@ parameters:
     description: Número da página
     required: true
     type: string            
+  tipoDeArmazenamentoDeOrigemQuery:
+    name: origem
+    in: query
+    description: Tipo de armazenamento de origem
+    required: true
+    type: string            
+    default: TABELA
+    enum:
+      - TABELA
+      - S3
+  tipoDeArmazenamentoDeDestinoQuery:
+    name: destino
+    in: query
+    description: Tipo de armazenamento de destino
+    required: true
+    type: string            
+    default: S3
+    enum:
+      - TABELA
+      - S3
+  quantidadeQuery:
+    name: quantidade
+    in: query
+    description: Quantidade de itens
+    required: true
+    type: number            
 
 ################################################################################
 #                                           Paths                              #
@@ -1126,6 +1156,67 @@ paths:
               status:
                 type: string  
 
+  /armazenamento/estatisticas:
+    get:
+      tags: [armazenamento]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/tipoDeArmazenamentoDeOrigemQuery"
+        - $ref: "#/parameters/tipoDeArmazenamentoDeDestinoQuery"
+      description: Obter estatísticas sobre o processo de migração
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              quantidade:
+                type: number  
+              memoria:
+                type: number  
+                
+  /armazenamento/referencias:
+    get:
+      tags: [armazenamento]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/tipoDeArmazenamentoDeOrigemQuery"
+        - $ref: "#/parameters/tipoDeArmazenamentoDeDestinoQuery"
+        - $ref: "#/parameters/quantidadeQuery"
+      description: Obter uma lista de IDs que precisam ser migradas
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ArmazenamentoRef"
+
+  /armazenamento/{id}/migrar:
+    post:
+      tags: [armazenamento]
+      security:
+        - Bearer: []      
+      parameters:
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/tipoDeArmazenamentoDeOrigemQuery"
+        - $ref: "#/parameters/tipoDeArmazenamentoDeDestinoQuery"
+      description: Migrar a entidade representada por determinada ID
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              memoria:
+                type: number  
+
+
 ################################################################################
 #                                     Definitions                              #
 ################################################################################
@@ -1231,6 +1322,15 @@ definitions:
         $ref: "#/definitions/Localidade"
       orgao:
         $ref: "#/definitions/Orgao"
+      superiores:
+        type: array
+        items:
+          $ref: "#/definitions/Lotacao"
+      inferiores:
+        type: array
+        items:
+          $ref: "#/definitions/Lotacao"
+        
 
   LotacaoAtual:
     type: object
@@ -1583,3 +1683,16 @@ definitions:
         type: string
       descricao:
         type: string
+
+  ArmazenamentoRef:
+    type: object
+    properties:
+      id:
+        $ref: "#/definitions/ArmazenamentoRefId"
+    example:
+      id: documento:000000000123
+
+  ArmazenamentoRefId:
+    type: string
+    description: String que identifica um item
+    example: documento:000000000123

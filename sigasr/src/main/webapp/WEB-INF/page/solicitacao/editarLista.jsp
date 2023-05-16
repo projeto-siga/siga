@@ -757,29 +757,29 @@
 		var params = "";
 		
 		// caso exista algum item na tabela
-		//if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
+		 if (row[colunas.idOrgao] != '' && row[colunas.idOrgao] > 0)
 			params += '&permissao.orgaoUsuario.id=' + row[colunas.idOrgao];
 		
-		//if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
+		 if (row[colunas.idLocal] != '' && row[colunas.idLocal] > 0)
 	    	params += '&permissao.complexo.id=' + row[colunas.idLocal];
 		
-		//if (row[colunas.idLotacao] != '')
+		 if (row[colunas.idLotacao] != '')
 	    	params += '&permissao.lotacao.id=' + row[colunas.idLotacao];
 		
-		//if (row[colunas.idPessoa] != '')
+		 if (row[colunas.idPessoa] != '')
 	    	params += '&permissao.dpPessoa.id=' + row[colunas.idPessoa];
 		
-		//if (row[colunas.idCargo] != '')
+		 if (row[colunas.idCargo] != '' && row[colunas.idCargo] > 0)
 	    	params += '&permissao.cargo.id=' + row[colunas.idCargo];
 		
-		//if (row[colunas.idFuncao] != '')
+		 if (row[colunas.idFuncao] != '' && row[colunas.Funcao] > 0)
 	    	params += '&permissao.funcaoConfianca.id=' + row[colunas.idFuncao];
 		//if(row[colunas.idTipoPerm] == '')
 		//	row[colunas.idTipoPerm] = 0;
 		params += '&permissao.id=' + row[colunas.idTipoPerm];
 	
 		if ($("#idLista").val() != undefined && $("#idLista").val() != '')
-			params += '&permissao.listaPrioridade.id=' + $("#idLista").val();
+			params += '&listaPrioridade.idLista=' + $("#idLista").val();
 	
 		// lista de TipoPermissao
 		params += row[colunas.tipoPerm];
@@ -925,7 +925,7 @@
 		$("#ulPermissoes").find("li").each(function(i){
 	        var jDivs=$(this).find("span");
 	        listaTipoPermissaoListaVO.push({
-	        	"id": jDivs[0].id,
+	        	"idTipoPermissaoLista": jDivs[0].id,
 	        	"descrTipoPermissaoLista": jDivs[0].innerHTML
 	        });
 	    });
@@ -944,7 +944,7 @@
 	        var jDivs=$(this).find("span");
 	        
 	        // Atualiza a string serializada
-	    	params += '&permissao.tipoPermissaoSet[' + i + '].id=' + jDivs[0].id;
+	    	params += '&tipoPermissaoSet[' + i + '].idTipoPermissaoLista=' + jDivs[0].id;
 	    });
 		return params;
 	}

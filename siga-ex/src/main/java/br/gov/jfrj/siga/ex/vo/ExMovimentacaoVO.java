@@ -82,6 +82,7 @@ public class ExMovimentacaoVO extends ExVO {
 	String tempoRelativo;
 	boolean podeExibirNoSigale;
 	private String subscritor;
+	boolean tipoMovimentacaoArquivamento;
 
 	public ExMobilVO getMobVO() {
 		return mobVO;
@@ -113,6 +114,10 @@ public class ExMovimentacaoVO extends ExVO {
 			parte.put("lotaCadastrante", new ExParteVO(mov.getLotaCadastrante()));
 		if (mov.getCadastrante() != null)
 			parte.put("cadastrante", new ExParteVO(mov.getCadastrante()));
+		if (mov.getLotaTitular() != null)
+			parte.put("lotaTitular", new ExParteVO(mov.getLotaTitular()));
+		if (mov.getTitular() != null)
+			parte.put("titular", new ExParteVO(mov.getTitular()));
 		if (mov.getLotaSubscritor() != null)
 			parte.put("lotaSubscritor", new ExParteVO(mov.getLotaSubscritor()));
 		if (mov.getSubscritor() != null)
@@ -131,11 +136,14 @@ public class ExMovimentacaoVO extends ExVO {
 			descricao += Ex.getInstance().getBL().extraiPersonalizacaoAssinatura(mov,false);
 		}
 
+		if(mov.getExMovimentacaoCanceladora() != null && ExTipoDeMovimentacao.hasArquivado(mov.getExTipoMovimentacao()))
+			descricao = "";
+		
 		addAcoes(mov, cadastrante, titular, lotaTitular);
 
 		calcularClasse(mov);
 
-		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.MARCACAO) && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.RECEBIMENTO))
+		desabilitada = (mov.getExMovimentacaoRef() != null && mov.getExMovimentacaoRef().isCancelada() && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.MARCACAO) && mov.getExTipoMovimentacao() != (ExTipoDeMovimentacao.RECEBIMENTO) && !ExTipoDeMovimentacao.hasArquivado(mov.getExTipoMovimentacao()))
 				|| mov.getExMovimentacaoCanceladora() != null
 				|| mov.getExTipoMovimentacao() == (ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO);
 		
@@ -389,7 +397,7 @@ public class ExMovimentacaoVO extends ExVO {
 								.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, mov.getExDocumento())) {
 						addAcao(AcaoVO.builder().nome("Disponibilizar no Acompanhamento do Protocolo").nameSpace("/app/expediente/mov").acao("exibir_no_acompanhamento_do_protocolo")
 								.params("sigla",mov.getExMobil().getSigla())
-								.exp(new CpPodeSempre()).msgConfirmacao("Ao clicar em OK o conteúdo deste documento ficará disponível através do número do "
+								.exp(new CpPodeSempre()).msgConfirmacao(mov.getExMobil().isAcessoRestrito() ? "Atenção: Documento com Restrição de Acesso. \\n" : "" + "YYYYAo clicar em OK o conteúdo deste documento ficará disponível através do número do "
 										+ "protocolo de acompanhamento. Deseja continuar?").build());
 					}
 				}
@@ -506,6 +514,11 @@ public class ExMovimentacaoVO extends ExVO {
 				addAcao(AcaoVO.builder().nome("Protocolo").nameSpace("/app/expediente/mov").acao("protocolo_arq_transf").params("sigla", (mov.getCadastrante() == null ? "null" : mov.getCadastrante().getSigla()))
 						.params("dtIni", mov.getDtRegMovDDMMYYYYHHMMSS()).params("popup", "true").params("isTransf", "false")
 						.exp(new CpPodeSempre()).build());
+			if (mov.isCancelada() && mov.getDescrMov() != null) {
+				addAcao(AcaoVO.builder().nome("Motivo").nameSpace(null)
+						.acao(String.format("javascript:sigaModal.alerta('%s')", mov.getDescrMov()))
+						.exp(new CpPodeSempre()).build());
+			}
 		}
 
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
@@ -903,5 +916,9 @@ public class ExMovimentacaoVO extends ExVO {
 
 	public void setSubscritor(String subscritor) {
 		this.subscritor = subscritor;
+	}
+	
+	public boolean isTipoMovimentacaoArquivamento() {
+		return ExTipoDeMovimentacao.hasArquivado(exTipoMovimentacao);
 	}
 }

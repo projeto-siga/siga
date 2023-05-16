@@ -126,7 +126,6 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
-import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
@@ -443,7 +442,7 @@ public class ExDocumentoController extends ExController {
 		
 		Ex.getInstance()
 				.getBL()
-				.criarVia(getCadastrante(), getLotaTitular(),
+				.criarVia(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
@@ -463,6 +462,7 @@ public class ExDocumentoController extends ExController {
 		Ex.getInstance()
 				.getBL()
 				.criarVolume(getCadastrante(), getLotaTitular(),
+						getTitular(), getLotaTitular(),
 						exDocumentoDTO.getDoc());
 		ExDocumentoController.redirecionarParaExibir(result,
 				exDocumentoDTO.getSigla());
@@ -1620,9 +1620,9 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDto.setMsg(Ex
 					.getInstance()
 					.getBL()
-					.finalizar(getCadastrante(), getLotaTitular(),
-							exDocumentoDto.getDoc()));
-
+					.finalizar(getCadastrante(), getLotaCadastrante(),  
+							getTitular(), getLotaTitular(), exDocumentoDto.getDoc()));
+			
 			if (exDocumentoDto.getDoc().getForm() != null) {
 				if (exDocumentoDto.getDoc().getForm().get("acaoFinalizar") != null
 						&& exDocumentoDto.getDoc().getForm()
@@ -1634,8 +1634,10 @@ public class ExDocumentoController extends ExController {
 				}
 			}
 
-		} catch (final Throwable t) {
-			throw new AplicacaoException("Erro ao finalizar documento", 0, t);
+        } catch (final AplicacaoException t) {
+            throw t;
+        } catch (final Throwable t) {
+            throw new RuntimeException("Erro ao finalizar documento", t);
 		}
 
 		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
@@ -1646,7 +1648,8 @@ public class ExDocumentoController extends ExController {
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
-			final UploadedFile arquivo, final String tokenArquivo) {
+			final UploadedFile arquivo, final String tokenArquivo, 
+			final boolean adicionarRestricaoAcessoAntes) {
 		
 		final Ex ex = Ex.getInstance();
 		final ExBL exBL = ex.getBL();	
@@ -1685,6 +1688,42 @@ public class ExDocumentoController extends ExController {
 						null, null, null, null);
 
 				return;
+			}
+			
+			if(exDocumentoDTO.getDoc().getMobilGeral().isAcessoRestrito()) {
+				boolean pessoaEstaRestricaoAcesso = false;
+				//Verifica se Subscritor está na lista de restrição
+				for (DpPessoa pessoaRestrita : exDocumentoDTO.getDoc().getMobilGeral().getSubscritoresMovimentacoesPorTipo(ExTipoDeMovimentacao.RESTRINGIR_ACESSO, true)) {
+					pessoaEstaRestricaoAcesso = pessoaRestrita.equivale(subscritor);
+					if (pessoaEstaRestricaoAcesso) 
+						break;
+				}
+				
+				if (!pessoaEstaRestricaoAcesso) {
+					if (adicionarRestricaoAcessoAntes) {
+						Ex.getInstance()
+							.getBL()
+							.restringirAcessoAntes(exDocumentoDTO.getDoc(),subscritor,getCadastrante(),getLotaCadastrante());	
+					} else {
+						result.include(SigaModal.CONFIRMACAO, 
+								SigaModal
+									.mensagem("Documento Restrito. Usuário não está na lista de restrição de acesso. Deseja incluir?")
+									.titulo("Confirmação")
+									.inverterBotoes()
+									.classBotaoDeAcao("btn-success")
+									.classBotaoDeFechar("btn-danger")
+									.linkBotaoDeAcao("javascript:incluirRestricao(true);"));
+						result.forwardTo(this).edita(exDocumentoDTO, null, vars,
+								exDocumentoDTO.getMobilPaiSel(),
+								exDocumentoDTO.isCriandoAnexo(),
+								exDocumentoDTO.getAutuando(),
+								exDocumentoDTO.getIdMobilAutuado(),
+								exDocumentoDTO.getCriandoSubprocesso(),
+								null, null, null, null);
+
+						return;
+					}
+				}
 			}
 
 			long tempoIni = System.currentTimeMillis();
@@ -1896,13 +1935,13 @@ public class ExDocumentoController extends ExController {
 			}
 			
 			if(exDocumentoDTO.getDoc().getExMobilPai() != null && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, getCadastrante(), getLotaCadastrante(), exDocumentoDTO.getDoc().getExMobilPai())) {
-				exBL.copiarRestringir(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
+				exBL.herdaRestricaoAcessoDocumentoPai(exDocumentoDTO.getDoc().getMobilGeral(), exDocumentoDTO.getDoc().getExMobilPai().getDoc().getMobilGeral(), getCadastrante(), getTitular(), exDocumentoDTO.getDoc().getData());
 			}
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& exDocumentoDTO.isCapturado() && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
-				exBL.finalizar(getCadastrante(), getLotaTitular(),
-						exDocumentoDTO.getDoc());
+				exBL.finalizar(getCadastrante(), getLotaCadastrante(),
+						getTitular(), getLotaTitular(), exDocumentoDTO.getDoc());
 
 			lerEntrevista(exDocumentoDTO);
 
@@ -1984,6 +2023,7 @@ public class ExDocumentoController extends ExController {
 		
 	}
 
+	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/prever")
 	public void preve(final ExDocumentoDTO exDocumentoDTO, final String[] vars)
 			throws IllegalAccessException, InvocationTargetException,

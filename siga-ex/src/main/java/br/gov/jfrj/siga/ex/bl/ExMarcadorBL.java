@@ -165,8 +165,9 @@ public class ExMarcadorBL {
 		}
 
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
-				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado())
+				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado()) {
 			calcularMarcadoresDeTramite();
+		}
 		calcularMarcadoresDeNotificacao();
 
 		if (!mob.isArquivado())
@@ -612,7 +613,10 @@ public class ExMarcadorBL {
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.EM_TRANSITO_ELETRONICO.getId()
 							: CpMarcadorEnum.EM_TRANSITO.getId(),
-					tramite.getDtIniMov(), null, tramite.getCadastrante(), tramite.getLotaCadastrante(), null);
+					tramite.getDtIniMov(), null, 
+					(tramite.getTitular() != null? tramite.getTitular() : tramite.getCadastrante()),
+					(tramite.getLotaTitular() != null ? tramite.getLotaTitular() : tramite.getLotaCadastrante()), 
+					null);
 			acrescentarMarcaTransferencia(
 					mob.doc().isEletronico() ? CpMarcadorEnum.CAIXA_DE_ENTRADA.getId()
 							: CpMarcadorEnum.A_RECEBER.getId(),
@@ -770,7 +774,9 @@ public class ExMarcadorBL {
 		}
 
 		if (nivelMDest > 0) {
-			acrescentarMarca(mDest[nivelMDest], movDest[nivelMDest].getDtIniMov(), movDest[nivelMDest].getResp(),
+			acrescentarMarca(mDest[nivelMDest], 
+					(movDest[nivelMDest].getExMovimentacaoRef() != null && ExTipoDeMovimentacao.hasArquivado(movDest[nivelMDest].getExMovimentacaoRef().getExTipoMovimentacao())) ?
+					movDest[nivelMDest].getExMovimentacaoRef().getDtIniMov() : movDest[nivelMDest].getDtIniMov(), movDest[nivelMDest].getResp(),
 					movDest[nivelMDest].getLotaResp());
 			calcularMarcadoresFuturosTemporalidade(movDest[nivelMDest], mDest[nivelMDest]);
 		}
@@ -788,7 +794,12 @@ public class ExMarcadorBL {
 		ExTemporalidade tmpIntermed = mob.getTemporalidadeIntermediarioEfetiva();
 		ExTipoDestinacao destinacao = mob.getExDestinacaoFinalEfetiva();
 
-		Date dtIniMarca = mov.getDtIniMov();
+		Date dtIniMarca = null;
+		if (mov.getExMovimentacaoRef() != null && ExTipoDeMovimentacao.hasArquivado(mov.getExMovimentacaoRef().getExTipoMovimentacao()))
+			dtIniMarca = mov.getExMovimentacaoRef().getDtIniMov();
+		else
+			dtIniMarca = mov.getDtIniMov();
+		
 		Long marcadorFuturo = 0L;
 
 		if (marcador == CpMarcadorEnum.ARQUIVADO_CORRENTE.getId()) {

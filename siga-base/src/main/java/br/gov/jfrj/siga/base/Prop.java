@@ -30,6 +30,13 @@ public class Prop {
 	}
 
 	public static String get(String nome) {
+	    
+	    // Os segredos que assinam os tokens JWT não devem ser iguais
+	    //
+	    if (nome != null && (nome.contains("jwt.secret") || nome.contains("autenticacao.senha")) 
+	            && provider.getProp("/siga.jwt.secret").equals(provider.getProp("/siga.autenticacao.senha")))
+	        throw new RuntimeException("Parâmetros siga.jwt.secret e siga.autenticacao.senha não podem ser iguais.");
+	    
 		return provider.getProp(nome);
 	}
 
@@ -179,7 +186,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.jwt.cookie.name", "siga-jwt-auth");
 		provider.addPublicProperty("/siga.jwt.cookie.domain", null);
 		provider.addPrivateProperty("/siga.jwt.secret");
-		provider.addPrivateProperty("/siga.autenticacao.senha", provider.getProp("/siga.jwt.secret"));
+		provider.addPrivateProperty("/siga.autenticacao.senha", new StringBuffer(provider.getProp("/siga.jwt.secret")).reverse().toString());
 		provider.addPublicProperty("/siga.jwt.token.ttl", "3600");
 		provider.addPublicProperty("/siga.local", null);
 		provider.addPublicProperty("/siga.uf.padrao", null);
@@ -357,6 +364,11 @@ public class Prop {
 
 		/* Properties para ativação do Módulo de compra e contratações.*/
 		provider.addPrivateProperty("/secc.ui.url", null);
+		
+		/* Configuração do tamanho máximo para exibição paginada de documento completo em pdf
+		 * Quantidade de Documentos presentes por pagina */
+		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax", null);
+		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.quantidade.documentos", null);
 		
 	}
 }

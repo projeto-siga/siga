@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import org.jsoup.parser.Parser;
 
+import com.crivano.jmodel.Utils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -47,6 +48,7 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.calc.diarias.FreemarkerFormatFactoryMoeda;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import freemarker.cache.TemplateLoader;
+import freemarker.core.ParseException;
 import freemarker.core.TemplateNumberFormatFactory;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -56,6 +58,10 @@ import freemarker.template.TemplateExceptionHandler;
 
 public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		TemplateLoader {
+    
+    final static Pattern patternFreemarkerMarkdown = Pattern.compile(
+            "\\[@markdown\\](?<markdown>.+)\\[/@markdown\\]\\s*",
+            Pattern.MULTILINE | Pattern.DOTALL);
 
 	private Configuration cfg;
 
@@ -72,7 +78,7 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		cfg.setNumberFormat("0.######");
 		cfg.setLocalizedLookup(false);
 		cfg.setLogTemplateExceptions(false);
-		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
 		
 		Map<String, TemplateNumberFormatFactory> customNumberFormats = new HashMap<>();
 		customNumberFormats.put("moeda", FreemarkerFormatFactoryMoeda.INSTANCE);
@@ -114,17 +120,38 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 		if (attrs.containsKey("descricaodefault"))
 			root.put("gerar_descricaodefault", true);
 
-		String sTemplate = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";
-		if (ou != null) {
-			sTemplate += "[#include \"" + ou.getAcronimoOrgaoUsu() + "\"]";
+		String template = (String) attrs.get("template");
+		
+		if (template != null) {
+    		// Se o template não contem entrevista nem documento, processar com JModel
+            if (template.contains("[@markdown")) {
+                Matcher matcher = patternFreemarkerMarkdown.matcher(template);
+                StringBuffer sb = new StringBuffer();
+                while (matcher.find()) {
+                    String rep = matcher.group("markdown");
+                    matcher.appendReplacement(sb, markdownToFreemarker(rep));
+                }
+                matcher.appendTail(sb);
+                template = sb.toString();
+            } else if (!template.contains("[@entrevista") && !template.contains("[@documento") && !template.contains("[@descricao") && 
+                    !template.contains("[@interview") && !template.contains("[@document") && !template.contains("[@description") && 
+                    !template.contains("[@markdown") && !template.contains("[@dadosComplementares") && !template.contains("[@extensaoBuscaTextual")) {
+    		    template = markdownToFreemarker(template);
+    		}
 		}
-		if (attrs.get("template") != null)
-			sTemplate += "\n" + (String) attrs.get("template");
-		sTemplate += "\n[/#compress]";
+
+		String templateFinal = "[#compress]\n[#include \"DEFAULT\"][#include \"GERAL\"]\n";
+		if (ou != null) {
+			templateFinal += "[#include \"" + ou.getAcronimoOrgaoUsu() + "\"]";
+		}
+		if (attrs.get("template") != null) {
+            templateFinal += "\n" + template;
+        }
+		templateFinal += "\n[/#compress]";
 
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); Writer out = new OutputStreamWriter(baos, StandardCharsets.UTF_8)) {
 			Template temp = new Template((String) attrs.get("nmMod"),
-					new StringReader(sTemplate), cfg);
+					new StringReader(templateFinal), cfg);
 			temp.process(root, out);
 			out.flush();
 			String processed = baos.toString(StandardCharsets.UTF_8.name());
@@ -155,17 +182,32 @@ public class ProcessadorModeloFreemarker implements ProcessadorModelo,
 			}
 			
 			return processed;
-		} catch (TemplateException e) {
-			if (e.getCauseException() != null
-					&& e.getCauseException() instanceof AplicacaoException)
-				throw (AplicacaoException) e.getCauseException();
-			throw new RuntimeException("Erro executanto template Freemarker: " + e.getMessage(), e);
-		} catch (IOException e) {
-			return "Erro executando template FreeMarker\n\n" + e.getMessage();
+        } catch (TemplateException e) {
+            if (e.getCause() != null && e.getCause() instanceof AplicacaoException)
+                throw (AplicacaoException) e.getCause();
+            throw new RuntimeException("Erro executanto template Freemarker: <pre>\n\n" + com.crivano.jmodel.Utils.escapeHTML(e.getLocalizedMessage())
+                    + "\n\n---\n" + com.crivano.jmodel.Utils.addLineNumbers(templateFinal, e.getLineNumber(),
+                            e.getEndLineNumber(), e.getColumnNumber(), e.getEndColumnNumber())
+                    + "\n---\n\n" + "</pre>", e);
+        } catch (ParseException e) {
+            if (e.getCause() != null && e.getCause() instanceof AplicacaoException)
+                throw (AplicacaoException) e.getCause();
+            throw new RuntimeException("Erro compilando template Freemarker: <pre>\n\n" + com.crivano.jmodel.Utils.escapeHTML(e.getLocalizedMessage())
+                    + "\n\n---\n" + com.crivano.jmodel.Utils.addLineNumbers(templateFinal, e.getLineNumber(),
+                            e.getEndLineNumber(), e.getColumnNumber(), e.getEndColumnNumber())
+                    + "\n---\n\n" + "</pre>", e);
+        } catch (IOException e) {
+            return "Erro executando template FreeMarker\n\n" + e.getMessage();
 		} finally {
 			root = null;
 		}
 	}
+
+    private String markdownToFreemarker(String rep) {
+        String s = com.crivano.jmodel.Template.markdownToFreemarker(null, rep, null);
+        s = s.replace("<table>", "<table class=\"table table-sm table-striped doc-table\">");
+        return s;
+    }
 
 	public void closeTemplateSource(Object arg0) throws IOException {
 	}

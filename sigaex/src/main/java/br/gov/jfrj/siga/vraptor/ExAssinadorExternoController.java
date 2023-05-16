@@ -238,7 +238,7 @@ public class ExAssinadorExternoController extends ExController {
 				Date dataAtualSemTempo = sdf.parse(sdf.format(CpDao.getInstance().dt()));
 				doc.setDtPrimeiraAssinatura(dataAtualSemTempo); 
 				
-				Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), doc);
+				Ex.getInstance().getBL().finalizar(cadastrante, cadastrante.getLotacao(), null, null, doc);
 			} else {
 				DpPessoa cadastrante = obterCadastrante(null, mob, mov);
 				Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc,cadastrante,cadastrante);
@@ -346,7 +346,7 @@ public class ExAssinadorExternoController extends ExController {
 
 			String msg = null;
 
-			DpLotacao lotaCadastrante = cadastrante != null ? cadastrante.getLotacao() : null;
+			DpLotacao lotaCadastrante = getLotaTitular() != null ? getLotaTitular() : cadastrante != null ? cadastrante.getLotacao() : null;
 			if (mov != null) {
 				ITipoDeMovimentacao tpMov = autenticar ? ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO;
@@ -357,10 +357,8 @@ public class ExAssinadorExternoController extends ExController {
 			} else if (mob != null) {
 				ITipoDeMovimentacao tpMov = autenticar ? ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO
 						: ExTipoDeMovimentacao.ASSINATURA_DIGITAL_DOCUMENTO;
-				// Nato: Assinatura externa não deve produzir transferência. 
-				// Se preferir a configuração default, deveria trocar o último parâmetro por null.
-				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, getLotaTitular(), mob.doc(), dt, assinatura,
-						null, tpMov, juntar, tramitar == null ? false : tramitar, exibirNoProtocolo, getTitular());
+				msg = Ex.getInstance().getBL().assinarDocumento(cadastrante, lotaCadastrante, mob.doc(), dt, assinatura,
+						null, tpMov, juntar, tramitar, exibirNoProtocolo, getTitular());
 				if (msg != null)
 					msg = "OK: " + msg;
 				else
@@ -516,7 +514,7 @@ public class ExAssinadorExternoController extends ExController {
 	private void assertPassword() throws Exception {
 		String pwd = Prop.get("assinador.externo.password");
 		if (pwd == null) 
-			throw new Exception("Antes de utilizar o assinador externo é necessário configurar a propriedade sigaex.assinador.externo.senha");
+			throw new Exception("Antes de utilizar o assinador externo é necessário configurar a propriedade sigaex.assinador.externo.password");
 		if (!pwd.equals(this.request.getHeader("Authorization")))
 			throw new Exception("Falha de autenticação.");
 	}

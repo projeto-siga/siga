@@ -223,6 +223,28 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ "			and (doc.lotaTitular.id = :idLotacao)"
 				+ "			and doc.orgaoUsuario.idOrgaoUsu = :idOrgaoUsuario"
 				+ "			and doc.dtFinalizacao is not null"),
+		@NamedQuery(name = "consultarDocumentosArquivados", query = "select mob from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
+				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"
+				+ "                where ((marca.dpPessoaIni.idPessoa=:pessoaIni or marca.dpLotacaoIni.idLotacao=:lotaIni)"
+				+ "                and (marca.cpMarcador.idMarcador in (:enumList))"
+				+ " 			   and mob.exDocumento NOT IN (SELECT mob_cancelado.exDocumento"
+				+ " 			   							   	FROM ExMobil mob_cancelado"
+				+ " 			   								JOIN CpMarca marca_cancelado on (marca_cancelado.idRef = mob_cancelado.idMobil )"
+				+ " 			   								WHERE (mob_cancelado.exDocumento = doc.idDoc)"
+				+ " 			   										AND (marca_cancelado.cpMarcador.idMarcador in (:enumListCancelados)) "
+				+ "														AND (marca_cancelado.dpPessoaIni.idPessoa=:pessoaIni or marca_cancelado.dpLotacaoIni.idLotacao=:lotaIni))"
+				+ "                ) order by marca.dtIniMarca desc"),
+		@NamedQuery(name = "consultarDocumentosArquivadosJaTransferido", query = "select mob, emFinal from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
+				+ " 			   JOIN ExMovimentacao emAnterior on (emAnterior.exMobil.idMobil = mob.idMobil) AND emAnterior.exTipoMovimentacao = 9 AND emAnterior.exMovimentacaoCanceladora = mob.ultimaMovimentacaoNaoCancelada"	
+				+ " 			   JOIN ExMovimentacao emFinal on (emFinal.exMobil.idMobil = mob.idMobil) AND emFinal.exTipoMovimentacao = 9"
+				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"
+				+ "                where ("
+				+ " 			   ((doc.cadastrante.idPessoa = :pessoaIni ) or "
+				+ "					(doc.lotaCadastrante.idLotacao = :lotaIni))"
+				+ "                and (marca.cpMarcador.idMarcador in (:enumList))"
+				+ " 			   AND emFinal.exMovimentacaoRef.idMov = emAnterior.idMov"
+				+ " 			   AND (emFinal.lotaDestinoFinal.idLotacao <> 0 or emFinal.lotaDestinoFinal IS NOT NULL) "
+				+ "                ) order by marca.dtIniMarca desc"),
 		@NamedQuery(name = "consultarDocumentosFinalizadosEntreDatas", query = "select doc from ExDocumento doc where "
 				+ "					doc.exTipoDocumento.idTpDoc = :idTipoDocumento"
 				+ "					and doc.lotaCadastrante.idLotacaoIni = :idLotacaoInicial"
@@ -1120,7 +1142,7 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		try {
 			return getCpArquivo().getConteudo();
 		} catch (Exception e) {
-			throw new AplicacaoException(e.getMessage());
+			throw new AplicacaoException("Erro obtendo conteúdo de documento", 0, e);
 		}
 	}
 

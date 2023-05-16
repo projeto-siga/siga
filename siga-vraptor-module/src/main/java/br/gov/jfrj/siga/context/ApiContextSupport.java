@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.base.RegraNegocioException;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -138,17 +139,7 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		
 		if (!getCtx().getAction().getClass().isAnnotationPresent(AcessoPublico.class)) {
 			try {
-				String token = AuthJwtFormFilter.extrairAuthorization(getCtx().getRequest());
-				Map<String, Object> decodedToken = AuthJwtFormFilter.validarToken(token);
-				final long now = System.currentTimeMillis() / 1000L;
-				if ((Integer) decodedToken.get("exp") < now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S) {
-					// Seria bom incluir o attributo HttpOnly
-					String tokenNew = AuthJwtFormFilter.renovarToken(token);
-					AuthJwtFormFilter.validarToken(token);
-					Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-					AuthJwtFormFilter.addCookie(getCtx().getRequest(), getCtx().getResponse(), cookie);
-				}
-				ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
+			    ContextoPersistencia.setUserPrincipal(AutenticadorFabrica.getInstance().obterPrincipal(getCtx().getRequest(), getCtx().getResponse()));
 			} catch (Exception e) {
 				if (!getCtx().getAction().getClass().isAnnotationPresent(AcessoPublicoEPrivado.class))
 					throw new SwaggerAuthorizationException(e.getMessage(), e, null);
@@ -184,8 +175,10 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	@Override
 	public void close() throws IOException {
 		try {
-		    if (em.getTransaction().isActive())
+		    if (em.getTransaction().isActive()) {
 				em.getTransaction().commit();
+				ContextoPersistencia.runAfterCommit();
+		    }
 		} catch (Exception e) {
 			if (em.getTransaction().isActive())
 				em.getTransaction().rollback();

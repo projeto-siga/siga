@@ -153,6 +153,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 	/**
 	 * Retorna o nível de acesso (não a descrição) atual do documento.
+	 * COM Atualização da DnmNivelAcesso
 	 */
 	public ExNivelAcesso getExNivelAcessoAtual() {
 		ExNivelAcesso nivel = getDnmExNivelAcesso();
@@ -160,6 +161,22 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			return Ex.getInstance().getBL().atualizarDnmNivelAcesso(this);
 		return nivel;
 	}
+	
+	
+	/**
+	 * Retorna o nível de acesso (não a descrição) atual do documento.
+	 * SEM Atualização da DnmNivelAcesso
+	 */
+	public ExNivelAcesso getExNivelAcessoAnterior() {
+		ExNivelAcesso nivel = null;
+		if (this.getMobilGeral() != null && this.getMobilGeral().getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() != null)
+			nivel = this.getMobilGeral().getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada().getExNivelAcesso();
+		if (nivel == null)
+			nivel = this.getExNivelAcesso();
+		return nivel;
+	}
+	
+	
 
 	/**
 	 * Retorna o nível de acesso (não a descrição) atual do documento.
@@ -1403,9 +1420,9 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	public Map<String, String> getForm() {
 		Hashtable<String, String> m = new Hashtable<String, String>();
 		final byte[] form = getConteudoBlobForm();
-        if (form != null)
-            Utils.mapFromUrlEncodedForm(m, form);
-        return m;
+		if (form != null)
+		    Utils.mapFromUrlEncodedForm(m, form);
+		return m;
 	}
 
 	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
@@ -2597,10 +2614,12 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public boolean isRecebeuJuntada() {
 		for (ExMobil mob : getExMobilSet()) {
-			for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
-				if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-						&& !mov.isCancelada())
-					return true;
+			if (mob.getExMovimentacaoReferenciaSet() != null ) {
+				for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
+					if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+							&& !mov.isCancelada())
+						return true;
+				}
 			}
 		}
 		return false;

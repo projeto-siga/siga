@@ -99,7 +99,7 @@
     
     function cancelar() {
     	document.getElementById("btnOk").disabled = false;
-        sigaModal.fechar('confirmacaoModal');
+        sigaModal.fechar('confirmacaoAlteracaoModal');
     }
 	
 	

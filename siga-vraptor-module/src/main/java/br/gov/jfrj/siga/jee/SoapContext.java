@@ -85,8 +85,10 @@ public abstract class SoapContext implements Closeable {
 	@Override
 	public void close() throws IOException {
 		try {
-		    if (em.getTransaction().isActive())
+		    if (em.getTransaction().isActive()) {
 				em.getTransaction().commit();
+                ContextoPersistencia.runAfterCommit();
+		    }
 		} catch (Exception e) {
 			if (em.getTransaction().isActive())
 				em.getTransaction().rollback();

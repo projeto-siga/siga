@@ -17,7 +17,8 @@ public class DocumentosSiglaCriarViaPost implements IDocumentosSiglaCriarViaPost
 		
 		ctx.assertAcesso(mob, ctx.getTitular(), ctx.getLotaTitular());
 
-		Ex.getInstance().getBL().criarVia(ctx.getTitular(), ctx.getLotaTitular(), mob.doc());
+		Ex.getInstance().getBL().criarVia(ctx.getCadastrante(), ctx.getLotaCadastrante(),
+				ctx.getTitular(), ctx.getLotaTitular(), mob.doc());
 
 		resp.sigla = mob.doc().getUltimaVia().getCodigoCompacto();
 		resp.status = "OK";

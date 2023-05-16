@@ -1071,7 +1071,7 @@ public class ExMobilController extends
 	}
 
 	@Get("/app/expediente/doc/listar_docs_para_reclassificar_lote")
-	public void listar_docs_para_reclassificar_lote(final String siglaClassificacao,
+	public void listar_docs_para_reclassificar_lote(final String classificacaoSelecao,
 													final String dpLotacaoSelecao, 
 													final int offset) {
 
@@ -1083,33 +1083,23 @@ public class ExMobilController extends
 		}
 		
         Integer tamanho = null;
-		if (Objects.nonNull(siglaClassificacao) && !siglaClassificacao.isEmpty()) {
+		Long idClassificacaoSelecao = 0L;
+		if (Objects.nonNull(classificacaoSelecao) && !classificacaoSelecao.isEmpty()) {
+			idClassificacaoSelecao = Long.valueOf(classificacaoSelecao);
 			tamanho = ExDao.getInstance()
 					.consultarQuantidadeParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
-                            idDpLotacaoSelecao, siglaClassificacao);
+                            idDpLotacaoSelecao, idClassificacaoSelecao);
 
 		}
 		
 		if (Objects.nonNull(tamanho)) {
-			List<ExDocumentoVO> documentosPorCodificacaoClassificacao =
-					ExDao.getInstance().consultarParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(),
-                            idDpLotacaoSelecao, siglaClassificacao, offset,
-							MAX_ITENS_PAGINA_DUZENTOS);
+			List<ExDocumentoVO> documentosPorCodificacaoClassificacao = ExDao.getInstance()
+					.consultarParaReclassificarEmLote(getTitular().getOrgaoUsuario().getId(), 
+							idDpLotacaoSelecao, idClassificacaoSelecao, offset, MAX_ITENS_PAGINA_DUZENTOS);
 
-			List<ExDocumentoVO> itens = new ArrayList<>();
-			for (ExDocumentoVO item : documentosPorCodificacaoClassificacao) {
-				ExMobil mob = dao().consultar(item.getIdDoc(), ExDocumento.class, false).getMobilGeral();
-
-				if (new ExPodeReclassificar(mob, getTitular(), getLotaTitular()).eval()) {
-					itens.add(item);
-				}
-			}
-
-			documentosPorCodificacaoClassificacao = null;
-					
 			getP().setOffset(offset);
 			setItemPagina(MAX_ITENS_PAGINA_DUZENTOS);
-			setItens(itens);
+			setItens(documentosPorCodificacaoClassificacao);
 			setTamanho(tamanho);
 
 			result.include("itens", this.getItens());

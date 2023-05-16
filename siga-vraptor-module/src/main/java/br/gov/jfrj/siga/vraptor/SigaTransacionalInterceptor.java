@@ -104,6 +104,7 @@ public class SigaTransacionalInterceptor extends br.com.caelum.vraptor.jpa.JPATr
 		if (!validator.hasErrors() && trn.isActive()) {
 			trn.commit();
 			beanManager.fireEvent(new AfterCommit());
+			ContextoPersistencia.runAfterCommit();
 		}
 	}
 

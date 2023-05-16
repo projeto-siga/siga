@@ -101,6 +101,34 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return penMov;
 	}
 
+	
+	/**
+	 * Retorna A penúltima movimentação não cancelada e não canceladora de um Mobil dentre os tipos informados
+	 * 
+	 * @return Penúltima movimentação não cancelada de um Mobil dentre os tipos informados
+	 * 
+	 */
+	public ExMovimentacao getPenultimaMovimentacaoPorTipoNaoCancelada(ITipoDeMovimentacao[] tpMovs) {
+		final Set<ExMovimentacao> movs = getMovsNaoCanceladas(tpMovs);
+				
+		ExMovimentacao mov = null;
+		ExMovimentacao penMov = null;
+		for (final Object element : movs) {
+			final ExMovimentacao movIterate = (ExMovimentacao) element;
+
+			if (movIterate.getExTipoMovimentacao() != ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO) {
+				if (mov == null && penMov == null) {
+					mov = movIterate;
+				} else {
+					penMov = mov;
+					mov = movIterate;
+				}
+			}
+		}
+		return penMov;
+	}
+	
+	
 	/**
 	 * Retorna as movimentações de um Mobil de acordo com um tipo específico de
 	 * movimentação.
@@ -124,6 +152,19 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 					movsTp.add(m);
 			}
 		return movsTp;
+	}
+	
+	public List<DpPessoa> getSubscritoresMovimentacoesPorTipo(ITipoDeMovimentacao tpMov, boolean somenteAtivas) {
+		List<ExMovimentacao> movimentacoes = getMovimentacoesPorTipo(tpMov, somenteAtivas);
+		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
+		
+		if (movimentacoes != null) {
+			for (ExMovimentacao movimentacao : movimentacoes) {
+				subscritores.add(movimentacao.getSubscritor());
+			}
+		}
+		return subscritores;
+		
 	}
 	
 	public List<ExMovimentacao> getMovimentacoesPorNome (String descr, boolean somenteAtivas) {
@@ -796,6 +837,30 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public ExMovimentacao getUltimaMovimentacao(ITipoDeMovimentacao tpMov) {
 		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { tpMov }, new ITipoDeMovimentacao[] {}, this, true, null, false);
 	}
+	
+	
+	/**
+	 * Retorna a última movimentação não cancelada que o móbil recebeu que altera
+	 * o nível de acesso ao documento
+	 * 
+	 * @return ExMovimentacao
+	 */
+	public ExMovimentacao getUltimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() {
+		return getUltimaMovimentacao(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO, 
+				ExTipoDeMovimentacao.RESTRINGIR_ACESSO},  new ITipoDeMovimentacao[] {}, this, false, null, false);
+	}	
+	
+	/**
+	 * Retorna a Penúltima movimentação não cancelada que o móbil recebeu que altera
+	 * o nível de acesso ao documento.
+	 * 
+	 * @return ExMovimentacao
+	 */
+	public ExMovimentacao getPenultimaMovimentacaoAlteracaoNivelAcessoNaoCancelada() {
+		return getPenultimaMovimentacaoPorTipoNaoCancelada(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.REDEFINICAO_NIVEL_ACESSO, 
+				ExTipoDeMovimentacao.RESTRINGIR_ACESSO});
+	}
+
 
 	/**
 	 * Retorna a última movimentação (cancelada ou não, conforme o parâmetro
@@ -1378,13 +1443,17 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 */
 	public Set<ExMobil> getJuntados(boolean recursivo) {
 		Set<ExMobil> set = new LinkedHashSet<ExMobil>();
-		for (ExMovimentacao mov : getExMovimentacaoReferenciaSet())
-			if (!mov.isCancelada()) {
-				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-					set.add(mov.getExMobil());
-				if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
-					set.remove(mov.getExMobil());
+		
+		if (getExMovimentacaoReferenciaSet() != null ) {
+			for (ExMovimentacao mov : getExMovimentacaoReferenciaSet()) {
+				if (!mov.isCancelada()) {
+					if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+						set.add(mov.getExMobil());
+					if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
+						set.remove(mov.getExMobil());
+				}
 			}
+		}
 		if (!recursivo)
 			return set;
 		else {
@@ -1722,12 +1791,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	public boolean temDocumentosJuntados() {
 		boolean b = false;
-		for (ExMovimentacao movRef : getExMovimentacaoReferenciaSet()) {
-			if (!movRef.isCancelada())
-				if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-					b = true;
-				else if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
-					b = false;
+		if (getExMovimentacaoReferenciaSet() != null ) {
+			for (ExMovimentacao movRef : getExMovimentacaoReferenciaSet()) {
+				if (!movRef.isCancelada())
+					if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+						b = true;
+					else if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
+						b = false;
+			}
 		}
 		return b;
 	}
@@ -2324,17 +2395,18 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	
 	public boolean isModeloIncluso(Long idModelo, Date depoisDaData) {
 		ExModelo mod = ExDao.getInstance().consultar(idModelo, ExModelo.class, false);
-		
-		for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
-			if (m.getExMovimentacaoCanceladora() != null)
-				continue;
-			if (depoisDaData != null && depoisDaData.after(m.getDtIniMov()))
-				continue;
-			if (m.getExTipoMovimentacao() != ExTipoDeMovimentacao.JUNTADA)
-				continue;
-			if (m.getExMobilRef() == this && m.getExMobil() != null 
-					&& m.getExMobil().doc().getExModelo().getIdInicial().equals(mod.getIdInicial()))
-				return true;
+		if (getExMovimentacaoReferenciaSet() != null ) {
+			for (ExMovimentacao m : getExMovimentacaoReferenciaSet()) {
+				if (m.getExMovimentacaoCanceladora() != null)
+					continue;
+				if (depoisDaData != null && depoisDaData.after(m.getDtIniMov()))
+					continue;
+				if (m.getExTipoMovimentacao() != ExTipoDeMovimentacao.JUNTADA)
+					continue;
+				if (m.getExMobilRef() == this && m.getExMobil() != null 
+						&& m.getExMobil().doc().getExModelo().getIdInicial().equals(mod.getIdInicial()))
+					return true;
+			}
 		}
 		return false;
 	}
@@ -2429,21 +2501,27 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public DpPessoa getTitular() {
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
-			return criacao.getCadastrante();
+			if (criacao.getTitular() != null)
+				return criacao.getTitular();
+			else
+				return criacao.getCadastrante();		
 		else if (doc().getCadastrante() != null)
 			return doc().getCadastrante();
 		else
 		    return doc().getSubscritor();
 	}
-	
+
 	public DpLotacao getLotaTitular() {
 		ExMovimentacao criacao = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.CRIACAO);
 		if (criacao != null)
-			return criacao.getLotaCadastrante();
+			if (criacao.getLotaTitular() != null)
+				return criacao.getLotaTitular();
+			else
+				return criacao.getLotaCadastrante();
 		else if (doc().getLotaCadastrante() != null)
 			return doc().getLotaCadastrante();
 		else
-		    return doc().getLotaSubscritor();
+		    return doc().getLotaSubscritor();		
 	}
 	
 	public boolean isEmTramiteParalelo() {
@@ -2522,6 +2600,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 
 	public ExRef getRef() {
 		return new ExRef(this);
+	}
+	
+	
+	/**
+	 * Verifica se o mobil geral está com registro de Restrição de Acesso ativo
+	 */
+	public boolean isAcessoRestrito() {
+		return sofreuMov(ExTipoDeMovimentacao.RESTRINGIR_ACESSO,null,doc().getMobilGeral());
 	}
 
 }

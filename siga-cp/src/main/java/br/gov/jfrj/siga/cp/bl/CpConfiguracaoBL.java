@@ -783,8 +783,18 @@ public class CpConfiguracaoBL {
 						srv.setDscServico(sDesc);
 						srv.setCpServicoPai(srvPai);
 						srv.setCpTipoServico(tpsrv);
-						ContextoPersistencia.upgradeToTransactional();
+						
+						// Nato: Atenção, deu muito trabalho para descobrir um problema aqui. Acontece que acrescentar um
+						// serviço novo é uma coisa que ocorre quando estamos montando o menu, e portanto, já é fora do 
+						// escopo do vRaptor. É no escopo do servlet do JSP. Sendo assim, o upgrade estava funcionando,
+						// no entanto, não havia mais um interceptor para dar o commit. Então, o pool estava perdendo
+						// uma conexão, pois sem o commit o close do EntityManager não libera a conexão do pool. Resolvi
+						// forçando um commit e fazendo o downgrade. No final, acho que essa coisa de abrir uma transação
+						// durante o processamento da View é muito ruim e não deveria ser feita.
+						boolean upgraded = ContextoPersistencia.upgradeToTransactional();
 						dao().acrescentarServico(srv);
+						if (upgraded)
+						    ContextoPersistencia.flushTransactionAndDowngradeToNonTransactional();
 					}
 					srvPai = srvRecuperado;
 				}

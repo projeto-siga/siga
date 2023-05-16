@@ -5075,8 +5075,8 @@ ${texto}
 
 [#macro document]
 	[#assign _scope='document']
-    [#assign document_content][#nested/][/#assign]
 	[@documento formato=(PAGE_SIZE!"A4") orientacao=(PAGE_ORIENTATION!"portrait") margemEsquerda=(MARGIN_LEFT!"3cm") margemDireita=(MARGIN_RIGHT!"2cm") margemSuperior=(MARGIN_TOP!"1cm") margemInferior=(MARGIN_BOTTOM!"2cm")]
+	    [#assign document_content][#nested/][/#assign]
 		[#switch STYLE!]
   			[#case "memorando"]
 				[@memorando texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"MEMORANDO")/]
@@ -5182,7 +5182,12 @@ ${texto}
 			[#if kind == ""][#local kind = infer_type(var, opcoes) /][/#if]
 		    [#if kind == "oculto"]
 		    [#elseif kind == "checkbox"]
-		    	${(.vars[var+index]?string(valor!"Sim", default!"Não"))!}
+		    	[#local v = .vars[var+index] /]
+		    	[#if v?is_boolean]
+		    		${(v?string(valor!"Sim", default!"Não"))!}
+		    	[#elseif v?is_string]
+		    		${v!}
+		    	[/#if]
 		    [#elseif kind == "radio"]
 		    	${(.vars[var+index]?string(valor!"Sim", default!"Não"))!}
 		    [#elseif kind == "editor"]

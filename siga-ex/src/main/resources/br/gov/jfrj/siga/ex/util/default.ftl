@@ -5118,7 +5118,10 @@ ${texto}
 [#macro description]
 	[#assign _scope='description']
 	[@descricao]
-		[#nested]
+		[#local descr][#nested][/#local]
+		[#local descr = descr?replace('<p>', '') /]
+		[#local descr = descr?replace('</p>', '') /]
+		{${descr}}
 	[/@descricao]
 [/#macro]
 

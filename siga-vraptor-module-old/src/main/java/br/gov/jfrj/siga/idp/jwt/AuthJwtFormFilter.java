@@ -6,6 +6,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -29,8 +30,9 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 public class AuthJwtFormFilter implements Filter {
 
 	public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
+	public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = null;
 
-	private static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
+	public static final int TIME_TO_EXPIRE_IN_S = 60 * 60 * 8; // 8h é o tempo
 																// de duração
 	public static final int TIME_TO_RENEW_IN_S = 60 * 60 * 7; // renova
 																// automaticamente
@@ -122,12 +124,12 @@ public class AuthJwtFormFilter implements Filter {
 				String token = extrairAuthorization(req);
 				Map<String, Object> decodedToken = validarToken(token);
 				final long now = System.currentTimeMillis() / 1000L;
-				if ((Integer) decodedToken.get("exp") < now + TIME_TO_RENEW_IN_S) {
-					// Seria bom incluir o attributo HttpOnly
+				if (((Integer) decodedToken.get("exp")) < (now + TIME_TO_RENEW_IN_S)) {
+
 					String tokenNew = renovarToken(token);
-					Map<String, Object> decodedNewToken = validarToken(token);
-					Cookie cookie = buildCookie(tokenNew);
-					resp.addCookie(cookie);
+					validarToken(token);
+					addCookie(req, resp, buildCookie(tokenNew));
+					
 //					Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.RENOVACAO_AUTOMATICA,
 //							(String) decodedNewToken.get("sub"), (Integer) decodedNewToken.get("iat"),
 //							(Integer) decodedNewToken.get("exp"), HttpRequestUtils.getIpAudit(req));
@@ -148,7 +150,7 @@ public class AuthJwtFormFilter implements Filter {
 			if ("jwt expired".equals(e.getMessage()))
 				redirecionarParaFormDeLogin(req, resp, e);
 			else
-				throw new RuntimeException(e);
+				throw new ServletException(e);
 		} catch (SigaJwtInvalidException e) {
 			redirecionarParaFormDeLogin(req, resp, e);
 			return;
@@ -161,7 +163,7 @@ public class AuthJwtFormFilter implements Filter {
 				return;
 			} else {
 				/* Erro não gerado pela sessão adiciona na stack */
-				throw new RuntimeException(e);
+				throw new ServletException(e);
 			}
 		} finally {
 			ContextoPersistencia.removeUserPrincipal();
@@ -169,7 +171,6 @@ public class AuthJwtFormFilter implements Filter {
 	}
 
 	public static Cookie buildCookie(String tokenNew) {
-
 		Cookie cookie = new Cookie(getNameCookie(), tokenNew);
 		cookie.setPath("/");
 
@@ -177,9 +178,26 @@ public class AuthJwtFormFilter implements Filter {
 			cookie.setDomain(getCookieDomain());
 		}
 
+		cookie.setMaxAge(TIME_TO_EXPIRE_IN_S);
+
 		return cookie;
 	}
+	
+	private static String removeSpecial(String str) {
+		//return str.replaceAll("[a-zA-Z0-9]+", ""); Ajustar REGEX para suportar ., traço e Número
+		return str;
+	}
 
+	public static void addCookie(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {
+		response.setHeader("Set-Cookie",
+				removeSpecial(cookie.getName()) + "=" + removeSpecial(cookie.getValue()) 
+						+ "; Path=" + cookie.getPath() 
+						+ (cookie.getDomain() == null ? "" : "; Domain="+removeSpecial(cookie.getDomain()))
+						+ "; Max-Age="+ cookie.getMaxAge() 
+						+ "; Expires=" + new Date(new Date().getTime() + cookie.getMaxAge() * 1000)
+						+ "; HttpOnly" + (!Prop.get("/siga.base.url").contains("https") ? "" : "; Secure; SameSite=None"));
+	}
+	
 	public static Cookie buildEraseCookie() {
 		Cookie cookie = new Cookie(getNameCookie(), "");
 		cookie.setPath("/");
@@ -252,15 +270,12 @@ public class AuthJwtFormFilter implements Filter {
 	 * @return String
 	 */
 	private static String getNameCookie() {
-		final String NAME_ENVIRONMENT_PRODUCTION = "PROD";
-		final String NAME_ENVIRONMENT = Prop.get("/siga.ambiente");
-		String nameCookie = SIGA_JWT_AUTH_COOKIE_NAME;
-
-		if (SigaMessages.isSigaSP()) {
-			if (!NAME_ENVIRONMENT_PRODUCTION.equals(NAME_ENVIRONMENT.toUpperCase().trim()))
-				nameCookie += "-" + NAME_ENVIRONMENT;
-		}
-		return nameCookie;
+		
+		if (SIGA_JWT_AUTH_COOKIE_NAME.equals(Prop.get("/siga.jwt.cookie.name")))
+			return SIGA_JWT_AUTH_COOKIE_NAME;
+		else
+			//Add prefixo + name cookie para desambiguacao
+			return SIGA_JWT_AUTH_COOKIE_NAME + "-" + Prop.get("/siga.jwt.cookie.name");
 	}
 	
 	private static String getCookieDomain() {

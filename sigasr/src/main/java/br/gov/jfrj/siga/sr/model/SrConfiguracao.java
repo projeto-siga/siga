@@ -264,9 +264,9 @@ public class SrConfiguracao extends CpConfiguracao {
 
 	public static List<SrConfiguracao> inflar(List<SrConfiguracaoCache> l) {
 		StringBuilder sb = new StringBuilder(
-				"select conf from SrConfiguracao as conf where conf.idConfiguracao in :ids");
-		if (l == null)
-			return new ArrayList<>();
+				"select conf from SrConfiguracao as conf where conf.idConfiguracao in (:ids)");
+		if (l == null || l.isEmpty())
+			return new ArrayList<SrConfiguracao>();
 		List<Long> ids = new ArrayList<>();
 		for (SrConfiguracaoCache i : l) {
 			ids.add(i.idConfiguracao);

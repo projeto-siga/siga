@@ -73,11 +73,10 @@
 							title="Data de início: ${f:formatarDDMMYY(pi.hisDtIni)}">${pi.duracaoDoProcedimento}</td>
 						<td align="right">${pi.statusDescr}</td>
 
-						<td>${pi.definicaoDeTarefaCorrente.nome}</td>
+						<td>${pi.tarefaCorrenteDescrHtml}</td>
 
-						<td align="center"><siga:selecionado sigla="${pi.atendente}"
-								pessoaParam="${pi.eventoPessoa.sigla}"
-								lotacaoParam="${pi.eventoLotacao.sigla}" /></td>
+						<td align="center"><c:set var="atendente" value="${pi.atendenteDescr}" /><siga:selecionado sigla="${atendente.sigla}"
+								pessoaParam="${atendente.siglaPessoa}" lotacaoParam="${atendente.siglaLotacao}" /></td>
 						<td align="right"
 							title="Data de início: ${f:formatarDDMMYY(pi.dtInicioDaTarefa)}">${pi.duracaoDaTarefa}</td>
 					</tr>

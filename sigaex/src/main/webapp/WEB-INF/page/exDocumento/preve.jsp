@@ -1,8 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	buffer="64kb"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://localhost/customtag" prefix="tags"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
+<%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
+<%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 
 <c:set var="titulo_pagina" scope="request">
 	Visualizar
@@ -16,9 +20,8 @@
 
 <siga:pagina titulo="Visualizar documento" popup="true">
 
-<table width="100%" border="0">
-	<tr>
-		<td style="padding: 10;"><tags:fixdocumenthtml>
+<div style="word-wrap: break-word" class="divDoc bg-white p-3 pb-5 w-100">
+<tags:fixdocumenthtml>
 			<c:if test="${modelo.conteudoTpBlob == 'template/freemarker'}">
 			    <c:choose>
 				    <c:when test="${empty mov}">
@@ -32,8 +35,7 @@
 			<c:if test="${modelo.conteudoTpBlob != 'template/freemarker'}">
 				<c:import url="/paginas/expediente/modelos/${jsp}" />
 			</c:if>
-		</tags:fixdocumenthtml></td>
-	</tr>
-</table>
+		</tags:fixdocumenthtml>
+</div>
 </siga:pagina>  
 

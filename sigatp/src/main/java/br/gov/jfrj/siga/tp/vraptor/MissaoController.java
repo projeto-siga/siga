@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
@@ -256,9 +255,10 @@ public class MissaoController extends TpController {
 		    missao.setRequisicoesTransporte(requisicoesTransporteAlt);
 
 		if (missao.getCondutor() == null)
-			validator.add(new I18nMessage(REQUISICOES_TRANSPORTE_STR, MISSAO_CONDUTOR_REQUIRED));
-		else	
-			checarCategoriaCNHVeiculoCondutor(missao);
+			validator.add(new I18nMessage(REQUISICOES_TRANSPORTE_STR, MISSAO_CONDUTOR_REQUIRED)); 
+		
+		
+		error (!checarCategoriaCNHVeiculoCondutor(missao),CONDUTOR_STR, "missao.categoriaCNHCondutorErradaParaVeiculo.validation");
 		
 		redirecionarSeErroAoSalvar(missao, template);
 		
@@ -417,7 +417,8 @@ public class MissaoController extends TpController {
 
 		result.include("requisicoesVsEstados", requisicoesVsEstados);
 
-		checarCategoriaCNHVeiculoCondutor(missao);
+		error (!checarCategoriaCNHVeiculoCondutor(missao),CONDUTOR_STR, "missao.categoriaCNHCondutorErradaParaVeiculo.validation");
+		
 		redirecionarSeErroAoSalvar(missao, Template.FINALIZAR);
 		missao.setCpOrgaoUsuario(getTitular().getOrgaoUsuario());
 		missao.setResponsavel(dpPessoa);
@@ -463,7 +464,7 @@ public class MissaoController extends TpController {
 	@RoleAdminMissaoComplexo
 	@RoleAgente
 	@Path("/iniciarMissao")
-	public void iniciarMissao(Missao missao, List<RequisicaoTransporte> requisicoesTransporteAlt) throws Exception {		
+	public void iniciarMissao(@Valid Missao missao, List<RequisicaoTransporte> requisicoesTransporteAlt) throws Exception {		
 		if (missao.getDataHoraSaida() == null) {
 			validator.add(new I18nMessage("dataHoraSaida", "missoes.dataHoraSaidaNulo.validation"));
 		}
@@ -479,7 +480,7 @@ public class MissaoController extends TpController {
 			validator.add(new I18nMessage(REQUISICOES_TRANSPORTE_STR, MISSAO_REQUISICOES_TRANSPORTE_REQUIRED));
 		}
 
-		checarCategoriaCNHVeiculoCondutor(missao);
+		error (!checarCategoriaCNHVeiculoCondutor(missao),CONDUTOR_STR, "missao.categoriaCNHCondutorErradaParaVeiculo.validation");
 
 		redirecionarSeErroAoSalvar(missao, Template.INICIAR);
 
@@ -527,7 +528,7 @@ public class MissaoController extends TpController {
 		    missao.setRequisicoesTransporte(requisicoesTransporteAlt);
 
 		validarOdometro(missao);
-		redirecionarSeErroAoSalvar(missao, template);
+		redirecionarSeErroAoSalvar(missao, Template.INICIORAPIDO);
 
 		missao.setCpOrgaoUsuario(getTitular().getOrgaoUsuario());
 		missao.setSequence(missao.getCpOrgaoUsuario());
@@ -535,13 +536,14 @@ public class MissaoController extends TpController {
 		missao.setResponsavel(dpPessoa);
 
 
-		boolean temRequisicaoDeServico = validarRequisicoesDeServico(missao, template);
+		boolean temRequisicaoDeServico = validarRequisicoesDeServico(missao, Template.INICIORAPIDO);
 
 		if (!temRequisicaoDeServico)
 			verificarDisponibilidadeDeVeiculo(missao);
 
-		checarCategoriaCNHVeiculoCondutor(missao);
-		redirecionarSeErroAoSalvar(missao, template);
+		error (!checarCategoriaCNHVeiculoCondutor(missao),CONDUTOR_STR, "missao.categoriaCNHCondutorErradaParaVeiculo.validation");
+		redirecionarSeErroAoSalvar(missao, Template.INICIORAPIDO);
+		
 		missao.setDataHora(Calendar.getInstance());
 		missao.setInicioRapido(PerguntaSimNao.SIM);
 
@@ -752,6 +754,15 @@ public class MissaoController extends TpController {
 		removerRequisicoesDoRenderArgs(missao.getRequisicoesTransporte());
 		result.forwardTo(this).inicioRapido(missao);
 	}
+	
+	private List<Long> montaIdsRequisicao(Missao missao) throws Exception
+	{
+		List<Long> reqs = new ArrayList<Long>();
+		for (RequisicaoTransporte req : missao.getRequisicoesTransporte())
+			reqs.add(req.getId());
+		
+		return reqs;
+	}
 
 	@RoleAdmin
     @RoleAdminMissao
@@ -762,7 +773,6 @@ public class MissaoController extends TpController {
 	    result.include("mostrarBotoesIniciarRapido", true);
 	    result.include("mostrarDadosProgramada", true);
 	    result.include("mostrarDadosIniciada", true);
-
 	    condicaoComponentesVeiculo();
 	}
 
@@ -951,7 +961,7 @@ public class MissaoController extends TpController {
 		result.include(MISSOESPORCONDUTOREESCALA_STR, missoes);
 	}
 
-	protected void checarCategoriaCNHVeiculoCondutor(Missao missao) throws Exception {
+	protected boolean checarCategoriaCNHVeiculoCondutor(Missao missao)  {
 		CategoriaCNH categoriaCondutor1 = null;
 		CategoriaCNH categoriaCondutor2 = null;
 
@@ -978,14 +988,13 @@ public class MissaoController extends TpController {
 			}
 
 			if (categoriaCondutor1 != null && categoriaCondutor2 != null && (categoriaCondutor1.compareTo(missao.getVeiculo().getCategoriaCNH()) >= 0 || categoriaCondutor2.compareTo(missao.getVeiculo().getCategoriaCNH()) >= 0))
-				return;
+				return true;
 		} else {
 			if (missao.getCondutor().getCategoriaCNH().compareTo(missao.getVeiculo().getCategoriaCNH()) >= 0) {
-				return;
+				return true;
 			}
 		}
-
-		validator.add(new I18nMessage("categoriaCnhCondutor", "missao.categoriaCNHCondutorErradaParaVeiculo.validation"));
+	    return false;	
 	}
 
 	@RoleAdmin
@@ -1175,7 +1184,7 @@ public class MissaoController extends TpController {
 			    validator.onErrorUse(Results.page()).of(MissaoController.class).incluir();
 				break;
 			case INICIORAPIDO:
-			    validator.onErrorUse(Results.logic()).forwardTo(MissaoController.class).inicioRapido(missao);
+				validator.onErrorForwardTo(this).inicioRapido(missao);
 				break;
 
 			case CANCELAR:
@@ -1183,7 +1192,7 @@ public class MissaoController extends TpController {
 				break;
 
 			case FINALIZAR:
-                validator.onErrorUse(Results.logic()).forwardTo(MissaoController.class).finalizar(missao.getId());
+				validator.onErrorForwardTo(this).finalizar(missao.getId());
                 break;
 
 			case INICIAR:

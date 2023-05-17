@@ -1380,7 +1380,6 @@ CREATE TABLE `veiculo_aud` (
 --
 -- Dumping routines for database 'sigatp'
 --
-/*!50003 DROP FUNCTION IF EXISTS `remove_acento` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1389,26 +1388,35 @@ CREATE TABLE `veiculo_aud` (
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`%` FUNCTION `remove_acento`(acentuado VARCHAR(4000)) RETURNS varchar(4000) CHARSET utf8 COLLATE utf8_bin
-    DETERMINISTIC
-BEGIN
-	
-	SET @textvalue = acentuado ;
+drop function if exists remove_acento;
+delimiter //
+create function remove_acento( textvalue varchar(20000) )
+returns varchar(20000) DETERMINISTIC
+begin
 
-    -- ACCENTS
-    SET @withaccents = 'ŠšŽžÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝŸÞàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿþƒ';
-    SET @withoutaccents = 'SsZzAAAAAAACEEEEIIIINOOOOOOUUUUYYBaaaaaaaceeeeiiiinoooooouuuuyybf';
-    SET @count = LENGTH(@withaccents);
+set @textvalue = textvalue;
 
-	WHILE @count > 0 DO
-        SET @textvalue = REPLACE(@textvalue, SUBSTRING(@withaccents, @count, 1), SUBSTRING(@withoutaccents, @count, 1));
-        SET @count = @count - 1;
-    END WHILE;
-    
-    RETURN UPPER(@textvalue);
+-- ACCENTS
+set @withaccents = 'ŠšŽžÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝŸÞàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿþƒ';
+set @withoutaccents = 'SsZzAAAAAAACEEEEIIIINOOOOOOUUUUYYBaaaaaaaceeeeiiiinoooooouuuuyybf';
+set @count = length(@withaccents);
 
-END ;;
+while @count > 0 do
+    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+    set @count = @count - 1;
+end while;
+
+-- SPECIAL CHARS
+set @special = '!@#$%¨&*()_+=§¹²³£¢¬"`´{[^~}]<,>.:;?/°ºª+*|\\''';
+set @count = length(@special);
+while @count > 0 do
+    set @textvalue = replace(@textvalue, substring(@special, @count, 1), '');
+    set @count = @count - 1;
+end while;
+
+return @textvalue;
+
+end;//
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;

@@ -96,7 +96,7 @@ public class ExModelo extends AbstractExModelo implements Sincronizavel, Selecio
 			byte[] blob = getConteudoBlobMod2();
 			if (blob == null) return false;
 			String freemarker = new String(getConteudoBlobMod2(), StandardCharsets.UTF_8);
-			if (freemarker.contains("@descricao") || freemarker.contains("@description"))
+			if (freemarker.contains("@descricao") || freemarker.contains("@description") || freemarker.contains("{/description}"))
 				return true;
 		}
 		return false;

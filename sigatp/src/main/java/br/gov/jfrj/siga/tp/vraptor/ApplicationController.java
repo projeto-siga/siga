@@ -116,7 +116,13 @@ public class ApplicationController extends TpController {
     }
     
     private int retornaDias() {
-    	return Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), autorizacaoGI.getComplexoPadrao()));
+    //	try {
+    		return Integer.parseInt(Parametro.buscarValorEmVigor("total.dias.pesquisa", getTitular(), autorizacaoGI.getComplexoAdministrador()));
+    //	} catch (Exception ex) {
+    //		return 15;
+    		
+    //	}
+    			
     }
 
     @Path("/index")

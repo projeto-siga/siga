@@ -29,11 +29,10 @@ import org.codehaus.jettison.json.JSONObject;
 
 import br.gov.jfrj.siga.acesso.ConfiguracaoAcesso;
 import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpServico;
+import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.util.SigaUtil;
 import br.gov.jfrj.siga.cp.util.TokenException;
@@ -59,21 +58,6 @@ import br.gov.jfrj.siga.gi.service.GiService;
 @WebService(serviceName = "GiService", endpointInterface = "br.gov.jfrj.siga.gi.service.GiService", targetNamespace = "http://impl.service.gi.siga.jfrj.gov.br/")
 public class GiServiceImpl implements GiService {
 	
-    private boolean autenticaViaBanco(CpIdentidade identidade, String senha) {
-    	// caso o campo senha esteja vazio ou nulo, retorna false. 
-    	// Não autentica usuários com senha em branco.
-    	if(identidade.getDscSenhaIdentidade() == null || identidade.getDscSenhaIdentidade().equals("")) 
-    		return false;
-    	
-    	try {
-    		final String hashAtual = GeraMessageDigest.executaHash(senha.getBytes(), "MD5");
-    		if (identidade != null && identidade.getDscSenhaIdentidade().equals(hashAtual)) return true;
-		} catch (Exception e) {
-			return false;
-		}
-    	return false;
-    }
-    
     private boolean autenticaViaLdap(String matricula, String senha) {
     	try {
 			return IntegracaoLdapViaWebService.getInstancia().autenticarUsuario(matricula, senha);
@@ -109,7 +93,7 @@ public class GiServiceImpl implements GiService {
 
 		try {
 			if(modoAut.equals(_MODO_AUTENTICACAO_BANCO)) {
-				if (autenticaViaBanco(id, senha)) {
+			    if (ValidadorDeSenhaFabrica.getInstance().validarSenha(id, senha)) {
 					resultado = parseLoginResult(id);
 				}
 			} else if(modoAut.equals(_MODO_AUTENTICACAO_LDAP)) {
@@ -516,9 +500,9 @@ public class GiServiceImpl implements GiService {
 
 		/* Autenticação */
 		if(modoAut.equals(_MODO_AUTENTICACAO_BANCO)) {
-			if (!autenticaViaBanco(id, senha)) {
-				throw new AplicacaoException("Usuário ou Senha inválidos.");
-			}
+            if (!ValidadorDeSenhaFabrica.getInstance().validarSenha(id, senha)) {
+                throw new AplicacaoException("Usuário ou Senha inválidos.");
+            }
 		} else if(modoAut.equals(_MODO_AUTENTICACAO_LDAP)) {
 			if(!autenticaViaLdap(matricula, senha)) {
 				throw new AplicacaoException("Usuário ou Senha inválidos.");

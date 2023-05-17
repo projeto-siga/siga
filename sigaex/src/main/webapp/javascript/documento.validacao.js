@@ -52,7 +52,10 @@ function validarCamposEntrevista() {
 	
 	obrigatorios.each(function() {
 		var elemento = $('[name="' + this.value + '"]');
-		var valor = elemento.val();
+
+		var fieldName = this.value.replace("Sel.sigla", "Sel.id");
+		var valor = $('[name="' + fieldName + '"]').val();
+		
 		var temCpf = !!elemento.data('formatarCpf');
 		var temCnpj = !!elemento.data('formatarCnpj');
 		
@@ -74,7 +77,7 @@ function validarCamposEntrevista() {
 			removerErro(elemento);																						
 		}
 							
-		if (valor.length > 0 || valor || !/^\s*$/.test(valor)) {			
+		if (valor && (valor.length > 0 || !/^\s*$/.test(valor))) {			
 			if (elemento.hasClass('campoData')) {
 				validarData(elemento);				
 			}
@@ -140,7 +143,7 @@ function validarCnpj(elemento) {
 }
 
 function validarSelect(elemento) {
-	if (elemento[0].tagName === 'SELECT') {
+	if (elemento[0] && elemento[0].tagName === 'SELECT') {
 		var option = elemento.find(':selected');
 		if (option.length > 0 && (option.attr('id') === 'opcaoNeutra' || option.val() === '')) {
 			aplicarErro(elemento, 'Favor selecione uma opção');
@@ -149,7 +152,7 @@ function validarSelect(elemento) {
 }
 
 function validarInputRadioECheckbox(elemento) {
-	if(elemento[0].tagName === 'INPUT' && (elemento[0].type === 'radio' || elemento[0].type === 'checkbox')) {
+	if(elemento[0] && elemento[0].tagName === 'INPUT' && (elemento[0].type === 'radio' || elemento[0].type === 'checkbox')) {
 		var checado = $('input[name="' + elemento.attr('name') + '"]:checked');
 		if (checado.length == 0) {				
 			aplicarErro(elemento, 'Favor selecionar alguma opção');									
@@ -249,7 +252,10 @@ function aplicarMensagemErro(elemento, mensagem) {
 }
 
 function obterLabel(elemento) {
-	var tituloLabel = $('label[for="' + elemento.attr('name') + '"]');
+	var elementoName = elemento.attr('name');
+	if (!elementoName) return;
+	var fieldName = elementoName.replace(/_[A-Za-z0-9_]+Sel\.sigla$/, "");
+	var tituloLabel = $('label[for="' + fieldName + '"]');
 	
 	if (tituloLabel.length == 0) {
 		var tag = elemento.parent().prev();		

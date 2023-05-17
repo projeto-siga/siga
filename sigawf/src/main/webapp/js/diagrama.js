@@ -472,7 +472,7 @@ app
 			$scope.graphDrawDebounced = debounce($scope.graphDraw,
 				1000, false);
 
-			function graphElement(shape, n, nextn) {
+			function graphElement(shape, n, nextn, idx) {
 				var resp;
 				switch (n.tipoResponsavel) {
 					case 'LOTACAO':
@@ -569,7 +569,7 @@ app
 					default:
 						resp = n.tipoResponsavel
 				}
-				var s = '"' + n.id + '"[shape="' + shape + '"][label=<' + n.titulo + (resp ? "<br/><font point-size=\"10pt\">" + resp + "</font>" : "") + '>];';
+				var s = '"' + n.id + '"[shape="' + shape + '"]' + (idx ? '[URL="#tarefa-' + idx + '"]' : '') + '[label=<' + (idx ? '<font color="blue">' + idx + '. </font>' : '') + n.titulo + (resp ? "<br/><font point-size=\"10pt\">" + resp + "</font>" : "") + '>];';
 				if (n.tipo !== "FIM") {
 					if (n.desvio && n.desvio.length > 0) {
 						for (var x in n.desvio) {
@@ -621,7 +621,7 @@ app
 						s += graphElement(
 							tipos[n.tipo],
 							n,
-							i < wf.tarefa.length - 1 ? wf.tarefa[i + 1] : undefined);
+							i < wf.tarefa.length - 1 ? wf.tarefa[i + 1] : undefined, i+1);
 					}
 				}
 				s += '}';

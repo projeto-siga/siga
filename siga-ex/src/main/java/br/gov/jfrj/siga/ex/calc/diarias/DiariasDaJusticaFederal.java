@@ -326,7 +326,6 @@ public class DiariasDaJusticaFederal {
             double diariaParaCalculoDoDeslocamento = valorUnitarioDaDiariaParaCalculoDoDeslocamento;
             if (internacional) {
                 diaria = floor(valorUnitatioDaDiaria * cotacaoDoDolar);
-                diariaParaCalculoDoDeslocamento = floor(diariaParaCalculoDoDeslocamento * cotacaoDoDolar);
             }
             // § 1º O magistrado ou servidor que se deslocar em equipe de trabalho
             // receberá diária equivalente ao maior valor pago entre os demais membros da

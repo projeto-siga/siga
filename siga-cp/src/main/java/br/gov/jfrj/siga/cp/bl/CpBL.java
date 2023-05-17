@@ -38,7 +38,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -67,6 +66,8 @@ import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.CpTipoIdentidade;
 import br.gov.jfrj.siga.cp.CpTipoMarcadorEnum;
 import br.gov.jfrj.siga.cp.CpToken;
+import br.gov.jfrj.siga.cp.auth.ValidadorDeSenha;
+import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.logic.CpExibirEmCampoDePesquisa;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorCorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
@@ -393,7 +394,7 @@ public class CpBL {
 					idNova.setDtCancelamentoIdentidade(null);
 					idNova.setDtCriacaoIdentidade(dt);
 
-					final String hashNova = GeraMessageDigest.executaHash(novaSenha.getBytes(), "MD5");
+					final String hashNova = ValidadorDeSenhaFabrica.getInstance().gerarMessageDigest(novaSenha);
 					idNova.setDscSenhaIdentidade(hashNova);
 
 					idNova.setDscSenhaIdentidadeCripto(null);
@@ -500,7 +501,7 @@ public class CpBL {
 						CpIdentidade idNova = new CpIdentidade();
 						String hashNova = "";
 						if (autenticaPeloBanco) {
-							hashNova = GeraMessageDigest.executaHash(novaSenha.getBytes(), "MD5");
+							hashNova = ValidadorDeSenhaFabrica.getInstance().gerarMessageDigest(novaSenha);
 						}
 						idNova.setDscSenhaIdentidade(hashNova);
 						idNova.setNmLoginIdentidade(matricula);
@@ -790,7 +791,7 @@ public class CpBL {
 		boolean podeTrocar = false;
 		boolean podeTrocarSenhaAdm = false;
 
-		podeTrocar = autenticarViaBanco(senhaAtual, id);
+		podeTrocar = ValidadorDeSenhaFabrica.getInstance().validarSenha(id, senhaAtual);
 
 		if (!podeTrocar) {
 			// tenta o modo administrador... Podendo autenticar o ADM pelo LDAP
@@ -801,7 +802,7 @@ public class CpBL {
 				if (admTrocaSenha) {
 					if (buscarModoAutenticacao(idCadastrante.getCpOrgaoUsuario().getSiglaOrgaoUsu())
 							.equals(GiService._MODO_AUTENTICACAO_BANCO)) {
-						podeTrocarSenhaAdm = autenticarViaBanco(senhaAtual, idCadastrante);
+						podeTrocarSenhaAdm = ValidadorDeSenhaFabrica.getInstance().validarSenha(idCadastrante, senhaAtual);
 					} else {
 						podeTrocarSenhaAdm = autenticarViaLdap(senhaAtual, idCadastrante);
 					}
@@ -838,7 +839,7 @@ public class CpBL {
 				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
-				final String hashNova = GeraMessageDigest.executaHash(senhaNova.getBytes(), "MD5");
+				final String hashNova = ValidadorDeSenhaFabrica.getInstance().gerarMessageDigest(senhaNova);
 				idNova.setDscSenhaIdentidade(hashNova);
 
 				// BASE64Encoder encoderBase64 = new BASE64Encoder();
@@ -868,7 +869,7 @@ public class CpBL {
 		if (senhaAtual == null || senhaAtual.trim().length() == 0) {
 			throw new AplicacaoException("Senha atual não confere");
 		}
-		final String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
+		final String hashAtual = ValidadorDeSenhaFabrica.getInstance().gerarMessageDigest(senhaAtual);
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(nomeUsuario, true);
 		// se o usuário não existir
@@ -970,7 +971,7 @@ public class CpBL {
 			consisteFormatoSenha(senhaNova);
 			try {
 				Date dt = dao().consultarDataEHoraDoServidor();
-				final String hashNova = GeraMessageDigest.executaHash(senhaNova.getBytes(), "MD5");
+				final String hashNova = ValidadorDeSenhaFabrica.getInstance().gerarMessageDigest(senhaNova);
 
 				dao().iniciarTransacao();
 				CpIdentidade i = null;
@@ -994,11 +995,6 @@ public class CpBL {
 		} else {
 			throw new AplicacaoException("Senha Atual não confere e/ou Senha nova diferente de confirmação");
 		}
-	}
-
-	private boolean autenticarViaBanco(String senhaAtual, final CpIdentidade id) throws NoSuchAlgorithmException {
-		String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
-		return id.getDscSenhaIdentidade().equals(hashAtual);
 	}
 
 	private boolean autenticarViaLdap(String login, String senhaAtual) {
@@ -1060,7 +1056,7 @@ public class CpBL {
 				throw new AplicacaoException("As pessoas devem ser diferentes!");
 			}
 			;
-			if (!autenticarViaBanco(senha1, cpIdAux1) || !autenticarViaBanco(senha2, cpIdAux2)) {
+			if (!ValidadorDeSenhaFabrica.getInstance().validarSenha(cpIdAux1, senha1) || !ValidadorDeSenhaFabrica.getInstance().validarSenha(cpIdAux2, senha2) ) {
 				throw new AplicacaoException("As senhas não conferem!");
 			}
 
@@ -1132,7 +1128,7 @@ public class CpBL {
 				PropertyUtils.copyProperties(idNova, id);
 				idNova.setIdIdentidade(null);
 				idNova.setDtCriacaoIdentidade(dt);
-				final String hashNova = GeraMessageDigest.executaHash(senhaNova.getBytes(), "MD5");
+				final String hashNova = ValidadorDeSenhaFabrica.getInstance().gerarMessageDigest(senhaNova);
 				idNova.setDscSenhaIdentidade(hashNova);
 
 				idNova.setDscSenhaIdentidadeCripto(null);

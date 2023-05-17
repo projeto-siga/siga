@@ -231,7 +231,7 @@ public class Parametro extends TpModel implements ConvertableEntity {
 		Query qry = Parametro.AR.em().createQuery(queryComData);
     	qry.setParameter("nomeParametro",nome);
     	qry.setParameter("dataHoje", hoje);
-    	qry.setParameter("usuario",usuario);
+    	qry.setParameter("usuario",usuario);	
     	qry.setParameter("lotacao", usuario.getLotacao());
     	qry.setParameter("complexoPadrao",complexoPadrao);
     	qry.setParameter("orgaoUsuario", usuario.getOrgaoUsuario());

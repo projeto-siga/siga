@@ -109,7 +109,7 @@ public class ExModeloController extends ExSelecionavelController {
 
 			String tipoModelo = modelo.getConteudoTpBlob();
 			if (tipoModelo == null || tipoModelo.trim().length() == 0) {
-				tipoModelo = "template-file/jsp";
+				tipoModelo = "template/freemarker";
 			}
 
 			final ExClassificacaoSelecao classificacaoSel = new ExClassificacaoSelecao();

@@ -4,8 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.ISairPost;
 import br.gov.jfrj.siga.context.AcessoPublico;
-import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
-import br.gov.jfrj.siga.vraptor.Transacional;
+import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 @AcessoPublico
@@ -20,8 +19,8 @@ public class SairPost implements ISairPost {
         request.getSession().setAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO, null);
 
         request.getSession(false);
-
-        AuthJwtFormFilter.addCookie(request, ctx.getCtx().getResponse(), AuthJwtFormFilter.buildEraseCookie());
+        
+        AutenticadorFabrica.getInstance().removerCookie(ctx.getCtx().getRequest(), ctx.getCtx().getResponse());
 
         resp.status = "OK";
     }

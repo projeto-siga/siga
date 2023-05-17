@@ -15,10 +15,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
@@ -35,18 +33,17 @@ import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
-import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
+import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
-import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
-import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 @Controller
@@ -71,11 +68,13 @@ public class LoginController extends SigaController {
 
 	@Transacional
 	@Get("public/app/login")
-	public void login(String cont) throws IOException {
+	public void login(String cont, String mensagem) throws IOException {
 		
 		final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar c = Calendar.getInstance();
 		
+		if (mensagem != null)
+		    result.include("loginMensagem", mensagem);
 		result.include("fAviso", "21-11-2019".equals(df.format(c.getTime())));
 		result.include("avisoMensagem", "Prezado usuário, o sistema SP Sem Papel passa por instabilidade e a equipe técnica está trabalhando para solucionar o mais rápido possível, assim que restabelecido essa mensagem sairá do ar.");
 		result.include("versao", SigaVersion.SIGA_VERSION);
@@ -113,7 +112,7 @@ public class LoginController extends SigaController {
 			if (isSenhaUsuarioExpirada(usuarioLogado)) {
 				result.include("isSenhaUsuarioExpirada", true);
 				result.include("loginUsuario", username);
-				result.forwardTo(this).login(cont);				
+				result.forwardTo(this).login(cont, null);				
 			} else {
 				gravaCookieComToken(username, cont);
 				result.include("isPinNotDefined", true);
@@ -123,12 +122,12 @@ public class LoginController extends SigaController {
 				result.include("loginMensagem", SigaMessages.getMessage("usuario.falhaautenticacao")); 
 			else
 				result.include("loginMensagem", e.getMessage());
-			result.forwardTo(this).login(cont);
+			result.forwardTo(this).login(cont, null);
 		}
 	}
 
 	@Get("public/app/logout")
-	public void logout() {
+	public void logout() throws Exception {
 		/*
 		 * Interrompe a sessão local com SSO
 		 */
@@ -136,7 +135,7 @@ public class LoginController extends SigaController {
 				
 		request.getSession(false);
 
-		AuthJwtFormFilter.addCookie(request, response, AuthJwtFormFilter.buildEraseCookie());
+		AutenticadorFabrica.getInstance().removerCookie(getRequest(), getResponse());
 		
 		result.redirectTo("/");					
 		
@@ -148,10 +147,6 @@ public class LoginController extends SigaController {
 		try (java.util.Scanner s = new java.util.Scanner(is, "UTF-8")) {
 			return s.useDelimiter("\\A").hasNext() ? s.next() : "";
 		}
-	}
-
-	private String extrairAuthorization(HttpServletRequest request) {
-		return request.getHeader("Authorization").replaceAll(".* ", "").trim();
 	}
 
 	@Get("app/swapUser")
@@ -189,19 +184,7 @@ public class LoginController extends SigaController {
 	}
 
 	private void gravaCookieComToken(String username, String cont) throws Exception {
-		String modulo = SigaJwtBL.extrairModulo(request);
-		SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
-
-		String token = jwtBL.criarToken(username, null, null, null);
-
-		Map<String, Object> decodedToken = jwtBL.validarToken(token);
-		Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
-				(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
-				(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
-
-		Cookie cookie = AuthJwtFormFilter.buildCookie(token);
-
-		AuthJwtFormFilter.addCookie(request, response, cookie);
+	    String token = AutenticadorFabrica.getInstance().criarCookie(request, response, username);
 
 		if (cont != null) {
 			if (cont.contains("?"))
@@ -214,25 +197,6 @@ public class LoginController extends SigaController {
 		} else
 			result.redirectTo("/");
 	}
-	
-	private Integer extrairTTL(HttpServletRequest request) throws Exception {
-		String opcoes = request.getHeader("Jwt-Options");
-		if (opcoes != null) {
-			Integer ttl = new JSONObject(opcoes).optInt("ttl");
-			ttl = ttl > 0 ? ttl : null;
-			return ttl;
-		}
-
-		return null;
-	}
-
-	private String extrairPermissoes(HttpServletRequest request) throws Exception {
-		String opcoes = request.getHeader("Jwt-Options");
-		if (opcoes != null) {
-			return new JSONObject(opcoes).optString("perm");
-		}
-		return null;
-	}	
 	
 	@Consumes("application/json")
 	@Post("public/app/login/novaSenha")
@@ -257,10 +221,8 @@ public class LoginController extends SigaController {
 		}								
 
 		if (!StringUtils.isEmpty(senhaAtual)) {
-			final String hashAtual = GeraMessageDigest.executaHash(senhaAtual.getBytes(), "MD5");
-			if (!hashAtual.equals(identidade.getDscSenhaIdentidade())) {
-				usuario.enviarErro("senhaAtual", "Senha atual está incorreta");
-			}			
+		    if (!ValidadorDeSenhaFabrica.getInstance().validarSenha(identidade, senhaAtual))
+		        usuario.enviarErro("senhaAtual", "Senha atual está incorreta");
 		} else {
 			usuario.enviarErro("senhaAtual", "Favor informar a senha atual");			
 		}
@@ -346,7 +308,7 @@ public class LoginController extends SigaController {
 				
 			} catch(AplicacaoException a){
 				result.include("loginMensagem", a.getMessage());		
-				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login");
+				result.forwardTo(this).login(Contexto.urlBase(request) + "/siga/public/app/login", null);
 			}catch(Exception e){
 				throw new AplicacaoException("Não foi possivel acessar o ." + Prop.get("/siga.integracao.sso.nome") );
 		}

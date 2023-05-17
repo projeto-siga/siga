@@ -113,6 +113,7 @@ import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
+import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.cp.bl.CpConfiguracaoBL;
@@ -1607,13 +1608,13 @@ public class ExBL extends CpBL {
 	public boolean deveTramitarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
 				titular, lotaTitular, ExTipoDeConfiguracao.TRAMITE_AUTOMATICO);
-		return idSit != null && idSit.isDefaultOuObrigatoria();
+		return idSit != null && idSit.isAutomaticoOuObrigatoria();
 	}
 
 	public boolean deveJuntarAutomaticamente(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex.getInstance().getConf().buscaSituacao(doc.getExModelo(), doc.getExTipoDocumento(),
 				titular, lotaTitular, ExTipoDeConfiguracao.JUNTADA_AUTOMATICA);
-		return idSit != null && idSit.isDefaultOuObrigatoria();
+		return idSit != null && idSit.isAutomaticoOuObrigatoria();
 	}
 
 	public String assinarDocumento(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
@@ -1893,7 +1894,7 @@ public class ExBL extends CpBL {
 				// Receber o móbil pai caso ele tenha sido tramitado para o cadastrante ou sua lotação
 				if (Ex.getInstance().getComp().pode(ExPodeReceber.class, cadastrante, lotaCadastrante, doc.getExMobilPai())) 
 					receber(cadastrante, cadastrante, lotaCadastrante, doc.getExMobilPai(), null);
-				juntarAoDocumentoPai(doc.getCadastrante(), doc.getLotaCadastrante(), doc, dtMov, cadastrante, cadastrante, mov);
+				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
 			}
 
 			if (doc.getExMobilAutuado() != null) {
@@ -2011,8 +2012,7 @@ public class ExBL extends CpBL {
 				
 				senhaValida = Cp.getInstance().getBL().validaPinIdentidade(senhaSubscritor, id);
 			} else {
-				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
-				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			    senhaValida = ValidadorDeSenhaFabrica.getInstance().validarSenha(id, senhaSubscritor);
 			}
 
 			if (!senhaValida) {
@@ -2261,8 +2261,7 @@ public class ExBL extends CpBL {
 				hashAtual = GeraMessageDigest.calcSha256(senhaSubscritor);	
 				senhaValida = id.getPinIdentidade().equals(hashAtual);
 			} else {
-				hashAtual = GeraMessageDigest.executaHash(senhaSubscritor.getBytes(), "MD5");
-				senhaValida = id.getDscSenhaIdentidade().equals(hashAtual);
+			    senhaValida = ValidadorDeSenhaFabrica.getInstance().validarSenha(id, senhaSubscritor);
 			}
 
 			if (!senhaValida) {

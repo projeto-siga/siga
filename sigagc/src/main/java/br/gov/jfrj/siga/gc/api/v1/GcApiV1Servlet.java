@@ -13,6 +13,7 @@ import com.crivano.swaggerservlet.dependency.TestableDependency;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
 import br.gov.jfrj.siga.context.SigaSwaggerServlet;
+import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -96,17 +97,7 @@ public class GcApiV1Servlet extends SigaSwaggerServlet implements IPropertyProvi
 		try {
 			if (!context.getAction().getClass().isAnnotationPresent(AcessoPublico.class)) {
 				try {
-					String token = AuthJwtFormFilter.extrairAuthorization(context.getRequest());
-					Map<String, Object> decodedToken = AuthJwtFormFilter.validarToken(token);
-					final long now = System.currentTimeMillis() / 1000L;
-					if ((Integer) decodedToken.get("exp") < now + AuthJwtFormFilter.TIME_TO_RENEW_IN_S) {
-						// Seria bom incluir o attributo HttpOnly
-						String tokenNew = AuthJwtFormFilter.renovarToken(token);
-						Map<String, Object> decodedNewToken = AuthJwtFormFilter.validarToken(token);
-						Cookie cookie = AuthJwtFormFilter.buildCookie(tokenNew);
-						context.getResponse().addCookie(cookie);
-					}
-					ContextoPersistencia.setUserPrincipal((String) decodedToken.get("sub"));
+				    ContextoPersistencia.setUserPrincipal(AutenticadorFabrica.getInstance().obterPrincipal(context.getRequest(), context.getResponse()));
 				} catch (Exception e) {
 					if (!context.getAction().getClass().isAnnotationPresent(AcessoPublicoEPrivado.class))
 						throw e;

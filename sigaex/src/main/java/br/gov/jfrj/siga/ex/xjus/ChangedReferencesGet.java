@@ -34,6 +34,10 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
 
 		String[] aCursor = req.cursor.split(";");
+		
+		if (aCursor.length != RecordServiceEnum.values().length) {
+		    throw new RuntimeException("Cursor inválido: '" + req.cursor + "'. Deveria ser algo do tipo: '" + AllReferencesGet.defaultCursor() + "'.");
+		}
 
 		// Call Each System
 		for (RecordServiceEnum service : RecordServiceEnum.values()) {

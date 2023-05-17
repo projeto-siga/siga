@@ -11,6 +11,9 @@ public class CronologiaComparator implements Comparator<ExMovimentacao> {
 		try {
 			int i = 0;
 			
+			if (o1 == o2)
+			    return 0;
+			
 			// Nato: quando estamos gravando uma nova movimentação, ela precisa ser
 			// inserida no final da lista, caso o contrário, se for um recebimento,
 			// não será correlacionada com a transferência anterior. A falta
@@ -38,12 +41,10 @@ public class CronologiaComparator implements Comparator<ExMovimentacao> {
 				return Integer.MIN_VALUE;
 
 			// Pelo tipo da movimentação
-			if (o1.getExTipoMovimentacao() != null && o2.getExTipoMovimentacao() != null) {
-				i = ExMovimentacao.tpMovDesempatePosicao(o1.getExTipoMovimentacao(),
-						o2.getExTipoMovimentacao());
-				if (i != 0)
-					return i;
-			}
+			i = ExMovimentacao.tpMovDesempatePosicao(o1.getExTipoMovimentacao(),
+					o2.getExTipoMovimentacao());
+			if (i != 0)
+				return i;
 
 			// Pela ID
 			i = o2.getIdMov().compareTo(o1.getIdMov());

@@ -824,7 +824,7 @@ public class ExMovimentacaoController extends ExController {
 		} else if (idSit == CpSituacaoDeConfiguracaoEnum.PROIBIDO || idSit == CpSituacaoDeConfiguracaoEnum.NAO_PODE) {
 			af.ativo = false;
 			af.fixo = true;
-		} else if (idSit == CpSituacaoDeConfiguracaoEnum.DEFAULT || idSit == CpSituacaoDeConfiguracaoEnum.PODE) {
+		} else if (idSit == CpSituacaoDeConfiguracaoEnum.DEFAULT || idSit == CpSituacaoDeConfiguracaoEnum.PODE || idSit == CpSituacaoDeConfiguracaoEnum.AUTOMATICO) {
 			af.ativo = true;
 			af.fixo = false;
 		} else if (idSit == CpSituacaoDeConfiguracaoEnum.NAO_DEFAULT) {

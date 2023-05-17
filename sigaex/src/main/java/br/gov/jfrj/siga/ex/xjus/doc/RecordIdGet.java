@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import com.crivano.swaggerservlet.PresentableUnloggedException;
+
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
@@ -28,12 +30,12 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			try {
 				primaryKey = Long.valueOf(req.id);
 			} catch (NumberFormatException nfe) {
-				throw new RuntimeException("REMOVED");
+				throw new PresentableUnloggedException("REMOVED");
 			}
 			ExDocumento doc = ExDao.getInstance().consultar(primaryKey, ExDocumento.class, false);
 
 			if (doc == null || doc.isCancelado()) {
-				throw new RuntimeException("REMOVED");
+				throw new PresentableUnloggedException("REMOVED");
 			}
 
 			resp.id = req.id;
@@ -116,10 +118,12 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			addFieldAndFacet(resp, "modelo", doc.getExModelo().getNmMod());
 		if (doc.getDnmExNivelAcesso() != null)
 			addField(resp, "acesso", doc.getDnmExNivelAcesso().getNmNivelAcesso());
-		if (doc.getDtDocYYYYMMDD() != null) {
-			addField(resp, "data", doc.getDtDocYYYYMMDD());
-			addFacet(resp, "ano", doc.getDtDocYYYYMMDD().substring(0, 4));
-			addFacet(resp, "mes", doc.getDtDocYYYYMMDD().substring(5, 7));
+		
+		String dtDocYYYYMMDD = doc.getDtDocYYYYMMDD();
+        if (dtDocYYYYMMDD != null && !dtDocYYYYMMDD.isEmpty()) {
+			addField(resp, "data", dtDocYYYYMMDD);
+			addFacet(resp, "ano", dtDocYYYYMMDD.substring(0, 4));
+			addFacet(resp, "mes", dtDocYYYYMMDD.substring(5, 7));
 		}
 
 		ExClassificacao cAtual = doc.getExClassificacaoAtual();

@@ -1530,7 +1530,9 @@ CKEDITOR.replace( '${var}',
     [#if v != ""]
        [#local v = exbl.canonicalizarHtml(v, false, true, false, true) aux=v /]        
 	[#else]
-        [#local aux="" v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>'/]
+		[#if !default?has_content]
+        	[#local v = '<p style="text-indent:2cm; text-align: justify">&nbsp;</p>' aux=v /]
+        [/#if]
 	[/#if]
 
         <div>
@@ -1545,8 +1547,8 @@ CKEDITOR.replace( '${var}',
                         [#if ( (func.podeUtilizarExtensaoEditor(lotaCadastrante, doc.exModelo.idMod?number)!false)
                            && (!((desconsiderarExtensao == 'true')!false)) )]
 		[#else]
-			[#if aux != ""]            
-      		 	<textarea id="${var}" name="${var}" class="editor">${v?html}</textarea>
+			[#if aux??]            
+      		 	<textarea id="${var}" name="${var}" class="editor">${aux?html}</textarea>
 			[#else]
        			<textarea id="${var}" name="${var}" class="editor"> ${default!}</textarea>
 			[/#if]
@@ -1861,14 +1863,16 @@ CKEDITOR.replace( '${var}',
     [/#if]
 [/#macro]
 
-[#macro memo var titulo colunas linhas reler=false obrigatorio=false default=""]
-        [#if reler == true]
-                [#local jreler = " onchange=\"javascript: sbmt();\""]
-        [/#if]
+[#macro memo var titulo colunas linhas reler=false obrigatorio=false default="" atts={}]
+    [#if reler == true]
+        [#local jreler = " onchange=\"javascript: sbmt();\""]
+    [/#if]
 
-        [#local v = .vars[var]!default]
+    [#local v = .vars[var]!default]
 
-	<div class="form-group" style="margin-bottom:0">
+	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]
+		
+    <div class="form-group" style="margin-bottom:0">
         <input type="hidden" name="vars" value="${var}" />
 
         [#if (alerta!"Não") = 'Sim' && v = ""]
@@ -1889,7 +1893,7 @@ CKEDITOR.replace( '${var}',
         [/#if]
 
         [#if !gerar_formulario!false]
-        	<textarea id="${var}" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} style="width:100%;" class="form-control">${v}</textarea>
+        	<textarea id="${var}" cols="${colunas}" rows="${linhas}" name="${var}" ${jreler!""} ${attsHtml} style="width:100%;" class="form-control">${v}</textarea>
         	<div class="invalid-feedback  invalid-feedback-${var}">Preenchimento obrigatório</div>
         [#else]
             <span class="valor">${v}</span>
@@ -2742,6 +2746,10 @@ Pede deferimento.</span><br/><br/><br/>
 	      [#if (Bairro!"") != ""]${Bairro!}<br />[/#if]
 	      [#if (CEP!"") != ""]${CEP}[/#if] [#if (Municipio!"") != ""]${Municipio!}[/#if] [#if (Municipio!"") != "" && (UF!"") != ""]- ${UF!}<br />[/#if] 
 	      [#if (EmCopia!"") != ""]<b>Cc ${EmCopia!}<b>[/#if]   
+	      [#if (Rodape!"") != ""]Rodapé do Ofício ${Rodape!}[/#if]
+	      [#if (OrgaoArea!"") != ""]<br /><br /><center>${OrgaoArea!}</center>[/#if] 
+	      [#if (Endereco!"") != ""]<center>${Endereco!}</center>[/#if]
+	      [#if (Telefone!"") != ""]<center>Telefone: ${Telefone!}</center>[/#if]  [#if (Email!"") != ""]<center>Email: ${Email!}</center>[/#if]
 	    </p>
     <!-- FIM ENDERECAMENTO -->
 [/#macro]
@@ -2820,6 +2828,9 @@ Pede deferimento.</span><br/><br/><br/>
 	        [@fimSubscritor]${(pessoaVO.subscritor.idPessoa)}[/@fimSubscritor]
     	[/#if]
 	[/#list]
+	[#if incluirAssinaturaBIE == true]
+   		<!-- FIM ASSINATURA -->
+	[/#if]
 [/#macro]
 
 [#macro assinaturaMovCentro formatarOrgao=false]
@@ -2969,12 +2980,16 @@ Pede deferimento.</span><br/><br/><br/>
 [/#macro]
 
 
-[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true exibeRodapeEnderecamento=false]
+[#macro estiloBrasaoCentralizado tipo tamanhoLetra="11pt"  exibeAssinatura=true formatarOrgao=true orgaoCabecalho=true numeracaoCentralizada=false dataAntesDaAssinatura=false incluirMioloDJE=false omitirCodigo=false omitirData=false omitirCabecalho=false topoPrimeiraPagina='' incluirAssinaturaBIE=true exibeClassificacaoDocumental=true exibeRodapeEnderecamento=false]
     [@primeiroCabecalho]${topoPrimeiraPagina!}
-    [@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [#if !omitirCabecalho]
+    	[@cabecalhoCentralizadoPrimeiraPagina orgaoCabecalho/]
+    [/#if]
     [/@primeiroCabecalho]
     [@cabecalho]
-    [@cabecalhoCentralizado orgaoCabecalho/]
+    [#if !omitirCabecalho]
+	    [@cabecalhoCentralizado orgaoCabecalho/]
+    [/#if]
     [/@cabecalho]
     [@letra tamanhoLetra]
         [#if !numeracaoCentralizada]
@@ -3057,7 +3072,6 @@ Pede deferimento.</span><br/><br/><br/>
    [#if exibeRodapeEnderecamento]
    		[@rodapeEnderecamento/]
    [/#if]
-  
 [/#macro]
 
 [#macro processo]
@@ -4976,7 +4990,7 @@ ${texto}
     [/#if]
 [/#macro]
 
-[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={}]
+[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={} innerGroup=false]
     [#if !hidden]
     	</div>
     	[#local id=""/]
@@ -4986,6 +5000,7 @@ ${texto}
 		    [#local id = (depend=="")?string("", "div-" + c + "-" + depend)] 
 	    	[#local dependClasses][#list depend?split(";") as x] depend-on-${x}[/#list][/#local]
     	[/#if]
+        [#if innerGroup]<div class="col col-12">[/#if]
 	    [@division id=id depend=depend suppressIndependent=true atts={'class': 'row' + dependClasses!}]
 	    	[#if title?? && title != '']<h5 class="col-12">${title}</h5>[/#if]
 	    	[#if info?? && info != '']<div class="col-12"><p class="alert alert-info mb-1">${info}</p></div>[/#if]
@@ -4993,8 +5008,13 @@ ${texto}
 	    	[#if danger?? && danger != '']<div class="col-12"><p class="alert alert-danger mb-1">${danger}</p></div>[/#if]
 			[#nested]
 	    [/@division]
+        [#if innerGroup]</div>[/#if]
 	    <div class="row">
     [/#if]
+[/#macro]
+
+[#macro row_break]
+	<div class="w-100"></div>
 [/#macro]
 
 [#macro if expr depend='']
@@ -5055,8 +5075,8 @@ ${texto}
 
 [#macro document]
 	[#assign _scope='document']
-    [#assign document_content][#nested/][/#assign]
 	[@documento formato=(PAGE_SIZE!"A4") orientacao=(PAGE_ORIENTATION!"portrait") margemEsquerda=(MARGIN_LEFT!"3cm") margemDireita=(MARGIN_RIGHT!"2cm") margemSuperior=(MARGIN_TOP!"1cm") margemInferior=(MARGIN_BOTTOM!"2cm")]
+	    [#assign document_content][#nested/][/#assign]
 		[#switch STYLE!]
   			[#case "memorando"]
 				[@memorando texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"MEMORANDO")/]
@@ -5082,8 +5102,13 @@ ${texto}
   			[#case "solicitacao"]
 				[@solicitacao tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"FORMULÁRIO") assunto=(_assunto!"")/]
       			[#break]
+  			[#case "pagina_em_branco"]
+                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!true) incluirMioloDJE=(_incluirMioloDJE!false) omitirCabecalho=true omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
+				    ${document_content!}
+                [/@estiloBrasaoCentralizado]
+      			[#break]
   			[#default]
-                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!false) incluirMioloDJE=(_incluirMioloDJE!false) omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
+                [@estiloBrasaoCentralizado tipo=(_tipo!"") tamanhoLetra=(_tamanhoLetra!"Normal")  exibeAssinatura=(_exibeAssinatura!true) formatarOrgao=(_formatarOrgao!true) orgaoCabecalho=(_orgaoCabecalho!true) numeracaoCentralizada=(_numeracaoCentralizada!false) dataAntesDaAssinatura=(_dataAntesDaAssinatura!false) incluirMioloDJE=(_incluirMioloDJE!false) omitirCabecalho=(_omitirCabecalho!false) omitirCodigo=(_omitirCodigo!false) omitirData=(_omitirData!false) topoPrimeiraPagina=(_topoPrimeiraPagina!"") incluirAssinaturaBIE=(_incluirAssinaturaBIE!true) exibeClassificacaoDocumental=(_exibeClassificacaoDocumental!true) exibeRodapeEnderecamento=(_exibeRodapeEnderecamento!false)]
 				    ${document_content!}
                 [/@estiloBrasaoCentralizado]
   		[/#switch]
@@ -5091,8 +5116,12 @@ ${texto}
 [/#macro]
 
 [#macro description]
+	[#assign _scope='description']
 	[@descricao]
-		[#nested]
+		[#local descr][#nested][/#local]
+		[#local descr = descr?replace('<p>', '') /]
+		[#local descr = descr?replace('</p>', '') /]
+		{${descr}}
 	[/@descricao]
 [/#macro]
 
@@ -5117,7 +5146,9 @@ ${texto}
 [/#macro]
 
 [#function infer_type var opcoes=""]
-	[#if var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	[#if opcoes?has_content]
+    	[#return "selecao"]
+    [#elseif var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "cpf"]
 	[#elseif var?matches("^cnpj([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "cnpj"]
@@ -5143,8 +5174,6 @@ ${texto}
     	[#return "documento"]
 	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "funcao"]
-    [#elseif opcoes?has_content]
-    	[#return "selecao"]
     [#else]
     	[#return "texto"]
     [/#if]
@@ -5152,11 +5181,16 @@ ${texto}
 
 [#macro value var index=(_index!'') title=var+index kind="" width="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true sensitivity=""][#compress]
 	[#if document]
-		<span style="color: ${VALUE_COLOR};">
+    	[#if _scope != 'description']<span style="color: ${VALUE_COLOR};">[/#if][#compress]
 			[#if kind == ""][#local kind = infer_type(var, opcoes) /][/#if]
 		    [#if kind == "oculto"]
 		    [#elseif kind == "checkbox"]
-		    	${(.vars[var+index]?string(valor!"Sim", default!"Não"))!}
+		    	[#local v = .vars[var+index] /]
+		    	[#if v?is_boolean]
+		    		${(v?string(valor!"Sim", default!"Não"))!}
+		    	[#elseif v?is_string]
+		    		${v!}
+		    	[/#if]
 		    [#elseif kind == "radio"]
 		    	${(.vars[var+index]?string(valor!"Sim", default!"Não"))!}
 		    [#elseif kind == "editor"]
@@ -5188,7 +5222,7 @@ ${texto}
 			[#else]
 				${(.vars[var+index])!}
 			[/#if]
-		</span>
+    	[/#compress][#if _scope != 'description']</span>[/#if]
 	[/#if]
 [/#compress][/#macro]
 
@@ -5335,11 +5369,21 @@ Exemplos de utilização:
         [#return]
     [/#if]
     
-	[#-- tipo oculto não deve gerar nem o grupo --]
+	[#-- tipo checkbox --]
 	[#if kind=="checkbox"]
-		[#local value=(value == "")?string("Sim", value) /]
-		[#local default=(default == "")?string("Não", default) /]
+		[#local checkedValue=(value == "")?string("Sim", value) /]
+		[#local uncheckedValue=(default == "")?string("Não", default) /]
+		[#local default=uncheckedValue /]
 		[#local suffix="_chk" /]
+    [/#if]
+    
+	[#-- tipo selecionavel --]
+	[#if kind=="pessoa" || kind=="lotacao" || kind=="cossignatario" || kind=="funcao" || kind=="documento"]
+		[#local selectTipo = kind /]
+		[#if kind=="documento"]
+			[#local selectTipo = 'expediente' /]
+		[/#if]
+	    [#local suffix = "_" + selectTipo + "Sel.sigla" /]
     [/#if]
 	
 	[#-- trata cpf e cnpj --]
@@ -5366,22 +5410,21 @@ Exemplos de utilização:
 		[#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
 		[@inlineTemplate/] 
     [/#if]
-
-	[#if (alerta!"Não") = 'Sim' && v = ""]
+    
+	[#if (alerta!"Não") == 'Sim' && v == ""]
 	    [#list obrigatorios?split(",") as campo]
-    	     [#if campo == var]
+    	     [#if campo == var + suffix!""]
         		[#local vermelho = "color:red"]
              [/#if]
         [/#list]
     [/#if]
 
-    [#if required]
-    	[#local negrito = "font-weight:bold"]
-    	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
-    [/#if]
-    
     [#if !gerar_formulario!false]    	
 		<div class="form-group ${col} mb-2">
+		    [#if required]
+		    	[#local negrito = "font-weight:bold"]
+		    	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
+		    [/#if]
 			[#if title?has_content && kind != "checkbox" && kind != "radio" ]    			
 				<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${title}</label>
 			[/#if]
@@ -5430,10 +5473,9 @@ Exemplos de utilização:
 			[#elseif kind == "checkbox"]
 				<input type="hidden" id="${var}" name="${var}" value="${v}" />
 				<div class="form-check">
-					### ${refresh_js!'vazio'}
-					<input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" value="${value}"
-						[#if v==value]checked[/#if] 
-						onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${value}'; else document.getElementById('${var}').value = '${default}'; ${onclique!}; ${refresh_js!}" [#if id == ""]data-criar-id="true"[/#if]/> 
+					<input class="form-check-input" id="${id}" type="checkbox" name="${var}_chk" 
+						[#if v==checkedValue]checked[/#if] 
+						onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${checkedValue}'; else document.getElementById('${var}').value = '${uncheckedValue}'; ${onclique!}; ${refresh_js!}" [#if id == ""]data-criar-id="true"[/#if]/> 
 					<label title="campo: ${var}" class="form-check-label" for="${id}" style="${negrito!""};${vermelho!""}" [#if id == ""]data-nome-ref="${var}_chk"[/#if]>${title!""}</label>
 				</div>		
 			[#elseif kind == "radio"]
@@ -5822,18 +5864,18 @@ Exemplos de utilização:
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="pessoa" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="pessoa" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "lotacao"]
-				[@field_selectable tipo="lotacao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="lotacao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "cossignatario"]
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="cosignatario" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="cosignatario" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "funcao"]
-				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "documento"]
-			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[/#if]
 		        [#if required]            		    
 			   		<div class="invalid-feedback invalid-feedback-${var}${suffix!}">Preenchimento obrigatório</div>
@@ -5850,18 +5892,15 @@ Exemplos de utilização:
 
     [#assign varName = var + tipoSel + "Sel.id" /]    
     [#local vId = .vars[varName]!default]
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
     <input type="hidden" name="vars" value="${varName}" />
-
+    
+    [#assign varName = var + tipoSel + "Sel.sigla" /]
     [#local vSigla = .vars[varName]!default]
     <input type="hidden" name="vars" value="${varName}" />
 
     [#assign varName = var + tipoSel + "Sel.descricao" /]
     [#local vDescricao = .vars[varName]!default]
     <input type="hidden" name="vars" value="${varName}" />
-
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
-    <input type="hidden" name="obrigatorios" value="${varName}" />	    
 
     [#if !gerar_formulario!false]
         [@field_selectable_box titulo=titulo var=var tipo=tipo refresh_js=refresh_js paramList=paramList modulo=modulo col=col hint=hint /]	        
@@ -5993,3 +6032,4 @@ Exemplos de utilização:
         [/#if]
     </script>
 [/#macro]
+

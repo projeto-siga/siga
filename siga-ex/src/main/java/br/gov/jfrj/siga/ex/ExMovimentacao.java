@@ -439,7 +439,7 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 		int i = tpMovDesempate.indexOf(idTpMov);
 		int i2 = tpMovDesempate.indexOf(idTpMov2);
 		
-		return i - i2;
+		return i2 - i;
 	}
 
 	public int compareTo(final ExMovimentacao mov) {

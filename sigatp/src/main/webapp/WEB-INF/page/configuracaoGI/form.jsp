@@ -31,10 +31,10 @@ $(function() {
 			<siga:selecao tipo="pessoa" propriedade="pessoa" tema="simple" modulo="siga" urlAcao="buscar" siglaInicial="${cpConfiguracao.dpPessoa}" idInicial="${cpConfiguracao.dpPessoa.id}" descricaoInicial="${cpConfiguracao.dpPessoa.descricao}"/>
 							
 		    <label for= "cpConfiguracao.cpSituacaoConfiguracao" class="obrigatorio">  Situa&ccedil;&atilde;o Configura&ccedil;&atilde;o</label>	
-   			<siga:select id="cpSituacaoConfiguracao" name="cpConfiguracao.cpSituacaoConfiguracao" list="cpSituacoesConfiguracao" listKey="id" listValue="dscSitConfiguracao" value="${cpConfiguracao.cpSituacaoConfiguracao.descr}"/>
+   			<siga:select id="cpSituacaoConfiguracao" name="cpConfiguracao.cpSituacaoConfiguracao" list="cpSituacoesConfiguracao" listKey="id" listValue="descr" value="${cpConfiguracao.cpSituacaoConfiguracao.descr}"/>
 			
 			<label for= "cpConfiguracao.cpTipoConfiguracao" class= "obrigatorio"> Tipo de Configura&ccedil;&atilde;o</label>	
-   			<siga:select id="cpTipoConfiguracao" name="cpConfiguracao.cpTipoConfiguracao" list="cpTiposConfiguracao" listKey="idTpConfiguracao" listValue="dscTpConfiguracao" value="${cpConfiguracao.cpTipoConfiguracao.idTpConfiguracao}" />
+   			<siga:select id="cpTipoConfiguracao" name="idTpConfiguracao" list="cpTiposConfiguracao" listKey="id" listValue="descr" value="${cpConfiguracao.cpTipoConfiguracao.descr}" />
 			
 			<label for= "cpConfiguracao.complexo" class= "obrigatorio">Complexo</label>	
    			<siga:select id="complexo" name="cpConfiguracao.complexo" list="cpComplexos" listKey="idComplexo" listValue="nomeComplexo" value="${cpConfiguracao.complexo.idComplexo}"/>

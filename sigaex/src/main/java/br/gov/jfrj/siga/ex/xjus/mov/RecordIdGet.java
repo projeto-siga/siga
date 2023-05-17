@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.ex.xjus.mov;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.crivano.swaggerservlet.PresentableUnloggedException;
+
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -24,18 +26,18 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			try {
 				primaryKey = Long.valueOf(req.id);
 			} catch (NumberFormatException nfe) {
-				throw new RuntimeException("REMOVED");
+				throw new PresentableUnloggedException("REMOVED");
 			}
 			ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey, ExMovimentacao.class, false);
 
 			if (mov == null || mov.isCancelada()) {
-				throw new RuntimeException("REMOVED");
+				throw new PresentableUnloggedException("REMOVED");
 			}
 
 			ExDocumento doc = mov.getExDocumento();
 
 			if (doc == null || doc.isCancelado()) {
-				throw new RuntimeException("REMOVED");
+				throw new PresentableUnloggedException("REMOVED");
 			}
 
 			Date dt = doc.getDtFinalizacao();

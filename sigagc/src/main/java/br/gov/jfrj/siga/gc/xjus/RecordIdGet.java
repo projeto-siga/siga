@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
 
+import com.crivano.swaggerservlet.PresentableUnloggedException;
+
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
@@ -25,12 +27,12 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		try {
 			primaryKey = Long.valueOf(req.id);
 		} catch (NumberFormatException nfe) {
-			throw new RuntimeException("REMOVED");
+			throw new PresentableUnloggedException("REMOVED");
 		}
 		GcInformacao inf = GcInformacao.AR.findById(primaryKey);
 
 		if (inf == null || inf.isCancelado()) {
-			throw new RuntimeException("REMOVED");
+			throw new PresentableUnloggedException("REMOVED");
 		}
 
 		resp.id = req.id;

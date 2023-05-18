@@ -19,13 +19,24 @@ jobs:
       - name: Clone Siga Docker
         shell: bash
         run: git clone https://github.com/projeto-siga/siga-docker.git
-      - name: Set Env Branch
+              
+      - name: Set Env Branch For Push
         shell: bash
+        if: github.event_name != 'pull_request'
         run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_ENV
-      - name: Build and Start Sigadoc
+        
+      - name: Build and Start Sigadoc For Push
+        if: github.event_name != 'pull_request'
         run: cd siga-docker && echo "Start SIGA on branch" ${BRANCH}  && docker-compose up -d && cd ..
         env:
           BRANCH: ${{env.BRANCH}}
+      
+      - name: Build and Start Sigadoc For Pull Request
+        if: github.event_name == 'pull_request'
+        run: cd siga-docker && echo "Start SIGA on branch" ${BRANCH}  && docker-compose up -d && cd ..
+        env:
+          BRANCH: ${{ github.event.pull_request.base.ref }}
+          
       - uses: actions/checkout@v3
       - name: Set up JDK 8
         uses: actions/setup-java@v3

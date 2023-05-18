@@ -1,5 +1,12 @@
 name: rest-test
-on: push
+on:
+  push:
+    branches:
+      - "develop"
+      - "master"
+  pull_request:
+    branches:
+      - "develop"
 jobs:
   test:
     runs-on: ubuntu-latest

@@ -1,4 +1,4 @@
-name: tests
+name: rest-test
 on: push
 jobs:
   test:

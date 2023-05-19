@@ -102,49 +102,56 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Get("app/modelo/editar")
-	public void edita(final Long id, final Integer postback) throws UnsupportedEncodingException {
+	public void edita(final Long id, final Long idModeloVersao,final Integer postback) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (postback == null) {
-			ExModelo modelo = buscarModelo(id);
+			if (idModeloVersao == null) {
+				ExModelo modelo = buscarModelo(id);
 
-			String tipoModelo = modelo.getConteudoTpBlob();
-			if (tipoModelo == null || tipoModelo.trim().length() == 0) {
-				tipoModelo = "template/freemarker";
+				String tipoModelo = modelo.getConteudoTpBlob();
+				if (tipoModelo == null || tipoModelo.trim().length() == 0) {
+					tipoModelo = "template/freemarker";
+				}
+
+				final ExClassificacaoSelecao classificacaoSel = new ExClassificacaoSelecao();
+				final ExClassificacaoSelecao classificacaoCriacaoViasSel = new ExClassificacaoSelecao();
+
+				classificacaoSel.buscarPorObjeto(modelo.getExClassificacao());
+				classificacaoCriacaoViasSel.buscarPorObjeto(modelo.getExClassCriacaoVia());
+
+				final String conteudo = modelo.getConteudoBlobMod() != null ? new String(modelo.getConteudoBlobMod2(), UTF8)
+						: null;
+				final Long forma = modelo.getExFormaDocumento() != null ? modelo.getExFormaDocumento().getIdFormaDoc()
+						: null;
+				final Long nivel = modelo.getExNivelAcesso() != null ? modelo.getExNivelAcesso().getIdNivelAcesso() : null;
+
+				result.include("id", id);
+				result.include("nome", modelo.getNmMod());
+				result.include("classificacaoSel", classificacaoSel);
+				result.include("classificacaoCriacaoViasSel", classificacaoCriacaoViasSel);
+				result.include("pessoaSel", new DpPessoaSelecao());
+				result.include("lotacaoSel", new DpLotacaoSelecao());
+				result.include("cargoSel", new DpCargoSelecao());
+				result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
+				result.include("forma", forma);
+				result.include("listaForma", getListaForma());
+				result.include("nivel", nivel);
+				result.include("listaNivelAcesso", getListaNivelAcesso());
+				result.include("tipoModelo", tipoModelo);
+				result.include("conteudo", conteudo);
+				result.include("descricao", modelo.getDescMod());
+				result.include("arquivo", modelo.getNmArqMod());
+				result.include("uuid", modelo.getUuid());
+				result.include("diretorio", modelo.getNmDiretorio());
+				result.include("marcaDagua", modelo.getMarcaDagua());
+				result.include("extensoesArquivo", modelo.getExtensoesArquivo());
+				result.include("listaModeloHistorico", listarModelosAnteriores(modelo.getIdInicial()));
+			} else {
+				ExModelo modelo = buscarModelo(idModeloVersao);
+				final String conteudo = modelo.getConteudoBlobMod() != null ? new String(
+						modelo.getConteudoBlobMod2(), UTF8) : null;
+				result.include("conteudoModelo", conteudo);
 			}
-
-			final ExClassificacaoSelecao classificacaoSel = new ExClassificacaoSelecao();
-			final ExClassificacaoSelecao classificacaoCriacaoViasSel = new ExClassificacaoSelecao();
-
-			classificacaoSel.buscarPorObjeto(modelo.getExClassificacao());
-			classificacaoCriacaoViasSel.buscarPorObjeto(modelo.getExClassCriacaoVia());
-
-			final String conteudo = modelo.getConteudoBlobMod() != null ? new String(modelo.getConteudoBlobMod2(), UTF8)
-					: null;
-			final Long forma = modelo.getExFormaDocumento() != null ? modelo.getExFormaDocumento().getIdFormaDoc()
-					: null;
-			final Long nivel = modelo.getExNivelAcesso() != null ? modelo.getExNivelAcesso().getIdNivelAcesso() : null;
-
-			result.include("id", id);
-			result.include("nome", modelo.getNmMod());
-			result.include("classificacaoSel", classificacaoSel);
-			result.include("classificacaoCriacaoViasSel", classificacaoCriacaoViasSel);
-			result.include("pessoaSel", new DpPessoaSelecao());
-			result.include("lotacaoSel", new DpLotacaoSelecao());
-			result.include("cargoSel", new DpCargoSelecao());
-			result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
-			result.include("forma", forma);
-			result.include("listaForma", getListaForma());
-			result.include("nivel", nivel);
-			result.include("listaNivelAcesso", getListaNivelAcesso());
-			result.include("tipoModelo", tipoModelo);
-			result.include("conteudo", conteudo);
-			result.include("descricao", modelo.getDescMod());
-			result.include("arquivo", modelo.getNmArqMod());
-			result.include("uuid", modelo.getUuid());
-			result.include("diretorio", modelo.getNmDiretorio());
-			result.include("marcaDagua", modelo.getMarcaDagua());
-			result.include("extensoesArquivo", modelo.getExtensoesArquivo());
-			result.include("listaExtensoes", CpExtensoesDeArquivoEnum.getList());
 		}
 	}
 
@@ -471,5 +478,9 @@ public class ExModeloController extends ExSelecionavelController {
 			getItens().removeAll(lExcluir);
 		}
 		return s;
+	}
+
+	private List<ExModelo> listarModelosAnteriores(final Long idInicial) {
+		return dao().listarModelosAnterioresIdAndHisDtFim(idInicial);
 	}
 }

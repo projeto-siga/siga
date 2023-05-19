@@ -220,12 +220,6 @@
 									if(item.id !== undefined && item.id === 'conteudoModeloSelecionado' ) dv.rightOriginal().setValue($(item).val());
 								}
 
-								function abrirNovoModelo(item) {
-									if(item.id !== undefined && item.id === 'novoIdModelo' && $(item).val() !== '')
-										window.location.href = window.location.origin+'/sigaex/app/modelo/editar?id='+$(item).val();
-								}
-
-
 								$('#versao').on('change', function() {
 									$.ajax({
 										url:'/sigaex/app/modelo/editar',
@@ -468,9 +462,6 @@
 				                    complete: function() {
 				                    	$.unblockUI();
 					                },
-									success: function(data){
-										Array.from($(data)).forEach(abrirNovoModelo);
-									},
 			                        error: function(data) {
 			                            alert("Erro gravando as alterações!");
 			                        }
@@ -517,8 +508,7 @@
 						$("#extensoesArquivo").prop("disabled", true);
 				}
 	</script>
-	<input type="hidden" id="novoIdModelo" value="${novoIdModelo}"/>
-	<textarea id="conteudoModeloSelecionado" style="display:none;" cols="1" rows="1"
+W	<textarea id="conteudoModeloSelecionado" style="display:none;" cols="1" rows="1"
 			  name="conteudoModeloSelecionado" class="form-control"><c:out value="${conteudoModelo}"
 														  default="" /></textarea>
 

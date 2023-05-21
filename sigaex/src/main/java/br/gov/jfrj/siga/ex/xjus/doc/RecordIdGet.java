@@ -44,9 +44,6 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			resp.refresh = "NEVER";
 			resp.code = doc.getCodigo();
 			resp.title = doc.getDescrDocumento();
-			resp.field = new ArrayList<>();
-			resp.facet = new ArrayList<>();
-			resp.refresh = "NEVER";
 			// resp.setLastModified(doc.getDtFinalizacao());
 
 			addMetadataForDoc(doc, resp);

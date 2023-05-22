@@ -4,6 +4,7 @@ on:
     branches:
       - "develop"
       - "master"
+      - 'releases/**'
 jobs:
   test:
     runs-on: ubuntu-latest

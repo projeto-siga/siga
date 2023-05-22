@@ -69,13 +69,13 @@ public class Stamp {
 
 		return stamp(abPdf, sigla, rascunho, copia, cancelado, semEfeito, internoProduzido, qrCode, mensagem,
 				paginaInicial, paginaFinal, cOmitirNumeracao, instancia, orgaoUsu, marcaDaguaDoModelo, idsAssinantes,
-				false);
+				false, false);
 	}
 
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
-			List<Long> idsAssinantes, boolean tamanhoOriginal) throws DocumentException, IOException {
+			List<Long> idsAssinantes, boolean tamanhoOriginal, boolean reduzirVisuAssinPdf) throws DocumentException, IOException {
 			
 		if (idsAssinantes != null && idsAssinantes.size() > 0 && Prop.getBool("assinatura.estampar"))
 			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
@@ -263,7 +263,7 @@ public class Stamp {
 				}
 
 				if (mensagem != null) {
-					String msg = gerarReducaoAssinaturas(mensagem);
+					String msg = gerarReducaoAssinaturas(reduzirVisuAssinPdf, mensagem);
 					PdfPTable table = new PdfPTable(1);
 					table.setTotalWidth(r.getWidth() - image39.getHeight() - (QRCODE_LEFT_MARGIN_IN_CM
 							+ QRCODE_SIZE_IN_CM + 4 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT);
@@ -404,9 +404,9 @@ public class Stamp {
 		}
 	}
 	
-	private static String gerarReducaoAssinaturas(String mensagem) {
+	private static String gerarReducaoAssinaturas(boolean reduzirVisuAssinPdf, String mensagem) {
 		Pattern pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b");
-		if (true && pattern.matcher(mensagem).find()) {
+		if (reduzirVisuAssinPdf && pattern.matcher(mensagem).find()) {
 			pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b|(,| e )|(\\bDocumento Nº: \\b)");
 	        Matcher mm = pattern.matcher(mensagem);
 			

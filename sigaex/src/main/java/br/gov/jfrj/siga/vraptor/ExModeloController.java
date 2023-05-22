@@ -445,13 +445,6 @@ public class ExModeloController extends ExSelecionavelController {
 		return new ExModelo();
 	}
 
-	private ExModelo buscarModeloAtual(final Long id) {
-		if (id != null) {
-			return buscarModelo(id).getModeloAtual();
-		}
-		return new ExModelo();
-	}
-
 	private ExModelo buscarModeloAntigo(final Long idInicial) {
 		if (idInicial != null) {
 			return dao().consultar(idInicial, ExModelo.class, false).getModeloAtual();

@@ -23,7 +23,9 @@ import br.gov.jfrj.siga.cp.CpComplexo;
 import br.gov.jfrj.siga.cp.CpConfiguracao;
 import br.gov.jfrj.siga.cp.CpServico;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpSituacaoDeConfiguracaoEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
+import br.gov.jfrj.siga.cp.model.enm.ITipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.tp.exceptions.ConfiguracaoGIControllerException;
 import br.gov.jfrj.siga.tp.model.TpDao;
@@ -145,11 +147,9 @@ public class ConfiguracaoGIController extends TpController {
             CpOrgaoUsuario cpOrgaoUsuario = CpOrgaoUsuario.AR.findById(idOrgaoUsu);
 
 
-            List<CpTipoDeConfiguracao> cpTiposConfiguracao = new ArrayList<CpTipoDeConfiguracao>();
-            cpTiposConfiguracao.add(CpTipoDeConfiguracao.UTILIZAR_SERVICO);
-            cpTiposConfiguracao.add(CpTipoDeConfiguracao.UTILIZAR_COMPLEXO);
+            List<ITipoDeConfiguracao> cpTiposConfiguracao = Arrays.asList(CpTipoDeConfiguracao.UTILIZAR_SERVICO,CpTipoDeConfiguracao.UTILIZAR_COMPLEXO);
 
-            List<CpTipoDeConfiguracao> cpSituacoesConfiguracao = Arrays.asList(CpTipoDeConfiguracao.values());
+            List<CpSituacaoDeConfiguracaoEnum> cpSituacoesConfiguracao = Arrays.asList(CpSituacaoDeConfiguracaoEnum.values());
     		Map<String, Object> parametros = new HashMap<String,Object>();
     		parametros.put("idOrgaoUsu",idOrgaoUsu);
             List<CpComplexo> cpComplexos = CpComplexo.AR.find(" orgaoUsuario.idOrgaoUsu = :idOrgaoUsu ", parametros).fetch();
@@ -176,8 +176,9 @@ public class ConfiguracaoGIController extends TpController {
     }
 
     @Transactional
-    public void salvar(CpConfiguracao cpConfiguracao) throws ConfiguracaoGIControllerException {
+    public void salvar(CpConfiguracao cpConfiguracao, Integer idTpConfiguracao) throws ConfiguracaoGIControllerException {
         try {
+        	cpConfiguracao.setCpTipoConfiguracao(CpTipoDeConfiguracao.getById(idTpConfiguracao));
             isValid(cpConfiguracao);
             CpConfiguracao cpConfiguracaoNova = new CpConfiguracao();
             CpConfiguracao cpConfiguracaoAnterior = CpConfiguracao.AR.findById(cpConfiguracao.getId());
@@ -199,7 +200,7 @@ public class ConfiguracaoGIController extends TpController {
             }
 
             cpConfiguracaoNova.setCpSituacaoConfiguracao(cpConfiguracao.getCpSituacaoConfiguracao());
-            cpConfiguracaoNova.setCpTipoConfiguracao(cpConfiguracao.getCpTipoConfiguracao());
+            cpConfiguracaoNova.setCpTipoConfiguracao(CpTipoDeConfiguracao.getById(idTpConfiguracao));
             cpConfiguracaoNova.setComplexo(cpConfiguracao.getComplexo());
             cpConfiguracaoNova.setOrgaoUsuario(cpConfiguracao.getOrgaoUsuario());
             cpConfiguracaoNova.setLotacao(cpConfiguracao.getLotacao());

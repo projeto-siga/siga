@@ -174,9 +174,6 @@
 							<td>${assdoc.doc.descrFormaDoc}</td>
 							<td>${assdoc.doc.descrDocumento}</td>
 						</tr>
-						<!-- Nato: desabilitando o trâmite automático na assinatura em lote -->
-						<input type="hidden" name="ad_tramitar_${assdoc.doc.idDoc}"
-							value="false" />
 						<input type="hidden" name="ad_descr_${assdoc.doc.idDoc}"
 							value="${assdoc.doc.sigla}" />
 						<input type="hidden" name="ad_url_pdf_${assdoc.doc.idDoc}"

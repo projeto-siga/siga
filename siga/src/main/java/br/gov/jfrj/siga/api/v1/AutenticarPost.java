@@ -3,28 +3,22 @@ package br.gov.jfrj.siga.api.v1;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
-import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IAutenticarPost;
-import br.gov.jfrj.siga.base.HttpRequestUtils;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.context.AcessoPublico;
-import br.gov.jfrj.siga.context.ApiContextSupport;
-import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
-import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.service.GiService;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
-import br.gov.jfrj.siga.idp.jwt.SigaJwtBL;
 import br.gov.jfrj.siga.vraptor.Transacional;
 
 @AcessoPublico
@@ -33,7 +27,7 @@ public class AutenticarPost implements IAutenticarPost {
 	@Override
 	public void run(Request req, Response resp, SigaApiV1Context ctx) throws Exception {
 		try {
-			HttpServletRequest request = ctx.getCtx().getRequest();
+            HttpServletRequest request = ctx.getCtx().getRequest();
 
 			final String authorization = request.getHeader("Authorization");
 			if (authorization == null || !authorization.toLowerCase().startsWith("basic"))
@@ -65,21 +59,9 @@ public class AutenticarPost implements IAutenticarPost {
 
 				throw new RuntimeException(mensagem.toString());
 			}
-
-			String modulo = SigaJwtBL.extrairModulo(request);
-			SigaJwtBL jwtBL = SigaJwtBL.inicializarJwtBL(modulo);
-
-			String token = jwtBL.criarToken(username, null, null, AuthJwtFormFilter.TIME_TO_EXPIRE_IN_S);
-
-			Map<String, Object> decodedToken = jwtBL.validarToken(token);
-			Cp.getInstance().getBL().logAcesso(AbstractCpAcesso.CpTipoAcessoEnum.AUTENTICACAO,
-					(String) decodedToken.get("sub"), (Integer) decodedToken.get("iat"),
-					(Integer) decodedToken.get("exp"), HttpRequestUtils.getIpAudit(request));
-
+			
+			String token = AutenticadorFabrica.getInstance().criarCookie(request, ctx.getCtx().getResponse(), username);
 			resp.token = token;
-
-			Cookie cookie = AuthJwtFormFilter.buildCookie(token);
-			AuthJwtFormFilter.addCookie(SwaggerServlet.getHttpServletRequest(), SwaggerServlet.getHttpServletResponse(), cookie);
 		} catch (Exception ex) {
 			throw new PresentableUnloggedException("Erro no login: " + ex.getMessage(), ex);
 		}

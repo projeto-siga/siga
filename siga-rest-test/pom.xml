@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>siga</groupId>
 		<artifactId>siga-doc</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>11.1-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -11,6 +11,20 @@
 	<artifactId>siga-rest-test</artifactId>
 
 	<dependencies>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>5.3.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-path</artifactId>
+			<version>5.3.0</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-cp</artifactId>
@@ -28,22 +42,270 @@
 					<artifactId>bcprov-jdk14</artifactId>
 					<groupId>bouncycastle</groupId>
 				</exclusion>
+
+
+				<exclusion>
+					<groupId>javax.enterprise</groupId>
+					<artifactId>cdi-api</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.jboss.spec.javax.servlet</groupId>
+					<artifactId>jboss-servlet-api_2.5_spec</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.codehaus.jettison</groupId>
+					<artifactId>jettison</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>net.sf.jasperreports</groupId>
+					<artifactId>jasperreports</artifactId>
+				</exclusion>
+
+
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-client</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-collections4</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi-ooxml-schemas</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi-ooxml</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>commons-fileupload</groupId>
+					<artifactId>commons-fileupload</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.apache.xmlbeans</groupId>
+					<artifactId>xmlbeans</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>net.sf.kxml</groupId>
+					<artifactId>kxml2</artifactId>
+				</exclusion>
+
+				<!-- Siga -->
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-ws</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-sinc-lib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-rel</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-ldap</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-jwt</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mvel</groupId>
+					<artifactId>mvel2</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.minio</groupId>
+					<artifactId>minio</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
 		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>5.3.0</version>
+			<groupId>siga</groupId>
+			<artifactId>siga-ex</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.lowagie</groupId>
+					<artifactId>itext</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.lowagie</groupId>
+					<artifactId>itext-rtf</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>net.sf.kxml</groupId>
+					<artifactId>kxml2</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.spec.javax.servlet</groupId>
+					<artifactId>jboss-servlet-api_2.5_spec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.freemarker</groupId>
+					<artifactId>freemarker</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.xmlgraphics</groupId>
+					<artifactId>fop</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.ccil.cowan.tagsoup</groupId>
+					<artifactId>tagsoup</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>net.sourceforge.cssparser</groupId>
+					<artifactId>cssparser</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>net.sourceforge.htmlcleaner</groupId>
+					<artifactId>htmlcleaner</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.apache.axis</groupId>
+					<artifactId>axis</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>swetake</groupId>
+					<artifactId>qrcode</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>javax.xml</groupId>
+					<artifactId>jaxrpc-api</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>com.auth0</groupId>
+					<artifactId>java-jwt</artifactId>
+				</exclusion>
+
+
+				<!-- Siga -->
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-cp</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-ext</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>siga</groupId>
+					<artifactId>siga-integracao</artifactId>
+				</exclusion>
+
+				<!-- CDI -->
+				<exclusion>
+					<groupId>org.jboss.spec.javax.ejb</groupId>
+					<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+				</exclusion>
+				<!-- habilitar para usar ExDaoTest.java <exclusion> <groupId>com.oracle</groupId> 
+			<artifactId>ojdbc6</artifactId> <version>11.2.0.3.0</version> <scope>compile</scope> 
+			</exclusion> -->
+
+				<exclusion>
+					<groupId>br.jus.trf2.xjus</groupId>
+					<artifactId>x-jus-record-api</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>com.crivano</groupId>
+					<artifactId>swaggerservlet</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>com.crivano</groupId>
+					<artifactId>jmodel</artifactId>
+				</exclusion>
+
+				<!-- PDF Related -->
+				<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
+				<exclusion>
+					<groupId>com.itextpdf</groupId>
+					<artifactId>itextpdf</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<!-- ALWAYS required, usually included transitively. -->
+					<groupId>com.openhtmltopdf</groupId>
+					<artifactId>openhtmltopdf-core</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<!-- Required for PDF output. -->
+					<groupId>com.openhtmltopdf</groupId>
+					<artifactId>openhtmltopdf-pdfbox</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<!-- Optional, leave out if you do not need logging via slf4j. -->
+					<groupId>com.openhtmltopdf</groupId>
+					<artifactId>openhtmltopdf-slf4j</artifactId>
+				</exclusion>
+
+				<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>json-path</artifactId>
-			<version>5.3.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
+	<build>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<configuration>
+				<includes>
+					<include>br/gov/jfrj/siga/ex/api/v1/unit/*.java</include>
+				</includes>
+				<skipTests>false</skipTests>
+				<testFailureIgnore>true</testFailureIgnore>
+			</configuration>
+		</plugin>
+	</plugins>
+	</build>
 
 </project>

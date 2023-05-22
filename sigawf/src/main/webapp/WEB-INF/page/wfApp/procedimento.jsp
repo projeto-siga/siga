@@ -79,9 +79,11 @@
 							<c:forEach var="mov" items="${movs}">
 								<tr class="${mov.classeVO}">
 									<td class="align-top" title="${mov.dtIniVO}">${mov.tempoRelativoVO}</td>
+						<!--  			<td class="align-top"
+										title="${mov.hisIdcIni.dpPessoa.descricao} - ${mov.hisIdcIni.dpPessoa.lotacao.descricao}">${mov.hisIdcIni.dpPessoa.sigla}</td>-->
 									<td class="align-top"
-										title="${mov.hisIdcIni.dpPessoa.descricao} - ${mov.hisIdcIni.dpPessoa.lotacao.descricao}">${mov.hisIdcIni.dpPessoa.sigla}</td>
-									<td class="align-top" title="${mov.lotaTitular.descricao}">${mov.lotaTitular.siglaCompleta}</td>
+										title="${mov.hisIdcIni.dpPessoa.descricao}">${mov.hisIdcIni.dpPessoa.sigla}</td>
+									<td class="align-top" title="${mov.lotaTitular.descricao}">${mov.lotaTitular.siglaCompleta}</td> 
 									<td class="align-top">${mov.evento}</td>
 									<td class="align-top" style="word-break: break-all;"><span
 										class="align-top">${mov.descricaoEvento}</span></td>
@@ -174,7 +176,7 @@
 						</p>
 						<p>
 							<b>Cadastrante:</b> ${pi.hisIdcIni.dpPessoa.sigla}
-							(${pi.hisIdcIni.dpPessoa.lotacao.sigla})
+					<!--  		(${pi.hisIdcIni.dpPessoa.lotacao.sigla}) -->
 						</p>
 						<p>
 							<b>Titular:</b> ${pi.titular} (${pi.lotaTitular})

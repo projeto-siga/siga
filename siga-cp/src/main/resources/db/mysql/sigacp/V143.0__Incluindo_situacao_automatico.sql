@@ -1,0 +1,1 @@
+INSERT INTO `cp_situacao_configuracao` VALUES(10, 'Automático', 6);

@@ -65,8 +65,8 @@
 										</td>
 										<td>${cpConfiguracao.lotacao != null ? cpConfiguracao.lotacao.nomeLotacao : ""}</td>
 										<td>${cpConfiguracao.dpPessoa != null ? cpConfiguracao.dpPessoa.nomePessoa : "" }</td>	
-										<td>${cpConfiguracao.cpSituacaoConfiguracao != null ? cpConfiguracao.cpSituacaoConfiguracao.dscSitConfiguracao : "" }</td>
-										<td>${cpConfiguracao.cpTipoConfiguracao != null ? cpConfiguracao.cpTipoConfiguracao.dscTpConfiguracao : "" }</td>
+										<td>${cpConfiguracao.cpSituacaoConfiguracao != null ? cpConfiguracao.cpSituacaoConfiguracao.descr : "" }</td>
+										<td>${cpConfiguracao.cpTipoConfiguracao != null ? cpConfiguracao.cpTipoConfiguracao.descr : "" }</td>
 										<td>${cpConfiguracao.cpServico != null ? cpConfiguracao.cpServico.siglaServico : "" }</td>
 										<td>${cpConfiguracao.complexo != null ? cpConfiguracao.complexo.nomeComplexo : "" }</td>
 									</tr>

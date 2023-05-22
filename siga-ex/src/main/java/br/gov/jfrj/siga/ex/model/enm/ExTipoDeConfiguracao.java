@@ -253,8 +253,8 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-					CpSituacaoDeConfiguracaoEnum.NAO_PODE,CpSituacaoDeConfiguracaoEnum.DEFAULT },
-			CpSituacaoDeConfiguracaoEnum.PODE, true),
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE,CpSituacaoDeConfiguracaoEnum.DEFAULT,CpSituacaoDeConfiguracaoEnum.AUTOMATICO },
+			CpSituacaoDeConfiguracaoEnum.AUTOMATICO, true),
 	//
 	MOVIMENTAR(1, "Movimentar",
 			"Muitas das operações realizadas pelo Siga-Doc se enquadram na categoria \"Movimentação\". As movimentações são ações que são registradas em relação à determinado documento. Trâmites, juntadas, arquivamentos, e definições de perfil são exemplos de movimentações.\n"
@@ -370,7 +370,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.NIVEL_DE_ACESSO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
-					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.DEFAULT },
+					CpSituacaoDeConfiguracaoEnum.NAO_PODE, CpSituacaoDeConfiguracaoEnum.DEFAULT, CpSituacaoDeConfiguracaoEnum.AUTOMATICO },
 			CpSituacaoDeConfiguracaoEnum.DEFAULT, true),
 	//
 	UTILIZAR_EXTENSAO_CONVERSOR_HTML(33, "Utilizar Extensão de Conversor HTML",

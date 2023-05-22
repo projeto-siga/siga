@@ -205,7 +205,7 @@
 								<h2>Diferenças</h2>
 								<div class="form-group">
 									<label><b>Versões</b></label>
-									<select id="versao" name="versao" value="${modeloVersao}" class="custom-select">
+									<select id="versao" name="versao" class="custom-select">
 										<option value="${id}">[Versão Atual]</option>
 										<c:forEach var="item" items="${listaModeloHistorico}">
 											<option value="${item[0]}">${item[1]}</option>
@@ -216,30 +216,27 @@
 							</div>
 							<br>
 							<script>
-								function setConteudoModeloSelecionado(item) {
-									if(item.id !== undefined && item.id === 'conteudoModeloSelecionado' ) dv.rightOriginal().setValue($(item).val());
-								}
 
 								$('#versao').on('change', function() {
 									$.ajax({
-										url:'/sigaex/app/modelo/editar',
+										url:'/sigaex/app/modelo/buscar-json-conteudo-para-comparar/'+ this.value,
 										type: "GET",
-										data: { idModeloVersao: this.value },
 										success: function(data) {
-											Array.from($(data)).forEach(setConteudoModeloSelecionado)
+											dv.rightOriginal().setValue(data.conteudoModelo);
 										}
 									});
 								});
 
-								var value, orig1, orig2, dv, hilight= true;
-								function initUI(panes) {
-									if (value == null) return;
+								var dv, hilight= true;
+								function initUI(conteudo) {
+
+									if (conteudo == null) return;
 									var target = document.getElementById("view");
 									target.innerHTML = "";
 									dv = CodeMirror.MergeView(target, {
-										value: value,
-										origLeft: panes == 3 ? orig1 : null,
-										orig: orig2,
+										value: conteudo,
+										origLeft: null,
+										orig: conteudo,
 										lineNumbers: true,
 										mode: "freemarker",
 										highlightDifferences: hilight
@@ -252,10 +249,7 @@
 								}
 
 								window.onload = function() {
-									value = document.getElementById("conteudo").value;
-									orig1 = value;
-									orig2 = value;
-									initUI(2);
+									initUI(document.getElementById("conteudo").value);
 									$("#collapseComparacao").removeClass("show");
 								};
 
@@ -382,7 +376,6 @@
 			span.style.display="";
 			if (editor == null && id.value == "template/freemarker") {
 				editor = CodeMirror.fromTextArea(document.getElementById("conteudo"), {mode: "freemarker", tabMode: "indent", lineNumbers: true, firstLineNumber: 4, electricChars: false, smartIndent: false, viewportMargin: Infinity});
-				editor.setOption("theme","darcula");
 			}
 		}
 		
@@ -443,7 +436,27 @@
 	</c:if>
 
 	<script>
-			$(document).ready(function() {
+
+		function atualizaMergeView(id) {
+			$.ajax({
+				url:'/sigaex/app/modelo/buscar-json-conteudo-para-comparar/'+ id,
+				type: "GET",
+				success: function(data) {
+					initUI(data.conteudoModelo);
+
+				}
+			});
+		}
+
+        // adiciona atualização no evento de collapse para que o quadro seja atualizado
+		$('#collapseComparacao').on('shown.bs.collapse', function () {
+			// Atualiza CodeMirror
+			$('.CodeMirror').each(function(i, el){
+				el.CodeMirror.refresh();
+			});
+		});
+
+		$(document).ready(function() {
 			    $(window)
 			        .keydown(
 			            function(e) {
@@ -459,7 +472,29 @@
 			                        beforeSend: function() {
 			                        	$.blockUI({message: '<span style="font-size: 200%">Gravando modelo...</span>'});
 				                    },
-				                    complete: function() {
+				                    complete: function(data) {
+										var options, index, select, option, id;
+
+										// Obtem DOM versao
+										select = document.getElementById('versao');
+
+										// Limpa select
+										select.options.length = 0;
+
+										// Obtem listaModeloHistorico
+										options = JSON.parse(data.responseText);
+										if(options !== null) {
+											// Carrega nova listaModeloHistorico
+					     					var listaModeloHistorico = options.listaModeloHistorico;
+											for (index = 0; index < listaModeloHistorico.length; ++index) {
+												option = listaModeloHistorico[index];
+												select.options.add(new Option(option[1], option[0]));
+											}
+											id = listaModeloHistorico[0][0];
+										}
+										// atualiza mergeview
+										atualizaMergeView(id);
+
 				                    	$.unblockUI();
 					                },
 			                        error: function(data) {
@@ -508,8 +543,4 @@
 						$("#extensoesArquivo").prop("disabled", true);
 				}
 	</script>
-W	<textarea id="conteudoModeloSelecionado" style="display:none;" cols="1" rows="1"
-			  name="conteudoModeloSelecionado" class="form-control"><c:out value="${conteudoModelo}"
-														  default="" /></textarea>
-
 </siga:pagina>

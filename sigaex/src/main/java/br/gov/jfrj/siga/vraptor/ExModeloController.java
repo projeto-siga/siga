@@ -2,12 +2,7 @@ package br.gov.jfrj.siga.vraptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -43,6 +38,8 @@ import br.gov.jfrj.siga.model.dao.DaoFiltroSelecionavel;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
 import br.gov.jfrj.siga.persistencia.ExModeloDaoFiltro;
+
+import static br.com.caelum.vraptor.view.Results.json;
 
 @Controller
 public class ExModeloController extends ExSelecionavelController {
@@ -86,6 +83,26 @@ public class ExModeloController extends ExSelecionavelController {
 		aBuscarJson(sigla);
 	}
 
+	@Get
+	@Path({ "/app/modelo/buscar-json-conteudo-para-comparar/{id}" })
+	public void buscaConteudoParaComparar(Long id) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		ExModelo modelo = buscarModelo(id);
+		final String conteudo = modelo.getConteudoBlobMod() != null ? new String(
+				modelo.getConteudoBlobMod2(), UTF8) : null;
+		result.use(json()).from(conteudo,"conteudoModelo").serialize();
+	}
+
+	@Get
+	@Path({ "/app/modelo/buscar-json-lista-para-comparar/{id}" })
+	public void buscaListaParaComparar(Long id) throws Exception {
+		assertAcesso(VERIFICADOR_ACESSO);
+		ExModelo modelo = buscarModelo(id).getModeloAtual();
+		List<ExModelo> listaModeloHistorico =  new ArrayList(Arrays.asList(new Object[][]{{modelo.getId(),"[Versão Atual]"}}));
+		listaModeloHistorico.addAll(listarModelosAnteriores(modelo.getIdInicial()));
+		result.use(json()).from(listaModeloHistorico,"listaModeloHistorico").serialize();
+	}
+
 	@Get("app/modelo/listar")
 	public void lista(final String script) throws Exception {
 		try {
@@ -102,56 +119,52 @@ public class ExModeloController extends ExSelecionavelController {
 	}
 
 	@Get("app/modelo/editar")
-	public void edita(final Long id, final Long idModeloVersao,final Integer postback) throws UnsupportedEncodingException {
+	public void edita(final Long id,final Integer postback) throws UnsupportedEncodingException {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (postback == null) {
-			if (idModeloVersao == null) {
-				ExModelo modelo = buscarModelo(id);
 
-				String tipoModelo = modelo.getConteudoTpBlob();
-				if (tipoModelo == null || tipoModelo.trim().length() == 0) {
-					tipoModelo = "template/freemarker";
-				}
+			ExModelo modelo = buscarModelo(id).getModeloAtual();
 
-				final ExClassificacaoSelecao classificacaoSel = new ExClassificacaoSelecao();
-				final ExClassificacaoSelecao classificacaoCriacaoViasSel = new ExClassificacaoSelecao();
-
-				classificacaoSel.buscarPorObjeto(modelo.getExClassificacao());
-				classificacaoCriacaoViasSel.buscarPorObjeto(modelo.getExClassCriacaoVia());
-
-				final String conteudo = modelo.getConteudoBlobMod() != null ? new String(modelo.getConteudoBlobMod2(), UTF8)
-						: null;
-				final Long forma = modelo.getExFormaDocumento() != null ? modelo.getExFormaDocumento().getIdFormaDoc()
-						: null;
-				final Long nivel = modelo.getExNivelAcesso() != null ? modelo.getExNivelAcesso().getIdNivelAcesso() : null;
-
-				result.include("id", id);
-				result.include("nome", modelo.getNmMod());
-				result.include("classificacaoSel", classificacaoSel);
-				result.include("classificacaoCriacaoViasSel", classificacaoCriacaoViasSel);
-				result.include("pessoaSel", new DpPessoaSelecao());
-				result.include("lotacaoSel", new DpLotacaoSelecao());
-				result.include("cargoSel", new DpCargoSelecao());
-				result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
-				result.include("forma", forma);
-				result.include("listaForma", getListaForma());
-				result.include("nivel", nivel);
-				result.include("listaNivelAcesso", getListaNivelAcesso());
-				result.include("tipoModelo", tipoModelo);
-				result.include("conteudo", conteudo);
-				result.include("descricao", modelo.getDescMod());
-				result.include("arquivo", modelo.getNmArqMod());
-				result.include("uuid", modelo.getUuid());
-				result.include("diretorio", modelo.getNmDiretorio());
-				result.include("marcaDagua", modelo.getMarcaDagua());
-				result.include("extensoesArquivo", modelo.getExtensoesArquivo());
-				result.include("listaModeloHistorico", listarModelosAnteriores(modelo.getIdInicial()));
-			} else {
-				ExModelo modelo = buscarModelo(idModeloVersao);
-				final String conteudo = modelo.getConteudoBlobMod() != null ? new String(
-						modelo.getConteudoBlobMod2(), UTF8) : null;
-				result.include("conteudoModelo", conteudo);
+			String tipoModelo = modelo.getConteudoTpBlob();
+			if (tipoModelo == null || tipoModelo.trim().length() == 0) {
+				tipoModelo = "template/freemarker";
 			}
+
+			final ExClassificacaoSelecao classificacaoSel = new ExClassificacaoSelecao();
+			final ExClassificacaoSelecao classificacaoCriacaoViasSel = new ExClassificacaoSelecao();
+
+			classificacaoSel.buscarPorObjeto(modelo.getExClassificacao());
+			classificacaoCriacaoViasSel.buscarPorObjeto(modelo.getExClassCriacaoVia());
+
+			final String conteudo = modelo.getConteudoBlobMod() != null ? new String(modelo.getConteudoBlobMod2(), UTF8)
+					: null;
+			final Long forma = modelo.getExFormaDocumento() != null ? modelo.getExFormaDocumento().getIdFormaDoc()
+					: null;
+			final Long nivel = modelo.getExNivelAcesso() != null ? modelo.getExNivelAcesso().getIdNivelAcesso() : null;
+
+
+			result.include("nome", modelo.getNmMod());
+			result.include("classificacaoSel", classificacaoSel);
+			result.include("classificacaoCriacaoViasSel", classificacaoCriacaoViasSel);
+			result.include("pessoaSel", new DpPessoaSelecao());
+			result.include("lotacaoSel", new DpLotacaoSelecao());
+			result.include("cargoSel", new DpCargoSelecao());
+			result.include("funcaoSel", new DpFuncaoConfiancaSelecao());
+			result.include("forma", forma);
+			result.include("listaForma", getListaForma());
+			result.include("nivel", nivel);
+			result.include("listaNivelAcesso", getListaNivelAcesso());
+			result.include("tipoModelo", tipoModelo);
+			result.include("conteudo", conteudo);
+			result.include("descricao", modelo.getDescMod());
+			result.include("arquivo", modelo.getNmArqMod());
+			result.include("uuid", modelo.getUuid());
+			result.include("diretorio", modelo.getNmDiretorio());
+			result.include("marcaDagua", modelo.getMarcaDagua());
+			result.include("extensoesArquivo", modelo.getExtensoesArquivo());
+			result.include("listaExtensoes", CpExtensoesDeArquivoEnum.getList());
+			result.include("id", modelo.getId());
+			result.include("listaModeloHistorico", listarModelosAnteriores(modelo.getIdInicial()));
 		}
 	}
 
@@ -175,9 +188,9 @@ public class ExModeloController extends ExSelecionavelController {
 			modelo.setNmDiretorio(diretorio);
 			modelo.setUuid(uuid);
 			modelo.setMarcaDagua(marcaDagua);
-			
+
 			modelo.setIdInicial(modAntigo != null ? modAntigo.getIdInicial() : null);
-			
+
 			if (conteudo != null && conteudo.trim().length() > 0) {
 				modelo.setConteudoBlobMod2(conteudo.getBytes(UTF8));
 			}
@@ -203,7 +216,7 @@ public class ExModeloController extends ExSelecionavelController {
 		if ("Ok".equals(param("ok"))) {
 			result.redirectTo(ExModeloController.class).lista(null);
 		} else {
-			result.redirectTo("editar?id=" + (modelo.getId() != null ? modelo.getId() : id));
+			result.redirectTo("buscar-json-lista-para-comparar/" + (modelo.getId() != null ? modelo.getId() : id));
 		}
 	}
 
@@ -428,6 +441,13 @@ public class ExModeloController extends ExSelecionavelController {
 	private ExModelo buscarModelo(final Long id) {
 		if (id != null) {
 			return Ex.getInstance().getBL().getCopia(dao().consultar(id, ExModelo.class, false));
+		}
+		return new ExModelo();
+	}
+
+	private ExModelo buscarModeloAtual(final Long id) {
+		if (id != null) {
+			return buscarModelo(id).getModeloAtual();
 		}
 		return new ExModelo();
 	}

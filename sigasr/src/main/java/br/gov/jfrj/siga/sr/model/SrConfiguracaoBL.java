@@ -113,7 +113,7 @@ public class SrConfiguracaoBL extends CpConfiguracaoBL {
     public List<SrConfiguracaoCache> listarConfiguracoesAtivasPorFiltro(SrConfiguracao confFiltro, int atributoDesconsideradoFiltro[]) throws Exception {
 
         deduzFiltro(confFiltro);
-        Set<Integer> atributosDesconsiderados = new LinkedHashSet<Integer>();
+         Set<Integer> atributosDesconsiderados = new LinkedHashSet<Integer>();
         for (int i = 0; i < atributoDesconsideradoFiltro.length; i++) {
             atributosDesconsiderados.add(atributoDesconsideradoFiltro[i]);
         }

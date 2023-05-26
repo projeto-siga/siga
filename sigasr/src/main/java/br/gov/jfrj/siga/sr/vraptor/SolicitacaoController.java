@@ -150,6 +150,8 @@ public class SolicitacaoController extends SrController {
 	@Transacional
 	@Path("/gravarPermissaoUsoLista")
 	public void gravarPermissaoUsoLista(SrConfiguracao permissao, SrLista listaPrioridade, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
+		//SISTEMA TRAVA SE COLOCAR BREAKPOINT NAS LINHAS ABAIXO
+		//O SISTEMA TRAVA SE COLOCAR SYSTEM.OUT.PRINTLN NO PERMISSAO
 		permissao.setListaPrioridade(listaPrioridade);
 		permissao.setTipoPermissaoSet(tipoPermissaoSet);
 		permissao.salvarComoPermissaoUsoLista();
@@ -157,8 +159,9 @@ public class SolicitacaoController extends SrController {
 		DpLotacao lotacaoAtual = permissao.getLotacao();
 		DpLotacao lotacaoInicial = lotacaoAtual.getLotacaoInicial();
 		permissao.setLotacao(lotacaoInicial);
-		
+
 		result.use(Results.http()).body(permissao.toVO().toJson());
+
 	}
 
 	@Path("/listarPermissaoUsoLista")
@@ -260,9 +263,10 @@ public class SolicitacaoController extends SrController {
 	public void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.AR.findById(id);
 		lista.finalizar();
-
+	
 		result.use(Results.http()).body(lista.toJson());
 	}
+
 
 	@Transacional
 	@Path("/reativarLista")

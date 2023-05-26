@@ -53,11 +53,11 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 		final String servernameport = request.getServerName() + ":" + request.getServerPort();
 		final String contextpath = request.getContextPath();
 
-		iniciarGeracaoDePdf(req, resp, usuario, filename, contextpath, servernameport);
+		iniciarGeracaoDePdf(req, resp, usuario, filename, contextpath, servernameport, false);
 	}
 
 	public static void iniciarGeracaoDePdf(Request req, Response resp, String u, String filename, String contextpath,
-			String servernameport) throws IOException, Exception {
+			String servernameport, boolean reduzirVisuAssinPdf) throws IOException, Exception {
 		resp.uuid = UUID.randomUUID().toString();
 		String uuid = resp.uuid;
 		Status.update(uuid, "Aguardando na fila de tarefas", 0, 100, 0L);
@@ -72,7 +72,7 @@ public class DocumentosSiglaArquivoGet implements IDocumentosSiglaArquivoGet {
 		Integer paramoffset = req.paramoffset;
 		
 		DownloadAssincrono task = new DownloadAssincrono(uuid, contenttype, sigla, estampar, volumes, contextpath,
-				servernameport, exibirReordenacao, tamanhoOriginal, paramoffset);
+				servernameport, exibirReordenacao, tamanhoOriginal, paramoffset, reduzirVisuAssinPdf);
 
 		ExApiV1Servlet.submitToExecutor(task);
 	}

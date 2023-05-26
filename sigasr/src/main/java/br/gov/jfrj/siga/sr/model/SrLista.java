@@ -149,28 +149,11 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
     }
 
     public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
-    	//Na condição avaliada possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA)); retorna false
-    	System.out.println("-------------");
-    	System.out.println(lotaTitular);
-    	System.out.println(pess);
-    	System.out.println(getLotaCadastrante());
-    	//o usuário tem permissão, deveria retornar true
     	
     	// Valida se lotacao do usuario tentando acessar é equivalente a lotação do usuario que cadastrou, se sim, ele pode consultar.
     	Boolean lotaTitulaRIgualLotaCadastrante = lotaTitular.equivale(getLotaCadastrante());
     	if (lotaTitulaRIgualLotaCadastrante == Boolean.TRUE)
     		return Boolean.TRUE;
-    	
-    	// Valida se o usuário ou a lotação do usuário possui permissão de consulta a lista
-    	
-    	// TODO: Seperar validação da lotação e validação do usuário pra identificar e corrigir erro de validação
-    	
-    	// TODO: validar se lotacao possui permissão
-    	Boolean lotaTitularTemPermissao = lotacaoPossuiPermissao(lotaTitular, SrTipoPermissaoLista.CONSULTA);
-    	if (lotaTitularTemPermissao == Boolean.TRUE)
-    		return Boolean.TRUE;
-    	
-    	// TODO: validar se usuario possui permissão
     	
     	Boolean lotaTitularEPessoaPermitido = possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
     	// Valida se usuario e pessoa possuem permissão
@@ -180,16 +163,7 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
     	return Boolean.FALSE;
     }
     
-    // CORREÇÃO BUG PERMISSÕES
-    //##################################################################################################
-    private boolean lotacaoPossuiPermissao(DpLotacao lotaTitular, Long tipoPermissaoLista) {
-    	//TODO: Desenvolver código para validar somente a permissao da lotação 
-    	//Lotação possui possui permissão de consulta na lista?
-    	//Quais permissões a lotação possui?
-    	
-        return Boolean.FALSE;
-    }
-  //#####################################################################################################
+
     public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
         return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
     }
@@ -200,50 +174,11 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
 
     private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
  
-    	//getPermissoesDoCache está retornando uma lista vazia?
-    	//fonção alterada em getPermissoesDoCache2 - original em getPermissoesDoCache
+
         List<SrConfiguracaoCache> permissoesEncontradas = getPermissoesDoCache(lotaTitular, pess);
-        //Object permissoesEncontradas = getPermissoesDoCache2(lotaTitular, pess);
-        //##################################################################
-        
-        
-        //A lotação do objeto [permissoesEncontradas] tem permissão de consulta na lista?
-        
-        
-        //##################################################################
-        System.out.println("-------------A");
-        System.out.println(permissoesEncontradas);
-        // permissões encontradas só está retornando os objetos
-        System.out.println(permissoesEncontradas);
-        /*
-        if (permissoesEncontradas.isEmpty()) {
-            System.out.println("No permissions found in the cache.");
-        }
-        */
-        //porque não entra nesse for?
-        //
-        //permissoesEncontradas está vindo como null, pro isso não entra no for?
-    	System.out.println(permissoesEncontradas);
-    	
-    	//NÃO ENTRA NO FOR
     	
         for (SrConfiguracaoCache srConfiguracao : permissoesEncontradas) {
-        	System.out.println(srConfiguracao);
-        	System.out.println(srConfiguracao.tipoPermissaoSet);
             for (SrTipoPermissaoLista permissao : srConfiguracao.tipoPermissaoSet) { 
-            	System.out.println("tipoPermissaoLista");
-            	System.out.println(tipoPermissaoLista);
-            	System.out.println("permissao.getIdTipoPermissaoLista()");
-            	System.out.println(permissao.getIdTipoPermissaoLista().toString());
-            	System.out.println(permissao.getIdTipoPermissaoLista());
-                System.out.println("Possui permissão? ");
-                System.out.println(tipoPermissaoLista == permissao.getIdTipoPermissaoLista());
-
-                //LINHA NOVA COM UMA HIPÓTESE DE CORREÇÃO DO ERRO:
-                //if (tipoPermissaoLista.equals(permissao.getIdTipoPermissaoLista())) {
-                //    return Boolean.TRUE;
-                //}
-                //LINHA QUE JÁ ESTAVA AQUI, COM POSSÍVEL ERRO
                 if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
                     return Boolean.TRUE;
                 }
@@ -264,13 +199,6 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
             confFiltro.setDpPessoa(pess);
             confFiltro.setListaPrioridade(this);
             confFiltro.setCpTipoConfiguracao(SrTipoDeConfiguracao.PERMISSAO_USO_LISTA);
-            //no teste 68 está retornando 
-            // id: null ,pessoa: JOÃO LUIS MOREIRA DE OLIVEIRA ,lotacao: COSADM ,situação:  ,tipo conf: Permissão de uso da lista
-            System.out.println(confFiltro);
-            System.out.println(SrConfiguracao.listar(confFiltro));
-            //Essa parte retorna erro
-            
-            //o return está retornando os objetos
             return SrConfiguracao.listar(confFiltro);
             
         } catch (Exception e) {
@@ -278,33 +206,6 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
         }
     }
     
-    public Object getPermissoesDoCache2(DpLotacao lotaTitular, DpPessoa pess) {
-        try {
-            SrConfiguracao confFiltro = new SrConfiguracao();
-            confFiltro.setLotacao(lotaTitular);
-            confFiltro.setDpPessoa(pess);
-            confFiltro.setListaPrioridade(this);
-            confFiltro.setCpTipoConfiguracao(SrTipoDeConfiguracao.PERMISSAO_USO_LISTA);
-            //no teste 68 está retornando 
-            // id: null ,pessoa: JOÃO LUIS MOREIRA DE OLIVEIRA ,lotacao: COSADM ,situação:  ,tipo conf: Permissão de uso da lista
-            System.out.println(confFiltro);
-            System.out.println(SrConfiguracao.listar(confFiltro));
-            //Essa parte retorna erro
-            
-            //o return está retornando os objetos
-            //#############################
-            //A lotação do usuário em [conffiltro] tem permissão de consulta?
-            //tem quais permissões
-            //como validar as permissões de consulta dessa lotação na lista?
-            
-            
-            //#############################
-            return confFiltro;
-            
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public List<SrConfiguracao> getPermissoes() {
         return getPermissoes(null, null);

@@ -153,6 +153,11 @@ public class SolicitacaoController extends SrController {
 		permissao.setListaPrioridade(listaPrioridade);
 		permissao.setTipoPermissaoSet(tipoPermissaoSet);
 		permissao.salvarComoPermissaoUsoLista();
+		
+		DpLotacao lotacaoAtual = permissao.getLotacao();
+		DpLotacao lotacaoInicial = lotacaoAtual.getLotacaoInicial();
+		permissao.setLotacao(lotacaoInicial);
+		
 		result.use(Results.http()).body(permissao.toVO().toJson());
 	}
 

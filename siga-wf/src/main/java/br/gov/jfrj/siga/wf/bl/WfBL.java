@@ -124,7 +124,7 @@ public class WfBL extends CpBL {
 			}
 		}
 
-		if (variable.containsKey("doc_document"))
+		if (principal == null && variable.containsKey("doc_document"))
 			principal = (String) variable.get("doc_document");
 
 		if (tipoDePrincipal == null)

@@ -152,6 +152,7 @@ public class SolicitacaoController extends SrController {
 	public void gravarPermissaoUsoLista(SrConfiguracao permissao, SrLista listaPrioridade, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
 		//SISTEMA TRAVA SE COLOCAR BREAKPOINT NAS LINHAS ABAIXO
 		//O SISTEMA TRAVA SE COLOCAR SYSTEM.OUT.PRINTLN NO PERMISSAO
+
 		permissao.setListaPrioridade(listaPrioridade);
 		permissao.setTipoPermissaoSet(tipoPermissaoSet);
 		permissao.salvarComoPermissaoUsoLista();
@@ -161,7 +162,6 @@ public class SolicitacaoController extends SrController {
 		permissao.setLotacao(lotacaoInicial);
 
 		result.use(Results.http()).body(permissao.toVO().toJson());
-
 	}
 
 	@Path("/listarPermissaoUsoLista")

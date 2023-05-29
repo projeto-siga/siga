@@ -43,6 +43,7 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 
@@ -432,7 +433,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoBlobMod(byte[] createBlob) {
 		if(createBlob != null)
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob, "modelo-" + getNmMod(), ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS);
 	}
 	
 	/**

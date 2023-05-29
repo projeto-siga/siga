@@ -58,6 +58,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.ContextoPersistencia.AfterCommit;
@@ -123,6 +124,12 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
     @Transient
     private PersistentAttributeInterceptor persistentAttributeInterceptor;
 
+    @Transient
+    private String nomeSugerido;
+
+    @Transient
+    private ArmazenamentoTemporalidadeEnum temporalidadeSugerida;
+
     @Override
     public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
         return persistentAttributeInterceptor;
@@ -153,6 +160,12 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 //			 System.out.println("* " + (CpDao.getInstance().em().getTransaction() ==
 //					 null || !CpDao.getInstance().em().getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" );
 //		
+//            {
+//                Armazenamento a = ArmazenamentoFabrica.getInstance(CpArquivoTipoArmazenamentoEnum.S3);
+//                TipoConteudo t = identificarTipoDeConteudo();
+//                this.caminho = a.gerarCaminho(nomeSugerido, t, temporalidadeSugerida);
+//            }
+            
                 if (this.arquivoBlob == null) {
                     this.arquivoBlob = new CpArquivoBlob();
                     this.arquivoBlob.setArquivo(this);
@@ -161,8 +174,11 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                 break;
             default:
                 if (this.tamanho > 0L) {
-                    this.caminho = gerarCaminho();
                     Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+
+                    TipoConteudo t = identificarTipoDeConteudo();
+
+                    this.caminho = a.gerarCaminho(nomeSugerido, t, temporalidadeSugerida);
                     a.salvar(getCaminho(), getConteudoTpArq(), this.getConteudo());
                 }
                 break;
@@ -170,6 +186,13 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         long fim = System.currentTimeMillis();
         log.debug("Tempo para persistir o arquivo: " + (fim - ini) + " Tamanho: "
                 + (this.getConteudo() != null ? this.getConteudo().length : "nulo"));
+    }
+
+    public TipoConteudo identificarTipoDeConteudo() {
+        TipoConteudo t = TipoConteudo.getByMimeType(getConteudoTpArq());
+        if (t == null)
+            t = TipoConteudo.ZIP;
+        return t;
     }
 
     @PostPersist
@@ -258,12 +281,14 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         return old;
     }
 
-    public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo) {
+    public static CpArquivo updateConteudo(CpArquivo old, byte[] conteudo, String nome, ArmazenamentoTemporalidadeEnum temporalidade) {
         if (old == null || !Arrays.equals(old.getConteudo(), conteudo)) {
             CpArquivo arq = CpArquivo.forUpdate(old);
             arq.cacheArquivo = conteudo;
             arq.tamanho = Long.valueOf(conteudo.length);
             arq.setFormatoLivre(false);
+            arq.nomeSugerido = nome;
+            arq.temporalidadeSugerida = temporalidade;
             return arq;
         }
         return old;
@@ -285,21 +310,6 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         arq.setFormatoLivre(true);
         arq.hashSha256 = hashSha256;
         return arq;
-    }
-
-    public String gerarCaminho() {
-        String extensao;
-
-        TipoConteudo t = TipoConteudo.getByMimeType(getConteudoTpArq());
-        if (t != null)
-            extensao = t.getExtensao();
-        else
-            extensao = TipoConteudo.ZIP.getExtensao();
-
-        Calendar c = Calendar.getInstance();
-        return c.get(Calendar.YEAR) + "/" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.DATE) + "/"
-                + c.get(Calendar.HOUR_OF_DAY) + "/" + c.get(Calendar.MINUTE) + "/" + UUID.randomUUID().toString() + "."
-                + extensao;
     }
 
     public java.lang.Long getIdArq() {

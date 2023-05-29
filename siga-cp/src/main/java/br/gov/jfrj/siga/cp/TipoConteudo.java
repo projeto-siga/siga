@@ -5,7 +5,8 @@ import java.util.Map;
 
 public enum TipoConteudo {
 	
-	ZIP("application/zip", "zip"),
+    ZIP("application/zip", "zip"),
+    P7S("application/pkcs7-signature", "p7s"),
 	JPG("image/jpeg", "jpg"),
 	PNG("image/png", "png"),
 	TXT("application/txt", "txt"),

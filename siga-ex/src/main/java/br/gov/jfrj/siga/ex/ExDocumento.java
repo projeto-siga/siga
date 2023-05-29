@@ -64,6 +64,8 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -3276,4 +3278,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return listaOrdenada;
 	}
+
+    public void setConteudoBlobDoc(byte[] createBlob) {
+        if(createBlob != null)
+            setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob, getCodigoCompacto(), isFinalizado() ? ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS : ArmazenamentoTemporalidadeEnum.TEMPORARIO));
+    }
+
 }

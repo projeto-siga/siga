@@ -16,7 +16,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,17 +33,16 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.print.Doc;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
 import org.jboss.logging.Logger;
+import org.json.JSONObject;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -62,6 +60,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.validator.Validator;
 import br.com.caelum.vraptor.view.Results;
+import br.gov.jfrj.itextpdf.Documento;
+import br.gov.jfrj.itextpdf.Stamp;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
@@ -94,6 +94,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
@@ -193,10 +194,8 @@ import br.gov.jfrj.siga.integracao.ws.pubnet.dto.MontaReciboPublicacaoDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.dto.TokenDto;
 import br.gov.jfrj.siga.integracao.ws.pubnet.mapping.AuthHeader;
 import br.gov.jfrj.siga.integracao.ws.pubnet.service.PubnetConsultaService;
-import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
 import br.gov.jfrj.siga.vraptor.builder.ExMovimentacaoBuilder;
-import org.json.JSONObject;
 
 @Controller
 public class ExMovimentacaoController extends ExController {
@@ -314,7 +313,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpPessoaSelecao subscritorSel,
 			final DpPessoaSelecao titularSel, final boolean substituicao,
 			final List<UploadedFile> arquivoLista 	,final String dtMovString,
-			final List<String> descrMovLista) throws IOException {
+			final List<String> descrMovLista) throws Exception {
 		
 			validarArquivosAnexados( arquivoLista);
 		 
@@ -345,7 +344,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 	
 
-	private void validarArquivosAnexados( List<UploadedFile> arquivoLista ) throws IOException{
+	private void validarArquivosAnexados( List<UploadedFile> arquivoLista ) throws Exception{
 
 		 if (arquivoLista == null || arquivoLista.isEmpty()){
 				
@@ -366,7 +365,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 		
 
-	private void validarArquivoAnexado(UploadedFile arquivo) throws IOException{
+	private void validarArquivoAnexado(UploadedFile arquivo) throws Exception{
 		
 		validarSeArquivoFoiAnexado(arquivo);
 		
@@ -409,14 +408,16 @@ public class ExMovimentacaoController extends ExController {
 		}
 	}	
 	 
-	private void validarSeArquivoAnexadoEstaCorrompido( UploadedFile arquivo) throws IOException {
+	private void validarSeArquivoAnexadoEstaCorrompido( UploadedFile arquivo) throws Exception {
+		byte[] abPdf = toByteArray(arquivo);
 		
-		ExMovimentacao mov = new ExMovimentacao();
+		int pages = Documento.getNumberOfPages(abPdf);
 		
-		mov.setConteudoBlobMov2(  toByteArray(arquivo) );
-		mov.setConteudoTpMov(arquivo.getContentType());
+		byte[] documentoComStamp = Stamp.stamp(abPdf, "", true,
+                false, false, false, false, null, null, null, null, null,
+                null, null, "", null);
 		
-		if (mov.getContarNumeroDePaginas() == null || mov.getArquivoComStamp() == null) {
+		if (pages == 0 || documentoComStamp == null) {
 			throw new AplicacaoException(MessageFormat.format("O arquivo %s está corrompido. Favor gera-lo novamente antes de anexar.", arquivo.getFileName()));
 		}
 	}
@@ -427,7 +428,7 @@ public class ExMovimentacaoController extends ExController {
 			final DpPessoaSelecao subscritorSel,
 			final DpPessoaSelecao titularSel, final boolean substituicao,
 			final UploadedFile arquivo, final String dtMovString,
-			final String descrMov) throws IOException {
+			final String descrMov) throws Exception {
 
 		validarArquivoAnexado(arquivo);
 		
@@ -464,8 +465,6 @@ public class ExMovimentacaoController extends ExController {
 		mov.setSubscritor(subscritorSel.getObjeto());
 		mov.setTitular(titularSel.getObjeto());
 		
-		mov.setConteudoBlobMov2(  toByteArray(arquivo) );
-		
 		// Obtem as pendencias que serÃ£o resolvidas
 		final String aidMov[] = getRequest().getParameterValues(
 				"pendencia_de_anexacao");
@@ -486,7 +485,7 @@ public class ExMovimentacaoController extends ExController {
 					.anexarArquivo(getCadastrante(), getLotaTitular(), mob,
 							mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
 							mov.getTitular(), mov.getLotaTitular(),
-							mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
+							toByteArray(arquivo), mov.getConteudoTpMov(),
 							movimentacaoBuilder.getDescrMov(), pendencias);
 			
 	}
@@ -577,17 +576,14 @@ public class ExMovimentacaoController extends ExController {
 		
 		validarTamanhoArquivoAnexado(arquivo);
 		
-		mov.setConteudoBlobMov2(toByteArray(arquivo));
- 
 		// Nato: Precisei usar o código abaixo para adaptar o charset do  nome do arquivo
 		final String sNmArqMov = adaptarCharsetNomeArquivo(mov.getNmArqMov());
-		
 		
 		Ex.getInstance().getBL()
 		.anexarArquivoAuxiliar(getCadastrante(), getLotaTitular(), mob,
 				mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
 				mov.getTitular(), mov.getLotaTitular(),
-				mov.getConteudoBlobMov2(), mov.getConteudoTpMov());
+				toByteArray(arquivo), mov.getConteudoTpMov());
 		
 		
 		ExDocumentoController.redirecionarParaExibir(result, mobOriginal.getSigla());
@@ -4295,8 +4291,6 @@ public class ExMovimentacaoController extends ExController {
 		mov.setNmArqMov("teste.pdf");
 		mov.setConteudoTpMov("application/pdf");
 
-		mov.setConteudoBlobMov2(abPDF);
-
 		if (mob.isVolumeEncerrado()) {
 			throw new AplicacaoException(
 					"Não é possível anexar arquivo em volume encerrado.");
@@ -4330,7 +4324,7 @@ public class ExMovimentacaoController extends ExController {
 				.anexarArquivo(getCadastrante(), getLotaTitular(), mob,
 						mov.getDtMov(), mov.getSubscritor(), sNmArqMov,
 						mov.getTitular(), mov.getLotaTitular(),
-						mov.getConteudoBlobMov2(), mov.getConteudoTpMov(),
+						abPDF, mov.getConteudoTpMov(),
 						mov.getDescrMov(), pendencias);
 
 		result.redirectTo("/app/expediente/doc/exibir?sigla=" + sigla);

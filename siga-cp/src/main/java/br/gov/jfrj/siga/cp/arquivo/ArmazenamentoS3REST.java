@@ -166,6 +166,8 @@ public class ArmazenamentoS3REST implements Armazenamento {
 
     @Override
     public void apagar(String caminho) {
+        if (!obterTemporalidadePorCaminho(caminho).podeApagar)
+            return;
         // log.info("*** apagar: " + caminho);
         try {
             fetch("DELETE", bucket, caminho, null, null);

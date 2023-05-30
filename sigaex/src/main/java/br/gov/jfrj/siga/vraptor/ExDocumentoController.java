@@ -2595,6 +2595,7 @@ public class ExDocumentoController extends ExController {
 	private void lerForm(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException {
 		ExDocumento doc = exDocumentoDTO.getDoc();
+		doc.atrasarAtualizacaoDoArquivo();
 
 		if (doc.getCadastrante() == null) {
 			doc.setCadastrante(getCadastrante());

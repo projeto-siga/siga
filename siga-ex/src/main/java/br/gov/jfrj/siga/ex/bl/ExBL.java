@@ -3825,7 +3825,7 @@ public class ExBL extends CpBL {
 	
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
 			ExDocumento doc) throws Exception {
-
+	    doc.atrasarAtualizacaoDoArquivo();
 		// Verifica se o documento possui documento pai e se o usuário possui
 		// permissões de criar documento filho
 		/*
@@ -3950,6 +3950,8 @@ public class ExBL extends CpBL {
 			// Incluir movimentações de definição automática de perfil.
 			if (!doc.isFinalizado())
 				atualizarDefinicaoAutomaticaDePapel(cadastrante, lotaTitular, doc);
+			
+			doc.atualizarArquivo();
 			
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 			

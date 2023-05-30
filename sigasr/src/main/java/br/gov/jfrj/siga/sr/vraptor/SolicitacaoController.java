@@ -153,6 +153,11 @@ public class SolicitacaoController extends SrController {
 		permissao.setListaPrioridade(listaPrioridade);
 		permissao.setTipoPermissaoSet(tipoPermissaoSet);
 		permissao.salvarComoPermissaoUsoLista();
+		
+		DpLotacao lotacaoAtual = permissao.getLotacao();
+		DpLotacao lotacaoInicial = lotacaoAtual.getLotacaoInicial();
+		permissao.setLotacao(lotacaoInicial);
+
 		result.use(Results.http()).body(permissao.toVO().toJson());
 	}
 
@@ -255,9 +260,10 @@ public class SolicitacaoController extends SrController {
 	public void desativarLista(Long id, boolean mostrarDesativados) throws Exception {
 		SrLista lista = SrLista.AR.findById(id);
 		lista.finalizar();
-
+	
 		result.use(Results.http()).body(lista.toJson());
 	}
+
 
 	@Transacional
 	@Path("/reativarLista")

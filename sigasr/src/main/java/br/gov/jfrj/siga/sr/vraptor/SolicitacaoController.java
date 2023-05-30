@@ -217,14 +217,29 @@ public class SolicitacaoController extends SrController {
 	@Path("/buscarPermissoesLista")
 	public void buscarPermissoesLista(Long idLista) throws Exception {
 		List<SrConfiguracao> permissoes;
-
+		
 		if (idLista != null) {
 			SrLista lista = SrLista.AR.findById(idLista);
 			permissoes = new ArrayList<>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
 			permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
 		} else
 			permissoes = new ArrayList<SrConfiguracao>();
+		
+		// TODO: Alterar o permissoes para o nome da lotação exibir o nome da lotacao atual: COSADM no exemplo
+		
+		//Erro: O permissões está exibindo o nome da lotação inicial: NUSAD no exemplo
+		
+		//Solução:
 
+		//pegar o srconfiguração que possui como atributo o idlista = idLista (o ID da lista sendo exibida)
+		// a partir dele, dar select no cp_configuracao, buscar o id_lotacao
+		// em lotação, buscar o id_inicial e o nome da lotação inicial
+		
+		//SrConfiguracao srConfiguracao = SrConfiguracao.AR.
+		
+		//System.out.println("SrConfiguracao.convertToJSon(permissoes)");
+		//#########################
+		
 		result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));
 	}
 

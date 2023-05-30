@@ -55,13 +55,13 @@ public interface Armazenamento {
     default ArmazenamentoTemporalidadeEnum obterTemporalidadePorCaminho(String caminho) {
         if (caminho == null)
             return ArmazenamentoTemporalidadeEnum.DEFAULT;
-        String split[] = caminho.split(ponto());
+        String split[] = caminho.split("\\Q" + ponto() + "\\E");
         if (split.length == 1)
             return ArmazenamentoTemporalidadeEnum.DEFAULT;
-        String split2[] = split[split.length - 2].split(separador());
+        String split2[] = split[split.length - 2].split("\\Q" + separador() + "\\E");
         if (split2.length == 1)
             return ArmazenamentoTemporalidadeEnum.DEFAULT;
-        return ArmazenamentoTemporalidadeEnum.localizarPorIdentificador(split2[split.length - 1]);
+        return ArmazenamentoTemporalidadeEnum.localizarPorIdentificador(split2[split2.length - 1]);
     }
 
 }

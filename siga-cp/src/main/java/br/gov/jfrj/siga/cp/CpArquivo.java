@@ -130,6 +130,8 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
     @Transient
     private ArmazenamentoTemporalidadeEnum temporalidadeSugerida;
 
+    private static boolean fGerarCaminhoParaTabela = false;
+
     @Override
     public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
         return persistentAttributeInterceptor;
@@ -160,11 +162,16 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 //			 System.out.println("* " + (CpDao.getInstance().em().getTransaction() ==
 //					 null || !CpDao.getInstance().em().getTransaction().isActive() ? "NÃO" : "") + " TRANSACIONAL" );
 //		
-//            {
-//                Armazenamento a = ArmazenamentoFabrica.getInstance(CpArquivoTipoArmazenamentoEnum.S3);
-//                TipoConteudo t = identificarTipoDeConteudo();
-//                this.caminho = a.gerarCaminho(nomeSugerido, t, temporalidadeSugerida);
-//            }
+                if (fGerarCaminhoParaTabela) {
+                    Armazenamento a = ArmazenamentoFabrica.getInstance(CpArquivoTipoArmazenamentoEnum.S3);
+                    TipoConteudo t = identificarTipoDeConteudo();
+                    this.caminho = a.gerarCaminho(nomeSugerido, t, temporalidadeSugerida);
+                    ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
+                    if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO)
+                        log.info("TEMPORÁRIO: " + getCaminho());
+                    else
+                        log.info("30 ANOS: " + getCaminho());
+                }
             
                 if (this.arquivoBlob == null) {
                     this.arquivoBlob = new CpArquivoBlob();
@@ -180,6 +187,12 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
                     this.caminho = a.gerarCaminho(nomeSugerido, t, temporalidadeSugerida);
                     a.salvar(getCaminho(), getConteudoTpArq(), this.getConteudo());
+
+                    ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
+                    if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO)
+                        log.info("TEMPORÁRIO: " + getCaminho());
+                    else
+                        log.info("30 ANOS: " + getCaminho());
                 }
                 break;
         }
@@ -209,15 +222,28 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
             case BLOB:
                 throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
             case TABELA:
+                if (fGerarCaminhoParaTabela) {
+                    Armazenamento a = ArmazenamentoFabrica.getInstance(CpArquivoTipoArmazenamentoEnum.S3);
+                    ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
+                    if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO)
+                        log.info("EXCLUINDO: " + getCaminho());
+                    else
+                        log.info("MANTENDO: " + getCaminho());
+                }
                 break;
             default:
-                ContextoPersistencia.addAfterCommit(new AfterCommit() {
-                    @Override
-                    public void run() {
-                        Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
-                        a.apagar(getCaminho());
-                    }
-                });
+                final Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
+                ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
+                if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO) {
+                    log.info("EXCLUINDO: " + getCaminho());
+                    ContextoPersistencia.addAfterCommit(new AfterCommit() {
+                        @Override
+                        public void run() {
+                            a.apagar(getCaminho());
+                        }
+                    });
+                } else
+                    log.info("MANTENDO: " + getCaminho());
                 break;
         }
     }
@@ -258,6 +284,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
             default:
                 Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
                 cacheArquivo = a.recuperar(getCaminho());
+                log.info("RECUPERANDO: " + getCaminho());
                 break;
         }
         return cacheArquivo;

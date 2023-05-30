@@ -5219,6 +5219,8 @@ ${texto}
 				${(.vars[var+index+"_pessoaSel.descricao"])!}
 		    [#elseif kind == "funcao"]
 				${(.vars[var+index+"_" + kind + "Sel.descricao"])!}
+		    [#elseif kind == "documento"]
+				${(.vars[var+index+"_expedienteSel.sigla"])!}
 			[#else]
 				${(.vars[var+index])!}
 			[/#if]

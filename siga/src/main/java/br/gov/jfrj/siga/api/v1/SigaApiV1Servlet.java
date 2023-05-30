@@ -27,6 +27,7 @@ import br.gov.jfrj.siga.context.ApiContextSupport;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -134,7 +135,7 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
                     @Override
                     public boolean test() throws Exception {
                         Armazenamento storage = ArmazenamentoFabrica.getInstance(tipoArmazenamento);
-                        String caminho = "test-" + UUID.randomUUID().toString() + ".txt";
+                        String caminho = "test-" + UUID.randomUUID().toString() + "-" + ArmazenamentoTemporalidadeEnum.TEMPORARIO.getIdentificador() + ".txt";
                         storage.salvar(caminho, "text/plain", caminho.getBytes());
                         String conteudo = new String(storage.recuperar(caminho));
                         storage.apagar(caminho);

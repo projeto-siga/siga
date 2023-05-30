@@ -148,18 +148,8 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
         return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.INCLUSAO);
     }
 
-    public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {    	
-    	// Valida se lotacao do usuario tentando acessar é equivalente a lotação do usuario que cadastrou, se sim, ele pode consultar.
-    	Boolean lotaTitulaRIgualLotaCadastrante = lotaTitular.equivale(getLotaCadastrante());
-    	if (lotaTitulaRIgualLotaCadastrante == Boolean.TRUE)
-    		return Boolean.TRUE;
-    	
-    	Boolean lotaTitularEPessoaPermitido = possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
-    	// Valida se usuario e pessoa possuem permissão
-    	if (lotaTitularEPessoaPermitido == Boolean.TRUE)
-    		return Boolean.TRUE;
-    	
-    	return Boolean.FALSE;
+    public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
+    	return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
     }
     
     public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
@@ -174,9 +164,6 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
         List<SrConfiguracaoCache> permissoesEncontradas = getPermissoesDoCache(lotaTitular, pess);
         for (SrConfiguracaoCache srConfiguracao : permissoesEncontradas) {
             for (SrTipoPermissaoLista permissao : srConfiguracao.tipoPermissaoSet) { 
-                //if (tipoPermissaoLista.equals(permissao.getIdTipoPermissaoLista())) {
-                //    return Boolean.TRUE;
-                //}
                 if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
                     return Boolean.TRUE;
                 }

@@ -30,19 +30,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import br.gov.jfrj.siga.base.AplicacaoException;
-import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
-import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
@@ -422,13 +417,9 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 	}
 
 	public byte[] getConteudoBlobMod() {
-		try {
-			if (getCpArquivo() == null)
-				return null;
-			return getCpArquivo().getConteudo();
-		} catch (Exception e) {
-			throw new AplicacaoException(e.getMessage());
-		}
+		if (getCpArquivo() == null)
+			return null;
+		return getCpArquivo().getConteudo();
 	}
 
 	public void setConteudoBlobMod(byte[] createBlob) {

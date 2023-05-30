@@ -21,7 +21,10 @@ package br.gov.jfrj.siga.cp;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -52,6 +55,11 @@ import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.engine.spi.PersistentAttributeInterceptable;
 import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.jboss.logging.Logger;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Prop;
@@ -141,10 +149,19 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
     public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
         this.persistentAttributeInterceptor = persistentAttributeInterceptor;
     }
+    
+    static LoadingCache<TipoECaminho, byte[]> cacheArmazenamento = CacheBuilder.newBuilder()
+            .weigher((TipoECaminho key, byte[] value) -> value == null ? 0 : value.length)
+            .maximumWeight(10*1024*1024)
+            .expireAfterWrite(60, TimeUnit.MINUTES)
+            .build(new CacheLoader<TipoECaminho, byte[]>() {
+                public byte[] load(TipoECaminho source) throws Exception {
+                    log.info("RECUPERANDO: " + source.caminho + " do armazenamento " + source.tipo);
+                    Armazenamento a = ArmazenamentoFabrica.getInstance(source.tipo);
+                    return a.recuperar(source.caminho);
+                }
+            });
 
-    /**
-     * Simple constructor of AbstractExDocumento instances.
-     */
     public CpArquivo() {
     }
 
@@ -154,6 +171,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
             return;
 
         long ini = System.currentTimeMillis();
+        byte[] ab = this.getConteudo();
         switch (getTipoArmazenamento()) {
             case BLOB:
                 throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
@@ -176,17 +194,17 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                 if (this.arquivoBlob == null) {
                     this.arquivoBlob = new CpArquivoBlob();
                     this.arquivoBlob.setArquivo(this);
-                    this.arquivoBlob.setConteudoBlobArq(this.getConteudo());
+                    this.arquivoBlob.setConteudoBlobArq(ab);
                 }
                 break;
             default:
                 if (this.tamanho > 0L) {
                     Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
-
                     TipoConteudo t = identificarTipoDeConteudo();
-
                     this.caminho = a.gerarCaminho(nomeSugerido, t, temporalidadeSugerida);
+
                     a.salvar(getCaminho(), getConteudoTpArq(), this.getConteudo());
+                    cacheArmazenamento.put(new TipoECaminho(getTipoArmazenamento(), getCaminho()), ab);
 
                     ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
                     if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO)
@@ -198,7 +216,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
         }
         long fim = System.currentTimeMillis();
         log.debug("Tempo para persistir o arquivo: " + (fim - ini) + " Tamanho: "
-                + (this.getConteudo() != null ? this.getConteudo().length : "nulo"));
+                + (ab != null ? ab.length : "nulo"));
     }
 
     public TipoConteudo identificarTipoDeConteudo() {
@@ -272,9 +290,48 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
             return new CpArquivo();
     }
 
+    static class TipoECaminho {
+        public TipoECaminho(CpArquivoTipoArmazenamentoEnum tipo, String caminho) {
+            super();
+            this.tipo = tipo;
+            this.caminho = caminho;
+        }
+
+        CpArquivoTipoArmazenamentoEnum tipo;
+        String caminho;
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(caminho, tipo);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            TipoECaminho other = (TipoECaminho) obj;
+            return Objects.equals(caminho, other.caminho) && tipo == other.tipo;
+        }
+        
+        public String toString() {
+            return tipo.name() + "-" + caminho;
+        }
+        
+        public static TipoECaminho fromString(String s) {
+            String[] l = s.split("-", 2);
+            return new TipoECaminho(CpArquivoTipoArmazenamentoEnum.valueOf(l[0]), l[1]);
+        }
+    }
+
     public byte[] getConteudo() {
         if (cacheArquivo != null)
             return cacheArquivo;
+        if (this.idArq == null)
+            return null;
         switch (getTipoArmazenamento()) {
             case BLOB:
                 throw new RuntimeException("Armazenamento em BLOB não é mais suportado.");
@@ -282,9 +339,18 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                 cacheArquivo = getArquivoBlob() != null ? getArquivoBlob().getConteudoBlobArq() : null;
                 break;
             default:
-                Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
-                cacheArquivo = a.recuperar(getCaminho());
-                log.info("RECUPERANDO: " + getCaminho());
+                if (caminho == null)
+                    return null;
+                try {
+                    log.info("RECUPERANDO: " + getCaminho());
+                    cacheArquivo = cacheArmazenamento.get(new TipoECaminho(getTipoArmazenamento(), getCaminho()));
+                } catch (InvalidCacheLoadException e) {
+                    if (e.getMessage().contains("CacheLoader returned null for key"))
+                        return null;
+                    throw new RuntimeException("Erro recuperando blob '" + getCaminho() + "' do armazenamento " + getTipoArmazenamento(), e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException("Erro recuperando blob '" + getCaminho() + "' do armazenamento " + getTipoArmazenamento(), e);
+                }
                 break;
         }
         return cacheArquivo;

@@ -186,9 +186,9 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                     this.caminho = a.gerarCaminho(nomeSugerido, t, temporalidadeSugerida);
                     ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
                     if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO)
-                        log.info("TEMPORÁRIO: " + getCaminho());
+                        log.info("TEMPORÁRIO:  " + getCaminho());
                     else
-                        log.info("30 ANOS: " + getCaminho());
+                        log.info("30 ANOS:     " + getCaminho());
                 }
             
                 if (this.arquivoBlob == null) {
@@ -208,9 +208,9 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
 
                     ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
                     if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO)
-                        log.info("TEMPORÁRIO: " + getCaminho());
+                        log.info("TEMPORÁRIO:  " + getCaminho());
                     else
-                        log.info("30 ANOS: " + getCaminho());
+                        log.info("30 ANOS:     " + getCaminho());
                 }
                 break;
         }
@@ -244,16 +244,16 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                     Armazenamento a = ArmazenamentoFabrica.getInstance(CpArquivoTipoArmazenamentoEnum.S3);
                     ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
                     if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO)
-                        log.info("EXCLUINDO: " + getCaminho());
+                        log.info("EXCLUINDO:   " + getCaminho());
                     else
-                        log.info("MANTENDO: " + getCaminho());
+                        log.info("MANTENDO:    " + getCaminho());
                 }
                 break;
             default:
                 final Armazenamento a = ArmazenamentoFabrica.getInstance(getTipoArmazenamento());
                 ArmazenamentoTemporalidadeEnum tempo = a.obterTemporalidadePorCaminho(getCaminho());
                 if (tempo == ArmazenamentoTemporalidadeEnum.TEMPORARIO) {
-                    log.info("EXCLUINDO: " + getCaminho());
+                    log.info("EXCLUINDO:   " + getCaminho());
                     ContextoPersistencia.addAfterCommit(new AfterCommit() {
                         @Override
                         public void run() {
@@ -261,7 +261,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                         }
                     });
                 } else
-                    log.info("MANTENDO: " + getCaminho());
+                    log.info("MANTENDO:    " + getCaminho());
                 break;
         }
     }
@@ -342,7 +342,7 @@ public class CpArquivo implements Serializable, PersistentAttributeInterceptable
                 if (caminho == null)
                     return null;
                 try {
-                    log.info("RECUPERANDO: " + getCaminho());
+                    log.debug("CARREGANDO:  " + getCaminho());
                     cacheArquivo = cacheArmazenamento.get(new TipoECaminho(getTipoArmazenamento(), getCaminho()));
                 } catch (InvalidCacheLoadException e) {
                     if (e.getMessage().contains("CacheLoader returned null for key"))

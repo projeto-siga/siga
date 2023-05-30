@@ -151,7 +151,6 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
     public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
     	return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
     }
-    
     public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
         return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
     }
@@ -163,13 +162,12 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
     private boolean possuiPermissao(DpLotacao lotaTitular, DpPessoa pess, Long tipoPermissaoLista) {
         List<SrConfiguracaoCache> permissoesEncontradas = getPermissoesDoCache(lotaTitular, pess);
         for (SrConfiguracaoCache srConfiguracao : permissoesEncontradas) {
-            for (SrTipoPermissaoLista permissao : srConfiguracao.tipoPermissaoSet) { 
+            for (SrTipoPermissaoLista permissao : srConfiguracao.tipoPermissaoSet) {
                 if (tipoPermissaoLista == permissao.getIdTipoPermissaoLista()) {
                     return Boolean.TRUE;
                 }
             }
         }
-        
         return Boolean.FALSE;
     }
 

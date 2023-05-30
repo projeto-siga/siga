@@ -150,9 +150,6 @@ public class SolicitacaoController extends SrController {
 	@Transacional
 	@Path("/gravarPermissaoUsoLista")
 	public void gravarPermissaoUsoLista(SrConfiguracao permissao, SrLista listaPrioridade, List<SrTipoPermissaoLista> tipoPermissaoSet) throws Exception {
-		//SISTEMA TRAVA SE COLOCAR BREAKPOINT NAS LINHAS ABAIXO
-		//O SISTEMA TRAVA SE COLOCAR SYSTEM.OUT.PRINTLN NO PERMISSAO
-
 		permissao.setListaPrioridade(listaPrioridade);
 		permissao.setTipoPermissaoSet(tipoPermissaoSet);
 		permissao.salvarComoPermissaoUsoLista();

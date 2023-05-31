@@ -227,8 +227,8 @@ public class SolicitacaoController extends SrController {
 			// TODO: Alterar o permissoes para o nome da lotação exibir o nome da lotacao atual: COSADM no exemplo
 
 	        for (SrConfiguracao permissao : permissoes) {
-		        SrConfiguracao configuracao = permissoes.get(0);
-		        CpConfiguracao cpConfiguracao = CpConfiguracao.AR.findById(configuracao.getIdConfiguracao()); //ID
+		        //SrConfiguracao configuracao = permissoes.get(0);
+		        CpConfiguracao cpConfiguracao = CpConfiguracao.AR.findById(permissao.getIdConfiguracao()); //ID
 		                
 		        //dar select no cp_configuracao, buscar o id_lotacao_inicial
 		        Long id_lotacao_inicial = cpConfiguracao.getLotacao().getId();

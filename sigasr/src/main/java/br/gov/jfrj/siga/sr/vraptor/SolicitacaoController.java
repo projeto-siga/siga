@@ -213,35 +213,42 @@ public class SolicitacaoController extends SrController {
 		configuracao.salvarComHistorico();
 		result.use(Results.http()).body(configuracao.toVO().toJson());
 	}
-
+	
 	@Path("/buscarPermissoesLista")
 	public void buscarPermissoesLista(Long idLista) throws Exception {
-		List<SrConfiguracao> permissoes;
-		
+		List<SrConfiguracao> permissoes = null;
+		String nomeLotacaoAtual = null;
 		if (idLista != null) {
 			SrLista lista = SrLista.AR.findById(idLista);
 			permissoes = new ArrayList<>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
 			permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
-		} else
-			permissoes = new ArrayList<SrConfiguracao>();
-		
-		// TODO: Alterar o permissoes para o nome da lotação exibir o nome da lotacao atual: COSADM no exemplo
-		
-		//Erro: O permissões está exibindo o nome da lotação inicial: NUSAD no exemplo
-		
-		//Solução:
+			
+			// Erro: O permissões está exibindo o nome da lotação inicial: NUSAD no exemplo
+			// TODO: Alterar o permissoes para o nome da lotação exibir o nome da lotacao atual: COSADM no exemplo
 
-		//pegar o srconfiguração que possui como atributo o idlista = idLista (o ID da lista sendo exibida)
-		// a partir dele, dar select no cp_configuracao, buscar o id_lotacao
-		// em lotação, buscar o id_inicial e o nome da lotação inicial
-		
-		//SrConfiguracao srConfiguracao = SrConfiguracao.AR.
-		
-		//System.out.println("SrConfiguracao.convertToJSon(permissoes)");
-		//#########################
-		
-		result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));
-	}
+	        for (SrConfiguracao permissao : permissoes) {
+		        SrConfiguracao configuracao = permissoes.get(0);
+		        CpConfiguracao cpConfiguracao = CpConfiguracao.AR.findById(configuracao.getIdConfiguracao()); //ID
+		                
+		        //dar select no cp_configuracao, buscar o id_lotacao_inicial
+		        Long id_lotacao_inicial = cpConfiguracao.getLotacao().getId();
+		        
+		        //passa id_lotação_inicial e retorna sigla_lotação atual
+		        DpLotacao lotacao_inicial = DpLotacao.AR.findById(id_lotacao_inicial);
+		        DpLotacao lotacao_atual = lotacao_inicial.getLotacaoAtual();
+		        
+		        //pega a sigla da lotação atual
+		        String sigla_lotacao_atual = lotacao_atual.getSigla();
+		        
+		        //Alterar permissões para exibir a sigla da lotação atual ao invés de exibir a sigla da lotação inicial
+		        
+	                permissao.setLotacao(lotacao_atual);
+	            }
+	        }
+		// O JSON a seguir deve retornar SIGLA_LOTAÇÃO com a sigla da lotação atual: ex: COSADM
+				result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));             
+		} 
+	
 
 	@Transacional
 	@Path("/gravarLista")

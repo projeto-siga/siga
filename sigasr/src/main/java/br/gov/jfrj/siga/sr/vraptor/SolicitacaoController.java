@@ -213,20 +213,27 @@ public class SolicitacaoController extends SrController {
 		configuracao.salvarComHistorico();
 		result.use(Results.http()).body(configuracao.toVO().toJson());
 	}
-
+	
 	@Path("/buscarPermissoesLista")
 	public void buscarPermissoesLista(Long idLista) throws Exception {
-		List<SrConfiguracao> permissoes;
-
+		List<SrConfiguracao> permissoes = null;
+		String nomeLotacaoAtual = null;
 		if (idLista != null) {
 			SrLista lista = SrLista.AR.findById(idLista);
 			permissoes = new ArrayList<>(lista.getPermissoes(getTitular().getLotacao(), getCadastrante()));
 			permissoes = SrConfiguracao.listarPermissoesUsoLista(lista, false);
-		} else
-			permissoes = new ArrayList<SrConfiguracao>();
-
-		result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));
-	}
+	        for (SrConfiguracao permissao : permissoes) {
+		        CpConfiguracao cpConfiguracao = CpConfiguracao.AR.findById(permissao.getIdConfiguracao()); //ID
+		        Long id_lotacao_inicial = cpConfiguracao.getLotacao().getId();
+		        DpLotacao lotacao_inicial = DpLotacao.AR.findById(id_lotacao_inicial);
+		        DpLotacao lotacao_atual = lotacao_inicial.getLotacaoAtual();
+		        String sigla_lotacao_atual = lotacao_atual.getSigla();
+	            permissao.setLotacao(lotacao_atual);
+	            }
+	        }
+				result.use(Results.http()).body(SrConfiguracao.convertToJSon(permissoes));             
+		} 
+	
 
 	@Transacional
 	@Path("/gravarLista")

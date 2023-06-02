@@ -37,7 +37,8 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		resp.id = o.getResp().id;
 		resp.refresh = o.getResp().refresh;
 		resp.status = o.getResp().status;
-		resp.title = o.getResp().title;
+        resp.title = o.getResp().title;
+        resp.dateref = o.getResp().dateref;
 		resp.url = o.getResp().url;
 		resp.id += "-" + service.ordinal();
 	}

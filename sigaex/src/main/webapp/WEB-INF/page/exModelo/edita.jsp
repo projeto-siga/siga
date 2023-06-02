@@ -228,6 +228,22 @@
 			</div>
 
 			<div style="clear: both; margin-bottom: 20px;">
+				<div id="tableCadastradasCriarComoNovo"></div>
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary"
+						onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=42&nmTipoRetorno=modelo&campoFixo=True'" />
+				</div>
+			</div>
+
+			<div style="clear: both; margin-bottom: 20px;">
+				<div id="tableCadastradasDespachavel"></div>
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary"
+						onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=30&nmTipoRetorno=modelo&campoFixo=True'" />
+				</div>
+			</div>
+
+			<div style="clear: both; margin-bottom: 20px;">
 				<div id="tableCadastradasAssinar"></div>
 				<div>
 					<input type="button" value="Novo" class="btn btn-primary"
@@ -342,6 +358,8 @@
 		<script>
 			montaTableCadastradas('tableCadastradasEletronico', 4, 0, ${id});
 			montaTableCadastradas('tableCadastradasCriar', 2, 0, ${id});
+			montaTableCadastradas('tableCadastradasCriarComoNovo', 42, 0, ${id});
+			montaTableCadastradas('tableCadastradasDespachavel', 30, 0, ${id});
 			montaTableCadastradas('tableCadastradasAssinar', 1, 11, ${id});
 			montaTableCadastradas('tableCadastradasAssinarComSenha', 1, 58, ${id});		
 			montaTableCadastradas('tableCadastradasAcessar', 6, 0, ${id});

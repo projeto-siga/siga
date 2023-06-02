@@ -50,6 +50,9 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			resp.refresh = "NEVER";
 			resp.code = doc.getCodigo();
 			resp.title = doc.getDescrDocumento();
+            String dtMovYYYYMMDD = mov.getDtMovYYYYMMDD();
+            if (dtMovYYYYMMDD != null && !dtMovYYYYMMDD.isEmpty())
+                resp.dateref = dtMovYYYYMMDD;
 			resp.field = new ArrayList<>();
 			resp.facet = new ArrayList<>();
 			resp.refresh = "NEVER";

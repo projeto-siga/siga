@@ -3811,8 +3811,13 @@ public class ExBL extends CpBL {
 		return uri;
 	}
 	
+    public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
+            ExDocumento doc) throws Exception {
+        return gravar(cadastrante, titular, lotaTitular, doc, false);
+    }
+    
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
-			ExDocumento doc) throws Exception {
+			ExDocumento doc, boolean fManterSolicitacaoDeAssinatura) throws Exception {
 
 		// Verifica se o documento possui documento pai e se o usuário possui
 		// permissões de criar documento filho
@@ -3829,7 +3834,7 @@ public class ExBL extends CpBL {
 		 * ); }
 		 */					
 
-		if (doc.isAssinaturaSolicitada()) {
+		if (!fManterSolicitacaoDeAssinatura && doc.isAssinaturaSolicitada()) {
 			ExMovimentacao m = doc.getMovSolicitacaoDeAssinatura();
 			cancelar(titular, lotaTitular, m.getExMobil(), m, null, null, null,
 					"Edição após solicitação de assinatura");
@@ -8952,9 +8957,9 @@ public class ExBL extends CpBL {
 				        .withExFormaDoc(doc.getExFormaDocumento())
 				        .withIdTpConf(ExTipoDeConfiguracao.ATUALIZAR_DATA_AO_ASSINAR).eval();
 				
-				if ((Prop.isGovSP() || podePorConfiguracao) && doc.getDtDoc() != null && !DateUtils.isToday(doc.getDtDoc())) {
+				if ((Prop.isGovSP() || podePorConfiguracao) && doc.getDtDoc() != null && !dataAtualSemTempo.equals(doc.getDtDoc())) {
 				    doc.setDtDoc(dataAtualSemTempo);
-					gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc);
+					gravar(cadastrante, titular, titular != null ? titular.getLotacao() : null, doc, true);
 				}
 			}
 		}

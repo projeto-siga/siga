@@ -107,7 +107,8 @@ public class SigaDocPdfUtils {
 					ab = mov.getConteudoBlobpdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					Documento.getDocumento(baos, null, mob, null, completo, semmarcas, false, null, null, tamanhoOriginal, null);
+					boolean reduzirVisuAssinPdf = Documento.isReduzirVisuAssinPdf(titular, lotaTitular, mob.doc());
+					Documento.getDocumento(baos, null, mob, null, completo, semmarcas, false, null, null, tamanhoOriginal, null, reduzirVisuAssinPdf);
 					ab = baos.toByteArray();
 				}
 				if (ab == null) {

@@ -1759,7 +1759,7 @@ CKEDITOR.replace( '${var}',
                                         });
                                 }
 
-								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
+								CKEDITOR.config.extraPlugins = ['footnotes','strinsert', 'tableresize'];
 
                                 CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
                                     
@@ -5821,7 +5821,7 @@ Exemplos de utilização:
 							}
 						});
 					}
-					CKEDITOR.config.extraPlugins = ['footnotes', 'strinsert'];
+					CKEDITOR.config.extraPlugins = ['footnotes', 'strinsert', 'tableresize'];
 					CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
 					CKEDITOR.replace('${var}', {
 						toolbar: 'SigaToolbar'

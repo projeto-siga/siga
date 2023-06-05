@@ -3002,7 +3002,7 @@ public class ExMovimentacaoController extends ExController {
 	@Post("app/expediente/mov/transferirLoteDocumentosArquivados")
 	public void aTransferirLoteDocArquivado(
 			final DpLotacaoSelecao lotaResponsavelSel, final DpPessoaSelecao responsavelSel, final DpLotacaoSelecao lotacaoDestinatarioSel,
-			final List<Long> documentosSelecionados, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
+			Long idDocumentoSelecionado, Integer paramoffset, int tipoResponsavel, String motivoTransferencia)
 			throws Exception {
 		
 		assertAcesso(ACESSO_FORM_TRANSF_ARQ);
@@ -3017,25 +3017,34 @@ public class ExMovimentacaoController extends ExController {
 
 		final Date dt = dao().dt();
 		mov.setDtIniMov(dt);
-		ExMobil nmobil = new ExMobil();
-		final HashMap<ExMobil, AplicacaoException> MapMensagens = new HashMap<ExMobil, AplicacaoException>();
+		ExMobil mobil = new ExMobil();
 		
 		AplicacaoException msgErroNivelAcessoso = null;
+		
+		try {
+		
+			mobil = dao().consultar(idDocumentoSelecionado, ExMobil.class, false);
 
-		for (Long idDocumento : documentosSelecionados) {
-			try {
-			
-				final ExMobil mobil = dao().consultar(idDocumento, ExMobil.class, false);
+			if (!Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), mobil)) {
+				if (msgErroNivelAcessoso == null) {
+					msgErroNivelAcessoso = new AplicacaoException(
+							"O documento " + mobil.getDnmSigla() + " não pode ser transferido por estar inacessível ao usuário.");
+				}
+				if (!(msgErroNivelAcessoso == null)) {
+					throw new AplicacaoException(msgErroNivelAcessoso.getMessage());					
+				}
+			} else {
 				
 				Ex.getInstance()
 				.getBL()
 				.transferirEntreArquivos(mobil, getCadastrante(), getLotaCadastrante(), 
 						mov.getLotaDestinoFinal(), motivoTransferencia);
 
-			} catch (AplicacaoException e) {
-				MapMensagens.put(nmobil, e);
 			}
-
+		} catch (AplicacaoException e) {
+			e.printStackTrace();
+			result.use(Results.status()).forbidden(e.getMessage());
+			return;
 		}
 
 		result.include("mov", mov);
@@ -3637,7 +3646,7 @@ public class ExMovimentacaoController extends ExController {
 
 			ExMobil mobilJuntado = mob.getExMobilPai();
 			if (mobilJuntado != null && !mobilJuntado.getDoc().isEletronico()) {
-				cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null, null,
+				cancelarJuntadaGravar(DEFAULT_POSTBACK, sigla, null, null,
 						null, Boolean.FALSE);
 				return;
 			}
@@ -3749,16 +3758,14 @@ public class ExMovimentacaoController extends ExController {
 
 	@Transacional
 	@Post("/app/expediente/mov/cancelar_juntada_gravar")
-	public void cancelarJuntadaGravar(Integer postback, String sigla,
-			String dtMovString, String descrMov, DpPessoaSelecao subscritorSel,
+	public void cancelarJuntadaGravar(Integer postback, String sigla, String descrMov, DpPessoaSelecao subscritorSel,
 			DpPessoaSelecao titularSel, boolean substituicao) throws Exception {
 
 		this.setPostback(postback);
 		
 		try {
-			if (dtMovString != null && !Data.validaDDMMYYYY(dtMovString)) { 
-				throw new RegraNegocioException("Data inválida. Deve estar no formato DD/MM/AAAA e o ano deve estar neste século.");
-			}
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			String dtMovString = sdf.format(dao().dt());
 			
 			ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
 					.setDtMovString(dtMovString).setSubstituicao(substituicao)

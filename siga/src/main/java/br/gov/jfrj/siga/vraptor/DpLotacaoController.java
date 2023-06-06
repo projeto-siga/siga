@@ -232,7 +232,11 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			}
 		}
 	}
-
+	
+// TODO: Alterar método exibe para passas os dados dos possíveis substitutos pra view e exibir na tela
+// URL acessada: http://localhost:8080/siga/app/lotacao/exibir?sigla=ZZ-LTEST
+// View: page/dplotacao/exibi.jsp
+// Controller que retorna os dados necessários aqui: SubstituicaoController
 	@Get("app/lotacao/exibir")
 	public void exibi(String sigla) throws Exception {
 		StringBuilder sb = new StringBuilder();

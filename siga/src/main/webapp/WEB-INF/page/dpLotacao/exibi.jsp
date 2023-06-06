@@ -157,10 +157,137 @@
 			</tbody>
 		</table>
 		<br /> <br />
+		
+		<%-- TODO: chamar o código de substituição aqui(SubstituicaoController) e exibir na tela --%>
+			<!-- main content -->
+	<div class="container-fluid">
+		<div class="card bg-light mb-3" >
+			<div class="card-header">
+				<h5>Gerenciar possíveis substitutos</h5>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm">
+						<h6>Substituições cadastradas</h5>
+						<table border="0" class="gt-table table table-sm table-hover">
+							<thead class="${thead_color}">
+								<tr>
+									<th align="left">Titular</th>
+									<th align="left">Substituto</th>
+									<th align="center">Data inicial</th>
+									<th align="center">Data final</th>
+									<th align="center">Opções</th>
+								</tr>
+							</thead>
+							<tbody class="table-bordered">
+								<c:forEach var="substituicao" items="${itens}">
+									<tr>
+										<td align="left">
+											<c:choose>
+												<c:when test="${not empty substituicao.titular}">
+													${substituicao.titular.nomePessoa}
+												</c:when>
+												<c:otherwise>
+													${substituicao.lotaTitular.nomeLotacao}
+												</c:otherwise>
+											</c:choose>
+										</td>
+										<td align="left">
+											<c:choose>
+												<c:when test="${not empty substituicao.substituto}">
+													${substituicao.substituto.nomePessoa}
+												</c:when>
+												<c:otherwise>
+													${substituicao.lotaSubstituto.nomeLotacao}
+												</c:otherwise>
+											</c:choose>
+										</td>
+										<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
+										<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
+										<td align="center">
+											<siga:link title="Alterar" url="editar?id=${substituicao.idSubstituicao}" />
+																			
+											<siga:link title="Excluir" url="exclui?id=${substituicao.idSubstituicao}" 
+												popup="excluir" confirm="Deseja excluir substituição?" />									
+																		
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<c:choose>
+					<c:when test="${(isSubstituicao == 'true')}">			
+						<div class="row">
+							<div class="col-sm">
+								<h6>Substituições cadastradas para o Titular</h6>
+								<table border="0" class="gt-table table table-sm table-hover">
+									<thead class="${thead_color}">
+
+										<tr>
+											<th align="left">Titular</th>
+											<th align="left">Substituto</th>
+											<th align="center">Data inicial</th>
+											<th align="center">Data final</th>
+											<th align="center">Opções</th>
+										</tr>
+									</thead>
+									<tbody  class="table-bordered">
+										<c:forEach var="substTitular" items="${itensTitular}">
+											<tr>
+												<td align="left">
+													<c:choose>
+														<c:when test="${not empty substTitular.titular}">
+																${substTitular.titular.nomePessoa}
+														</c:when>
+														<c:otherwise>
+																${substTitular.lotaTitular.nomeLotacao}
+														</c:otherwise>	
+													</c:choose>
+												</td>
+												<td align="left">
+													<c:choose>
+														<c:when test="${not empty substTitular.substituto}">
+															${substTitular.substituto.nomePessoa}
+														</c:when>
+														<c:otherwise>
+															${substTitular.lotaSubstituto.nomeLotacao}
+														</c:otherwise>
+													</c:choose>
+												</td>
+												<td align="center">${substTitular.dtIniSubstDDMMYY}</td>
+												<td align="center">${substTitular.dtFimSubstDDMMYY}</td>
+												<td align="center">
+													<siga:link title="Alterar" url="editar?id=${substTitular.idSubstituicao}" />
+																					
+													<siga:link title="Excluir" url="exclui?id=${substTitular.idSubstituicao}" 
+														popup="excluir" confirm="Deseja excluir configuração?" />										
+												</td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</div>
+						</div>		
+					</c:when>
+					<c:otherwise>
+						<div class="row">
+							<div class="col-sm-2">
+								<button type="button"  onclick="javascript:window.location.href='editar'" class="btn btn-primary">Incluir</button>
+							</div>						
+						</div>
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</div>
+	</div>
+	
+		<br /> <br />
 		<h3 class="gt-table-head ${hide_only_GOVSP}">Organograma</h3>
 		<div id="organograma"></div>
 		
-		<%-- TODO: chamar o código de substituição aqui(SubstituicaoController) e exibir na tela --%>
+		
 		
 	</div>
 

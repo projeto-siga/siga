@@ -159,6 +159,9 @@
 		<br /> <br />
 		<h3 class="gt-table-head ${hide_only_GOVSP}">Organograma</h3>
 		<div id="organograma"></div>
+		
+		<%-- TODO: chamar o código de substituição aqui(SubstituicaoController) e exibir na tela --%>
+		
 	</div>
 
 	<script>

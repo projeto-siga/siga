@@ -48,6 +48,12 @@ $(function() {
 		      $.each(modules, function(){
 		        	var model = this;
 		        	var target = $("#"+model.viewId);
+		        	if (!target.length) {
+		        		target = $("#"+model.viewId+"Desabilitado");
+		        		target.show();
+			 			return;
+					}
+		        			   
 		        	$(target.find(".loading")).show();
 		        	
 		            $.ajax({

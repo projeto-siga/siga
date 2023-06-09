@@ -58,6 +58,8 @@
 			<c:if
 				test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
 				<div class="col col-sm-12 col-md-6">
+ 				<p id="mesaDocumentosDesabilitado" class="alert alert-warning" style="display: none">Quadro de documentos temporariamente desabilitado</p>
+				<c:if test="${f:resource('/siga.quadro.quantitativo.exibir.documentos') == 'true'}">
 				<div id="mesaDocumentos">
 					<div class="card bg-light mb-3">
 						<div class="card-header"><a href="/sigaex/app/expediente/doc/listar?primeiraVez=sim&idTipoFormaDoc=1">Expedientes</a></div>
@@ -77,6 +79,7 @@
 						</div>
 					</div>
 				</div>
+				</c:if>
 					<div class="mt-2">
 						<a class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/editar'"

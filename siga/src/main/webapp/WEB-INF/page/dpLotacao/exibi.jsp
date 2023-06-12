@@ -230,7 +230,7 @@
 											<th align="left">Substituto</th>
 											<th align="center">Data inicial</th>
 											<th align="center">Data final</th>
-											<th align="center">Opções</th>
+											<%--<th align="center">Opções</th>--%>
 										</tr>
 									</thead>
 									<tbody  class="table-bordered">
@@ -258,12 +258,14 @@
 												</td>
 												<td align="center">${substTitular.dtIniSubstDDMMYY}</td>
 												<td align="center">${substTitular.dtFimSubstDDMMYY}</td>
+												<%--
 												<td align="center">
 													<siga:link title="Alterar" url="editar?id=${substTitular.idSubstituicao}" />
 																					
 													<siga:link title="Excluir" url="exclui?id=${substTitular.idSubstituicao}" 
 														popup="excluir" confirm="Deseja excluir configuração?" />										
 												</td>
+												--%>
 											</tr>
 										</c:forEach>
 									</tbody>
@@ -271,6 +273,7 @@
 							</div>
 						</div>		
 					</c:when>
+					<%--
 					<c:otherwise>
 						<div class="row">
 							<div class="col-sm-2">
@@ -278,6 +281,7 @@
 							</div>						
 						</div>
 					</c:otherwise>
+					--%>
 				</c:choose>
 			</div>
 		</div>

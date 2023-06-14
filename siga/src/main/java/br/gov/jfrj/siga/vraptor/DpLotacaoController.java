@@ -237,16 +237,9 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		}
 	}
 	
-// TODO: Alterar método exibe para passas os dados dos possíveis substitutos pra view e exibir na tela
-// URL acessada: http://localhost:8080/siga/app/lotacao/exibir?sigla=ZZ-LTEST
-// View: page/dplotacao/exibi.jsp
-// Controller que retorna os dados necessários aqui: SubstituicaoController
-	//TODO: O código da substituição fica nesse local, chamar esse código no exibi.jsp do DpLotacaoController
 	@Get("/app/lotacao/exibir")
-	/* public void lista() throws Exception { */
 	public void exibi(String sigla) throws Exception
 	{
-		//Lotação
 		StringBuilder sb = new StringBuilder();
 		if (sigla == null)
 			throw new Exception("sigla deve ser informada.");
@@ -262,37 +255,18 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("lotacao", lot);
 		result.include("graph", sb.toString());
 		
-		System.out.println(lot);
-		System.out.println(sigla);
-		
-		//Substitutos
-		//Atual: Está exibindo os dados dos substitutos da lotação do usuário que está logado 
-		//TODO: Precisa exibir os dados dos substitutos da lotação do documento pesquisado
-		//TODO: Alterar o código abaixo para pegar a lotação do documento aberto, não a lotação do usuário logado
 		//TODO: A tela deve exibir soments os campos Substituto, data inicial e data final
 		
 		String substituicao = "false";
 		DpLotacao lotacaoDoCadastrante = getCadastrante().getLotacao();
-		System.out.println(getCadastrante().getLotacao());
-
-		//aqui tem que buscar a lotação do documento: Nome LOTACAO TESTE / Sigla LTEST no exemplo testado
-		//está retornando a lotação do usuário logado, tem que pegar a lotação teste (variavel lot)
 		DpLotacao lotacaoDoTitular = getLotaTitular();
-		lotacaoDoTitular = lot;
-		System.out.println(getLotaTitular());
-		System.out.println(lot);
 		DpPessoa titular =  getTitular();
-		System.out.println(getTitular());
-		System.out.println();
 		
 		if (!getCadastrante().getId().equals(titular.getId())
 				|| !lotacaoDoCadastrante.getId().equals(lotacaoDoTitular.getId())) {
-		//if (!getCadastrante().getId().equals(getTitular().getId())
-		//		|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
 			if(podeCadastrarQualquerSubstituicao()){
 				substituicao = "true";		
 				result.include("itensTitular", buscarSubstitutos(substituicao, titular, lotacaoDoTitular));
-				//result.include("itensTitular", buscarSubstitutos(substituicao, getTitular(), getLotaTitular()));
 			}	
 		}
 		result.include("isSubstituicao", substituicao);
@@ -341,26 +315,6 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST);
 	}
 	
-// TODO: Apagar código comentado
-/*
-	@Get("app/lotacao/exibir")
-	public void exibi(String sigla) throws Exception {
-		StringBuilder sb = new StringBuilder();
-		if (sigla == null)
-			throw new Exception("sigla deve ser informada.");
-		DpLotacao lot = dao().getLotacaoFromSigla(sigla);
-
-		sb.append("digraph G {");
-
-		sb.append("graph [dpi = 60]; node [shape = rectangle];");
-
-		graphAcrescentarLotacao(sb, lot);
-		sb.append("}");
-
-		result.include("lotacao", lot);
-		result.include("graph", sb.toString());
-	}
-*/
 	private void graphAcrescentarLotacao(StringBuilder sb, DpLotacao lot) {
 		for (DpLotacao lotsub : lot.getDpLotacaoSubordinadosSet()) {
 			if (lotsub.getDataFimLotacao() != null)

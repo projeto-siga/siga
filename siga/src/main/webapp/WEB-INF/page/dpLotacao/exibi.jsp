@@ -124,7 +124,7 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<br /> <br />
+		<br />
 		<h3 class="gt-table-head"><fmt:message key="tela.lotacao.magistrados.servidores"/></h3>
 		<table border="0" class="table table-sm table-striped">
 			<thead class="${thead_color}">
@@ -137,7 +137,6 @@
 					<th align="right">Email</th>
 				</tr>
 			</thead>
-
 			<tbody>
 				<c:forEach var="pessoa" items="${lotacao.dpPessoaLotadosSet}">
 					<tr>
@@ -156,7 +155,7 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<br /> <br />
+		<br />
 		<h3 class="gt-table-head">Substituições Cadastradas</h3>
 		<table border="0" class="gt-table table table-sm table-hover">
 							<thead class="${thead_color}">

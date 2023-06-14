@@ -255,8 +255,6 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("lotacao", lot);
 		result.include("graph", sb.toString());
 		
-		//TODO: A tela deve exibir soments os campos Substituto, data inicial e data final
-		
 		String substituicao = "false";
 		DpLotacao lotacaoDoCadastrante = getCadastrante().getLotacao();
 		DpLotacao lotacaoDoTitular = getLotaTitular();

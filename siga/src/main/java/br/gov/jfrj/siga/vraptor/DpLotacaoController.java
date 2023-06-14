@@ -262,18 +262,41 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		result.include("lotacao", lot);
 		result.include("graph", sb.toString());
 		
-		//Substitutos
-		String substituicao = "false";
+		System.out.println(lot);
+		System.out.println(sigla);
 		
-		if (!getCadastrante().getId().equals(getTitular().getId())
-				|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
+		//Substitutos
+		//Atual: Está exibindo os dados dos substitutos da lotação do usuário que está logado 
+		//TODO: Precisa exibir os dados dos substitutos da lotação do documento pesquisado
+		//TODO: Alterar o código abaixo para pegar a lotação do documento aberto, não a lotação do usuário logado
+		//TODO: A tela deve exibir soments os campos Substituto, data inicial e data final
+		
+		String substituicao = "false";
+		DpLotacao lotacaoDoCadastrante = getCadastrante().getLotacao();
+		System.out.println(getCadastrante().getLotacao());
+
+		//aqui tem que buscar a lotação do documento: Nome LOTACAO TESTE / Sigla LTEST no exemplo testado
+		//está retornando a lotação do usuário logado, tem que pegar a lotação teste (variavel lot)
+		DpLotacao lotacaoDoTitular = getLotaTitular();
+		lotacaoDoTitular = lot;
+		System.out.println(getLotaTitular());
+		System.out.println(lot);
+		DpPessoa titular =  getTitular();
+		System.out.println(getTitular());
+		System.out.println();
+		
+		if (!getCadastrante().getId().equals(titular.getId())
+				|| !lotacaoDoCadastrante.getId().equals(lotacaoDoTitular.getId())) {
+		//if (!getCadastrante().getId().equals(getTitular().getId())
+		//		|| !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId())) {
 			if(podeCadastrarQualquerSubstituicao()){
-				substituicao = "true";					
-				result.include("itensTitular", buscarSubstitutos(substituicao, getTitular(), getLotaTitular()));
+				substituicao = "true";		
+				result.include("itensTitular", buscarSubstitutos(substituicao, titular, lotacaoDoTitular));
+				//result.include("itensTitular", buscarSubstitutos(substituicao, getTitular(), getLotaTitular()));
 			}	
 		}
 		result.include("isSubstituicao", substituicao);
-		result.include("itens", buscarSubstitutos(substituicao, getCadastrante(), getCadastrante().getLotacao()));
+		result.include("itens", buscarSubstitutos(substituicao, getCadastrante(), lot));
 	}	
 	
 	private List<DpSubstituicao> buscarSubstitutos(String substituicao, DpPessoa pessoa, DpLotacao lotacao) 
@@ -317,6 +340,8 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 				getCadastrante(), getCadastrante().getLotacao(), 
 				CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST);
 	}
+	
+// TODO: Apagar código comentado
 /*
 	@Get("app/lotacao/exibir")
 	public void exibi(String sigla) throws Exception {

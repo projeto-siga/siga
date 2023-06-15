@@ -123,7 +123,9 @@ public class ExModeloController extends ExSelecionavelController {
 		assertAcesso(VERIFICADOR_ACESSO);
 		if (postback == null) {
 
-			ExModelo modelo = buscarModelo(id).getModeloAtual();
+			ExModelo modelo =  buscarModelo(id);
+
+			if(id != null) modelo = modelo.getModeloAtual();
 
 			String tipoModelo = modelo.getConteudoTpBlob();
 			if (tipoModelo == null || tipoModelo.trim().length() == 0) {

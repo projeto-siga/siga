@@ -3,6 +3,7 @@ package br.gov.jfrj.siga.vraptor;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -33,10 +35,12 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
+import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.CpUF;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.model.GenericoSelecao;
@@ -232,9 +236,10 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 			}
 		}
 	}
-
-	@Get("app/lotacao/exibir")
-	public void exibi(String sigla) throws Exception {
+	
+	@Get("/app/lotacao/exibir")
+	public void exibi(String sigla) throws Exception
+	{
 		StringBuilder sb = new StringBuilder();
 		if (sigla == null)
 			throw new Exception("sigla deve ser informada.");
@@ -249,8 +254,65 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 
 		result.include("lotacao", lot);
 		result.include("graph", sb.toString());
+		
+		String substituicao = "false";
+		DpLotacao lotacaoDoCadastrante = getCadastrante().getLotacao();
+		DpLotacao lotacaoDoTitular = getLotaTitular();
+		DpPessoa titular =  getTitular();
+		
+		if (!getCadastrante().getId().equals(titular.getId())
+				|| !lotacaoDoCadastrante.getId().equals(lotacaoDoTitular.getId())) {
+			if(podeCadastrarQualquerSubstituicao()){
+				substituicao = "true";		
+				result.include("itensTitular", buscarSubstitutos(substituicao, titular, lotacaoDoTitular));
+			}	
+		}
+		result.include("isSubstituicao", substituicao);
+		result.include("itens", buscarSubstitutos(substituicao, getCadastrante(), lot));
+	}	
+	
+	private List<DpSubstituicao> buscarSubstitutos(String substituicao, DpPessoa pessoa, DpLotacao lotacao) 
+			throws SQLException, ServletException {
+		
+		Boolean isSubstLotacao = false;
+		List<DpSubstituicao> todasSubst = new ArrayList<DpSubstituicao>();
+		List<DpSubstituicao> substVigentes = new ArrayList<DpSubstituicao>();
+		DpSubstituicao dpSubstituicao = new DpSubstituicao();
+		dpSubstituicao.setTitular(pessoa);
+		dpSubstituicao.setLotaTitular(lotacao);			
+	    todasSubst = dao.consultarOrdemData(dpSubstituicao);
+	    
+	    if (getCadastrante().getId().equals(getTitular().getId())
+				&& !getCadastrante().getLotacao().getId().equals(getLotaTitular().getId()))
+	    	    	isSubstLotacao = true;	
+	    
+	    for (DpSubstituicao subst : todasSubst) {	
+	    	if (substituicao == "true") {
+	    		if (isSubstLotacao && subst.getTitular() != null)
+	    			continue;	    		
+	    	}
+	    		
+	    	if (subst.getLotaSubstituto() != null && subst.getLotaSubstituto().isFechada()
+	    			&& substituicao == "false")	    		
+	    		continue;
+	    	if (subst.getSubstituto() != null && (subst.getSubstituto().isFechada() 
+	    			|| subst.getSubstituto().isBloqueada()) && substituicao == "false")
+	    		continue;
+	    	if (subst.isEmVoga() || subst.isFutura()) {
+	    		subst.setLotaSubstituto(subst.getLotaSubstituto() != null ? subst.getLotaSubstituto().getLotacaoAtual() : null);
+	    		subst.setLotaTitular(subst.getLotaTitular() != null ? subst.getLotaTitular().getLotacaoAtual() : null);
+	    		substVigentes.add(subst);	    		
+	    	}
+	    }
+		return substVigentes;
 	}
 
+	private boolean podeCadastrarQualquerSubstituicao() throws Exception {
+		return Cp.getInstance().getConf().podePorConfiguracao(
+				getCadastrante(), getCadastrante().getLotacao(), 
+				CpTipoDeConfiguracao.CADASTRAR_QUALQUER_SUBST);
+	}
+	
 	private void graphAcrescentarLotacao(StringBuilder sb, DpLotacao lot) {
 		for (DpLotacao lotsub : lot.getDpLotacaoSubordinadosSet()) {
 			if (lotsub.getDataFimLotacao() != null)

@@ -124,7 +124,7 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<br /> <br />
+		<br />
 		<h3 class="gt-table-head"><fmt:message key="tela.lotacao.magistrados.servidores"/></h3>
 		<table border="0" class="table table-sm table-striped">
 			<thead class="${thead_color}">
@@ -137,7 +137,6 @@
 					<th align="right">Email</th>
 				</tr>
 			</thead>
-
 			<tbody>
 				<c:forEach var="pessoa" items="${lotacao.dpPessoaLotadosSet}">
 					<tr>
@@ -156,6 +155,35 @@
 				</c:forEach>
 			</tbody>
 		</table>
+		<br />
+		<h3 class="gt-table-head">Substituições Cadastradas</h3>
+		<table border="0" class="gt-table table table-sm table-hover">
+							<thead class="${thead_color}">
+								<tr>
+									<th align="left">Substituto</th>
+									<th align="center">Data inicial</th>
+									<th align="center">Data final</th>
+								</tr>
+							</thead>
+							<tbody class="table-bordered">
+								<c:forEach var="substituicao" items="${itens}">
+									<tr>
+										<td align="left">
+											<c:choose>
+												<c:when test="${not empty substituicao.substituto}">
+													${substituicao.substituto.nomePessoa}
+												</c:when>
+												<c:otherwise>
+													${substituicao.lotaSubstituto.nomeLotacao}
+												</c:otherwise>
+											</c:choose>
+										</td>
+										<td align="center">${substituicao.dtIniSubstDDMMYY}</td>
+										<td align="center">${substituicao.dtFimSubstDDMMYY}</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
 		<br /> <br />
 		<h3 class="gt-table-head ${hide_only_GOVSP}">Organograma</h3>
 		<div id="organograma"></div>

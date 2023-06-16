@@ -273,6 +273,10 @@ public class ExApiV1Servlet extends SigaSwaggerServlet implements IPropertyProvi
 		/* Propriedade para ajustar o periodo em minutos da chamada ao garbage collector  */
 		addPublicProperty("garbage.tarefa.periodo", "10");
 
+		/* Propriedade para exibir descricao automatica para documentos capturados */
+		addPublicProperty("exibir.descricao.automatica.capturado", "false");
+
+
 	}
 
 	@Override

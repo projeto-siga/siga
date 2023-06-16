@@ -84,7 +84,8 @@
 														<tr class="status-${j}">
 															<td style="width: 73px !important;">${m.dtIniMarcaDDMMYYYY}</td>
 															<td style="width: 50px !important;"><span
-																title="${m.dpLotacaoIni.descricao}">${m.dpLotacaoIni.sigla}</span>
+																title="${i.lotacao.descricao}">${i.lotacao.sigla}</span></td>
+																<!-- title="${m.dpLotacaoIni.descricao}">${m.dpLotacaoIni.sigla}</span> --> <!-- Lotação Errada --> 
 															</td>
 															<td style="width: 50px !important;"><span
 																title="${m.dpPessoaIni.descricao}">${m.dpPessoaIni.sigla}</span>

@@ -208,8 +208,9 @@
 					<div class="row">
 						<div class="col col-3">
 							<div class="form-group mb-0">
-								<label>Data da devolução</label> 
-								<input type="text" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off"/>					 
+							     <!-- Campo data de devolução foi desativado por motivo de bug no a devolver fora do prazo --> <!--  TODO -->
+								<!--  <label>Data da devolução</label> --> 
+								<input type="hidden" name="dtDevolucaoMovString" onblur="javascript:verifica_data(this,0);" value="${dtDevolucaoMovString}" class="form-control campoData" autocomplete="off" disabled="disabled"/>					 
 							</div>
 						</div>
 					</div>	
@@ -217,7 +218,7 @@
 				<c:if test="${siga_cliente != 'GOVSP'}">			
 					<div class="row">
 						<div class="col col-12">
-								<small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small>
+								<!--   <small class="form-text text-muted">Atenção: somente preencher a data de devolução se a intenção for, realmente, que o documento seja devolvido até esta data.</small> -->
 						</div>				
 					</div>
 				</c:if>				

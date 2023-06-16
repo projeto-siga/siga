@@ -217,6 +217,8 @@ public class ExModeloController extends ExSelecionavelController {
 		Ex.getInstance().getBL().gravarModelo(modelo, modAntigo, null, getIdentidadeCadastrante());
 		if ("Ok".equals(param("ok"))) {
 			result.redirectTo(ExModeloController.class).lista(null);
+		}else if ("Aplicar".equals(param("submit"))) {
+			result.redirectTo("editar?id=" + (modelo.getId() != null ? modelo.getId() : id));
 		} else {
 			result.redirectTo("buscar-json-lista-para-comparar/" + (modelo.getId() != null ? modelo.getId() : id));
 		}

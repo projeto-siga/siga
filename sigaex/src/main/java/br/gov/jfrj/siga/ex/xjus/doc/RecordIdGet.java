@@ -33,7 +33,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
             }
             ExDocumento doc = ExDao.getInstance().consultar(primaryKey, ExDocumento.class, false);
 
-            if (doc == null || doc.isCancelado()) {
+            if (doc == null || doc.isCancelado() || doc.isSemEfeito()) {
                 throw new PresentableUnloggedException("REMOVED");
             }
 

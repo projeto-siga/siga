@@ -7,6 +7,7 @@ import com.crivano.swaggerservlet.SwaggerAsyncResponse;
 import com.crivano.swaggerservlet.SwaggerCall;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.ex.util.ExXjusRecordServiceEnum;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
@@ -16,7 +17,7 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
 		String split[] = req.id.split("-");
 		int i = Integer.valueOf(split[1]);
-		RecordServiceEnum service = RecordServiceEnum.values()[i];
+		ExXjusRecordServiceEnum service = ExXjusRecordServiceEnum.values()[i];
 
 		String url = AllReferencesGet.serviceUrl(service);
 		url = url.replaceFirst("/record/.+$", "/record/" + split[0]);

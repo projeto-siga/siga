@@ -30,26 +30,38 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.proxy.HibernateProxy;
@@ -86,7 +98,6 @@ import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.Data;
-import br.gov.jfrj.siga.base.DateUtils;
 import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.HttpRequestUtils;
@@ -113,6 +124,8 @@ import br.gov.jfrj.siga.cp.CpGrupoDeEmail;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.TipoConteudo;
+import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
 import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.bl.CpBL;
@@ -167,7 +180,6 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPorPorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeAtenderPedidoPublicacaoNoDiario;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComCertificadoDigital;
-import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelar;
 import br.gov.jfrj.siga.ex.logic.ExPodeCancelarAnexo;
@@ -212,6 +224,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.ex.util.DatasPublicacaoDJE;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
+import br.gov.jfrj.siga.ex.util.ExXjusRecordServiceEnum;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.util.GeradorRTF;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -241,6 +254,7 @@ import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Objeto;
 import br.gov.jfrj.siga.model.ObjetoBase;
 import br.gov.jfrj.siga.model.Selecionavel;
+import br.gov.jfrj.siga.model.ContextoPersistencia.AfterCommit;
 import br.gov.jfrj.siga.model.enm.CpExtensoesDeArquivoEnum;
 import br.gov.jfrj.siga.parser.PessoaLotacaoParser;
 import br.gov.jfrj.siga.parser.SiglaParser;
@@ -6740,6 +6754,7 @@ public class ExBL extends CpBL {
 			atualizarMarcas(doc);
 		}
 		atualizarWorkflow(doc, mob, mov);
+		atualizarXjus(doc, mob, mov);
  	}
 
 	private void atualizarWorkflow(ExDocumento doc, ExMobil mob, ExMovimentacao mov) {
@@ -6777,6 +6792,45 @@ public class ExBL extends CpBL {
 			set.clear();
 		docsParaAtualizacaoDeWorkflow.remove();
 	}
+	
+   private void atualizarXjus(ExDocumento doc, ExMobil mob, ExMovimentacao mov) {
+        if (mov != null) {
+            if (mov.getCpArquivo() != null) {
+                atualizarXjus(ExXjusRecordServiceEnum.formatIdAndService(mov.getIdMov(), ExXjusRecordServiceEnum.MOV));
+            }
+            doc = mob.doc();
+        } else if (mob != null)
+            doc = mob.doc();
+        
+        if (doc != null) {
+            atualizarXjus(ExXjusRecordServiceEnum.formatIdAndService(doc.getIdDoc(), ExXjusRecordServiceEnum.DOC));
+        }
+   }
+
+   private void atualizarXjus(final String id) {
+       if (!Prop.getBool("/xjus.reindex"))
+           return;
+       ContextoPersistencia.addAfterCommit(new AfterCommit() {
+           @Override
+           public void run() {
+               final SigaHTTP http = new SigaHTTP();
+               String url = Prop.get("/xjus.url");
+               if (url.endsWith("/query"))
+                   url = url.substring(0, url.length() - 5);
+               url += "record/" + id + "/reindex";
+               HashMap<String, String> headers = new HashMap<>();
+               try {
+                String response = IOUtils.toString(http.fetch(url, headers, 60000, null, "POST"), "UTF-8");
+                } catch (AplicacaoException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+           }
+       });
+   }
 
 	private void cancelarAlteracao() throws AplicacaoException {
 		ExDao.rollbackTransacao();

@@ -15,6 +15,7 @@ import com.crivano.swaggerservlet.SwaggerCall;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.ex.util.ExXjusRecordServiceEnum;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
@@ -30,17 +31,17 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		if (req.cursor == null)
 			req.cursor = AllReferencesGet.defaultCursor();
 
-		final CountDownLatch responseWaiter = new CountDownLatch(RecordServiceEnum.values().length);
-		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
+		final CountDownLatch responseWaiter = new CountDownLatch(ExXjusRecordServiceEnum.values().length);
+		Map<ExXjusRecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
 
 		String[] aCursor = req.cursor.split(";");
 		
-		if (aCursor.length != RecordServiceEnum.values().length) {
+		if (aCursor.length != ExXjusRecordServiceEnum.values().length) {
 		    throw new RuntimeException("Cursor inválido: '" + req.cursor + "'. Deveria ser algo do tipo: '" + AllReferencesGet.defaultCursor() + "'.");
 		}
 
 		// Call Each System
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (ExXjusRecordServiceEnum service : ExXjusRecordServiceEnum.values()) {
 			String url = AllReferencesGet.serviceUrl(service);
 
 			Request q = new Request();
@@ -59,7 +60,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 
 		Date dt1 = new Date();
 
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (ExXjusRecordServiceEnum service : ExXjusRecordServiceEnum.values()) {
 			long timeout = AllReferencesGet.TIMEOUT_MILLISECONDS - ((new Date()).getTime() - dt1.getTime());
 			if (timeout < 0L)
 				timeout = 0;
@@ -94,7 +95,7 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 		// Build a cursor by updating the previous one with new IDs that were returned
 		// at the current result list
 		for (Reference r : resp.list) {
-			RecordServiceEnum service = RecordServiceEnum.values()[Integer.valueOf(r.id.split("-")[1])];
+		    ExXjusRecordServiceEnum service = ExXjusRecordServiceEnum.values()[Integer.valueOf(r.id.split("-")[1])];
 			aCursor[service.ordinal()] = r.id;
 		}
 

@@ -36,9 +36,9 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 			ExDocumento doc = mov.getExDocumento();
 
-			if (doc == null || doc.isCancelado()) {
-				throw new PresentableUnloggedException("REMOVED");
-			}
+            if (doc == null || doc.isCancelado() || doc.isSemEfeito()) {
+                throw new PresentableUnloggedException("REMOVED");
+            }
 
 			Date dt = doc.getDtFinalizacao();
 			if (dt == null || dt.before(mov.getDtIniMov()))

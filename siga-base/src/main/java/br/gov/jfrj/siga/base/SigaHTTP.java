@@ -317,9 +317,14 @@ public class SigaHTTP {
 			throw new RuntimeException("Erro obtendo recurso externo", ioe);
 		}
 	}
-	
+
+   public InputStream fetch(String URL, HashMap<String, String> header,
+            Integer timeout, String payload) throws AplicacaoException {
+       return fetch(URL, header, timeout, payload, payload != null ? "POST" : "GET");
+   }
+   
 	public InputStream fetch(String URL, HashMap<String, String> header,
-			Integer timeout, String payload) throws AplicacaoException {
+			Integer timeout, String payload, String method) throws AplicacaoException {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(URL)
 					.openConnection();
@@ -339,9 +344,11 @@ public class SigaHTTP {
 
 			System.setProperty("http.keepAlive", "false");
 
+            if ("POST".equals(method)) 
+                conn.setRequestMethod("POST");
+            
 			if (payload != null) {
 				byte ab[] = payload.getBytes("UTF-8");
-				conn.setRequestMethod("POST");
 				// Send post request
 				conn.setDoOutput(true);
 				try (OutputStream os = conn.getOutputStream()) {

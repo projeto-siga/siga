@@ -1065,6 +1065,7 @@ public class ExBL extends CpBL {
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {			
 				baos.write(descrPublicacao.getBytes());
 //				baos.toByteArray();
+		        gerarIdDeMovimentacao(mov);
 				mov.setConteudoBlobMov2(baos.toByteArray());
 			}
 			
@@ -1133,6 +1134,7 @@ public class ExBL extends CpBL {
 			mov = criarNovaMovimentacao(ExTipoDeMovimentacao.ANEXACAO, cadastrante, lotaCadastrante,
 					mob, dtMov, subscritor, null, titular, lotaTitular, null);
 
+            gerarIdDeMovimentacao(mov);
 			mov.setNmArqMov(nmArqMov);
 			mov.setConteudoTpMov(tipoConteudo);
 			mov.setConteudoBlobMov2(conteudo);
@@ -1233,6 +1235,7 @@ public class ExBL extends CpBL {
 			mov = criarNovaMovimentacao(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR, cadastrante,
 					lotaCadastrante, mob, dtMov, subscritor, null, titular, lotaTitular, null);
 
+            gerarIdDeMovimentacao(mov);
 			mov.setNmArqMov(nmArqMov);
 			mov.setConteudoTpMov(tipoConteudo);
 			mov.setConteudoBlobMov2(conteudo);
@@ -1849,12 +1852,13 @@ public class ExBL extends CpBL {
 				mov = criarNovaMovimentacao(tpMovAssinatura, cadastrante, lotaCadastrante, doc.getMobilGeral(), dtMov, 
 						assinante, null, null, null, null);
 	
+				gerarIdDeMovimentacao(mov);
 				
 				// if (BUSCAR_CARIMBO_DE_TEMPO) {
 				// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
+				mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 				mov.setConteudoBlobMov2(cms);
 				// } else {
-				mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 				// mov.setConteudoBlobMov2(pkcs7);
 				// }
 	
@@ -1888,7 +1892,14 @@ public class ExBL extends CpBL {
 		return s;
 	}
 
-	private void depoisDeAssinar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
+	public void gerarIdDeMovimentacao(ExMovimentacao mov) {
+	    // Acrescentei essa gravação para que a ID da movimentação pudesse ser incluída no
+        // caminho do armazenamento.
+	    if (mov.getIdMov() == null)
+	        dao().gravar(mov);
+    }
+
+    private void depoisDeAssinar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
 			final ExMovimentacao mov, final Date dtMov, Boolean juntar, Boolean tramitar, boolean fPreviamenteAssinado,
 			DpPessoa usuarioDoToken) {
 		try {
@@ -2609,9 +2620,10 @@ public class ExBL extends CpBL {
 
 			// if (BUSCAR_CARIMBO_DE_TEMPO) {
 			// mov.setConteudoTpMov(CdService.MIME_TYPE_CMS);
+	        Ex.getInstance().getBL().gerarIdDeMovimentacao(mov);
+	        mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 			mov.setConteudoBlobMov2(cms);
 			// } else {
-			mov.setConteudoTpMov(MIME_TYPE_PKCS7);
 			// mov.setConteudoBlobMov2(pkcs7);
 			// }
 
@@ -3728,6 +3740,8 @@ public class ExBL extends CpBL {
 	}
 
 	public static boolean mostraDescricaoConfidencial(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
+	    if (doc.getExModelo().isDescricaoAutomatica())
+	        return false;
 		try {
 			return !Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, doc.getMobilGeral());
 		} catch (Exception e) {
@@ -3832,7 +3846,7 @@ public class ExBL extends CpBL {
     
 	public ExDocumento gravar(final DpPessoa cadastrante, final DpPessoa titular, final DpLotacao lotaTitular,
 			ExDocumento doc, boolean fManterSolicitacaoDeAssinatura) throws Exception {
-
+	    doc.atrasarAtualizacaoDoArquivo();
 		// Verifica se o documento possui documento pai e se o usuário possui
 		// permissões de criar documento filho
 		/*
@@ -3957,6 +3971,8 @@ public class ExBL extends CpBL {
 			// Incluir movimentações de definição automática de perfil.
 			if (!doc.isFinalizado())
 				atualizarDefinicaoAutomaticaDePapel(cadastrante, lotaTitular, doc);
+			
+			doc.atualizarArquivo();
 			
 			concluirAlteracaoDocComRecalculoAcesso(doc);
 			

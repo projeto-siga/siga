@@ -5,7 +5,8 @@ import java.util.Map;
 
 public enum TipoConteudo {
 	
-	ZIP("application/zip", "zip"),
+    ZIP("application/zip", "zip"),
+    P7S("application/pkcs7-signature", "p7s"),
 	JPG("image/jpeg", "jpg"),
 	PNG("image/png", "png"),
 	TXT("application/txt", "txt"),
@@ -18,7 +19,21 @@ public enum TipoConteudo {
 	DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"),
 	OCTET("application/octet-stream", "octet-stream"),
 	PDF("application/pdf", "pdf"),
+    AVI("video/avi", "avi"),
+    AVIF("image/avif", "avif"),
+    BMP("image/bmp", "bmp"),
+    DWG("image/vnd.dwg", "dwg"),
+    MOV("video/quicktime", "mov"),
+    MP4("video/mp4", "mp4"),
+    MPEG("video/mpeg", "mpeg"),
+    MPEG4("video/mpeg4-generic", "mpeg4"),
+    MP3("audio/mpeg", "mp3"),
+    PSD("image/vnd.adobe.photoshop", "psd"),
+    TIFF("image/tiff", "tiff"),
+    WAV("audio/wav", "wav"),
 	X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded", "txt");
+    
+    
 	
 	private TipoConteudo(String mimeType ,String extensao) {
 		this.mimeType = mimeType;

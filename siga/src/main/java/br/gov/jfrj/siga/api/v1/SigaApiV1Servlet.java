@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.naming.NameNotFoundException;
 import javax.servlet.ServletConfig;
@@ -23,52 +24,56 @@ import br.gov.jfrj.siga.base.Prop.IPropertyProvider;
 import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
 import br.gov.jfrj.siga.context.ApiContextSupport;
+import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
+import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
 public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvider {
-	private static final long serialVersionUID = 1756711359239182178L;
-	public static boolean migrationComplete = false;
+    private static final long serialVersionUID = 1756711359239182178L;
+    public static boolean migrationComplete = false;
 //	public static ExecutorService executor = null;
 
-	@Override
-	public void initialize(ServletConfig config) throws ServletException {
-		setAPI(ISigaApiV1.class);
+    @Override
+    public void initialize(ServletConfig config) throws ServletException {
+        setAPI(ISigaApiV1.class);
 
-		setActionPackage("br.gov.jfrj.siga.api.v1");
+        setActionPackage("br.gov.jfrj.siga.api.v1");
 
-		Prop.setProvider(this);
-		Prop.defineGlobalProperties();
-		defineProperties();
+        Prop.setProvider(this);
+        Prop.defineGlobalProperties();
+        defineProperties();
 
-		// Threadpool
+        // Threadpool
 //		if (SwaggerServlet.getProperty("redis.password") != null)
 //			SwaggerUtils.setCache(new MemCacheRedis());
 //		executor = Executors.newFixedThreadPool(new Integer(SwaggerServlet.getProperty("threadpool.size")));
 
-		class HttpGetDependency extends TestableDependency {
-			String testsite;
+        class HttpGetDependency extends TestableDependency {
+            String testsite;
 
-			HttpGetDependency(String category, String service, String testsite, boolean partial, long msMin,
-					long msMax) {
-				super(category, service, partial, msMin, msMax);
-				this.testsite = testsite;
-			}
+            HttpGetDependency(String category, String service, String testsite, boolean partial, long msMin,
+                    long msMax) {
+                super(category, service, partial, msMin, msMax);
+                this.testsite = testsite;
+            }
 
-			@Override
-			public String getUrl() {
-				return testsite;
-			}
+            @Override
+            public String getUrl() {
+                return testsite;
+            }
 
-			@Override
-			public boolean test() throws Exception {
-				final URL url = new URL(testsite);
-				final URLConnection conn = url.openConnection();
-				conn.connect();
-				return true;
-			}
-		}
+            @Override
+            public boolean test() throws Exception {
+                final URL url = new URL(testsite);
+                final URLConnection conn = url.openConnection();
+                conn.connect();
+                return true;
+            }
+        }
 
 //		class FileSystemWriteDependency extends TestableDependency {
 //			private static final String TESTING = "testing...";
@@ -96,47 +101,72 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 //		addDependency(
 //				new FileSystemWriteDependency("upload.dir.temp", getProperty("upload.dir.temp"), false, 0, 10000));
 
-		addDependency(new HttpGetDependency("rest", "www.google.com/recaptcha",
-				"https://www.google.com/recaptcha/api/siteverify", false, 0, 10000));
+        addDependency(new HttpGetDependency("rest", "www.google.com/recaptcha",
+                "https://www.google.com/recaptcha/api/siteverify", false, 0, 10000));
 
-		addDependency(new TestableDependency("database", "sigaexds", false, 0, 10000) {
+        addDependency(new TestableDependency("database", "sigaexds", false, 0, 10000) {
 
-			@Override
-			public String getUrl() {
-				return getProperty("datasource.name");
-			}
+            @Override
+            public String getUrl() {
+                return getProperty("datasource.name");
+            }
 
-			@Override
-			public boolean test() throws Exception {
-				try (SigaApiV1Context ctx = new SigaApiV1Context()) {
-					ctx.init(null);
-					return CpDao.getInstance().dt() != null;
-				}
-			}
+            @Override
+            public boolean test() throws Exception {
+                try (SigaApiV1Context ctx = new SigaApiV1Context()) {
+                    ctx.init(null);
+                    return CpDao.getInstance().dt() != null;
+                }
+            }
+        });
 
-			@Override
-			public boolean isPartial() {
-				return false;
-			}
-		});
+        CpArquivoTipoArmazenamentoEnum tipoArmazenamento = CpArquivoTipoArmazenamentoEnum
+                .valueOf(Prop.get("/siga.armazenamento.arquivo.tipo"));
+        switch (tipoArmazenamento) {
+            case S3:
+                addDependency(new TestableDependency("storage", getProperty("/siga.armazenamento.arquivo.bucket"), false,
+                        0, 10000) {
 
-		addDependency(new TestableDependency("database", "sigaexds-migration", false, 0, 10000) {
+                    @Override
+                    public String getUrl() {
+                        return getProperty("/siga.armazenamento.arquivo.url");
+                    }
 
-			@Override
-			public String getUrl() {
-				return getProperty("datasource.name") + "-migration";
-			}
+                    @Override
+                    public boolean test() throws Exception {
+                        Armazenamento storage = ArmazenamentoFabrica.getInstance(tipoArmazenamento);
+                        String caminho = "test-" + UUID.randomUUID().toString() + "-" + ArmazenamentoTemporalidadeEnum.TEMPORARIO.getIdentificador() + ".txt";
+                        storage.salvar(caminho, "text/plain", caminho.getBytes());
+                        String conteudo = new String(storage.recuperar(caminho));
+                        storage.apagar(caminho);
+                        return caminho.equals(conteudo);
+                    }
 
-			@Override
-			public boolean test() throws Exception {
-				return migrationComplete;
-			}
+                    @Override
+                    public boolean isPartial() {
+                        return false;
+                    }
+                });
+                break;
+        }
 
-			@Override
-			public boolean isPartial() {
-				return true;
-			}
-		});
+        addDependency(new TestableDependency("database", "sigaexds-migration", false, 0, 10000) {
+
+            @Override
+            public String getUrl() {
+                return getProperty("datasource.name") + "-migration";
+            }
+
+            @Override
+            public boolean test() throws Exception {
+                return migrationComplete;
+            }
+
+            @Override
+            public boolean isPartial() {
+                return true;
+            }
+        });
 
 //		if (SwaggerServlet.getProperty("redis.password") != null)
 //			addDependency(new TestableDependency("cache", "redis", false, 0, 10000) {

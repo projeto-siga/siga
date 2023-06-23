@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.cp.converter.ITipoDeMovimentacaoConverter;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -864,8 +865,17 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 
 	public void setConteudoBlobMov(byte[] createBlob) {
-		if(createBlob != null){
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
+		if (createBlob != null) {
+            if (getIdMov() == null)
+                throw new RuntimeException("Tentando gravar um conteúdo de movimentação quando ela ainda não tem ID.");
+            if (getExMobil() == null)
+                throw new RuntimeException("Tentando gravar um conteúdo de movimentação quando ela ainda não tem móbile.");
+            if (cpArquivo.getOrgaoUsuario() == null && getExMobil() != null && getExMobil().doc() != null && getExMobil().doc().getOrgaoUsuario() != null) {
+                CpOrgaoUsuario orgaoUsuario = getExMobil().doc().getOrgaoUsuario();
+                if (orgaoUsuario != null)
+                    cpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
+            }
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob, getReferencia().replace(":", "-mov"), ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS);
 		}
 	}
 

@@ -37,6 +37,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -426,7 +427,7 @@ public abstract class AbstractExModelo extends HistoricoAuditavelSuporte
 
 	public void setConteudoBlobMod(byte[] createBlob) {
 		if(createBlob != null)
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob, "modelo-" + getNmMod(), ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS);
 	}
 	
 	/**

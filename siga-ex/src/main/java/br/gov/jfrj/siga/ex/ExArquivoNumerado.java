@@ -105,7 +105,7 @@ public class ExArquivoNumerado implements Comparable {
 	public String getNomeOuDescricao() {
 		if (getArquivo() instanceof ExDocumento) {
 			ExDocumento doc = (ExDocumento) getArquivo();
-            if (doc.getExModelo().isDescricaoAutomatica() || isDescricaoAutomaticaCapturado(doc))
+            if (doc.getExModelo().isDescricaoAutomatica() || isDescricaoCapturado(doc))
 				return doc.getDescrDocumento();
 		}
 		return getNome();
@@ -251,8 +251,8 @@ public class ExArquivoNumerado implements Comparable {
 		}
 	}
 
-	private boolean isDescricaoAutomaticaCapturado(ExDocumento doc) {
-		return doc.isCapturado() && Prop.getBool("exibir.descricao.automatica.capturado");
+	private boolean isDescricaoCapturado(ExDocumento doc) {
+		return doc.isCapturado() && Prop.getBool("exibir.descricao.capturado");
 	}
 
 }

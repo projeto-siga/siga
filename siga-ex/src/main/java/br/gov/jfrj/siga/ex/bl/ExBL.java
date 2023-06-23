@@ -3726,6 +3726,8 @@ public class ExBL extends CpBL {
 	}
 
 	public static boolean mostraDescricaoConfidencial(ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular) {
+	    if (doc.getExModelo().isDescricaoAutomatica())
+	        return false;
 		try {
 			return !Ex.getInstance().getComp().pode(ExPodeAcessarDocumento.class, titular, lotaTitular, doc.getMobilGeral());
 		} catch (Exception e) {

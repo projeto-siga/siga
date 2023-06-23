@@ -1,3 +1,9 @@
+| Branch        |                                                         Status                                                         |
+|---------------|:----------------------------------------------------------------------------------------------------------------------:|
+| `Develop`     | ![Testes Unitários Develop](https://github.com/projeto-siga/siga/actions/workflows/tests.yml/badge.svg?branch=develop) |
+| `Master`      |  ![Testes Unitários Master](https://github.com/projeto-siga/siga/actions/workflows/tests.yml/badge.svg?branch=master)  |
+
+
 Siga - Sistema de Gestão Administrativa
 =======================================
 
@@ -25,4 +31,3 @@ Para instalar uma versão de testes do Siga-Doc, utilizando o Docker, clique [aq
 Para tirar dúvidas, entre em contato através do [forum](https://groups.google.com/forum/#!forum/siga-doc).
 
 Veja também a documentação para o desenvolvedor: [Javadoc](http://projeto-siga.github.io/artifacts/javadoc/).
-

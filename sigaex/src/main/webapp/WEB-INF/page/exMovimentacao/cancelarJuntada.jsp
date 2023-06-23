@@ -24,12 +24,6 @@
 					<input type="hidden" name="postback" value="1" />
 					<input type="hidden" name="sigla" value="${sigla}" />
 					<div class="row">
-						<div class="col-md-2 col-sm-3">
-							<div class="form-group">
-								<label for="dtMovString">Data</label>
-								<input class="form-control" type="text" name="dtMovString" onblur="javascript:verifica_data(this, true);"/>
-							</div>
-						</div>
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label>Responsável</label>

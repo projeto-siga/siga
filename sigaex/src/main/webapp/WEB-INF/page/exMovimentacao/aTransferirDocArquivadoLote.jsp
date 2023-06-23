@@ -10,8 +10,48 @@
 
 <fmt:message key="documento.transferencia.arquivados.lote" var="titulo" />
 <siga:pagina titulo="${titulo}">
+	
+	 <script type="text/javascript">
+     	
+        var strHtmlTableStatus = '<br />' +
+								'<div class="row">' +
+						        	'<div class="col-sm-7">' +
+										'<h5>Status de Processamento - Transferência de Documentos</h5>' +
+									'</div>' +
+						        	'<div class="col-sm-1">' +
+										'<button type="button" onclick="javascript:gerarTableStatus();" title="Status de Processamento" class="btn btn-secondary btn-sm mb-1 ml-1 mr-2"><i class="fas fa-sync-alt"></i></button>' +
+									'</div>' +
+									'<div class="col-sm-4" id="idDivAvisoStatus"> </div>' +
+						        '</div>' +
+								'<div>' +
+									'<table class="table table-hover table-striped" id="idTableStatus">' +
+										'<thead class="thead-dark align-middle text-center">' +
+											'<tr>' +
+												'<th class="text-center">Número</th>' +
+												'<th class="text-center">Status</th>' +
+												'<th class="text-center">Descrição</th>' +
+											'</tr>' +
+										'</thead>' +
+										'<tbody class="table-bordered" id="idTbodyStatus">' +					
+										'</tbody>' +
+									'</table>' +
+								'</div>';
+								
+		function checkUncheckAll(theElement) {
+			let isChecked = theElement.checked;
+			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
+		}
+	
+		function displaySel(chk) {
+			document.getElementById("checkall").checked = 
+			Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
+		}
+	</script>
 	<!-- main content bootstrap -->
 	<div class="container-fluid">
+		<div id="alertError">
+		</div>
+		
 		<div class="card bg-light mb-3">
 			<div class="card-header">
 				<h5>${titulo}</h5>
@@ -52,18 +92,18 @@
 								<label>&nbsp;</label> 
 								<c:if test="${tipoResponsavel == 1}">
 									 <div id="lotaResponsavel" style="display:">
-										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div> 
-									<div id="responsavel" style="display: none;"> 
-										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+									<div id="responsavel" style="display: none;">
+										<siga:selecao propriedade="responsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div>
 								</c:if>
 								<c:if test="${tipoResponsavel == 2}">
 									<div id="lotaResponsavel" style="display: none">
-										<siga:selecao propriedade="lotaResponsavel" tema="simple" modulo="siga"/>
+										<siga:selecao propriedade="lotaResponsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div> 
-									<div id="responsavel" style="display:"> 
-										<siga:selecao propriedade="responsavel" tema="simple" modulo="siga"/>
+									<div id="responsavel" style="display:">
+										<siga:selecao propriedade="responsavel" tema="simple" paramList="campoOrgaoDesabilitado=true" modulo="siga"/>
 									</div>
 								</c:if>
 							</div>
@@ -74,7 +114,7 @@
 									<label>&nbsp;</label> 
 									<button type="button" class="btn btn-outline-success" title="Exportar para CSV" id="exportarCsv" 
 										onclick="javascript:csv('listar', '/sigaex/app/expediente/rel/exportarDocsArquivadosTransferidoCsv');">
-										<i class="fa fa-file-csv"></i> Exportar Docs Transf.
+										<i class="fa fa-file-csv"></i> Exportar Transferência de Docs. Arq.
 									</button>
 								</div>
 							</div>
@@ -123,9 +163,12 @@
 									onclick="javascript:validaCampos();" role="button">Transferir</button>
 								</div>
 								<div class="col-sm-1 ml-3 my-2 my-sm-0">
-		                    		<input type="button" value="Voltar" onclick="javascript:history.back();" class="btn btn-primary" />				
+									<a href="/sigaex/app/expediente/mov/transferir_doc_arquivado_lote"
+                   						class="btn btn-cancel btn-primary">Voltar</a>
 								</div>
 							</div>
+							
+							<div class="gt-content-box gt-for-table" id="idTableStatus"></div>
 						</c:when>
 						<c:otherwise>
 							<div class="row">
@@ -163,26 +206,27 @@
 												key="usuario.pessoa2" /></th>
 									</tr>
 								</thead>
-								<tbody class="table-bordered">
+								<tbody id="docsTable" class="table-bordered">
 									<siga:paginador maxItens="${maxItems}" maxIndices="10"
 										totalItens="${tamanho}" itens="${itens}" var="documento">
 										<c:set var="x" scope="request">
 												chk_${documento.idMobil}
 											</c:set>
 										<c:set var="tpd_x" scope="request">tpd_${documento.idMobil}</c:set>
-										<tr>
+										<tr id="${documento.idMobil}">
 											<td align="center" class="align-middle text-center"><input
 												type="checkbox" name="documentosSelecionados"
 												value="${documento.idMobil}" id="${x}" class="chkDocumento"
-												onclick="javascript:displaySel(this, '${tpd_x}');" /></td>
-											<td class="text-center"><c:choose>
+												onclick="javascript:displaySel(this);" /></td>
+											<td class="text-center">
+												<c:choose>
 													<c:when test='${param.popup!="true"}'>
-														<a
+														<a id="sigla_${documento.idMobil}"
 															href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${documento.sigla}" target="_blank">
 															${documento.sigla} </a>
 													</c:when>
 													<c:otherwise>
-														<a
+														<a id="sigla_${documento.idMobil}"
 															href="javascript:opener.retorna_${param.propriedade}('${documento.idMobil}','${documento.sigla},'');" target="_blank">
 															${documento.sigla} </a>
 													</c:otherwise>
@@ -259,6 +303,10 @@
 	</siga:siga-modal>
 	
 		<script type="text/javascript" language="Javascript1.1">
+		window.onload = function () { 
+			localStorage.removeItem('listaExecucaoLote');
+		}
+		
 		function sbmt(offset) {
 			if (offset == null) {
 				offset = 0;
@@ -284,16 +332,6 @@
 			document.getElementById("lotaResponsavelSelButton").disabled = true;
 			document.getElementById("responsavelSelSpan").disabled = true;
 			document.getElementById("lotaResponsavelSelSpan").disabled = true;
-		}
-	
-		function checkUncheckAll(theElement) {
-			let isChecked = theElement.checked;
-			Array.from(document.getElementsByClassName("chkDocumento")).forEach(chk => chk.checked = isChecked);
-		}
-
-		function displaySel(chk, el) {
-			document.getElementById("checkall").checked = 
-			Array.from(document.getElementsByClassName("chkDocumento")).every(chk => chk.checked);
 		}
 		
 		function tipoOrigemSelecionado(){
@@ -332,7 +370,6 @@
 		
 		function getDestinoSelecionado(){
 			var lotaDestinoSelDescr = document.querySelector("#formulario_lotacaoDestinatarioSel_descricao");
-			console.log(lotaDestinoSelDescr.value);
 			document.getElementById("destino").textContent = lotaDestinoSelDescr;
 		}
 		
@@ -404,7 +441,12 @@
 			atualizarUrlDeTransferenciaArquivados(transfereDocumentosSelecionados(getIdDocumentosSelecionados()));
 		}
 		
+		var listaExecucaoLote = new Array();
+		var qtdTotalExecucao = 0;
+	    var exibeMsg = false;
+	    
 		function transfereDocumentosSelecionados(listaIdDocumentosSelecionados) {
+			listaExecucaoLote = new Array();
 			motivo = document.getElementById('motivoTransferencia').value;
 
 			var responsavelSelId = document.getElementById("formulario_responsavelSel_id").value;
@@ -419,37 +461,103 @@
 			var lotaDestinoSelDescr = document.getElementById("formulario_lotacaoDestinatarioSel_descricao").value;
 			var lotaDestinoSelSigla = document.getElementById("formulario_lotacaoDestinatarioSel_sigla").value;
 			
-			$.ajax({
-				method:'POST',
-				async: false,
-				url: '/sigaex/app/expediente/mov/transferirLoteDocumentosArquivados',
-				data: {
-					'lotaResponsavelSel.id': lotaResponsavelSelId,
-				    'lotaResponsavelSel.descricao': lotaResponsavelSelDescr,
-				    'lotaResponsavelSel.sigla': lotaResponsavelSelSigla,
-					'responsavelSel.id': responsavelSelId,
-			   		'responsavelSel.descricao': responsavelSelDescr,
-			      	'responsavelSel.sigla': responsavelSelSigla,
-			      	'lotacaoDestinatarioSel.id': lotaDestinoSelId,
-			   		'lotacaoDestinatarioSel.descricao': lotaDestinoSelDescr,
-			      	'lotacaoDestinatarioSel.sigla': lotaDestinoSelSigla,
-					'documentosSelecionados':listaIdDocumentosSelecionados,
-					'motivoTransferencia':motivo},
-				beforeSend: function(result){
-					console.log('carregando..');
-					sigaSpinner.mostrar();
-					sigaModal.fechar('confirmacaoModalTransferencia');
-		        },
-				success: function(result){	
-					location.reload();
-		        },
-		        error: function(xhr){
-		        	document.write(xhr.responseText); 
-		        },
-		        complete: function(result){	
-		        	sigaSpinner.ocultar();
-		        }
-			});
+			listaIdDocumentosSelecionados.forEach(
+           		doc => {
+           			$.ajax({
+        				method:'POST',
+        				async: false,
+        				url: '/sigaex/app/expediente/mov/transferirLoteDocumentosArquivados',
+        				data: {
+        					'lotaResponsavelSel.id': lotaResponsavelSelId,
+        				    'lotaResponsavelSel.descricao': lotaResponsavelSelDescr,
+        				    'lotaResponsavelSel.sigla': lotaResponsavelSelSigla,
+        					'responsavelSel.id': responsavelSelId,
+        			   		'responsavelSel.descricao': responsavelSelDescr,
+        			      	'responsavelSel.sigla': responsavelSelSigla,
+        			      	'lotacaoDestinatarioSel.id': lotaDestinoSelId,
+        			   		'lotacaoDestinatarioSel.descricao': lotaDestinoSelDescr,
+        			      	'lotacaoDestinatarioSel.sigla': lotaDestinoSelSigla,
+        					'idDocumentoSelecionado': doc,
+        					'motivoTransferencia':motivo},
+        				beforeSend: function(result){
+        					console.log('carregando..');
+        					sigaSpinner.mostrar();
+        					sigaModal.fechar('confirmacaoModalTransferencia');
+        		        },
+        				success: function(result){
+      					  	adicionarListaExecucaoLote(doc, "OK", "Transferência realizada com sucesso!");
+      					    qtdTotalExecucao += 1;
+      					    document.getElementById(doc).remove();
+        		        },
+        		        error: function(xhr){
+        		        	adicionarListaExecucaoLote(doc, "ERRO", xhr.responseText);
+        		        },
+        		        complete: function(result){	
+        		        	sigaSpinner.ocultar();
+        		        }
+        			});
+           			
+           		}
+			);
+			
+			gerarTableStatus();
+			
+		}
+		
+		function adicionarListaExecucaoLote(nrDoc, status, descrErr){
+			
+			var sigla = document.getElementById('sigla_' + nrDoc).text.trim();
+			
+			var myMap = new Map();
+			myMap.set('idDocumentoSelecionado', sigla);
+			myMap.set('status', status);
+			myMap.set('descrErr', descrErr);
+			
+        	var myJson = Object.fromEntries(myMap);
+			listaExecucaoLote.push(myJson);	
+			localStorage.setItem('listaExecucaoLote', JSON.stringify(listaExecucaoLote));
+			
+			if (status == 'OK')
+				exibeMsg = true;
+		}
+		
+		function gerarTableStatus(){
+			var data = JSON.parse(localStorage.getItem('listaExecucaoLote'));
+			
+			document.getElementById("idTableStatus").innerHTML = strHtmlTableStatus;
+			
+			const warehouseQuant = data =>
+			  document.getElementById("idTbodyStatus").innerHTML = data.map(
+			    item => ([
+			      '<tr>',
+			      ['idDocumentoSelecionado','status','descrErr'].map(
+			        key => '<td>'+item[key]+'</td>'
+			      ),
+			      '</tr>',
+			    ])
+			  ).flat(Infinity).join('');
+			  
+			warehouseQuant(data);
+			
+			if (exibeMsg && listaExecucaoLote.length >= qtdTotalExecucao) {
+				inserirValueDivAlertaError(exibeMsg, "Transferência em Lote realizado com sucesso!");
+			} else {
+				inserirValueDivAlertaError(exibeMsg, "Alguns documentos não foram transferidos!");
+			}
+				
+		}
+		
+		function inserirValueDivAlertaError(exibeMsg, data) {
+			if(data != null || data != ""){
+				
+				if (exibeMsg)
+					document.getElementById("alertError").classList.add('alert', 'alert-success');
+				else
+					document.getElementById("alertError").classList.add('alert', 'alert-warning');
+				
+				document.getElementById("alertError").innerHTML  = data;
+				window.scrollTo(0, 0);
+			}
 		}
 		
 		function csv(id, action) {

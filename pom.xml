@@ -5,8 +5,24 @@
 	<groupId>siga</groupId>
 	<artifactId>siga-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2-SNAPSHOT</version>
+	
+	<!-- Registro Centralizado da MAJOR.MINOR versão do SIGA -->
+	<version>11.1-SNAPSHOT</version>
 
+	<properties>
+		<!-- Registro Centralizado da PATCH versão do SIGA -->
+		<patch.version>2</patch.version>
+		
+ 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 		<java.version>8</java.version> 
+		<hibernate.version>5.3.7.Final</hibernate.version>
+		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
+		<spring.version>4.0.6.RELEASE</spring.version>
+		<log4j.version>2.18.0</log4j.version>
+		<maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
+		<generateBackupPoms>false</generateBackupPoms>
+	</properties>
+	
 	<modules>		
 		<module>siga-base</module>
 		<module>siga-ws</module>
@@ -26,30 +42,21 @@
 		<module>sigagc</module>
 		<module>sigasr</module>
  		<module>sigatp</module>
-		<!--<module>sigari</module>
- 		<module>siga-cp-sinc</module> 
- 		<module>siga-dump</module>
- 		<module>siga-integration-test</module> -->
     	<module>siga-ldap-cli</module>
 		<module>siga-jwt</module>
-		<!-- <module>siga-relarmaz</module> -->
 		<module>siga-oidc</module>
-		<!-- Desativado do Deploy por Enquanto <module>siga-le</module> !-->
 		<module>siga-integracao</module>
 		<module>siga-arq</module>
 	</modules>
-
-
-	<properties>
- 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
- 		<siga.version>${project.version}</siga.version>
-		<hibernate.version>5.3.7.Final</hibernate.version>
-		<version.jboss.bom.eap>6.2.0-redhat-1</version.jboss.bom.eap>
-		<spring.version>4.0.6.RELEASE</spring.version>
-		<siga.versao>develop</siga.versao>
-		<log4j.version>2.18.0</log4j.version>
-	</properties>
-
+	
+	
+	<scm>
+        <url>https://github.com/projeto-siga/siga.git</url> 
+        <connection>scm:git:https://github.com/projeto-siga/siga.git</connection> 
+        <developerConnection>scm:git:https://github.com/projeto-siga/siga.git</developerConnection> 
+        <tag>HEAD</tag>
+    </scm>
+      
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
@@ -83,7 +90,39 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>3.3.1</version>
 				<configuration>
+					<archive>
+			            <manifestEntries>
+			            	<Project-Version>${project.version}</Project-Version>
+			            	<Patch-Version>${patch.version}</Patch-Version>
+			            	
+			            	<SCM-RemoteURL>${git.remote.origin.url}</SCM-RemoteURL>
+							<SCM-CommitId>${git.commit.id}</SCM-CommitId>
+							<SCM-Tag>${git.tags}</SCM-Tag>
+							<SCM-Branch>${git.branch}</SCM-Branch>
+							<SCM-CommitIdAbbrev>${git.commit.id.abbrev}</SCM-CommitIdAbbrev>
+			            	
+							<Build-Label>${human.version}-${git.commit.id.abbrev}</Build-Label>
+							<Build-Time>${maven.build.timestamp}</Build-Time>
+			            </manifestEntries>
+			        </archive>
 				</configuration>
+			</plugin>
+			<plugin>
+			    <groupId>pl.project13.maven</groupId>
+			    <artifactId>git-commit-id-plugin</artifactId>
+			    <version>4.9.10</version>
+			    <executions>
+			        <execution>
+			            <id>get-the-git-infos</id>
+			            <goals>
+			                <goal>revision</goal>
+			            </goals>
+			            <phase>package</phase>
+			        </execution>
+			    </executions>
+			    <configuration>
+			        <!-- ... -->
+			    </configuration>
 			</plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
@@ -93,6 +132,33 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            
+              <plugin>
+			      <groupId>org.codehaus.mojo</groupId>
+			      <artifactId>build-helper-maven-plugin</artifactId>
+			      <version>3.2.0</version>
+			      
+			      <executions>
+			          <execution>
+			            <id>regex-property</id>
+			            <goals>
+			              <goal>regex-property</goal>
+			            </goals>
+			            <configuration>
+			              <name>human.version</name>
+			              <value>v${project.version}</value>
+			              <regex>-SNAPSHOT</regex>
+			              <replacement>.${patch.version}</replacement>
+			              <failIfNoMatch>false</failIfNoMatch>
+			            </configuration>
+			          </execution>
+			      </executions>
+			  </plugin>
+			  <plugin>
+			      <groupId>org.codehaus.mojo</groupId>
+			      <artifactId>versions-maven-plugin</artifactId>
+			      <version>2.8.1</version>
+			  </plugin>
 		</plugins>
 	</build>
 
@@ -115,25 +181,6 @@
 			<url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
 		</repository>
 
-		<!-- repositorio adicionado para a swetake
-		<repository>
-			<id>swetake</id>
-			<url>https://itrc.jju.edu.cn/nexus-2.0.6/content/repositories/thirdparty/</url>
-		</repository>
-		 -->
-
-		<!-- repositorio adicionado para a simplecaptcha -->
-		<!-- Edson: removendo pois está quebrado -->
-		<!--<repository>
-			<id>simplecaptcha</id>
-			<url>https://maven.nfms4redd.org/</url>
-		</repository>-->
-		<!-- repositorio adicionado para o dynamic jasper
-		<repository>
-	    	<id>fdvsolution.public</id>
-	    	<url>https://nexus.fdvs.com.ar/content/groups/public/</url>
-	    </repository>
-	     -->
 	</repositories>
 
 	<dependencyManagement>
@@ -167,7 +214,7 @@
 			<dependency>
 				<groupId>com.crivano</groupId>
 				<artifactId>jmodel</artifactId>
-			    <version>1.0.4</version>
+			    <version>1.0.5</version>
 			</dependency>
 
 			
@@ -193,7 +240,7 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-cp</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>bcmail-jdk14</artifactId>
@@ -208,17 +255,17 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-base</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ws</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-rel</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.bouncycastle</groupId>
@@ -261,68 +308,68 @@
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-sinc-lib</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<!-- Biblioteca configurada como modulo do Jboss -->
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ext</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-vraptor-module-old</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-jwt</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ldap</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-ex</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>sigaex</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-wf</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>sigawf</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-oidc</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-integracao</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>siga</groupId>
 				<artifactId>siga-arq</artifactId>
-				<version>${siga.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>

@@ -12,7 +12,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -147,9 +149,8 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
     }
 
     public boolean podeConsultar(DpLotacao lotaTitular, DpPessoa pess) {
-        return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
+    	return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.CONSULTA);
     }
-
     public boolean podeRemover(DpLotacao lotaTitular, DpPessoa pess) throws Exception {
         return (lotaTitular.equivale(getLotaCadastrante())) || possuiPermissao(lotaTitular, pess, SrTipoPermissaoLista.GESTAO);
     }
@@ -181,11 +182,14 @@ public class SrLista extends HistoricoSuporte implements Comparable<SrLista> {
             confFiltro.setDpPessoa(pess);
             confFiltro.setListaPrioridade(this);
             confFiltro.setCpTipoConfiguracao(SrTipoDeConfiguracao.PERMISSAO_USO_LISTA);
+            
             return SrConfiguracao.listar(confFiltro);
+            
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+    
 
     public List<SrConfiguracao> getPermissoes() {
         return getPermissoes(null, null);

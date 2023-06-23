@@ -78,7 +78,9 @@ import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.model.GenericoSelecao; 
 import br.gov.jfrj.siga.model.Selecionavel;
@@ -97,6 +99,7 @@ public class ExMobilController extends
 	private static final int MAX_ITENS_PAGINA_TRAMITACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE = 200;
+	private static final int MAX_ITENS_PAGINA_CINQUENTA = 50;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1169,4 +1172,51 @@ public class ExMobilController extends
 
 		}
 	}
+	
+	@Get("/app/expediente/mov/listar_docs_para_receber_em_lote")
+	public void listarDocsParaReceberEmLote(final String atendente, int offset) {
+		
+		assertAcesso("RECLOTE:Receber em Lote");
+		
+		Long pessoaId = null;
+		Long lotacaoId = null;
+		
+		switch (atendente) {
+			case "pessoa":
+				pessoaId = getTitular().getPessoaInicial().getId();
+				break;
+			case "lotacao":
+				lotacaoId = getLotaTitular().getLotacaoInicial().getId();
+				break;
+			default:
+				throw new AplicacaoException("Atendente deve ser informado");
+		}
+		
+		int tamanho = dao().consultarQuantidadeDocsParaReceberEmLote(pessoaId, lotacaoId);
+		List<ExMobil> itens = dao().consultarParaReceberEmLote(pessoaId, lotacaoId, offset, MAX_ITENS_PAGINA_CINQUENTA);
+		final List<ExMobil> l = new ArrayList<ExMobil>();
+			
+		if (Objects.nonNull(tamanho)) {
+			for (ExMobil m : itens) {
+				if (Ex.getInstance()
+								.getComp()
+								.pode(ExPodeReceber.class, getTitular(),
+										getLotaTitular(), m)) {
+					l.add(m);
+				}
+			}
+		}
+		
+		getP().setOffset(offset);
+		setItemPagina(MAX_ITENS_PAGINA_CINQUENTA);
+		setItens(l);
+		setTamanho(tamanho);
+
+		result.include("itens", this.getItens());
+		result.include("itemPagina", this.getItemPagina());
+		result.include("tamanho", this.getTamanho()); 
+		result.include("currentPageNumber", calculaPaginaAtual(offset));
+		
+	}
+	
 }

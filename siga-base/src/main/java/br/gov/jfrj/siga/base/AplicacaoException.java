@@ -83,6 +83,7 @@ public class AplicacaoException extends RuntimeException {
 	 */
 	public AplicacaoException(final String message, final int codigo, final Throwable causa) {
 		super(message, causa);
+		System.out.println("[SIGA-DOC-VERSION] "+ SigaVersion.SIGA_VERSION);
 		this.codigoErro = codigo;
 	}
 

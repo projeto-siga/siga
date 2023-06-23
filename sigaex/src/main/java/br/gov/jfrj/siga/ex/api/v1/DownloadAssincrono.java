@@ -26,9 +26,10 @@ public class DownloadAssincrono implements Callable<String> {
 	private boolean exibirReordenacao;
 	private boolean tamanhoOriginal;
 	private Integer paramoffset;
+	private boolean reduzirVisuAssinPdf;
 
 	public DownloadAssincrono(String uuid, String contenttype, String sigla, boolean estampar, boolean volumes,
-			String contextpath, String servernameport, boolean exibirReordenacao, boolean tamanhoOriginal, Integer paramoffset) {
+			String contextpath, String servernameport, boolean exibirReordenacao, boolean tamanhoOriginal, Integer paramoffset, boolean reduzirVisuAssinPdf) {
 		super();
 		this.uuid = uuid;
 		this.contenttype = contenttype;
@@ -40,6 +41,7 @@ public class DownloadAssincrono implements Callable<String> {
 		this.exibirReordenacao = exibirReordenacao;
 		this.tamanhoOriginal = tamanhoOriginal;
 		this.paramoffset = paramoffset;
+		this.reduzirVisuAssinPdf = reduzirVisuAssinPdf;
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class DownloadAssincrono implements Callable<String> {
 				Documento.getDocumentoHTML(buf, this.uuid, mob, null, true, volumes, this.contextpath,
 						this.servernameport);
 			else
-				Documento.getDocumento(buf, this.uuid, mob, null, true, estampar, volumes, null, null, tamanhoOriginal, paramoffset);
+				Documento.getDocumento(buf, this.uuid, mob, null, true, estampar, volumes, null, null, tamanhoOriginal, paramoffset, reduzirVisuAssinPdf);
 		} catch (Exception ex) {
 			SwaggerUtils.log(DownloadAssincrono.class).error(RequestExceptionLogger.simplificarStackTrace(ex));
 		}

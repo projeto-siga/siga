@@ -8,9 +8,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -65,13 +69,13 @@ public class Stamp {
 
 		return stamp(abPdf, sigla, rascunho, copia, cancelado, semEfeito, internoProduzido, qrCode, mensagem,
 				paginaInicial, paginaFinal, cOmitirNumeracao, instancia, orgaoUsu, marcaDaguaDoModelo, idsAssinantes,
-				false);
+				false, false);
 	}
 
 	public static byte[] stamp(byte[] abPdf, String sigla, boolean rascunho, boolean copia, boolean cancelado,
 			boolean semEfeito, boolean internoProduzido, String qrCode, String mensagem, Integer paginaInicial,
 			Integer paginaFinal, Integer cOmitirNumeracao, String instancia, String orgaoUsu, String marcaDaguaDoModelo,
-			List<Long> idsAssinantes, boolean tamanhoOriginal) throws DocumentException, IOException {
+			List<Long> idsAssinantes, boolean tamanhoOriginal, boolean reduzirVisuAssinPdf) throws DocumentException, IOException {
 			
 		if (idsAssinantes != null && idsAssinantes.size() > 0 && Prop.getBool("assinatura.estampar"))
 			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
@@ -259,10 +263,11 @@ public class Stamp {
 				}
 
 				if (mensagem != null) {
+					String msg = gerarReducaoAssinaturas(reduzirVisuAssinPdf, mensagem);
 					PdfPTable table = new PdfPTable(1);
 					table.setTotalWidth(r.getWidth() - image39.getHeight() - (QRCODE_LEFT_MARGIN_IN_CM
 							+ QRCODE_SIZE_IN_CM + 4 * STAMP_BORDER_IN_CM + PAGE_BORDER_IN_CM) * CM_UNIT);
-					PdfPCell cell = new PdfPCell(new Paragraph(mensagem,
+					PdfPCell cell = new PdfPCell(new Paragraph(msg,
 							FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, Color.BLACK)));
 					cell.setBorderWidth(0);
 					table.addCell(cell);
@@ -397,6 +402,31 @@ public class Stamp {
 			byte[] pdf = bo2.toByteArray();
 			return pdf;
 		}
+	}
+	
+	private static String gerarReducaoAssinaturas(boolean reduzirVisuAssinPdf, String mensagem) {
+		Pattern pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b");
+		if (reduzirVisuAssinPdf && pattern.matcher(mensagem).find()) {
+			pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b|(,| e )|(\\bDocumento Nº: \\b)");
+	        Matcher mm = pattern.matcher(mensagem);
+			
+	        Map<Integer, Integer> assinaturas = new HashMap<Integer, Integer>();
+	        int contador=0;
+			while(mm.find()) {
+				//System.out.println(mm.start() +" "+ mm.group() +" "+ mm.end());
+				assinaturas.put(++contador, mm.start());
+	        }
+			if (!assinaturas.isEmpty() && assinaturas.size() > 2) {
+				StringBuilder str = new StringBuilder();
+				//print 2 assinaturas
+				str.append(mensagem.substring(assinaturas.get(1), assinaturas.get(3)));
+				str.append(" +" + (assinaturas.size() - (mensagem.substring(assinaturas.get(assinaturas.size())).contains("Documento Nº:") ? 3 : 2)) 
+									+ " Pessoas - Para verificar todas as assinaturas consulte o link de autenticação. \n");
+				str.append(mensagem.substring(assinaturas.get(assinaturas.size())));
+				return str.toString();
+			}
+		}
+		return mensagem;
 	}
 
 	private static byte[] estamparAssinaturas(byte[] pdf, List<Long> idsAssinantes) {

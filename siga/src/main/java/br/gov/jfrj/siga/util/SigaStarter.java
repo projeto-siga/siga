@@ -14,6 +14,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.api.v1.SigaApiV1Servlet;
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
@@ -34,6 +35,11 @@ public class SigaStarter {
     @PostConstruct
     public void init() {
         log.info("INICIANDO SIGA.WAR");
+        
+		SigaVersion.loadSigaVersion();
+		log.info("SIGA Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
+		
         CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 
         try {

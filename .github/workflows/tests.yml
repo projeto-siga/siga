@@ -1,0 +1,51 @@
+name: rest-test
+on:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - 'release/**'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+      packages: write
+    steps:
+      - name: Clone Siga Docker
+        shell: bash
+        run: git clone https://github.com/projeto-siga/siga-docker.git
+              
+      - name: Set Env Branch For Push
+        shell: bash
+        if: github.event_name != 'pull_request'
+        run: echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_ENV
+        
+      - name: Build and Start Sigadoc 
+        run: cd siga-docker && echo "Start SIGA on branch" ${BRANCH}  && docker-compose up -d && cd ..
+        env:
+          BRANCH: ${{env.BRANCH}}
+               
+      - uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+      - name: Build with Maven
+        run: mvn clean install -T 1C -DskipTests=true
+      - name: Run Siga Rest Test
+        shell: bash
+        run: cd siga-rest-test && mvn test
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            **/surefire-reports/TEST-*.xml
+          

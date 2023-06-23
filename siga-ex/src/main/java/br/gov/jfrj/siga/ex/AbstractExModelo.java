@@ -37,8 +37,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
-import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
+import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
+
+import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.model.HistoricoAuditavelSuporte;
 import br.gov.jfrj.siga.model.Assemelhavel;
 

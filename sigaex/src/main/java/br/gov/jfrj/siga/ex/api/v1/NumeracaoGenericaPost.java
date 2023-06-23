@@ -1,5 +1,9 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.context.AcessoPublicoEPrivado;
+import br.gov.jfrj.siga.dp.DpPessoa;
+import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.base.AplicacaoException;
@@ -9,12 +13,33 @@ import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.gov.jfrj.siga.vraptor.Transacional;
+import com.crivano.swaggerservlet.SwaggerServlet;
 
+import java.util.Objects;
+
+@AcessoPublicoEPrivado
 @Transacional
 public class NumeracaoGenericaPost implements INumeracaoGenericaPost {
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+		// Verifica o acesso via chave
+		{
+			String auth = SwaggerServlet.getHttpServletRequest().getHeader("Authorization");
+
+			if (Objects.isNull(auth)) {
+				throw new SwaggerAuthorizationException();
+			}
+
+			DpPessoa cadastrante = ctx.getCadastrante();
+			String pwd = Prop.get("/sigaex.numeracao.generica.password");
+
+			if (Objects.isNull(cadastrante) && !Objects.equals(pwd, auth)) {
+				throw new SwaggerAuthorizationException("Propriedade sigaex.numeracao.generica.password não " + 
+						"confere com o valor recebido no cabeçalho Authorization");
+			}
+		}
+        
 		try {
 			final ExBL exBL = Ex.getInstance().getBL();
 

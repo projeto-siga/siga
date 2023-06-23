@@ -12,6 +12,7 @@ import javax.persistence.EntityManagerFactory;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
@@ -21,6 +22,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeConfiguracao;
 @Singleton
 @TransactionManagement(value = TransactionManagementType.BEAN)
 public class WfStarter {
+
 
     private final static org.jboss.logging.Logger log = Logger.getLogger(WfStarter.class);
     public static EntityManagerFactory emf;
@@ -33,6 +35,11 @@ public class WfStarter {
     @PostConstruct
     public void init() {
         log.info("INICIANDO SIGAWF.WAR");
+        
+		SigaVersion.loadSigaVersion();
+		log.info("SIGAWF Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
+		
         CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
         CpTipoDeConfiguracao.mapear(WfTipoDeConfiguracao.values());
 
@@ -50,4 +57,5 @@ public class WfStarter {
             }
         }
     }
+
 }

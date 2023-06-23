@@ -33,7 +33,7 @@ public enum WfTipoDeTarefa implements TaskKind {
 	//
 	CRIAR_DOCUMENTO("Criar Documento", "rectangle", "Criar Documento", WfTarefaDocCriar.class, true, true, false, false),
 	//
-	AUTUAR_DOCUMENTO("Autuar Documento", "rectangle", "Autuar", WfTarefaDocAutuar.class, true, false, false, false),
+	AUTUAR_DOCUMENTO("Autuar Documento", "rectangle", "Autuar", WfTarefaDocAutuar.class, true, true, false, false),
 	//
 	FORMULARIO("Tarefa de Usuário", "tab", null, WfTarefaFormulario.class, true, true, true, true),
 	//

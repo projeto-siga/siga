@@ -1759,7 +1759,7 @@ CKEDITOR.replace( '${var}',
                                         });
                                 }
 
-								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
+								CKEDITOR.config.extraPlugins = ['footnotes','strinsert', 'tableresize'];
 
                                 CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
                                     
@@ -5219,6 +5219,8 @@ ${texto}
 				${(.vars[var+index+"_pessoaSel.descricao"])!}
 		    [#elseif kind == "funcao"]
 				${(.vars[var+index+"_" + kind + "Sel.descricao"])!}
+		    [#elseif kind == "documento"]
+				${(.vars[var+index+"_expedienteSel.sigla"])!}
 			[#else]
 				${(.vars[var+index])!}
 			[/#if]
@@ -5819,7 +5821,7 @@ Exemplos de utilização:
 							}
 						});
 					}
-					CKEDITOR.config.extraPlugins = ['footnotes', 'strinsert'];
+					CKEDITOR.config.extraPlugins = ['footnotes', 'strinsert', 'tableresize'];
 					CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
 					CKEDITOR.replace('${var}', {
 						toolbar: 'SigaToolbar'

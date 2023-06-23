@@ -2108,7 +2108,8 @@ public class ExRelatorioController extends ExController {
 				
 				ExMovimentacao mov = new ExMovimentacao();
 				mov = (ExMovimentacao) d[1];
-
+				mov.setDescrMov((String) d[2]);
+				
 				texto.append(mob.getDnmSigla() + ";");
 				texto.append(mov.getExTipoMovimentacao() + ";");
 				texto.append(mob.getDnmDataUltimaMovimentacaoNaoCancelada() + ";");

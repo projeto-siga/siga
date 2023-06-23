@@ -7,159 +7,221 @@
 <%@ taglib uri="http://jsptags.com/tags/navigation/pager" prefix="pg"%>
 <%@ taglib uri="http://localhost/functiontag" prefix="f"%>
 
-<siga:pagina titulo="Recebimento em Lote">
+<siga:pagina titulo="Recebimento em Lote"> 
 
-	<script type="text/javascript" language="Javascript1.1">
-	function sbmt(offset) {
-		frm.action = '${pageContext.request.contextPath}/app/expediente/mov/receber_lote';
-		frm.submit();
+	<c:set var="thead_color" value="${thead_color}" scope="session"/>
+
+	<div class="container-fluid">
+	
+	<div class="card bg-light mb-3">
+            <div class="card-header">
+                <h5>Receber em Lote</h5>
+            </div>
+            <div class="card-body">
+                <form name="frm" id="frm" class="form" method="POST" action="listar_docs_recebidos" theme="simple">
+                
+                    <input type="hidden" name="siglasDocumentosRecebidosEmLote" value=""/>
+                    <input type="hidden" name="errosDocumentosNaoRecebidosJson" value=""/>
+                    
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Atendente</label>
+                                <select class="form-control siga-select2" id="selectAtendente">
+                                    <option value="pessoa" selected>${cadastrante.nomePessoa}</option>
+                                    <option value="lotacao">
+                                            ${cadastrante.lotacao.siglaCompleta} / ${cadastrante.lotacao.nomeLotacao}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <br/>
+                                <a href="javascript: listarDocumentosParaReceberEmLote()"
+                                   class="btn btn-primary"><i class="fas fa-search"></i> Pesquisar Documentos</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <br/>
+                                <br/>
+                                <button type="button" id="btnOk" class="btn btn-primary" onclick="validar();">
+                                    Receber
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="documentos">
+                	</div>
+                </form>
+            </div>
+        </div>
+        <siga:siga-modal id="confirmacaoModal" exibirRodape="false"
+                         tituloADireita="Confirma&ccedil;&atilde;o" linkBotaoDeAcao="#">
+            <div class="modal-body">
+                Os documentos selecionados ser&atilde;o recebidos. Deseja, confirmar?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">N&atilde;o</button>
+                <a href="#" class="btn btn-success btn-confirmacao" role="button" aria-pressed="true"
+                   onclick="confirmar();">
+                    Sim</a>
+            </div>
+        </siga:siga-modal>
+        <siga:siga-modal id="progressModal" exibirRodape="false" centralizar="true" tamanhoGrande="true"
+                         tituloADireita="Recebimento em lote" linkBotaoDeAcao="#" botaoFecharNoCabecalho="false">
+            <div class="modal-body">
+                <div id="progressbar-ad"></div>
+            </div>
+        </siga:siga-modal>
+        
+	</div>
+
+<script type="text/javascript">
+	
+	let siglasDocumentosRecebidosEmLote = [];
+	let errosDocumentosNaoRecebidosMap = new Map();
+	
+	function listarDocumentosParaReceberEmLote(offset) {
+	    sigaSpinner.mostrar();
+	
+	    offset = offset == null ? 0 : offset;
+	
+	    let selectAtendenteElement = document.getElementById('selectAtendente');
+	    let selectAtendenteValue = selectAtendenteElement.value;
+	
+	    let url = '/sigaex/app/expediente/mov/listar_docs_para_receber_em_lote'
+	        + '?atendente=' + selectAtendenteValue
+	        + '&offset=' + offset;
+	
+	    $.ajax({
+	        url: url,
+	        success: function (data) {
+	        	$('#documentos').html(data);
+	            sigaSpinner.ocultar(); 
+	        },
+	        error: function (result) {
+	            sigaSpinner.ocultar();
+	            console.log(result.errormsg);
+	        },
+	    });
 	}
 	
-	function checkUncheckAll(theElement) {
-		var theForm = theElement.form, z = 0;
-		for(z=0; z<theForm.length;z++) {
-	    	if(theForm[z].type == 'checkbox' && theForm[z].name != 'checkall') {
-				theForm[z].checked = !(theElement.checked);
-				theForm[z].click();
-			}
-		}
-	}
+	function validar() {
+        let checkedElements = $("input[name='documentosSelecionados']:checked");
+        if (checkedElements.length == 0) {
+            sigaModal.alerta('Selecione pelo menos um documento');
+        } else {
+            sigaModal.abrir('confirmacaoModal');
+        }
+    }
 	
-	function displaySel(chk, el) {
-		document.getElementById('div_' + el).style.display=chk.checked ? '' : 'none';
-		if (chk.checked == -2) 
-			document.getElementById(el).focus();
-	}
+	function confirmar() {
+        document.getElementById("btnOk").disabled = true;
+        sigaModal.fechar('confirmacaoModal');
+        enviarParaRecebimentoEmLote();
+    }
 	
-	function displayTxt(sel, el) {					
-		document.getElementById('div_' + el).style.display=sel.value == -1 ? '' : 'none';
-		document.getElementById(el).focus();
-	}
+	function enviarParaRecebimentoEmLote() {
+
+        process.push(function () {
+            $('#progressModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        });
+
+        Array.from($(".chkMobil:checkbox").filter(":checked")).forEach(
+            chk => {
+                process.push(function () {
+                    return receberPost(chk.value);
+                });
+                process.push(function () {
+                    chk.checked = false;
+                });
+            }
+        );
+
+        process.push(function () {
+            sigaModal.fechar('progressModal');
+            sigaSpinner.mostrar();
+            enviarParaListagemDocumentosRecebidos();
+        });
+
+        process.run();
+    }
 	
+	function receberPost(documentoSelSigla) {
+        $.ajax({
+            url: '/sigaex/api/v1/documentos/' + documentoSelSigla.replace('/', '') + '/receber',
+            type: 'POST',
+            async: false,
+            dataType: 'json',
+            success: function () {
+                siglasDocumentosRecebidosEmLote.push(documentoSelSigla);
+            },
+            error: function (response) {
+            	errosDocumentosNaoRecebidosMap.set(documentoSelSigla, response.responseJSON.errormsg);
+            }
+        });
+    }
+	
+	function enviarParaListagemDocumentosRecebidos() {
+        document.getElementsByName('siglasDocumentosRecebidosEmLote')[0].value = siglasDocumentosRecebidosEmLote;
+
+        let errosDocumentosNaoRecebidosJson = JSON.stringify(Object.fromEntries(errosDocumentosNaoRecebidosMap));
+        document.getElementsByName('errosDocumentosNaoRecebidosJson')[0].value = errosDocumentosNaoRecebidosJson;
+
+        document.frm.submit();
+    }
+	
+	let process = {
+            steps: [],
+            index: 0,
+            title: "Executando o recebimento em lote dos documentos selecionados",
+            errormsg: "Não foi possível completar a operação",
+            urlRedirect: null,
+            reset: function () {
+                this.steps = [];
+                this.index = 0;
+            },
+            push: function (x) {
+                this.steps.push(x);
+            },
+            run: function () {
+                this.progressbar = $('#progressbar-ad').progressbar();
+                this.nextStep();
+            },
+            finalize: function () {
+            },
+            nextStep: function () {
+                if (typeof this.steps[this.index] == 'string')
+                    eval(this.steps[this.index++]);
+                else {
+                    let ret = this.steps[this.index++]();
+                    if ((typeof ret == 'string') && ret != "OK") {
+                        this.finalize();
+                        return;
+                    }
+                }
+
+                this.progressbar.progressbar("value",
+                    100 * (this.index / this.steps.length));
+
+                if (this.index != this.steps.length) {
+                    let me = this;
+                    window.setTimeout(function () {
+                        me.nextStep();
+                    }, 100);
+                } else {
+                    this.finalize();
+                }
+            }
+        };
 	
 </script>
 
-	<div class="container-fluid">
-		
-
-	<form name="frm" action="receber_lote_gravar"
-		 method="post" theme="simple">
-		<input type="hidden" name="postback" value="1" />
-		<div class="card bg-light mb-3" >
-			<div class="card-header"><h5>Recebimento em Lote</h5></div>
-			<div class="card-body">
-				<div class="row">
-					<div class="col">
-						<div class="form-group">
-							<input type="submit" value="Receber" class="btn btn-primary" />
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<c:forEach var="secao" begin="0" end="1">
-			<c:remove var="primeiro" />
-			<c:forEach var="m" items="${itens}">
-				<c:if
-					test="${(secao==0 and titular.idPessoaIni==m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni) or (secao==1 and titular.idPessoaIni!=m.ultimaMovimentacaoNaoCancelada.resp.idPessoaIni)}">
-					<c:if test="${empty primeiro}">
-						
-					
-						<h5>Atendente: <c:choose>
-								<c:when test="${secao==0}">${titular.descricao}</c:when>
-								<c:otherwise>${lotaTitular.descricao}</c:otherwise>
-							</c:choose>
-						</h5>
-					
-						<table border="0" class="table table-hover">
-							<thead class="${thead_color} align-middle text-center">
-								<th rowspan="2" align="text-center"><input type="checkbox"
-									name="checkall" onclick="checkUncheckAll(this)" /></th>
-								<th rowspan="2" align="text-right">Número</th>
-								<th colspan="3" align="text-center">Documento</th>
-								<th colspan="2" align="text-center">Última Movimentação</th>
-								<th rowspan="2">Descrição</th>
-							</thead>
-							<thead class="${thead_color} align-middle text-center">
-								<th></th>
-								<th></th>
-								<th align="text-center">Data</th>
-								<th align="text-center">Lotação</th>
-								<th align="text-center">Pessoa</th>
-								<th align="text-center">Data</th>
-								<th align="text-center">Pessoa</th>
-								<th></th>
-							</thead>
-							<c:set var="primeiro" value="${true}" />
-					</c:if>
-					<tbody class="table-bordered">
-
-					<c:choose>
-						<c:when test='${evenorodd == "even"}'>
-							<c:set var="evenorodd" value="odd" />
-						</c:when>
-						<c:otherwise>
-							<c:set var="evenorodd" value="even" />
-						</c:otherwise>
-					</c:choose>
-					<tr class="${evenorodd}">
-						<c:set var="x" scope="request">chk_${m.id}</c:set>
-						<c:remove var="x_checked" scope="request" />
-						<c:if test="${param[x] == 'true'}">
-							<c:set var="x_checked" scope="request">checked</c:set>
-						</c:if>
-						<td width="2%" align="center"><input type="checkbox"
-							name="${x}" value="true" ${x_checked} /></td>
-						<td width="11.5%" align="right"><c:choose>
-							<c:when test='${param.popup!="true"}'>
-								<a href="${pageContext.request.contextPath}/app/expediente/doc/exibir?sigla=${m.sigla}">${m.sigla}</a>										
-							</c:when>
-							<c:otherwise>
-								<a
-									href="javascript:opener.retorna_${param.propriedade}('${m.id}','${m.sigla},'');">${m.sigla}</a>
-							</c:otherwise>
-						</c:choose></td>
-						<c:if test="${not m.geral}">
-							<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
-							<td width="5%" align="center"><siga:selecionado
-								sigla="${m.doc.lotaSubscritor.sigla}"
-								descricao="${m.doc.lotaSubscritor.descricao}" /></td>
-							<td width="5%" align="center"><siga:selecionado
-								sigla="${m.doc.subscritor.iniciais}"
-								descricao="${m.doc.subscritor.descricao}" /></td>
-							<td width="5%" align="center">${m.ultimaMovimentacaoNaoCancelada.dtMovDDMMYY}</td>
-							<td width="4%" align="center"><siga:selecionado
-								sigla="${m.ultimaMovimentacaoNaoCancelada.resp.iniciais}"
-								descricao="${m.ultimaMovimentacaoNaoCancelada.resp.descricao}" /></td>
-						</c:if>
-						<c:if test="${m.geral}">
-							<td width="5%" align="center">${m.doc.dtDocDDMMYY}</td>
-							<td width="4%" align="center"><siga:selecionado
-								sigla="${m.doc.subscritor.iniciais}"
-								descricao="${m.doc.subscritor.descricao}" /></td>
-							<td width="4%" align="center"><siga:selecionado
-								sigla="${m.doc.lotaSubscritor.sigla}"
-								descricao="${m.doc.lotaSubscritor.descricao}" /></td>
-							<td width="5%" align="center"></td>
-							<td width="4%" align="center"></td>
-							<td width="4%" align="center"></td>
-							<td width="10.5%" align="center"></td>
-						</c:if>
-						<td width="44%">${f:descricaoSePuderAcessar(m.doc, titular,
-						lotaTitular)}</td>
-					</tr>
-					</tbody>
-				</c:if>
-			</c:forEach>
-			<c:if test="${not empty primeiro}">
-				</table>
-				
-					
-			</c:if>
-		</c:forEach>
-	</form>
-
-	
-</div>
 </siga:pagina>

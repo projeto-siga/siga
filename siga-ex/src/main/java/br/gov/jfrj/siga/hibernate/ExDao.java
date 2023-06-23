@@ -1671,7 +1671,20 @@ public class ExDao extends CpDao {
 	public Date getServerDateTime() {
 		return null;
 	}
+	public List<ExModelo> listarModelosAnterioresIdAndHisDtFim(final Long idInicial) {
+		List<ExModelo> lista = null;
 
+		if (idInicial != null) {
+			Query q = em()
+					.createQuery(
+							"select m.idMod, m.hisDtFim from ExModelo m where m.hisIdIni = :idInicial and  m.hisDtFim is not null "
+									+ " order by m.hisDtFim desc ");
+
+			q.setParameter("idInicial",idInicial);
+			lista  = q.getResultList();
+		}
+		return lista;
+	}
 	public List<ExModelo> listarTodosModelosOrdenarPorNome(
 			ExTipoDocumento tipo, String script) {
 		Query q = null;
@@ -2936,6 +2949,27 @@ public class ExDao extends CpDao {
 				ExTipoDeMovimentacao.AVALIACAO_COM_RECLASSIFICACAO.getId()));
 
 		return ((BigDecimal) query.getSingleResult()).intValue();
+	}
+	
+	public List<ExMobil> consultarParaReceberEmLote(Long idPessoaIni, Long idLotacaoIni, Integer offset, Integer tamPagina) {
+		final Query query = em().createNamedQuery(
+				"consultarParaReceberEmLote");
+		query.setParameter("idLotacaoIni", idLotacaoIni);
+		query.setParameter("idPessoaIni",idPessoaIni);
+		query.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId());
+		query.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId());
+		query.setFirstResult(offset);
+		query.setMaxResults(tamPagina);
+		
+		return query.getResultList();
+	}
+	
+	public int consultarQuantidadeDocsParaReceberEmLote(Long idPessoaIni, Long idLotacaoIni) {
+		return ( (Long) em().createNamedQuery("consultarQuantidadeParaReceberEmLote", Long.class)
+				.setParameter("idPessoaIni", idPessoaIni)
+				.setParameter("aReceber", CpMarcadorEnum.A_RECEBER.getId())
+				.setParameter("caixaDeEntrada", CpMarcadorEnum.CAIXA_DE_ENTRADA.getId())
+				.setParameter("idLotacaoIni", idLotacaoIni).getSingleResult() ).intValue();
 	}
 
 }

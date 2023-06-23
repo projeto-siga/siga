@@ -64,6 +64,8 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.cp.CpArquivo;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
@@ -118,9 +120,15 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	@Transient
 	private String codigoUnico;
 	
-	@Transient
-	private String digitoVerificadorCodigoUnico;
-	
+    @Transient
+    private String digitoVerificadorCodigoUnico;
+    
+    @Transient
+    private boolean atrasandoAtualizacaoDoArquivo = false;
+    
+    @Transient
+    private Map<String, byte[]> mapAtualizacaoDoArquivo = new HashMap<>();
+    
 	/**
 	 * Simple constructor of ExDocumento instances.
 	 */
@@ -396,7 +404,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 */
 	public String getConteudo() {
 		if (getConteudoBlobDoc() != null)
-			return new String(getConteudoBlobDoc2());
+			return new String(getConteudoBlobDoc());
 		return "";
 	}
 
@@ -408,21 +416,17 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 *            Nome do arquivo compactado cujo conteúdo será retornado
 	 */
 	public byte[] getConteudoBlob(final String nome) {
-		final byte[] conteudoZip = getConteudoBlobDoc2();
+       if (atrasandoAtualizacaoDoArquivo && mapAtualizacaoDoArquivo.containsKey(nome)) {
+            return mapAtualizacaoDoArquivo.get(nome);
+        }
+
+		final byte[] conteudoZip = getConteudoBlobDoc();
 		byte[] conteudo = null;
 		final Compactador zip = new Compactador();
 		if (conteudoZip != null) {
 			conteudo = zip.descompactarStream(conteudoZip, nome);
 		}
 		return conteudo;
-	}
-
-	/**
-	 * Retorna, em formato array de bytes, todo o conteúdo do zip gravado no
-	 * blob do documento.
-	 */
-	public byte[] getConteudoBlobDoc2() {
-		return getConteudoBlobDoc();
 	}
 
 	/**
@@ -2679,10 +2683,28 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 
 		return false;
 	}
+	
+    public void atrasarAtualizacaoDoArquivo() {
+        atrasandoAtualizacaoDoArquivo = true;
+    }
+    
+    public void atualizarArquivo() {
+        atrasandoAtualizacaoDoArquivo = false;
+        for (String s : mapAtualizacaoDoArquivo.keySet()) {
+            setConteudoBlob(s, mapAtualizacaoDoArquivo.get(s));
+        }
+        mapAtualizacaoDoArquivo.clear();
+    }
+    
+
 
 	public void setConteudoBlob(final String nome, final byte[] conteudo) {
+	    if (atrasandoAtualizacaoDoArquivo) {
+	        mapAtualizacaoDoArquivo.put(nome, conteudo);
+	        return;
+	    }
 		final Compactador zip = new Compactador();
-		final byte[] arqZip = getConteudoBlobDoc2();
+		final byte[] arqZip = getConteudoBlobDoc();
 		byte[] conteudoZip = null;
 		if (arqZip == null || (zip.listarStream(arqZip) == null)) {
 			if (conteudo != null) {
@@ -3276,4 +3298,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		}
 		return listaOrdenada;
 	}
+
+    public void setConteudoBlobDoc(byte[] createBlob) {
+        if(createBlob != null)
+            setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob, getCodigoCompacto(), isFinalizado() ? ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS : ArmazenamentoTemporalidadeEnum.TEMPORARIO));
+    }
+
 }

@@ -16,10 +16,7 @@
 			nomeusuario.value = tmp.toUpperCase();
 		}
 	</script>
-	
-	<c:set var="siga_cliente_sso" scope="request" value="${f:resource('/siga.integracao.sso')}" />
-	<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('/siga.integracao.sso.btn.txt')}" />
-	
+		
 	<c:choose>
 		<c:when test="${siga_cliente == 'GOVSP'}">
 			<c:set var="login_box_class" value="box_login" />
@@ -105,7 +102,7 @@
 											<hr class="my-2">
 											<p class="text-left font-weight-bold">Ou acesse com: </p>
 							
-											<a href="/siga/public/app/loginSSO"class="btn btn-lg btn-dark btn-block">${siga_cliente_sso_btn_txt}</a>
+											<a href="/siga/public/app/loginSSO"class="btn btn-dark btn-lg btn-block btn-gov-br">Entrar com&nbsp;<span><b>${siga_cliente_sso_btn_txt}</b></span> </a>
 										</c:when>
 									</c:choose>
 									

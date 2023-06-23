@@ -185,8 +185,10 @@ public class ExArquivoController extends ExController {
 				
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
+				boolean reduzirVisuAssinPdf = Documento.isReduzirVisuAssinPdf(getTitular(), getLotaTitular(), mob.doc());
+				
 				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
-						filename, contextpath, servernameport);
+						filename, contextpath, servernameport, reduzirVisuAssinPdf);
 				result.redirectTo("/app/arquivo/status/" + mob.getCodigoCompacto() + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);
 				return null;
@@ -197,7 +199,8 @@ public class ExArquivoController extends ExController {
 					ab = mov.getConteudoBlobpdf();
 				} else {
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					Documento.getDocumento(baos, null, mob, mov, completo, estampar, volumes, hash, null, tamanhoOriginal, null);
+					boolean reduzirVisuAssinPdf = Documento.isReduzirVisuAssinPdf(getTitular(), getLotaTitular(), mob.doc());
+					Documento.getDocumento(baos, null, mob, mov, completo, estampar, volumes, hash, null, tamanhoOriginal, null, reduzirVisuAssinPdf);
 					ab = baos.toByteArray();
 				}
 				if (ab == null) {
@@ -332,8 +335,10 @@ public class ExArquivoController extends ExController {
 				req.exibirReordenacao = false;
 				String filename = isPdf ? (volumes ? mob.doc().getReferenciaPDF() : mob.getReferenciaPDF())
 						: (volumes ? mob.doc().getReferenciaHtml() : mob.getReferenciaHtml());
+				boolean reduzirVisuAssinPdf = Documento.isReduzirVisuAssinPdf(getTitular(), getLotaTitular(), mob.doc());
+				
 				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, null,
-						filename, contextpath, servernameport);
+						filename, contextpath, servernameport, reduzirVisuAssinPdf);
 			
 				result.forwardTo(this).status(mob.getCodigoCompacto(), resp.uuid, resp.jwt, filename);
 
@@ -346,7 +351,8 @@ public class ExArquivoController extends ExController {
 	
 			if (isPdf) {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				Documento.getDocumento(baos, null, mob, null, completo, semmarcas, volumes, null, null, tamanhoOriginal, null);
+				boolean reduzirVisuAssinPdf = Documento.isReduzirVisuAssinPdf(getTitular(), getLotaTitular(), mob.doc());
+				Documento.getDocumento(baos, null, mob, null, completo, semmarcas, volumes, null, null, tamanhoOriginal, null, reduzirVisuAssinPdf);
 				ab = baos.toByteArray();
 				
 				if (ab == null) {

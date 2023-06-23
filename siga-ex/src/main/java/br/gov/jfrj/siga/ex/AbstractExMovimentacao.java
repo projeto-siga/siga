@@ -51,6 +51,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.CpIdentidade;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.cp.converter.ITipoDeMovimentacaoConverter;
 import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.dp.CpMarcador;
@@ -85,14 +86,19 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeVinculo;
 				+ "                where ( (mar.dpLotacaoIni.idLotacao=:lotaIni or mar.dpPessoaIni.idPessoa=:pessoaIni)"
 				+ "                and (mar.cpMarcador.idMarcador=2 or mar.cpMarcador.idMarcador=75)"
 				+ "                ) order by mar.dtIniMarca desc"),
-		// Somente os "a receber"
-		@NamedQuery(name = "consultarParaReceberEmLote", query = "select mob from ExMobil mob join mob.exMarcaSet mar"
-				+ "                where (mar.dpLotacaoIni.idLotacao=:lotaIni"
-				+ "                and (mar.cpMarcador.idMarcador=3"
-				+ "                or mar.cpMarcador.idMarcador=14)"
-				+ "                ) order by mar.dtIniMarca desc"),
+		@NamedQuery(name = "consultarQuantidadeParaReceberEmLote", query = "select count(*) from ExMobil mob join mob.exMarcaSet mar"
+				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+				+ "                and (mar.cpMarcador.idMarcador = :aReceber or mar.cpMarcador.idMarcador = :caixaDeEntrada))"),
+		// Somente os mobis possíveis para o recebimento em lote
+		@NamedQuery(name = "consultarParaReceberEmLote",  query = "select mob from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
+						+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
+						+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
+						+ "                and (mar.cpMarcador.idMarcador = :aReceber or mar.cpMarcador.idMarcador = :caixaDeEntrada)"
+						
+						+ "                ) order by mar.dtIniMarca desc"),
 		// Somente os mobis possíveis para o arquivamento em lote
-		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote", 
+		@NamedQuery(name = "consultarParaArquivarCorrenteEmLote",  
 				query = "select mob from ExMobil mob join mob.exDocumento doc join mob.exMarcaSet mar"
 				+ "                where ( (mar.dpPessoaIni.idPessoa = :idPessoaIni "
 				+ "                		or mar.dpLotacaoIni.idLotacao = :idLotacaoIni)"
@@ -859,8 +865,17 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	}
 
 	public void setConteudoBlobMov(byte[] createBlob) {
-		if(createBlob != null){
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
+		if (createBlob != null) {
+            if (getIdMov() == null)
+                throw new RuntimeException("Tentando gravar um conteúdo de movimentação quando ela ainda não tem ID.");
+            if (getExMobil() == null)
+                throw new RuntimeException("Tentando gravar um conteúdo de movimentação quando ela ainda não tem móbile.");
+            if (cpArquivo.getOrgaoUsuario() == null && getExMobil() != null && getExMobil().doc() != null && getExMobil().doc().getOrgaoUsuario() != null) {
+                CpOrgaoUsuario orgaoUsuario = getExMobil().doc().getOrgaoUsuario();
+                if (orgaoUsuario != null)
+                    cpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
+            }
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob, getReferencia().replace(":", "-mov"), ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS);
 		}
 	}
 

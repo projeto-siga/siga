@@ -13,6 +13,7 @@ import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.arquivo.Armazenamento;
 import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoFabrica;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
 public class ArmazenamentoIdMigrarPost implements IArmazenamentoIdMigrarPost {
@@ -23,12 +24,13 @@ public class ArmazenamentoIdMigrarPost implements IArmazenamentoIdMigrarPost {
         CpArquivoTipoArmazenamentoEnum destino = CpArquivoTipoArmazenamentoEnum.valueOf(req.destino);
         CpArquivo arq = CpDao.getInstance().consultar(Long.parseLong(req.id), CpArquivo.class, false);
         byte[] conteudo = arq.getConteudo();
-        
+
         String caminho = null;
-        
+
         if (conteudo != null) {
-            caminho = arq.gerarCaminho();
             Armazenamento a = ArmazenamentoFabrica.getInstance(destino);
+            caminho = a.gerarCaminho(null, arq.identificarTipoDeConteudo(),
+                    ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS);
             a.salvar(caminho, arq.getConteudoTpArq(), conteudo);
             resp.memoria = (double) conteudo.length;
         } else {

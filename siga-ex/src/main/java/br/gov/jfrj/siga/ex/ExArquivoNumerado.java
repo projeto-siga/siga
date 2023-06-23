@@ -20,6 +20,7 @@ package br.gov.jfrj.siga.ex;
 
 import java.util.Date;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
@@ -104,12 +105,12 @@ public class ExArquivoNumerado implements Comparable {
 	public String getNomeOuDescricao() {
 		if (getArquivo() instanceof ExDocumento) {
 			ExDocumento doc = (ExDocumento) getArquivo();
-            if (doc.getExModelo().isDescricaoAutomatica())
+            if (doc.getExModelo().isDescricaoAutomatica() || isDescricaoCapturado(doc))
 				return doc.getDescrDocumento();
 		}
 		return getNome();
-	};
-		
+	}
+
 	public String getNomeOuDescricaoComMovimentacao() {
 		if (getArquivo() instanceof ExMovimentacao) {
 			ExMovimentacao mov = (ExMovimentacao) getArquivo();
@@ -250,5 +251,8 @@ public class ExArquivoNumerado implements Comparable {
 		}
 	}
 
+	private boolean isDescricaoCapturado(ExDocumento doc) {
+		return doc.isCapturado() && Prop.getBool("exibir.descricao.capturado");
+	}
 
 }

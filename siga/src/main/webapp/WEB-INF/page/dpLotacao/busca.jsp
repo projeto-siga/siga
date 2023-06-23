@@ -88,14 +88,15 @@
 				<h5>Dados da <fmt:message key="usuario.lotacao"/></h5>
 			</div>
 			<div class="card-body">
-				<form name="frm" action="${request.contextPath}/app/lotacao/buscar" class="form" method="POST">
+				<form name="frm" id="frm" action="${request.contextPath}/app/lotacao/buscar" class="form" method="POST">
 					<input type="hidden" name="buscarFechadas" value="${param['buscarFechadas']}" /> 
 					<input type="hidden" name="buscarTodosOrgaos" value="true" /> 
 					<input type="hidden" name="propriedade" value="${param.propriedade}" /> 
 					<input type="hidden" name="postback" value="1" /> 
 					<input type="hidden" name="paramoffset" value="0" />
 					<input type="hidden" name="p.offset" value="0" />
-					<input type="hidden" name="modal" value="${param['modal']}" />				
+					<input type="hidden" name="modal" value="${param['modal']}" />
+					<input type="hidden" name="campoOrgaoDesabilitado" value="${param['campoOrgaoDesabilitado']}" />			
 					<div class="row">
 						<div class="col-sm">
 							<div class="form-group">
@@ -109,8 +110,8 @@
 						<div class="col-sm">
 							<div class="form-group">
 								<label for="idOrgaoUsu">Órgão</label>
-								<select name="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2" >
-										<option value="">[Todos]</option>
+								<select name="idOrgaoUsu" id="idOrgaoUsu" value="${idOrgaoUsu}" class="form-control  siga-select2" >
+										<option value="${item.idOrgaoUsu}">[Todos]</option>
 										<c:forEach items="${orgaosUsu}" var="item">
 											<option value="${item.idOrgaoUsu}"
 												${item.idOrgaoUsu == idOrgaoUsu ? 'selected' : ''}>
@@ -164,6 +165,16 @@
 		</c:if>
 	</div>
 	
+<script type="text/javascript" language="Javascript1.1">
+	
+	if (${param.campoOrgaoDesabilitado == true}) {
+		$('#idOrgaoUsu').prop('disabled', true);
+	
+		$('#frm').on('submit', function() {
+		    $('#idOrgaoUsu').prop('disabled', false);
+		});
+	}
+</script>
 <script type="text/javascript" src="/siga/javascript/select2/select2.min.js"></script>
 <script type="text/javascript" src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 <script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>	

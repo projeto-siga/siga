@@ -14,6 +14,7 @@ import br.gov.jfrj.siga.ex.task.ExTarefas;
 import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.base.UsuarioDeSistemaEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeMovimentacao;
@@ -38,6 +39,11 @@ public class ExStarter {
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO SIGAEX.WAR");
+		
+		SigaVersion.loadSigaVersion();
+		log.info("SIGAEX Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
+		
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		CpTipoDeConfiguracao.mapear(ExTipoDeConfiguracao.values());
 		CpTipoDeMovimentacao.mapear(ExTipoDeMovimentacao.values());

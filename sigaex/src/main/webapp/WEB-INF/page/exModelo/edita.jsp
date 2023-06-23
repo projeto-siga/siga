@@ -7,12 +7,9 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/modelostag" prefix="mod"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
-<link rel="stylesheet" href="/siga/javascript/select2/select2.css"
-	type="text/css" media="screen, projection" />
-<link rel="stylesheet"
-	href="/siga/javascript/select2/select2-bootstrap.css" type="text/css"
-	media="screen, projection" />
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<link rel="stylesheet" href="/siga/javascript/select2/select2.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/siga/javascript/select2/select2-bootstrap.css" type="text/css" media="screen, projection" />
 <link rel="stylesheet" href="/siga/codemirror/lib/codemirror.css" />
 <link rel="stylesheet" href="/siga/codemirror/theme/default.css" />
 
@@ -52,6 +49,10 @@
 	<script src="/siga/codemirror/mode/css/css.js"></script>
 	<script src="/siga/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 	<script type="text/javascript" src="/siga/javascript/jquery.blockUI.js"></script>
+	<link rel=stylesheet href="/siga/codemirror_merge/addon/merge/merge.css">
+	<script src="/siga/codemirror_merge/addon/merge/dep/diff_match_patch.js"></script>
+	<script src="/siga/codemirror_merge/addon/merge/merge.js"></script>
+
 
 	<div class="container-fluid">
 		<div class="card bg-light mb-3">
@@ -130,14 +131,13 @@
 							<div class="form-group">
 								<label for="extensoesArquivo">Extensões permitidas para o arquivo capturado de formato livre</label> <select
 									class="form-control siga-select2" id="extensoesArquivo" name="extensoesArquivo[]"
-									multiple="" data-maximum-selection-length="20">
+									multiple="">
 									<c:forEach items="${listaExtensoes}" var="item">
 										<option value="${item}"
 												${fn:contains(extensoesArquivo, item) ? 'selected' : ''}
 										><div>${item}</div></option>
 									</c:forEach>
 								</select>
-								<small>Escolha até 20 extensões de arquivo</small>
 							</div>
 						</div>
 					</div>
@@ -196,6 +196,69 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
+							<p>
+								<a class="btn btn-primary" data-toggle="collapse" href="#collapseComparacao" role="button" aria-expanded="false" aria-controls="collapseComparacao">
+									Comparar Versões
+								</a>
+							</p>
+							<div class="collapse show" id="collapseComparacao">
+								<h2>Diferenças</h2>
+								<div class="form-group">
+									<label><b>Versões</b></label>
+									<select id="versao" name="versao" class="custom-select">
+										<option value="${id}">[Versão Atual]</option>
+										<c:forEach var="item" items="${listaModeloHistorico}">
+											<option value="${item[0]}">${item[1]}</option>
+										</c:forEach>
+									</select>
+								</div>
+								<div id=view></div>
+							</div>
+							<br>
+							<script>
+
+								$('#versao').on('change', function() {
+									$.ajax({
+										url:'/sigaex/app/modelo/buscar-json-conteudo-para-comparar/'+ this.value,
+										type: "GET",
+										success: function(data) {
+											dv.rightOriginal().setValue(data.conteudoModelo);
+										}
+									});
+								});
+
+								var dv, hilight= true;
+								function initUI(conteudo) {
+
+									if (conteudo == null) return;
+									var target = document.getElementById("view");
+									target.innerHTML = "";
+									dv = CodeMirror.MergeView(target, {
+										value: conteudo,
+										origLeft: null,
+										orig: conteudo,
+										lineNumbers: true,
+										mode: "freemarker",
+										highlightDifferences: hilight
+
+									});
+								}
+
+								function toggleDifferences() {
+									dv.setShowDifferences(hilight = !hilight);
+								}
+
+								window.onload = function() {
+									initUI(document.getElementById("conteudo").value);
+									$("#collapseComparacao").removeClass("show");
+								};
+
+							</script>
+						</div>
+
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
 							<div class="form-group">
 								<input type="submit" name="ok" value="Ok"
 									class="btn btn-primary" /> <input type="submit" name="submit"
@@ -224,6 +287,22 @@
 				<div>
 					<input type="button" value="Novo" class="btn btn-primary"
 						onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=2&nmTipoRetorno=modelo&campoFixo=True'" />
+				</div>
+			</div>
+
+			<div style="clear: both; margin-bottom: 20px;">
+				<div id="tableCadastradasCriarComoNovo"></div>
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary"
+						onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=42&nmTipoRetorno=modelo&campoFixo=True'" />
+				</div>
+			</div>
+
+			<div style="clear: both; margin-bottom: 20px;">
+				<div id="tableCadastradasDespachavel"></div>
+				<div>
+					<input type="button" value="Novo" class="btn btn-primary"
+						onclick="location.href='/sigaex/app/configuracao/editar?id=&idMod=${id}&idTpConfiguracao=30&nmTipoRetorno=modelo&campoFixo=True'" />
 				</div>
 			</div>
 
@@ -275,8 +354,30 @@
 	<script type="text/javascript"
 		src="/siga/javascript/select2/i18n/pt-BR.js"></script>
 	<script type="text/javascript" src="/siga/javascript/siga.select2.js"></script>
-
 	<script type="text/javascript">
+
+		function getDocHeight(element) {
+
+			return Math.max(
+					element.scrollHeight, element.offsetHeight, element.clientHeight
+			);
+		}
+
+		function KeyPress(e) {
+			var evtobj = window.event? event : e
+
+			if (evtobj.keyCode === 36 && evtobj.ctrlKey)
+			{
+				window.scrollTo(0, 600)
+			}
+			if (evtobj.keyCode === 35 && evtobj.ctrlKey)
+			{
+				window.scrollTo(0, getDocHeight(document.querySelectorAll('div[class="CodeMirror-code"]')[0].parentElement)+600);
+			}
+		}
+		document.getElementById("template/freemarker").addEventListener('keydown', KeyPress)
+
+
 		var editor = null;
 		function sbmt() {
 			frm.action='/modelo/editar';
@@ -342,6 +443,8 @@
 		<script>
 			montaTableCadastradas('tableCadastradasEletronico', 4, 0, ${id});
 			montaTableCadastradas('tableCadastradasCriar', 2, 0, ${id});
+			montaTableCadastradas('tableCadastradasCriarComoNovo', 42, 0, ${id});
+			montaTableCadastradas('tableCadastradasDespachavel', 30, 0, ${id});
 			montaTableCadastradas('tableCadastradasAssinar', 1, 11, ${id});
 			montaTableCadastradas('tableCadastradasAssinarComSenha', 1, 58, ${id});		
 			montaTableCadastradas('tableCadastradasAcessar', 6, 0, ${id});
@@ -351,7 +454,27 @@
 	</c:if>
 
 	<script>
-			$(document).ready(function() {
+
+		function atualizaMergeView(id) {
+			$.ajax({
+				url:'/sigaex/app/modelo/buscar-json-conteudo-para-comparar/'+ id,
+				type: "GET",
+				success: function(data) {
+					initUI(data.conteudoModelo);
+
+				}
+			});
+		}
+
+        // adiciona atualização no evento de collapse para que o quadro seja atualizado
+		$('#collapseComparacao').on('shown.bs.collapse', function () {
+			// Atualiza CodeMirror
+			$('.CodeMirror').each(function(i, el){
+				el.CodeMirror.refresh();
+			});
+		});
+
+		$(document).ready(function() {
 			    $(window)
 			        .keydown(
 			            function(e) {
@@ -367,7 +490,29 @@
 			                        beforeSend: function() {
 			                        	$.blockUI({message: '<span style="font-size: 200%">Gravando modelo...</span>'});
 				                    },
-				                    complete: function() {
+				                    complete: function(data) {
+										var options, index, select, option, id;
+
+										// Obtem DOM versao
+										select = document.getElementById('versao');
+
+										// Limpa select
+										select.options.length = 0;
+
+										// Obtem listaModeloHistorico
+										options = JSON.parse(data.responseText);
+										if(options !== null) {
+											// Carrega nova listaModeloHistorico
+					     					var listaModeloHistorico = options.listaModeloHistorico;
+											for (index = 0; index < listaModeloHistorico.length; ++index) {
+												option = listaModeloHistorico[index];
+												select.options.add(new Option(option[1], option[0]));
+											}
+											id = listaModeloHistorico[0][0];
+										}
+										// atualiza mergeview
+										atualizaMergeView(id);
+
 				                    	$.unblockUI();
 					                },
 			                        error: function(data) {
@@ -416,5 +561,4 @@
 						$("#extensoesArquivo").prop("disabled", true);
 				}
 	</script>
-
 </siga:pagina>

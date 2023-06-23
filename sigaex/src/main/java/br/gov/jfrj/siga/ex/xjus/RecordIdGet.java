@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.ex.xjus;
 
 import java.util.concurrent.TimeUnit;
 
+import com.crivano.swaggerservlet.PresentableUnloggedException;
 import com.crivano.swaggerservlet.SwaggerAsyncResponse;
 import com.crivano.swaggerservlet.SwaggerCall;
 
@@ -23,8 +24,11 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		SwaggerAsyncResponse<Response> o = SwaggerCall.callAsync(service.name().toLowerCase() + "-record-id",
 				Prop.get("/xjus.password"), "GET", url, null, Response.class)
 				.get(AllReferencesGet.TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
-		if (o.getException() != null)
-			throw o.getException();
+		if (o.getException() != null) {
+		    if ("REMOVED".equals(o.getException().getMessage()))
+		        throw new PresentableUnloggedException("REMOVED");
+	        throw o.getException();
+		}
 		resp.acl = o.getResp().acl;
 		resp.code = o.getResp().code;
 		resp.content = o.getResp().content;
@@ -33,7 +37,8 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		resp.id = o.getResp().id;
 		resp.refresh = o.getResp().refresh;
 		resp.status = o.getResp().status;
-		resp.title = o.getResp().title;
+        resp.title = o.getResp().title;
+        resp.dateref = o.getResp().dateref;
 		resp.url = o.getResp().url;
 		resp.id += "-" + service.ordinal();
 	}

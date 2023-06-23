@@ -194,7 +194,8 @@ public class ExProcessoAutenticacaoController extends ExController {
 			fileName = arq.getReferenciaPDF();
 			contentType = "application/pdf";
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null, tamanhoOriginal, null);
+			boolean reduzirVisuAssinPdf = Documento.isReduzirVisuAssinPdf(getTitular(), getLotaTitular(), mob.doc());
+			Documento.getDocumento(baos, null, mob, null, false, true, false, null, null, tamanhoOriginal, null, reduzirVisuAssinPdf);
 			bytes = baos.toByteArray();
 		} else {			
 			if (idMov != null && idMov != 0) {

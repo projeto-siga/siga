@@ -1759,7 +1759,7 @@ CKEDITOR.replace( '${var}',
                                         });
                                 }
 
-								CKEDITOR.config.extraPlugins = ['footnotes','strinsert'];
+								CKEDITOR.config.extraPlugins = ['footnotes','strinsert', 'tableresize'];
 
                                 CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
                                     
@@ -5075,8 +5075,8 @@ ${texto}
 
 [#macro document]
 	[#assign _scope='document']
-    [#assign document_content][#nested/][/#assign]
 	[@documento formato=(PAGE_SIZE!"A4") orientacao=(PAGE_ORIENTATION!"portrait") margemEsquerda=(MARGIN_LEFT!"3cm") margemDireita=(MARGIN_RIGHT!"2cm") margemSuperior=(MARGIN_TOP!"1cm") margemInferior=(MARGIN_BOTTOM!"2cm")]
+	    [#assign document_content][#nested/][/#assign]
 		[#switch STYLE!]
   			[#case "memorando"]
 				[@memorando texto=(document_content!) fecho=(_fecho!"Atenciosamente,") tamanhoLetra=(_tamanhoLetra!"Normal") _tipo=(_tipo!"MEMORANDO")/]
@@ -5118,7 +5118,10 @@ ${texto}
 [#macro description]
 	[#assign _scope='description']
 	[@descricao]
-		[#nested]
+		[#local descr][#nested][/#local]
+		[#local descr = descr?replace('<p>', '') /]
+		[#local descr = descr?replace('</p>', '') /]
+		{${descr}}
 	[/@descricao]
 [/#macro]
 
@@ -5143,7 +5146,9 @@ ${texto}
 [/#macro]
 
 [#function infer_type var opcoes=""]
-	[#if var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
+	[#if opcoes?has_content]
+    	[#return "selecao"]
+    [#elseif var?matches("^cpf([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "cpf"]
 	[#elseif var?matches("^cnpj([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "cnpj"]
@@ -5169,8 +5174,6 @@ ${texto}
     	[#return "documento"]
 	[#elseif var?matches("^funcao([A-Z0-9_][A-Za-z0-9_]*)*$")]
     	[#return "funcao"]
-    [#elseif opcoes?has_content]
-    	[#return "selecao"]
     [#else]
     	[#return "texto"]
     [/#if]
@@ -5182,7 +5185,12 @@ ${texto}
 			[#if kind == ""][#local kind = infer_type(var, opcoes) /][/#if]
 		    [#if kind == "oculto"]
 		    [#elseif kind == "checkbox"]
-		    	${(.vars[var+index]?string(valor!"Sim", default!"Não"))!}
+		    	[#local v = .vars[var+index] /]
+		    	[#if v?is_boolean]
+		    		${(v?string(valor!"Sim", default!"Não"))!}
+		    	[#elseif v?is_string]
+		    		${v!}
+		    	[/#if]
 		    [#elseif kind == "radio"]
 		    	${(.vars[var+index]?string(valor!"Sim", default!"Não"))!}
 		    [#elseif kind == "editor"]
@@ -5211,6 +5219,8 @@ ${texto}
 				${(.vars[var+index+"_pessoaSel.descricao"])!}
 		    [#elseif kind == "funcao"]
 				${(.vars[var+index+"_" + kind + "Sel.descricao"])!}
+		    [#elseif kind == "documento"]
+				${(.vars[var+index+"_expedienteSel.sigla"])!}
 			[#else]
 				${(.vars[var+index])!}
 			[/#if]
@@ -5361,12 +5371,21 @@ Exemplos de utilização:
         [#return]
     [/#if]
     
-	[#-- tipo oculto não deve gerar nem o grupo --]
+	[#-- tipo checkbox --]
 	[#if kind=="checkbox"]
 		[#local checkedValue=(value == "")?string("Sim", value) /]
 		[#local uncheckedValue=(default == "")?string("Não", default) /]
 		[#local default=uncheckedValue /]
 		[#local suffix="_chk" /]
+    [/#if]
+    
+	[#-- tipo selecionavel --]
+	[#if kind=="pessoa" || kind=="lotacao" || kind=="cossignatario" || kind=="funcao" || kind=="documento"]
+		[#local selectTipo = kind /]
+		[#if kind=="documento"]
+			[#local selectTipo = 'expediente' /]
+		[/#if]
+	    [#local suffix = "_" + selectTipo + "Sel.sigla" /]
     [/#if]
 	
 	[#-- trata cpf e cnpj --]
@@ -5393,22 +5412,21 @@ Exemplos de utilização:
 		[#assign inlineTemplate = ["[#assign ${var} = v/]", "assignInlineTemplate"]?interpret /]
 		[@inlineTemplate/] 
     [/#if]
-
-	[#if (alerta!"Não") = 'Sim' && v = ""]
+    
+	[#if (alerta!"Não") == 'Sim' && v == ""]
 	    [#list obrigatorios?split(",") as campo]
-    	     [#if campo == var]
+    	     [#if campo == var + suffix!""]
         		[#local vermelho = "color:red"]
              [/#if]
         [/#list]
     [/#if]
 
-    [#if required]
-    	[#local negrito = "font-weight:bold"]
-    	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
-    [/#if]
-    
     [#if !gerar_formulario!false]    	
 		<div class="form-group ${col} mb-2">
+		    [#if required]
+		    	[#local negrito = "font-weight:bold"]
+		    	<input type="hidden" name="obrigatorios" value="${var}${suffix!}" />
+		    [/#if]
 			[#if title?has_content && kind != "checkbox" && kind != "radio" ]    			
 				<label for="${var}" title="campo: ${var}" style="${negrito!};${vermelho!}">${title}</label>
 			[/#if]
@@ -5803,7 +5821,7 @@ Exemplos de utilização:
 							}
 						});
 					}
-					CKEDITOR.config.extraPlugins = ['footnotes', 'strinsert'];
+					CKEDITOR.config.extraPlugins = ['footnotes', 'strinsert', 'tableresize'];
 					CKEDITOR.config.extraAllowedContent = 'td[align*],td{border*}';
 					CKEDITOR.replace('${var}', {
 						toolbar: 'SigaToolbar'
@@ -5848,18 +5866,18 @@ Exemplos de utilização:
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="pessoa" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="pessoa" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "lotacao"]
-				[@field_selectable tipo="lotacao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="lotacao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "cossignatario"]
 				[#if searchClosed]
 					[@assign paramList = "searchClosed=true" /]
 				[/#if]
-				[@field_selectable tipo="cosignatario" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="cosignatario" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "funcao"]
-				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "documento"]
-			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=obrigatorio col=col hint=hint /]
+			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[/#if]
 		        [#if required]            		    
 			   		<div class="invalid-feedback invalid-feedback-${var}${suffix!}">Preenchimento obrigatório</div>
@@ -5876,18 +5894,15 @@ Exemplos de utilização:
 
     [#assign varName = var + tipoSel + "Sel.id" /]    
     [#local vId = .vars[varName]!default]
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
     <input type="hidden" name="vars" value="${varName}" />
-
+    
+    [#assign varName = var + tipoSel + "Sel.sigla" /]
     [#local vSigla = .vars[varName]!default]
     <input type="hidden" name="vars" value="${varName}" />
 
     [#assign varName = var + tipoSel + "Sel.descricao" /]
     [#local vDescricao = .vars[varName]!default]
     <input type="hidden" name="vars" value="${varName}" />
-
-    [#assign varName = var + tipoSel + "Sel.sigla" /]
-    <input type="hidden" name="obrigatorios" value="${varName}" />	    
 
     [#if !gerar_formulario!false]
         [@field_selectable_box titulo=titulo var=var tipo=tipo refresh_js=refresh_js paramList=paramList modulo=modulo col=col hint=hint /]	        

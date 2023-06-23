@@ -43,6 +43,7 @@ import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpArquivo;
 import br.gov.jfrj.siga.cp.CpArquivoTipoArmazenamentoEnum;
 import br.gov.jfrj.siga.cp.TipoConteudo;
+import br.gov.jfrj.siga.cp.arquivo.ArmazenamentoTemporalidadeEnum;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.model.Objeto;
 
@@ -187,7 +188,7 @@ public abstract class AbstractExPreenchimento extends Objeto implements
 	public void setPreenchimentoBlob(byte[] preenchimentoBlob) {
 		if(preenchimentoBlob != null){
 			cpArquivo = CpArquivo.updateConteudoTp(cpArquivo, TipoConteudo.X_WWW_FORM_URLENCODED.getMimeType());
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, preenchimentoBlob);
+			cpArquivo = CpArquivo.updateConteudo(cpArquivo, preenchimentoBlob, "preenchimento-" + getNomePreenchimento(), ArmazenamentoTemporalidadeEnum.TEMPORARIO);
 		}
 	}
 	

@@ -5,12 +5,10 @@
 	<parent>
 		<groupId>siga</groupId>
 		<artifactId>siga-doc</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>11.1-SNAPSHOT</version>
 	</parent>
 
 	<packaging>jar</packaging>
-
-	<groupId>siga</groupId>
 	<artifactId>siga-integracao</artifactId>
 
 	<properties>
@@ -30,10 +28,8 @@
 			<version>1.9</version>
 		</dependency>
 		<dependency>
-
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
-			<version>2.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -43,7 +39,6 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.2</version>
 		</dependency>
 		<dependency>
     		<groupId>com.fasterxml.jackson.core</groupId>
@@ -69,17 +64,14 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcmail-jdk15on</artifactId>
-			<version>1.50</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.50</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.50</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>

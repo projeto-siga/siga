@@ -19,7 +19,6 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
 	@Override
 	@SuppressWarnings("unchecked")
 	public void run(Request req, Response resp, XjusRecordAPIContext ctx) throws Exception {
-		resp.list = new ArrayList<>();
 		if (req.lastdate == null)
 			req.lastdate = new Date(0L);
 		if (req.lastid == null)

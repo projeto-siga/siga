@@ -188,6 +188,7 @@ public class AppController extends GcController {
 				pagina);
 	}
 
+	@RequestParamsPermissiveCheck
 	@Path("/app/knowledgeInplace")
 	public void knowledgeInplace(Long id, String[] tags, String label, String msgvazio, String urlvazio, String titulo,
 			boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)
@@ -196,6 +197,7 @@ public class AppController extends GcController {
 				podeCriar, pagina);
 	}
 
+	@RequestParamsPermissiveCheck
 	@Path("/app/knowledgeInplaceMinimal")
 	public void knowledgeInplaceMinimal(Long id, String[] tags, String label, String msgvazio, String urlvazio,
 			String titulo, boolean testarAcesso, boolean popup, String estiloBusca, Boolean podeCriar, String pagina)

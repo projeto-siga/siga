@@ -67,6 +67,7 @@ import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 import com.nimbusds.openid.connect.sdk.validators.IDTokenValidator;
 import com.thetransactioncompany.json.pretty.PrettyJson;
 
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.sp.prodesp.siga.client.HTTPRequestParametersInterceptorServlet;
 import br.gov.sp.prodesp.siga.client.PendingAuthenticationRequest;
 import net.minidev.json.JSONObject;
@@ -261,24 +262,28 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 						createError("Invalid JWK set URL: " + e.getMessage());
 					return;
 				}
-				
-				// Display the remote signing JWK for the ID token
-				try {
-					List<JWK> candidates = new RemoteJWKSet(pendingRequest.getProviderMetadata().getJWKSetURI().toURL())
-						.get(new JWKSelector(new JWKMatcher.Builder()
-							.keyType(KeyType.forAlgorithm(idToken.getHeader().getAlgorithm()))
-							.keyID(((SignedJWT)idToken).getHeader().getKeyID())
-							.build()),
-							null);
+				if (Prop.get("/siga.integracao.sso.jwks.uri") != null) {
 					
-					if (candidates.isEmpty()) {
-							createError("No matching signing JWK found");
+					
+					// Display the remote signing JWK for the ID token
+					try {
+						List<JWK> candidates = new RemoteJWKSet(pendingRequest.getProviderMetadata().getJWKSetURI().toURL())
+							.get(new JWKSelector(new JWKMatcher.Builder()
+								.keyType(KeyType.forAlgorithm(idToken.getHeader().getAlgorithm()))
+								.keyID(((SignedJWT)idToken).getHeader().getKeyID())
+								.build()),
+								null);
+						
+						if (candidates.isEmpty()) {
+								createError("No matching signing JWK found");
+							return;
+						}
+						
+					} catch (Exception e) {
+							createError("Couldn't retrieve OpenID provider JWK set: " + e.getMessage());
 						return;
 					}
-					
-				} catch (Exception e) {
-						createError("Couldn't retrieve OpenID provider JWK set: " + e.getMessage());
-					return;
+				
 				}
 				
 			} else if (JWSAlgorithm.Family.HMAC_SHA.contains(idToken.getHeader().getAlgorithm())) {

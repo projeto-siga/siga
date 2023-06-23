@@ -81,6 +81,7 @@
 
 	<!-- main content -->
 	<div class="container-fluid">
+		<div id="alertError" style="font-size: 10pt;overflow: auto!important;max-height: 100px;" role="alert"></div>
 		<form name="frm" action="listar" id="listar" class="form100" method="GET">
 			<input type="hidden" name="paramoffset" value="0" />
 			<input type="hidden" name="p.offset" value="0" />
@@ -368,24 +369,40 @@
 	}
 	
 	function inativarPessoasSelecionadas(listaIdPessoasSelecionadas) {
-		
-		
-		$.ajax({
-			method:'POST',
-			url: '/siga/app/pessoa/inativarLote',
-			data: {'idPessoasSelecionadas':listaIdPessoasSelecionadas},
-			beforeSend: function(result){	
-				sigaSpinner.mostrar();
-				sigaModal.fechar('confirmacaoModal');
-	        },
-			success: function(result){	
-				location.reload();
-	        },
-			error: 'erro',
-	        complete: function(result){	
-	        	sigaSpinner.ocultar();
-	        }
-		});
+		if (typeof listaIdPessoasSelecionadas == "undefined" || listaIdPessoasSelecionadas.length == 0){
+			sigaModal.alerta("Selecione pelo menos uma pessoa para inativar!");
+		} else {
+			$.ajax({
+				method:'POST',
+				url: '/siga/app/pessoa/inativarLote',
+				data: {'idPessoasSelecionadas':listaIdPessoasSelecionadas},
+				beforeSend: function(result){	
+					sigaSpinner.mostrar();
+					sigaModal.fechar('confirmacaoModal');
+		        },
+				success: function(result){
+					location.reload();
+		        },
+		        error: function (err) {
+		        	inserirValueDivAlertaError(err.responseText);
+				},
+		        complete: function(result){	
+		        	sigaSpinner.ocultar();
+		        } 
+		        
+			});
+		}
+	}
+	
+	function inserirValueDivAlertaError(err) {
+		if(err != null || err != ""){
+			document.getElementById("alertError").classList.add('alert');
+			document.getElementById("alertError").classList.add('alert-danger');
+			document.getElementById("alertError").classList.add("fade-close")
+			document.getElementById("alertError").classList.remove("d-none");
+			document.getElementById("alertError").innerHTML = err;
+			window.scrollTo(0, 0);
+		}
 	}
 	
 	

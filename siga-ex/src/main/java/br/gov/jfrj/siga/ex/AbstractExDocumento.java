@@ -28,9 +28,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.Convert;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Sort;
@@ -51,6 +69,7 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.converter.ExTipoDePrincipalConverter;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
+import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 
 /**
  * A class that represents a row in the EX_DOCUMENTO table. You can customize
@@ -234,13 +253,14 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDePrincipal;
 				+ " 			   										AND (marca_cancelado.cpMarcador.idMarcador in (:enumListCancelados)) "
 				+ "														AND (marca_cancelado.dpPessoaIni.idPessoa=:pessoaIni or marca_cancelado.dpLotacaoIni.idLotacao=:lotaIni))"
 				+ "                ) order by marca.dtIniMarca desc"),
-		@NamedQuery(name = "consultarDocumentosArquivadosJaTransferido", query = "select mob, emFinal from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
+		@NamedQuery(name = "consultarDocumentosArquivadosJaTransferido", query = "select mob, emFinal, emAnterior.descrMov from ExDocumento doc JOIN ExMobil mob on (mob.exDocumento = doc.idDoc )"
 				+ " 			   JOIN ExMovimentacao emAnterior on (emAnterior.exMobil.idMobil = mob.idMobil) AND emAnterior.exTipoMovimentacao = 9 AND emAnterior.exMovimentacaoCanceladora = mob.ultimaMovimentacaoNaoCancelada"	
 				+ " 			   JOIN ExMovimentacao emFinal on (emFinal.exMobil.idMobil = mob.idMobil) AND emFinal.exTipoMovimentacao = 9"
 				+ " 			   JOIN CpMarca marca on (marca.idRef = mob.idMobil )"
 				+ "                where ("
-				+ " 			   ((doc.cadastrante.idPessoa = :pessoaIni ) or "
-				+ "					(doc.lotaCadastrante.idLotacao = :lotaIni))"
+				+ "((emAnterior.cadastrante.idPessoa = :pessoaIni) OR "
+				+ " (emAnterior.lotaCadastrante.idLotacao = :lotaIni)) "
+				+ " AND (emFinal.idMov = mob.ultimaMovimentacaoNaoCancelada.idMov)"
 				+ "                and (marca.cpMarcador.idMarcador in (:enumList))"
 				+ " 			   AND emFinal.exMovimentacaoRef.idMov = emAnterior.idMov"
 				+ " 			   AND (emFinal.lotaDestinoFinal.idLotacao <> 0 or emFinal.lotaDestinoFinal IS NOT NULL) "
@@ -1146,11 +1166,6 @@ public abstract class AbstractExDocumento extends ExArquivo implements
 		}
 	}
 
-	public void setConteudoBlobDoc(byte[] createBlob) {
-		if(createBlob != null)
-			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob);
-	}
-	
 	public CpArquivo getCpArquivoFormatoLivre() {
 		return cpArquivoFormatoLivre;
 	}

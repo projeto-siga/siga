@@ -66,12 +66,16 @@ import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.util.Texto;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExArquivoNumerado;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.ext.AbstractConversorHTMLFactory;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ProcessadorHtml;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -397,12 +401,12 @@ public class Documento {
 	public byte[] getDocumento(ExMobil mob, ExMovimentacao mov, boolean tamanhoOriginal)
 			throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		getDocumento(baos, null, mob, mov, false, true, false, null, null, tamanhoOriginal, null);
+		getDocumento(baos, null, mob, mov, false, true, false, null, null, tamanhoOriginal, null, false);
 		return baos.toByteArray();
 	}
 
 	public static boolean getDocumento(OutputStream os, String uuid, ExMobil mob, ExMovimentacao mov,
-			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado, boolean tamanhoOriginal, Integer paramoffset)
+			boolean completo, boolean estampar, boolean volumes, String hash, byte[] certificado, boolean tamanhoOriginal, Integer paramoffset, boolean reduzirVisuAssinPdf)
 			throws Exception {
 		PdfReader reader;
 		int n;
@@ -482,7 +486,8 @@ public class Documento {
 						Prop.get("carimbo.texto.superior"), 
 						mob.getExDocumento().getOrgaoUsuario().getDescricao(), 
 						mob.getExDocumento().getMarcaDagua(), 
-						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal);
+						an.getMobil().getDoc().getIdsDeAssinantes(),tamanhoOriginal, 
+						reduzirVisuAssinPdf);
 
 				bytes += ab.length;
 
@@ -619,6 +624,13 @@ public class Documento {
 		map.put("quantDocsPagina", EXIBICAO_PAG_PDF_COMPL_QTD_DOCS);
 		String json = new Gson().toJson(map); 
 		return json;
+	}
+	
+	public static boolean isReduzirVisuAssinPdf(DpPessoa titular, DpLotacao lotaTitular, ExDocumento doc) {
+		return new ExPodePorConfiguracao(titular, lotaTitular)
+				.withIdTpConf(ExTipoDeConfiguracao.REDUZIR_VISUALIZACAO_ASSINATURAS_DOCS_PDF)
+		        .withExMod(doc.getExModelo())
+		        .withExFormaDoc(doc.getExFormaDocumento()).eval();
 	}
 	
 	public static boolean exibirPaginacaoPdfDocCompleto() {

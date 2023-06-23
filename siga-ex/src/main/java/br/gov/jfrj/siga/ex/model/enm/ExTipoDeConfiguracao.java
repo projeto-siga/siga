@@ -111,7 +111,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			"Indica se determinada espécie ou modelo podem ser escolhidos quando o usuário pede para \"Incluir Documento\".",
 			new Enum[] { CpParamCfg.PESSOA, CpParamCfg.LOTACAO, CpParamCfg.TIPO_DE_LOTACAO, CpParamCfg.CARGO,
 					CpParamCfg.FUNCAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO, ExParamCfg.TIPO_FORMA_DOCUMENTO,
-					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+					ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO, ExParamCfg.CLASSIFICACAO },
 			new Enum[] { CpParamCfg.SITUACAO },
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
 					CpSituacaoDeConfiguracaoEnum.NAO_PODE },
@@ -607,7 +607,16 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
                     ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
             new Enum[] { CpParamCfg.SITUACAO }, new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE,
                     CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-            CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
+            CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+	
+	REDUZIR_VISUALIZACAO_ASSINATURAS_DOCS_PDF(65, "Reduzir Exibição de Assinaturas em Documentos em PDF", 
+			"Essa configuração permite a redução de exibição de assinaturas em Documentos PDF conforme exemplo: \"Apresentar bloco resumido em todas as páginas com duas assinaturas e a informação + 12 Pessoas,  Para verificar todas as assinaturas consulte o link de autenticação.\""
+			+ " (neste exemplo foram 14 assinaturas).",
+			new Enum[] { CpParamCfg.LOTACAO, CpParamCfg.ORGAO, ExParamCfg.TIPO_DOCUMENTO,
+					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] {CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE},
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
  
 	
 	private final int id; 

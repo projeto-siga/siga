@@ -40,10 +40,10 @@ public class PessoaLotacaoParser extends SiglaParser {
 
 	public static final String CARACTER = "[" + LETTER + "|" + NUMBER + "|" + CARACTERES_INVALIDOS_QUE_DEVEM_SER_REMOVIDOS_EM_BREVE + "]";
 
-	public static final String PESSOA = "(" + CARACTER + "{2}+" + ")" + "("
+	public static final String PESSOA = "(" + CARACTER + "+" + ")" + "("
 			+ NUMBER + "+" + ")";
 
-	public static final String LOTACAO = "(" + CARACTER + "{2}+" + ")" + "("
+	public static final String LOTACAO = "(" + CARACTER + "+" + ")" + "("
 			+ "[" + CARACTER + "|" + "/" + "|" + "-" + "]+" + ")";
 
 	public static final String PESSOA_E_OU_LOTACAO = "(" + PESSOA + ")?"
@@ -65,42 +65,22 @@ public class PessoaLotacaoParser extends SiglaParser {
 			throw new RuntimeException(
 					"Erro de sintaxe na definição da lotação para qual o documento deve ser transferido. A sintaxe correta é, por exemplo: @RJSESIE.");
 		else {
-			String siglaPessoa = matcher.group(3);
-			String orgaoPessoa = matcher.group(2);
-			String orgaoLotacao = matcher.group(5);
-			String siglaLotacao = matcher.group(6);
-			if (siglaPessoa != null) {
+			String siglaPessoaCompleta = matcher.group(1);
+			String siglaLotacaoCompleta = matcher.group(4);
+
+			if (siglaPessoaCompleta != null) {
 				try {
-					CpOrgaoUsuario orgao = null;
-					{
-						CpOrgaoUsuario example = new CpOrgaoUsuario();
-						example.setSiglaOrgaoUsu(orgaoPessoa);
-						orgao = (CpOrgaoUsuario) CpDao.getInstance()
-								.consultarPorSigla(example);
-					}
+
 					DpPessoaDaoFiltro filtro = new DpPessoaDaoFiltro();
-					filtro.setSigla(orgaoPessoa + siglaPessoa);
-					filtro.setIdOrgaoUsu(orgao.getIdOrgaoUsu());
-					DpPessoa pessoa = (DpPessoa) CpDao.getInstance()
-							.consultarPorSigla(filtro);
+					filtro.setSigla(siglaPessoaCompleta);
+					DpPessoa pessoa = (DpPessoa) CpDao.getInstance().consultarPorSigla(filtro);
 					this.setPessoa(pessoa);
 				} catch (Exception ex) {
 				}
 			}
-			if (siglaLotacao != null) {
+			if (siglaLotacaoCompleta != null) {
 				try {
-					CpOrgaoUsuario orgao = null;
-					{
-						CpOrgaoUsuario example = new CpOrgaoUsuario();
-						example.setSiglaOrgaoUsu(orgaoLotacao);
-						orgao = (CpOrgaoUsuario) CpDao.getInstance()
-								.consultarPorSigla(example);
-					}
-					DpLotacaoDaoFiltro filtro = new DpLotacaoDaoFiltro();
-					filtro.setSigla(siglaLotacao);
-					filtro.setIdOrgaoUsu(orgao.getIdOrgaoUsu());
-					DpLotacao lotacao = (DpLotacao) CpDao.getInstance()
-							.consultarPorSigla(filtro);
+					DpLotacao lotacao = (DpLotacao) CpDao.getInstance().getLotacaoFromSigla(siglaLotacaoCompleta);
 					this.setLotacao(lotacao);
 				} catch (Exception ex) {
 				}

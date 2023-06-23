@@ -126,6 +126,7 @@ public class SrConfiguracaoCache extends CpConfiguracaoCache {
 		this.acoesSet = cfg.getAcoesSet();
 		this.acaoFiltro = cfg.getAcaoFiltro() != null ? cfg.getAcaoFiltro() : null;
 		this.itemConfiguracaoFiltro = cfg.getItemConfiguracaoFiltro() != null ? cfg.getItemConfiguracaoFiltro() : null;
+		this.tipoPermissaoSet = cfg.getTipoPermissaoSet();
 	}
 	
     public int getNivelItemParaComparar() {

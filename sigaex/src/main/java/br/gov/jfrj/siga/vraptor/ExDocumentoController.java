@@ -308,7 +308,9 @@ public class ExDocumentoController extends ExController {
 
 	private boolean validar() {
 		if (getPar().get("obrigatorios") != null) {
-			for (final String valor : getPar().get("obrigatorios")) {
+			for (String valor : getPar().get("obrigatorios")) {
+			    if (valor != null && valor.endsWith("Sel.sigla"))
+			        valor = valor.replace("Sel.sigla", "Sel.id");
 				if (getPar().get(valor) == null
 						|| getPar().get(valor)[0].trim().equals("")
 						|| getPar().get(valor)[0].trim().equals("Não")
@@ -2593,6 +2595,7 @@ public class ExDocumentoController extends ExController {
 	private void lerForm(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars) throws IOException {
 		ExDocumento doc = exDocumentoDTO.getDoc();
+		doc.atrasarAtualizacaoDoArquivo();
 
 		if (doc.getCadastrante() == null) {
 			doc.setCadastrante(getCadastrante());

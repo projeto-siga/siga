@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExProtocolo;
+import br.gov.jfrj.siga.ex.ExRef;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
@@ -824,10 +825,9 @@ public class ExDocumentoController extends ExController {
 				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
 			
 			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
-				ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
-				
-				Map<String, String> form = Ex.getInstance().getBL().obterEntrevista(doc, false);
-				
+			    ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
+			    ExRef ref = new ExRef(doc);
+			    Map<String, String> form = ref.getForm();
 				for(Entry<String,String> entry : form.entrySet()) {
 					if(!parFreeMarker.containsKey(entry.getKey()))
 						parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});

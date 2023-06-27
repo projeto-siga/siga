@@ -4979,7 +4979,24 @@ ${texto}
 	[/#if]
 [/#macro]
 
-[#macro context var]${var}[/#macro]
+[#macro context var sensitivity=''][#compress]
+	[#if var=='SUBSCRITOR_NOME']${(doc.subscritor.descricao)!}
+	[#elseif var=='SUBSCRITOR_SIGLA']${(doc.subscritor.sigla)!}
+	[#elseif var=='SUBSCRITOR_CPF']${(doc.subscritor.cpfPessoa)!}
+	[#elseif var=='SUBSCRITOR_CARGO']${(doc.subscritor.cargo.descricao)!}
+	[#elseif var=='SUBSCRITOR_FUNCAO_DE_CONFIANCA']${(doc.subscritor.funcao.descricao)!}
+	[#elseif var=='SUBSCRITOR_UNIDADE']${(doc.subscritor.lotacao.descricao)!}
+	[#elseif var=='DESTINATARIO_NOME']${(doc.destinatario.descricao)!}
+	[#elseif var=='DESTINATARIO_SIGLA']${(doc.destinatario.sigla)!}
+	[#elseif var=='DESTINATARIO_CPF']${(doc.destinatario.cpfPessoa)!}
+	[#elseif var=='DESTINATARIO_CARGO']${(doc.destinatario.cargo.descricao)!}
+	[#elseif var=='DESTINATARIO_FUNCAO_DE_CONFIANCA']${(doc.destinatario.funcao.descricao)!}
+	[#elseif var=='DESTINATARIO_UNIDADE']${(doc.destinatario.lotacao.descricao)!}
+	[#elseif var=='DOCUMENTO_DATA']${(doc.dtDocDDMMYYYY)!}
+	[#elseif var=='DOCUMENTO_CIDADE_E_DATA']${doc.dtExtenso!}
+	[#elseif var=='DOCUMENTO_NUMERO']${(doc.sigla)!}
+	[#else]${var}[/#if]
+[/#compress][/#macro]
 
 [#macro division id="" depend="" suppressIndependent=false atts={}]
 	[#assign attsHtml][#list atts?keys as k]${k}="${atts[k]}"[/#list][/#assign]

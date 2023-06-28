@@ -14,23 +14,43 @@ public class ModelosIdLotacoesIdLotacaoPreenchimentosGet implements IModelosIdLo
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-		//TODO: Listar os preenchimentos da lotação selecionada na frente e os das outras lotações depois
-		//TODO: Listar os preenchimentos em ordem alfabetica
-		//TODO: Refatoração: reduzir comentarios desnecessários
+		
 		//TODO: Refatoração: reduzir repetição de código
-		
-		//novo código: lista todos os preenchimentos, independente da lotação selecionada
-		resp.list = listarPreenchimentosSemFiltroLotacao(Long.parseLong(req.id));
-		
-		//código anterior: lista os preenchimentos filtrados por Lotação
-		//resp.list = listarPreenchimentos(Long.parseLong(req.id), Long.parseLong(req.idLotacao));	
+		resp.list = listarPreenchimentosPriorizandoLotacao(Long.parseLong(req.id), Long.parseLong(req.idLotacao));	
 	}
+	
+	// Lista todos os preenchimentos, primeiro os preenchimentos da lotação selecionada, depois os das outras
+	public static List<PreenchimentoItem> listarPreenchimentosPriorizandoLotacao(Long idModelo, Long idLotacao) {
+	    ExDao dao = ExDao.getInstance();
+	    ExModelo mod = dao.consultar(idModelo, ExModelo.class, false);
+	    mod = dao.consultar(mod.getIdInicial(), ExModelo.class, false);
+	    ExPreenchimento filtro = new ExPreenchimento();
+	    filtro.setExModelo(mod);
+	    List<ExPreenchimento> l = dao.consultar(filtro);
+	    List<PreenchimentoItem> listaDePreenchimentos = new ArrayList<>();
+	    List<PreenchimentoItem> preenchimentosDeOutrasLotacoes = new ArrayList<>();
+
+	    for (ExPreenchimento i : l) {
+	        PreenchimentoItem item = new PreenchimentoItem();
+	        item.idPreenchimento = Long.toString(i.getIdPreenchimento());
+	        item.nome = i.getNomePreenchimento();
+
+	        // Se a lotação do preenchimento atual corresponder à lotação selecionada, adiciona à lista principal
+	        if (i.getDpLotacao().getId().equals(idLotacao)) {
+	            listaDePreenchimentos.add(item);
+	        } else {
+	        	preenchimentosDeOutrasLotacoes.add(item);
+	        }
+	    }
+
+	    listaDePreenchimentos.addAll(preenchimentosDeOutrasLotacoes);
+
+	    return listaDePreenchimentos;
+	}
+
 	
 	//Lista todos os preenchimentos de 1 lotação específica.
 	public static List<PreenchimentoItem> listarPreenchimentos(Long idModelo, Long idLotacao) {
-		//o resultado com o filtro de lotação deve ser exibido 1º
-		//na sequencia, exibir todas as outras opções em ordem alfabetica
-
 		ExDao dao = ExDao.getInstance();
 		ExModelo mod = dao.consultar(idModelo, ExModelo.class, false);
 		mod = dao.consultar(mod.getIdInicial(), ExModelo.class, false);

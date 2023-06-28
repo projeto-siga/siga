@@ -27,7 +27,7 @@ public class ModelosIdLotacoesIdLotacaoPreenchimentosGet implements IModelosIdLo
 	    ExPreenchimento filtro = new ExPreenchimento();
 	    filtro.setExModelo(mod);
 	    List<ExPreenchimento> l = dao.consultar(filtro);
-	    List<PreenchimentoItem> listaDePreenchimentos = new ArrayList<>();
+	    List<PreenchimentoItem> list = new ArrayList<>();
 	    List<PreenchimentoItem> preenchimentosDeOutrasLotacoes = new ArrayList<>();
 
 	    for (ExPreenchimento i : l) {
@@ -37,15 +37,15 @@ public class ModelosIdLotacoesIdLotacaoPreenchimentosGet implements IModelosIdLo
 
 	        // Se a lotação do preenchimento atual corresponder à lotação selecionada, adiciona à lista principal
 	        if (i.getDpLotacao().getId().equals(idLotacao)) {
-	            listaDePreenchimentos.add(item);
+	            list.add(item);
 	        } else {
 	        	preenchimentosDeOutrasLotacoes.add(item);
 	        }
 	    }
 
-	    listaDePreenchimentos.addAll(preenchimentosDeOutrasLotacoes);
+	    list.addAll(preenchimentosDeOutrasLotacoes);
 
-	    return listaDePreenchimentos;
+	    return list;
 	}
 
 	

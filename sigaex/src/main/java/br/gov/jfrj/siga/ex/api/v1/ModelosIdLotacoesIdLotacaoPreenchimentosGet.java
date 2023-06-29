@@ -14,28 +14,36 @@ public class ModelosIdLotacoesIdLotacaoPreenchimentosGet implements IModelosIdLo
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-		resp.list = listarPreenchimentos(Long.parseLong(req.id), Long.parseLong(req.idLotacao));
+		resp.list = listarPreenchimentos(Long.parseLong(req.id), Long.parseLong(req.idLotacao));	
 	}
-
+	
+	// Lista todos os preenchimentos, primeiro os preenchimentos da lotação selecionada, depois os das outras
 	public static List<PreenchimentoItem> listarPreenchimentos(Long idModelo, Long idLotacao) {
-		ExDao dao = ExDao.getInstance();
-		ExModelo mod = dao.consultar(idModelo, ExModelo.class, false);
-		mod = dao.consultar(mod.getIdInicial(), ExModelo.class, false);
-		DpLotacao lota = dao.consultar(idLotacao, DpLotacao.class, false);
-		lota = dao.consultar(lota.getIdInicial(), DpLotacao.class, false);
+	    ExDao dao = ExDao.getInstance();
+	    ExModelo mod = dao.consultar(idModelo, ExModelo.class, false);
+	    mod = dao.consultar(mod.getIdInicial(), ExModelo.class, false);
+	    ExPreenchimento filtro = new ExPreenchimento();
+	    filtro.setExModelo(mod);
+	    List<ExPreenchimento> l = dao.consultar(filtro);
+	    List<PreenchimentoItem> list = new ArrayList<>();
+	    List<PreenchimentoItem> preenchimentosDeOutrasLotacoes = new ArrayList<>();
 
-		ExPreenchimento filtro = new ExPreenchimento();
-		filtro.setExModelo(mod);
-		filtro.setDpLotacao(lota);
-		List<ExPreenchimento> l = dao.consultar(filtro);
-		List<PreenchimentoItem> list = new ArrayList<>();
-		for (ExPreenchimento i : l) {
-			PreenchimentoItem item = new PreenchimentoItem();
-			item.idPreenchimento = Long.toString(i.getIdPreenchimento());
-			item.nome = i.getNomePreenchimento();
-			list.add(item);
-		}
-		return list;
+	    for (ExPreenchimento i : l) {
+	        PreenchimentoItem item = new PreenchimentoItem();
+	        item.idPreenchimento = Long.toString(i.getIdPreenchimento());
+	        item.nome = i.getNomePreenchimento();
+
+	        // Se a lotação do preenchimento atual corresponder à lotação selecionada, adiciona à lista principal
+	        if (i.getDpLotacao().getId().equals(idLotacao)) {
+	            list.add(item);
+	        } else {
+	        	preenchimentosDeOutrasLotacoes.add(item);
+	        }
+	    }
+
+	    list.addAll(preenchimentosDeOutrasLotacoes);
+
+	    return list;
 	}
 
 	@Override

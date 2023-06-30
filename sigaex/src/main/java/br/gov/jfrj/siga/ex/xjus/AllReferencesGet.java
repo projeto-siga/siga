@@ -16,7 +16,9 @@ import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.base.XjusRecordServiceEnum;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
+import br.gov.jfrj.siga.ex.util.ExXjusRecordServiceEnum;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
@@ -30,11 +32,11 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 		if (req.lastid == null)
 			req.lastid = defaultLastId();
 
-		final CountDownLatch responseWaiter = new CountDownLatch(RecordServiceEnum.values().length);
-		Map<RecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
+		final CountDownLatch responseWaiter = new CountDownLatch(ExXjusRecordServiceEnum.values().length);
+		Map<ExXjusRecordServiceEnum, Future<SwaggerAsyncResponse<Response>>> map = new HashMap<>();
 
 		// Call Each System
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (ExXjusRecordServiceEnum service : ExXjusRecordServiceEnum.values()) {
 			String url = serviceUrl(service);
 
 			Request q = new Request();
@@ -51,7 +53,7 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
 		Date dt1 = new Date();
 
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (ExXjusRecordServiceEnum service : ExXjusRecordServiceEnum.values()) {
 			long timeout = TIMEOUT_MILLISECONDS - ((new Date()).getTime() - dt1.getTime());
 			if (timeout < 0L)
 				timeout = 0;
@@ -81,19 +83,19 @@ public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 			resp.list.remove(resp.list.size() - 1);
 	}
 
-	static public String serviceUrl(RecordServiceEnum service) {
+	static public String serviceUrl(ExXjusRecordServiceEnum service) {
 		String url = SwaggerServlet.getHttpServletRequest().getRequestURL().toString().replace("/x-jus/v1/",
 				"/x-jus/" + service.name().toLowerCase() + "/v1/");
 		return url;
 	}
 
 	static public String defaultLastId() {
-		return XjusUtils.formatId(0L) + "-" + RecordServiceEnum.values()[RecordServiceEnum.values().length - 1].ordinal();
+		return XjusUtils.formatId(0L) + "-" + ExXjusRecordServiceEnum.values()[XjusRecordServiceEnum.values().length - 1].ordinal();
 	}
 
 	static public String defaultCursor() {
 		String s = "";
-		for (RecordServiceEnum service : RecordServiceEnum.values()) {
+		for (ExXjusRecordServiceEnum service : ExXjusRecordServiceEnum.values()) {
 			if (!s.isEmpty())
 				s += ";";
 			s += XjusUtils.formatId(0L) + "-" + service.ordinal();

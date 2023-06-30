@@ -123,15 +123,44 @@ public class ExRef {
 		return map;
 	}
 
-	public String toString() {
-		if (getAns() == null || getAns().size() == 0)
-			return "";
-		List<String> l = new ArrayList<>();
-		for (ExArquivoNumerado an : getAns())
-			if (an.getMobil() != null)
-				l.add(an.getMobil().getSigla());
-		return Texto.stringsSeparadarComVirgulaEE(l);
-	}
+    public String getSigla() {
+        if (getAns() == null || getAns().size() == 0)
+            return "";
+        List<String> l = new ArrayList<>();
+        for (ExArquivoNumerado an : getAns())
+            if (an.getMobil() != null)
+                l.add(an.getMobil().getSigla());
+        return Texto.stringsSeparadarComVirgulaEE(l);
+    }
+    
+    public String getFolha() {
+        if (getAns() == null || getAns().size() == 0)
+            return "";
+        List<String> l = new ArrayList<>();
+        for (ExArquivoNumerado an : getAns())
+            if (an.getMobil() != null) {
+                String folha = an.getFolha();
+                if (folha != null)
+                    l.add(folha);
+            }
+        return Texto.stringsSeparadarComVirgulaEE(l);
+    }
+
+    public String getSiglaEFolha() {
+        if (getAns() == null || getAns().size() == 0)
+            return "";
+        List<String> l = new ArrayList<>();
+        for (ExArquivoNumerado an : getAns())
+            if (an.getMobil() != null) {
+                String folha = an.getFolha();
+                l.add(an.getMobil().getSigla() + (folha != null ? " (" + folha + ")" : ""));
+            }
+        return Texto.stringsSeparadarComVirgulaEE(l);
+    }
+
+    public String toString() {
+        return getSigla();
+    }
 
 	public ExDocumento getDoc() {
 		return doc;

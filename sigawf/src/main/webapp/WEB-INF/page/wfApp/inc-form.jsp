@@ -1,13 +1,13 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 
 <div>
-	<c:if test="${empty td}">
+	<c:if test="${empty td or piAnterior != pi}" >
 		<c:set var="td" value="${pi.definicaoDeTarefaCorrente}" scope="request"/>
 	</c:if>
+	<c:set var="piAnterior" value="${pi}" scope="request"/>
 	<c:set var="msgAviso" value="${pi.getMsgAviso(titular, lotaTitular)}" />
 	<c:set var="desabilitarFormulario" value="${pi.isDesabilitarFormulario(titular, lotaTitular)}" />
-	<c:if
-		test="${empty td.id or (not desabilitarFormulario and empty msgAviso)}">
+	<c:if test="${empty td.id or (not desabilitarFormulario and empty msgAviso)}"> 
 		<div class="gt-form-row gt-width-100">
 			<input type="hidden" value="${pi.id}" name="tiId" />
 			
@@ -193,7 +193,7 @@
 			</c:if>
 		</div>
 		<%--</c:if> --%>
-	</c:if>
+	</c:if> 
 	<c:if test="${not empty td.id}">
 		<span style="color: red; font-weight: bold;"> ${msgAviso}</span>
 	</c:if>

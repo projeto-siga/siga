@@ -187,27 +187,28 @@ public class SigaApiV1Servlet extends SwaggerServlet implements IPropertyProvide
 //					return uuid.equals(uuid2);
 //				}
 //			});
-    }
+	}
 
-    private void defineProperties() {
-        addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
-        addPublicProperty("senha.usuario.expiracao.dias", null);
+	private void defineProperties() {
+		addPublicProperty("datasource.name", "java:/jboss/datasources/SigaCpDS");
+		addPublicProperty("senha.usuario.expiracao.dias", null);
         addPrivateProperty("sinc.password", null);
-    }
+        addPublicProperty("quadro.quantitativo.exibir.documentos", "true");
+	}
 
-    @Override
-    public String getService() {
-        return "siga";
-    }
+	@Override
+	public String getService() {
+		return "siga";
+	}
 
-    @Override
-    public String getUser() {
-        return ContextoPersistencia.getUserPrincipal();
-    }
+	@Override
+	public String getUser() {
+		return ContextoPersistencia.getUserPrincipal();
+	}
 
-    @Override
-    public String getProp(String nome) {
-        return getProperty(nome);
-    }
+	@Override
+	public String getProp(String nome) {
+		return getProperty(nome);
+	}
 
 }

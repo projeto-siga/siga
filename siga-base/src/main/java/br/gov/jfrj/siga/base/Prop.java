@@ -200,6 +200,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.mesa.versao", "2ant");
 		provider.addPublicProperty("/siga.municipios", null);
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
+		provider.addPublicProperty("//sigaex.habilitarExibicaoDataDevolucao", "false"); //TODO
 
 		/* End-points Externos complementares */
 		provider.addPublicProperty("/siga.pagina.inicial.url", null);
@@ -220,7 +221,8 @@ public class Prop {
 		provider.addPrivateProperty("/xjus.jwt.secret", null);
 		provider.addPrivateProperty("/xjus.password", null);
 		provider.addPublicProperty("/xjus.permalink.url", null);
-		provider.addPublicProperty("/xjus.url", null);
+        provider.addPublicProperty("/xjus.url", null);
+        provider.addPublicProperty("/xjus.reindex", "false");
 		
 		// Propriedade para desabilitar itens de enums. Informar uma lista, separada por vírgula, na qual cada item é 
 		// composto do nome simples do enum, um ponto final e a propriedade .name() a ser desabilitada

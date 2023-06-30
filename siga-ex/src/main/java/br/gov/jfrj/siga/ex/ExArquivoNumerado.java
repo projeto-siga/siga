@@ -192,6 +192,15 @@ public class ExArquivoNumerado implements Comparable {
 		}
 		return 0;
 	}
+	
+    public String getFolha() {
+        if (getPaginaInicial() == null || getPaginaFinal() == null)
+            return null;
+        if (getPaginaInicial().equals(getPaginaFinal()))
+            return "fl. " + getPaginaInicial();
+        else
+            return "fls. " + getPaginaInicial() + "-" + getPaginaFinal();
+    }
 
 	public boolean isCopia() {
 		return copia;

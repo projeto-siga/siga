@@ -16,7 +16,7 @@ public class XjusUtils {
 	public static String formatId(Long id) {
 		return String.format("%012d", id);
 	}
-
+	
 	public static String getAcessosString(Set<Object> acessos, Date dt, Object incluirAcesso, Object excluirAcesso) {
 		if (acessos.contains(ACESSO_PUBLICO))
 			return ACESSO_PUBLICO;

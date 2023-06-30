@@ -361,7 +361,7 @@ public class Condutor extends TpModel implements ConvertableEntity, Comparable<C
 	public static Condutor recuperarLogado(DpPessoa titular, CpOrgaoUsuario orgaoUsuario) {
 		Map<String, Object> parametros = new HashMap<String,Object>();
 		parametros.put("cpOrgaoUsuario",orgaoUsuario);
-		parametros.put("idLotacaoIni",titular.getIdInicial());
+		parametros.put("idPessoaIni",titular.getIdInicial());
 		return Condutor.AR.find("dpPessoa.idPessoaIni=:idPessoaIni and cpOrgaoUsuario=:cpOrgaoUsuario", parametros).first();
 	}
 

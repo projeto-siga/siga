@@ -200,6 +200,7 @@ public class Prop {
 		provider.addPublicProperty("/siga.mesa.versao", "2ant");
 		provider.addPublicProperty("/siga.municipios", null);
 		provider.addPublicProperty("/siga.ws.seguranca.token.jwt", "false");
+		provider.addPublicProperty("//sigaex.habilitarExibicaoDataDevolucao", "false"); //TODO
 
 		/* End-points Externos complementares */
 		provider.addPublicProperty("/siga.pagina.inicial.url", null);

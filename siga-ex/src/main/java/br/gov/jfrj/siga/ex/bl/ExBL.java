@@ -4388,7 +4388,9 @@ public class ExBL extends CpBL {
 			dao().gravar(movCancelada);
 		}
 
-		Notificador.notificarDestinariosEmail(mov, mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA ? Notificador.TIPO_NOTIFICACAO_GRAVACAO : Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
+		Notificador.notificarDestinariosEmail(mov, (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA 
+				|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO 
+				||mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO) ? Notificador.TIPO_NOTIFICACAO_GRAVACAO : Notificador.TIPO_NOTIFICACAO_CANCELAMENTO);
 	}
 
 	public void excluirDocumentoAutomatico(final ExDocumento doc, DpPessoa titular, DpLotacao lotaTitular)

@@ -150,12 +150,13 @@ public class Notificador {
 			}
 		}
 		
-		if (mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.TRANSFERENCIA)
+		if ((mov.getExTipoMovimentacao() == (ExTipoDeMovimentacao.TRANSFERENCIA)
+				|| mov.getExTipoMovimentacao() == (ExTipoDeMovimentacao.TRAMITE_PARALELO)
+				|| mov.getExTipoMovimentacao() == (ExTipoDeMovimentacao.NOTIFICACAO))
 				|| ((mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO)
 						|| mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA))  
 						&& (mov.getExMovimentacaoRef().getExTipoMovimentacao() ==(ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA) 
-								|| mov.getExMovimentacaoRef().getExTipoMovimentacao() ==(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA)))
-				) {
+								|| mov.getExMovimentacaoRef().getExTipoMovimentacao() ==(ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA))))				 {
 			DpLotacao  lotacao;			
 			try {
 				if (mov.getResp() != null)
@@ -453,7 +454,9 @@ public class Notificador {
 			}
 		
 			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
-					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA) {
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO) {
 				if (mov.getResp() != null) {
 					conteudo.append("Destinatário:  <b>"
 							+ mov.getResp().getNomePessoa()
@@ -516,7 +519,9 @@ public class Notificador {
 			}
 
 			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
-					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA) {
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO) {
 				if (mov.getResp() != null) {
 					conteudoHTML.append("<p>Destinatário:  <b>"
 							+ mov.getResp().getNomePessoa() + " (Matrícula: "

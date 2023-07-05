@@ -102,7 +102,7 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 	}
 	
 	public String getSiglaDaLotacaoENomedoPreenchimento() {
-		return getDpLotacao().getSigla() + getNomePreenchimento();
+		return getDpLotacao().getSigla() + " - " + getNomePreenchimento();
 	}
 
 }

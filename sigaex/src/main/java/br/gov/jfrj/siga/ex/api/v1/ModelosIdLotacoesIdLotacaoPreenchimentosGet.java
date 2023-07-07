@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -14,10 +15,10 @@ public class ModelosIdLotacoesIdLotacaoPreenchimentosGet implements IModelosIdLo
 
 	@Override
 	public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
-		resp.list = listarPreenchimentos(Long.parseLong(req.id), Long.parseLong(req.idLotacao));	
+		resp.list = listarPreenchimentos(Long.parseLong(req.id), Long.parseLong(req.idLotacao));
 	}
 	
-	// Lista todos os preenchimentos, primeiro os preenchimentos da lotação selecionada, depois os das outras
+	
 	public static List<PreenchimentoItem> listarPreenchimentos(Long idModelo, Long idLotacao) {
 	    ExDao dao = ExDao.getInstance();
 	    ExModelo mod = dao.consultar(idModelo, ExModelo.class, false);
@@ -25,26 +26,37 @@ public class ModelosIdLotacoesIdLotacaoPreenchimentosGet implements IModelosIdLo
 	    ExPreenchimento filtro = new ExPreenchimento();
 	    filtro.setExModelo(mod);
 	    List<ExPreenchimento> l = dao.consultar(filtro);
-	    List<PreenchimentoItem> list = new ArrayList<>();
-	    List<PreenchimentoItem> preenchimentosDeOutrasLotacoes = new ArrayList<>();
 
+	    List<PreenchimentoItem> lotacaoSelecionadaList = new ArrayList<>();
+	    HashMap<Long, List<PreenchimentoItem>> lotacoesMap = new HashMap<>();
 	    for (ExPreenchimento i : l) {
 	        PreenchimentoItem item = new PreenchimentoItem();
 	        item.idPreenchimento = Long.toString(i.getIdPreenchimento());
-	        item.nome = i.getNomePreenchimento();
+	        String nome = i.getNomePreenchimento();
+	        String siglaLotacaoEPreenchimento = i.getSiglaDaLotacaoENomedoPreenchimento();
+	        item.nome = siglaLotacaoEPreenchimento;
 
-	        // Se a lotação do preenchimento atual corresponder à lotação selecionada, adiciona à lista principal
-	        if (i.getDpLotacao().getId().equals(idLotacao)) {
-	            list.add(item);
+	        Long idLotacaoAtual = i.getDpLotacao().getId();
+	        
+	        if (idLotacaoAtual.equals(idLotacao)) {
+	            lotacaoSelecionadaList.add(item);
 	        } else {
-	        	preenchimentosDeOutrasLotacoes.add(item);
+	            if (!lotacoesMap.containsKey(idLotacaoAtual)) {
+	                lotacoesMap.put(idLotacaoAtual, new ArrayList<>());
+	            }
+	            lotacoesMap.get(idLotacaoAtual).add(item);
 	        }
 	    }
 
-	    list.addAll(preenchimentosDeOutrasLotacoes);
-
+	    List<PreenchimentoItem> list = new ArrayList<>();
+	    list.addAll(lotacaoSelecionadaList);
+	    for (Long id : lotacoesMap.keySet()) {
+	        list.addAll(lotacoesMap.get(id));
+	    }
 	    return list;
 	}
+
+	
 
 	@Override
 	public String getContext() {

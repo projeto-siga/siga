@@ -416,7 +416,7 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("_Tramitar").descr("Enviar o documento para outra lotação ou pessoa.").icone("email_go").nameSpace("/app/expediente/mov").acao("transferir")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeTransferir(mob, titular, lotaTitular)).build());
 		
-		addAcao(AcaoVO.builder().nome("Tramitar em Paralelo").descr("Enviar o documento simultaneamente para outra lotação ou pessoa.").icone("email_go").nameSpace("/app/expediente/mov").acao("tramitar_paralelo")
+		addAcao(AcaoVO.builder().nome("Tramitar em Paralelo").descr("Enviar o documento simultaneamente para diversas lotações ou pessoas.").icone("email_go").nameSpace("/app/expediente/mov").acao("tramitar_paralelo")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeTramitarEmParalelo(mob, titular, lotaTitular)).build());
 		
 		addAcao(AcaoVO.builder().nome("Notificar").descr("Notificar determinada lotação ou pessoa sobre a existêcia deste documento.").icone("email_go").nameSpace("/app/expediente/mov").acao("notificar")

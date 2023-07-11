@@ -16,9 +16,12 @@ public class AuthTest {
     private static RequestSpecification requestSpecZZ99999;
     private static RequestSpecification requestSpecZZ99998;
     private static RequestSpecification requestSpecZZ99997;
+    private static RequestSpecification requestSpecZZ99996;
+    private static RequestSpecification requestSpecZZ99995;
+    private static RequestSpecification requestSpecZZ99994;
 
     public static enum Pessoa {
-        ZZ99999(1), ZZ99998(2), ZZ99997(3);
+        ZZ99999(1), ZZ99998(2), ZZ99997(3), ZZ99996(9), ZZ99995(8), ZZ99994(7);
 
         int id;
 
@@ -57,6 +60,9 @@ public class AuthTest {
                 localInstance = requestSpecZZ99999;
                 if (localInstance == null) {
                     RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
+                    requestSpecZZ99994 = buildSpec(auth("ZZ99994", "Password1"));
+                    requestSpecZZ99995 = buildSpec(auth("ZZ99995", "Password1"));
+                    requestSpecZZ99996 = buildSpec(auth("ZZ99996", "Password1"));
                     requestSpecZZ99997 = buildSpec(auth("ZZ99997", "Password1"));
                     requestSpecZZ99998 = buildSpec(auth("ZZ99998", "Password1"));
                     requestSpecZZ99999 = buildSpec(auth("ZZ99999", "Password1"));
@@ -102,6 +108,18 @@ public class AuthTest {
         return given().spec(requestSpecZZ99997);
     }
 
+    public static RequestSpecification givenZZ99996() {
+        return given().spec(requestSpecZZ99996);
+    }
+
+    public static RequestSpecification givenZZ99995() {
+        return given().spec(requestSpecZZ99995);
+    }
+
+    public static RequestSpecification givenZZ99994() {
+        return given().spec(requestSpecZZ99994);
+    }
+
     public static RequestSpecification givenFor(Pessoa pessoa) {
         switch (pessoa) {
             case ZZ99999:
@@ -110,6 +128,12 @@ public class AuthTest {
                 return givenZZ99998();
             case ZZ99997:
                 return givenZZ99997();
+            case ZZ99996:
+                return givenZZ99996();
+            case ZZ99995:
+                return givenZZ99995();
+            case ZZ99994:
+                return givenZZ99994();
         }
         return null;
     }

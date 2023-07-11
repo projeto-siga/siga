@@ -19,10 +19,15 @@ public class TramitarReceberEArquivar extends DocTest {
         
         Receber.receber(Pessoa.ZZ99998, sigla);
         
+        consultar(Pessoa.ZZ99998, sigla);
+        contemAcao("concluir_gravar", false);
+        contemAcao("arquivar_corrente_gravar", true);
+
         ArquivarCorrente.arquivar(Pessoa.ZZ99998, sigla);
         
         consultar(Pessoa.ZZ99998, sigla);
         contemMarca(CpMarcadorEnum.ARQUIVADO_CORRENTE, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
+        contemAcao("concluir_gravar", false);
         contemAcao("arquivar_corrente_gravar", false);
         contemAcao("reabrir_gravar", true);
     }

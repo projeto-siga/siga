@@ -487,6 +487,12 @@ app
 						else
 							resp = n.tipoResponsavel
 						break;
+			        case 'EMAIL2':
+                        if (n.refPessoaResponsavel && n.refPessoaResponsavel.originalObject && n.refPessoaResponsavel.originalObject.firstLine)
+                            resp = n.refPessoaResponsavel.originalObject.firstLine
+                        else
+                            resp = n.tipoResponsavel
+                        break;  
 					case 'RESPONSAVEL':
 						if (n.refResponsavel)
 							resp = $scope

@@ -2609,21 +2609,45 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return subscritoresDesp;
 	}
 
-	/**
-	 * Retorna se determinado documento recebeu juntada.
-	 */
-	public boolean isRecebeuJuntada() {
-		for (ExMobil mob : getExMobilSet()) {
-			if (mob.getExMovimentacaoReferenciaSet() != null ) {
-				for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
-					if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-							&& !mov.isCancelada())
-						return true;
-				}
-			}
-		}
-		return false;
-	}
+    /**
+     * Retorna se determinado documento recebeu juntada.
+     */
+    public boolean isRecebeuJuntada() {
+        return contemMovimentacaoReferenciaEmAlgumMobile(ExTipoDeMovimentacao.JUNTADA);
+    }
+
+    /**
+     * Retorna se determinado documento recebeu anexação.
+     */
+    public boolean isRecebeuAnexo() {
+        return contemMovimentacaoEmAlgumMobile(ExTipoDeMovimentacao.ANEXACAO);
+    }
+
+    private boolean contemMovimentacaoEmAlgumMobile(ExTipoDeMovimentacao tpmov) {
+        for (ExMobil mob : getExMobilSet()) {
+            if (mob.getExMovimentacaoSet() != null ) {
+                for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+                    if ((mov.getExTipoMovimentacao() == tpmov)
+                            && !mov.isCancelada())
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean contemMovimentacaoReferenciaEmAlgumMobile(ExTipoDeMovimentacao tpmov) {
+        for (ExMobil mob : getExMobilSet()) {
+            if (mob.getExMovimentacaoReferenciaSet() != null ) {
+                for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
+                    if ((mov.getExTipoMovimentacao() == tpmov)
+                            && !mov.isCancelada())
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
 
 	/**
 	 * Verifica se todos os móbiles do documento estão eliminados.

@@ -289,7 +289,7 @@
 						<c:if
 							test="${ (primeiroMobil == true) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
-							<!--TODO: Alterar a cor de fundo para destacar o campo no CSS dessa div-->
+							<!-- O Ajax abaixo chama esse arquivo: /sigawf/src/main/webapp/WEB-INF/page/wfApp/doc.jsp -->
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->
 							<c:set var="primeiroMobil" value="${false}" />
@@ -297,7 +297,6 @@
 						<c:if
 							test="${(not m.mob.geral) or (docVO.tipoFormaDocumento != 'processo_administrativo')}">
 							<div id="${m.sigla}" depende=";wf;" class="wf_div"></div>
-							<!--TODO: Alterar a cor de fundo para destacar o campo no CSS dessa div-->
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->
 						</c:if>

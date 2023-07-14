@@ -10,7 +10,7 @@
 		<c:set var="ajax" value="sim" scope="request" />
 
 		<div class="card mb-3 border-info">
-			<div class="card-header bg-warning text-white">
+			<div class="card-header bg-warning">
 				<a href="${linkTo[WfAppController].procedimento(pi.id)}"
 					style="color: white; text-decoration: underline;">${pi.sigla}</a> - 
 				<strong>${pi.definicaoDeTarefaCorrente.nome}</strong>

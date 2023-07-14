@@ -24,8 +24,8 @@
 				</siga:links>
 
 				<c:if test="${pi.pausado || pi.retomando}">
-					<div style="background-color: #2f5e5e"; class="card bg-info mb-3 mt-3">
-						<div style="background-color: #2f5e5e"; class="card-header text-white">
+					<div class="card bg-info mb-3 mt-3">
+						<div class="card-header text-white">
 							<c:if
 								test="${pi.tipoDePrincipal eq 'DOCUMENTO' and not empty pi.principal}">
 								<a

@@ -2799,14 +2799,23 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return false;
 	}
 
-	public Set<ExDocumento> getDocumentoETodosOsPaisDasVias() {
-		Set<ExDocumento> docs = new HashSet<ExDocumento>();
-		docs.add(this);
-		docs.addAll(getTodosOsPaisDasVias());
-		return docs;
-	}
+    public Set<ExDocumento> getDocumentoETodosOsPaisDasVias() {
+        return getDocumentoETodosOsPaisDasVias(new HashSet<ExDocumento>());
+    }
 
-	public List<ExDocumento> getTodosOsPaisDasVias() {
+    public Set<ExDocumento> getDocumentoETodosOsPaisDasVias(Set<ExDocumento> docs) {
+        if (!docs.contains(this)) {
+            docs.add(this);
+            docs.addAll(getTodosOsPaisDasVias(docs));
+        }
+        return docs;
+    }
+
+    public List<ExDocumento> getTodosOsPaisDasVias() {
+        return getTodosOsPaisDasVias(new HashSet<ExDocumento>());
+    }
+        
+    public List<ExDocumento> getTodosOsPaisDasVias(Set<ExDocumento> docs) {
 		List<ExDocumento> pais = new ArrayList<ExDocumento>();
 		if (!isExpediente())
 			return pais;
@@ -2816,8 +2825,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			ExMobil pai = mob.getExMobilPai();
 			// impede loop infinito ao acessar documentos juntados a ele mesmo
 			if (pai != null
-					&& pai.getDoc().getIdDoc() != mob.getDoc().getIdDoc())
-				pais.addAll(pai.doc().getDocumentoETodosOsPaisDasVias());
+					&& pai.getDoc().getIdDoc() != mob.getDoc().getIdDoc() && !docs.contains(pai.doc()))
+				pais.addAll(pai.doc().getDocumentoETodosOsPaisDasVias(docs));
 		}
 		return pais;
 	}

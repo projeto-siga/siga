@@ -154,6 +154,9 @@ public class OpenIdServlet extends javax.servlet.http.HttpServlet {
 
 			if (oidcParameter.getParametersOIDC().getScopeEmail())
 				scope.add("email");
+			
+			if (oidcParameter.getParametersOIDC().getScopeGovBrConfiabilidades())
+				scope.add("govbr_confiabilidades");
 
 			if (oidcParameter.getParametersOIDC().getScopeProfile())
 				scope.add("profile");

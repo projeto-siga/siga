@@ -82,7 +82,9 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 	private static final String HTTP_REQUEST_PARAMETERS2 = "http-request-parameters";
 	private static final String PUBLIC_APP_LOGIN_SP = "public/app/loginSSO";
 	public  static final String PUBLIC_CPF_USER_SSO = "cpfUserSSO";
-
+	public  static final String PUBLIC_ACCESSTOKEN = "accessToken";
+	public static final String URL_SERVICOS = "https://api.staging.acesso.gov.br";
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -369,7 +371,7 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 				
 				createUserInfo(userInfoJWEHeader, userInfoJWSHeader, jsonObject);
 				
-				reqSession(jsonObject, req);
+				reqSession(jsonObject, req, accessToken);
 				
 				handleCallback(resp);
 				 
@@ -382,10 +384,12 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 	/*
 	 * SESSION
 	 */
-	private void reqSession(JSONObject jsonObject, HttpServletRequest req) {
+	private void reqSession(JSONObject jsonObject, HttpServletRequest req, AccessToken accessToken) {
 		String cpf = (String) jsonObject.get("sub");
 		if(!cpf.isEmpty()){
 			req.getSession().setAttribute(PUBLIC_CPF_USER_SSO, cpf);
+			req.getSession().setAttribute(PUBLIC_ACCESSTOKEN, accessToken.getValue());
+			
 		}
 		log.debug("CPF SSO: " + cpf);
 	}

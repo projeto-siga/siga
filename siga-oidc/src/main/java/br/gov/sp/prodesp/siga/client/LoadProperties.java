@@ -48,6 +48,7 @@ public class LoadProperties {
 	static final String scopeOpenId = "scope_openid";
 	static final String scopeEmail = "scope_email";
 	static final String scopeProfile = "scope_profile";
+	static final String scopeGovBrConfiabilidades = "scope_govbr_confiabilidades";
 	static final String scopePhone = "scope_phone";
 	static final String scopeAddress = "scope_address";
 	static final String scopeOfflineAccess = "scope_offline_access";
@@ -115,8 +116,9 @@ public class LoadProperties {
 		parametersOIDC.setResponseType(adaptorProperties.getProperty(responseType).trim());
 		parametersOIDC.setScopeOpenId(new Boolean(adaptorProperties.getProperty(scopeOpenId).trim()));
 		parametersOIDC.setScopeEmail(new Boolean(adaptorProperties.getProperty(scopeEmail).trim()));
+		parametersOIDC.setScopeGovBrConfiabilidades(new Boolean(adaptorProperties.getProperty(scopeGovBrConfiabilidades).trim()));
 		parametersOIDC.setScopeProfile(new Boolean(adaptorProperties.getProperty(scopeProfile).trim()));
-		parametersOIDC.setScopeProfile(new Boolean(adaptorProperties.getProperty(scopePhone).trim()));
+		parametersOIDC.setScopePhone(new Boolean(adaptorProperties.getProperty(scopePhone).trim()));
 		parametersOIDC.setScopeAddress(new Boolean(adaptorProperties.getProperty(scopeAddress).trim()));
 		parametersOIDC.setScopeOfflineAccess(new Boolean(adaptorProperties.getProperty(scopeOfflineAccess).trim()));
 		parametersOIDC.setPrompt(adaptorProperties.getProperty(prompt).trim());

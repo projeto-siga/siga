@@ -289,6 +289,7 @@
 						<c:if
 							test="${ (primeiroMobil == true) and (docVO.tipoFormaDocumento == 'processo_administrativo')}">
 							<div id="${docVO.sigla}" depende=";wf;" class="wf_div"></div>
+							<!-- O Ajax abaixo chama esse arquivo: /sigawf/src/main/webapp/WEB-INF/page/wfApp/doc.jsp -->
 							<!--ajax:${doc.codigo}-${i}-->
 							<!--/ajax:${doc.codigo}-${i}-->
 							<c:set var="primeiroMobil" value="${false}" />

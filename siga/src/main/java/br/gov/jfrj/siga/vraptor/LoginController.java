@@ -352,7 +352,7 @@ public class LoginController extends SigaController {
 	}
 	
 	private List<NivelDaContaGovBr> getNiveisDeConta(String accessToken, String cpf) throws  Exception, AplicacaoException {
-		URL url = new URL(CallBackServlet.URL_SERVICOS + "/confiabilidades/v3/contas/" + cpf + "/niveis?response-type=ids");
+		URL url = new URL(Prop.get("/siga.integracao.sso.nivelDaConta.dominio") + "/confiabilidades/v3/contas/" + cpf + "/niveis?response-type=ids");
 		log.debug("Invocando url para recuperar niveis da Conta :" + url); 
 		log.debug("Bearer " + accessToken);
 		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();

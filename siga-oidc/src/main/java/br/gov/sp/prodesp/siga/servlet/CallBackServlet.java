@@ -83,7 +83,6 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 	private static final String PUBLIC_APP_LOGIN_SP = "public/app/loginSSO";
 	public  static final String PUBLIC_CPF_USER_SSO = "cpfUserSSO";
 	public  static final String PUBLIC_ACCESSTOKEN = "accessToken";
-	public static final String URL_SERVICOS = "https://api.staging.acesso.gov.br";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

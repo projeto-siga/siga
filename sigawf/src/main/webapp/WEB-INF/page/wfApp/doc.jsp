@@ -12,7 +12,7 @@
 		<div class="card mb-3 border-info">
 			<div class="card-header bg-warning">
 				<a href="${linkTo[WfAppController].procedimento(pi.id)}"
-					style="color: white; text-decoration: underline;">${pi.sigla}</a> - 
+					style="color: black; text-decoration: underline;">${pi.sigla}</a> - 
 				<strong>${pi.definicaoDeTarefaCorrente.nome}</strong>
 			</div>
 			<div class="card-body">

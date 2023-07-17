@@ -340,10 +340,6 @@ public class ExAssinadorExternoController extends ExController {
 
 			DpPessoa cadastrante = obterCadastrante(cpf, mob, mov);
 
-			boolean apenasComSolicitacaoDeAssinatura = !Ex.getInstance().getConf().podePorConfiguracao(cadastrante, ExTipoDeConfiguracao.PODE_ASSINAR_SEM_SOLICITACAO);
-			if (apenasComSolicitacaoDeAssinatura && !mob.doc().isAssinaturaSolicitada())
-				throw new Exception("Documento requer solicitação de assinatura. Provavelmente, o documento foi editado após a solicitação.");
-
 			String msg = null;
 
 			DpLotacao lotaCadastrante = getLotaTitular() != null ? getLotaTitular() : cadastrante != null ? cadastrante.getLotacao() : null;

@@ -1672,9 +1672,18 @@ document.getElementById('tramitar').onclick = function() {
 	    
 	    // Verificar se a div existe e está visível para saber se o documento tem um workflow associado
 	    if (div && div.offsetWidth > 0 && div.offsetHeight > 0) {
-	        return confirm('Esse documento já possui um worflow associado, você tem certeza que deseja tramitar este documento?');
+	        return confirm('Este documento está atualmente tramitando por um workflow. Tramitar manualmente pode resultar em inconsistências no processo. Você tem certeza que deseja prosseguir com o trâmite manual?');
 	    }
 	}
+	
+document.getElementById('tramitar-em-paralelo').onclick = function() {
+    var div = document.getElementById('quadro_destaque_tem_workflow_associado');
+    
+    // Verificar se a div existe e está visível para saber se o documento tem um workflow associado
+    if (div && div.offsetWidth > 0 && div.offsetHeight > 0) {
+        return confirm('Este documento está atualmente tramitando por um workflow. Tramitar manualmente pode resultar em inconsistências no processo. Você tem certeza que deseja prosseguir com o trâmite manual?');
+    }
+}
 </script>
 <c:if test="${podeReordenar}"> 
 	<script src="/siga/javascript/assinatura.reordenar-ass.js"></script>

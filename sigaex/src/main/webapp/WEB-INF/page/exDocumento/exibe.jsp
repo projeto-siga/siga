@@ -1666,6 +1666,16 @@
 			document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
 	} 
 </script>
+<script>
+document.getElementById('tramitar').onclick = function() {
+	    var div = document.getElementById('quadro_destaque_tem_workflow_associado');
+	    
+	    // Verificar se a div existe e está visível para saber se o documento tem um workflow associado
+	    if (div && div.offsetWidth > 0 && div.offsetHeight > 0) {
+	        return confirm('Esse documento já possui um worflow associado, você tem certeza que deseja tramitar este documento?');
+	    }
+	}
+</script>
 <c:if test="${podeReordenar}"> 
 	<script src="/siga/javascript/assinatura.reordenar-ass.js"></script>
 </c:if>

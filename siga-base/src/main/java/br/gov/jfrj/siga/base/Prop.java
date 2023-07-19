@@ -366,6 +366,9 @@ public class Prop {
 		/* Properties para ativação do Módulo de compra e contratações.*/
 		provider.addPrivateProperty("/secc.ui.url", null);
 		
+		/* Property que é enviada nas chamadas de webservice do freemarker, no header authorization.*/
+		provider.addPrivateProperty("/siga.freemarker.webservice.password", null);
+		
 		/* Configuração do tamanho máximo para exibição paginada de documento completo em pdf
 		 * Quantidade de Documentos presentes por pagina */
 		provider.addPublicProperty("/siga.exibicao.paginada.pdf.completo.megabytes.tamanhomax", null);

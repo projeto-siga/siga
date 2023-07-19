@@ -18,9 +18,11 @@
  ******************************************************************************/
 package br.gov.jfrj.siga.ex.util;
 
+import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,7 +39,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import br.gov.jfrj.siga.ex.logic.*;
+import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.xml.sax.InputSource;
 
@@ -75,6 +77,24 @@ import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.DiariasDaJustica
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.FaixaEnum;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.TipoDeDiariaEnum;
 import br.gov.jfrj.siga.ex.calc.diarias.DiariasDaJusticaFederal.TipoDeTransporteParaEmbarqueEDestinoEnum;
+import br.gov.jfrj.siga.ex.logic.ExDefaultUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExDeveAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExDeveUtilizarSegundoFatorPIN;
+import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinar;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacao;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAssinarPor;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarDocumento;
+import br.gov.jfrj.siga.ex.logic.ExPodeAutenticarMovimentacaoComSenha;
+import br.gov.jfrj.siga.ex.logic.ExPodeDisponibilizarNoAcompanhamentoDoProtocolo;
+import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
+import br.gov.jfrj.siga.ex.logic.ExPodeUtilizarSegundoFatorPIN;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
@@ -940,13 +960,37 @@ public class FuncoesEL {
 					corpo = corpo.replaceAll(">\\s+", ">").replaceAll("\\s+<", "<");
 				}
 			}
-			String auth = (String) resource("/siga.freemarker.webservice.password");
+			String auth = Prop.get("/siga.freemarker.webservice.password");
 			if (auth != null)
 				headers.put("Authorization", auth);
-			// String s = ConexaoHTTP.get(url, headers, timeout, corpo);
-			// //Reescrito para utilizar o SigaTTP
 			SigaHTTP sigaHTTP = new SigaHTTP();
 			String s = sigaHTTP.getNaWeb(url, headers, timeout, corpo);
+			return s;
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
+	public static String fetch(String method, String url, String payload, Map<String, String> headers, Integer timeout) {
+		try {
+			if (headers == null)
+				headers = new HashMap<String, String>();
+			if (payload != null && payload.isEmpty())
+				payload = null;
+			if (payload != null && headers.get("Content-Type") == null) {
+				if (payload.startsWith("<"))
+					headers.put("Content-Type", "text/xml;charset=UTF-8");
+				else
+					headers.put("Content-Type", "application/json");
+			}
+			String auth = Prop.get("/siga.freemarker.webservice.password");
+			if (auth != null)
+				headers.put("Authorization", auth);
+			SigaHTTP sigaHTTP = new SigaHTTP();
+			InputStream is = sigaHTTP.fetch(url, headers,	timeout, payload, method);
+			byte[] ab = sigaHTTP.convertStreamToByteArray(is, 8192);
+			String s = new String(ab, StandardCharsets.UTF_8);
+			System.out.println(s);
 			return s;
 		} catch (Exception e) {
 			return "";

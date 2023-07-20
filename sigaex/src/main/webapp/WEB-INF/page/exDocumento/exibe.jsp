@@ -1666,6 +1666,15 @@
 			document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
 	} 
 </script>
+
+<!-- Verifica qual é o tipo da tarefa 
+<c:forEach var="pi" items="${item.value}">
+    <script type="text/javascript">
+        // Armazene o valor de pi.definicaoDeTarefaCorrente.nome em uma variável JavaScript
+        var workflowTaskType = "${pi.definicaoDeTarefaCorrente.nome}";
+    </script>
+</c:forEach>
+-->
 <script>
 document.getElementById('tramitar').onclick = function() {
 	    var div = document.getElementById('quadro_destaque_tem_workflow_associado');
@@ -1684,7 +1693,23 @@ document.getElementById('tramitar-em-paralelo').onclick = function() {
         return confirm('Este documento está atualmente tramitando por um workflow. Tramitar manualmente pode resultar em inconsistências no processo. Você tem certeza que deseja prosseguir com o trâmite manual?');
     }
 }
+
+// Exibir a mensagem de confirmação se o quadro tem um workflow associado
+document.getElementById('incluir-documento').onclick = function() {
+    var div = document.getElementById('quadro_destaque_tem_workflow_associado');
+    if (tipoDeTarefa != "INCLUIR_DOCUMENTO"){
+    	event.preventDefault();
+    }
+    if (tipoDeTarefa == "INCLUIR_DOCUMENTO"){
+    	if (div && div.offsetWidth > 0 && div.offsetHeight > 0) {
+        	return confirm('Já existe uma minuta de documento gerada automaticamente pelo sistema, que pode ser editada pelo usuário, se necessário. Você realmente deseja prosseguir com a inclusão de um novo documento?');
+    	} else {
+    		event.preventDefault();
+    	}
+    }
+}
 </script>
+
 <c:if test="${podeReordenar}"> 
 	<script src="/siga/javascript/assinatura.reordenar-ass.js"></script>
 </c:if>

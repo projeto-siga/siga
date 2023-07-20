@@ -14,6 +14,10 @@
 				<a href="${linkTo[WfAppController].procedimento(pi.id)}"
 					style="color: black; text-decoration: underline;">${pi.sigla}</a> - 
 				<strong>${pi.definicaoDeTarefaCorrente.nome}</strong>
+						<script type="text/javascript">
+							// Identifica o tipo de tarefa para condições no exibe.jsp
+							var tipoDeTarefa = "${pi.definicaoDeTarefaCorrente.tipoDeTarefa}";
+						</script>
 			</div>
 			<div class="card-body">
 

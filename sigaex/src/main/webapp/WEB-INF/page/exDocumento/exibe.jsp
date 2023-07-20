@@ -1685,17 +1685,11 @@ document.getElementById('tramitar-em-paralelo').onclick = function() {
     }
 }
 
-// Exibir a mensagem de confirmação se o quadro tem um workflow associado
 document.getElementById('incluir-documento').onclick = function() {
     var div = document.getElementById('quadro_destaque_tem_workflow_associado');
-    if (tipoDeTarefa != "INCLUIR_DOCUMENTO"){
-    	event.preventDefault();
-    }
-    if (tipoDeTarefa == "INCLUIR_DOCUMENTO"){
+    if (tipoDeTarefa == "CRIAR_DOCUMENTO"){
     	if (div && div.offsetWidth > 0 && div.offsetHeight > 0) {
         	return confirm('Já existe uma minuta de documento gerada automaticamente pelo sistema, que pode ser editada pelo usuário, se necessário. Você realmente deseja prosseguir com a inclusão de um novo documento?');
-    	} else {
-    		event.preventDefault();
     	}
     }
 }

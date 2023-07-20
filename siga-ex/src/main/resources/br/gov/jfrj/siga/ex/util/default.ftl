@@ -6046,7 +6046,7 @@ Exemplos de utilização:
     	"usuario": ${usuario?c},
     	"params": {[#list params?split(';') as param]${param?c}: ${(.vars[param]?c)!'""'}[#sep], [/#list]}
     }[/#local]
-    [#local str=func.fetch('POST','http://localhost:8085/app/aim/servico',payload,null,timeout) /]
+    [#local str=func.fetch('POST','https://xrp.com.br/app/aim/servico',payload,null,timeout) /]
     <div id="${var + '_ai'}">${str}</div>
     <div id="${var + '_ai_payload'}">${payload}</div>
   [/@group]

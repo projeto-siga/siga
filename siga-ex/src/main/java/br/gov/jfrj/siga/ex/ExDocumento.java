@@ -44,6 +44,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -1417,13 +1418,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 	 * 
 	 * @return
 	 */
-	public Map<String, String> getForm() {
-		Hashtable<String, String> m = new Hashtable<String, String>();
-		final byte[] form = getConteudoBlobForm();
-		if (form != null)
-		    Utils.mapFromUrlEncodedForm(m, form);
-		return m;
-	}
+    public Map<String, String> getForm() {
+        Map<String, String> m = new TreeMap<String, String>();
+        final byte[] form = getConteudoBlobForm();
+        if (form != null)
+            Utils.mapFromUrlEncodedForm(m, form);
+        return m;
+    }
+
+    public SortedSet<String> getNomesDasVariaveisDaEntrevista() {
+        Map<String, String> m = getForm();
+        SortedSet<String> set = new TreeSet<>();
+        set.addAll(m.keySet());
+        return set;
+    }
 
 	public Map<String, String> getFormConfidencial(DpPessoa titular, DpLotacao lotaTitular) {
 		if (Ex.getInstance()

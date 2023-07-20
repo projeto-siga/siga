@@ -1666,15 +1666,6 @@
 			document.getElementById('painel').src = montarUrlDocPDF('${urlCapturado}',document.getElementById('visualizador').value); 
 	} 
 </script>
-
-<!-- Verifica qual é o tipo da tarefa 
-<c:forEach var="pi" items="${item.value}">
-    <script type="text/javascript">
-        // Armazene o valor de pi.definicaoDeTarefaCorrente.nome em uma variável JavaScript
-        var workflowTaskType = "${pi.definicaoDeTarefaCorrente.nome}";
-    </script>
-</c:forEach>
--->
 <script>
 document.getElementById('tramitar').onclick = function() {
 	    var div = document.getElementById('quadro_destaque_tem_workflow_associado');

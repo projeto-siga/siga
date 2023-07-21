@@ -9,11 +9,15 @@
 	<c:forEach var="pi" items="${item.value}">
 		<c:set var="ajax" value="sim" scope="request" />
 
-		<div class="card mb-3 border-info">
+		<div id="quadro_destaque_tem_workflow_associado" class="card mb-3 border-info">
 			<div class="card-header bg-warning">
 				<a href="${linkTo[WfAppController].procedimento(pi.id)}"
-					style="color: white; text-decoration: underline;">${pi.sigla}</a> - 
+					style="color: black; text-decoration: underline;">${pi.sigla}</a> - 
 				<strong>${pi.definicaoDeTarefaCorrente.nome}</strong>
+						<script type="text/javascript">
+							// Identifica o tipo de tarefa para condições no exibe.jsp
+							var tipoDeTarefa = "${pi.definicaoDeTarefaCorrente.tipoDeTarefa}";
+						</script>
 			</div>
 			<div class="card-body">
 

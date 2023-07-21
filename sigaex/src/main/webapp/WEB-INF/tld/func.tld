@@ -388,6 +388,11 @@
   <function-signature>java.lang.String webservice(java.lang.String, java.lang.String, java.lang.Integer)</function-signature>
  </function>
  <function>
+  <name>fetch</name>
+  <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
+  <function-signature>java.lang.String fetch(java.lang.String, java.lang.String, java.lang.String, Map&lt;String,String&gt;, java.lang.Integer)</function-signature>
+ </function>
+ <function>
   <name>parseXML</name>
   <function-class>br.gov.jfrj.siga.ex.util.FuncoesEL</function-class>
   <function-signature>freemarker.ext.dom.NodeModel webservice(java.lang.String)</function-signature>

@@ -9,7 +9,7 @@
 	<c:forEach var="pi" items="${item.value}">
 		<c:set var="ajax" value="sim" scope="request" />
 
-		<div id="quadro_destaque_tem_workflow_associado" class="card mb-3 border-info">
+		<div id="quadro_destaque_tem_workflow_associado" class="card mb-3 border-warning">
 			<div class="card-header bg-warning">
 				<a href="${linkTo[WfAppController].procedimento(pi.id)}"
 					style="color: black; text-decoration: underline;">${pi.sigla}</a> - 

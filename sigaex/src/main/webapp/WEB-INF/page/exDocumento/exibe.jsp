@@ -120,6 +120,10 @@
 		
 	.tabela-ordenavel tbody a {
 		pointer-events: none;
+	}
+	
+	.border-warning {
+    	border-color: #ffc107; /* A cor geralmente usada para bg-warning no Bootstrap */
 	}								
 </style>						
 

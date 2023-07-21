@@ -124,11 +124,7 @@
 	
 	.border-warning {
     	border-color: #ffc107; /* A cor geralmente usada para bg-warning no Bootstrap */
-	}
-	.text-black-underline {
-    	color: black;
-    	text-decoration: underline;
-	}								
+	}							
 </style>						
 
 <script>

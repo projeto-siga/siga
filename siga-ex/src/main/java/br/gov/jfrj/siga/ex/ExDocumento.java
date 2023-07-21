@@ -2613,21 +2613,45 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return subscritoresDesp;
 	}
 
-	/**
-	 * Retorna se determinado documento recebeu juntada.
-	 */
-	public boolean isRecebeuJuntada() {
-		for (ExMobil mob : getExMobilSet()) {
-			if (mob.getExMovimentacaoReferenciaSet() != null ) {
-				for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
-					if ((mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
-							&& !mov.isCancelada())
-						return true;
-				}
-			}
-		}
-		return false;
-	}
+    /**
+     * Retorna se determinado documento recebeu juntada.
+     */
+    public boolean isRecebeuJuntada() {
+        return contemMovimentacaoReferenciaEmAlgumMobile(ExTipoDeMovimentacao.JUNTADA);
+    }
+
+    /**
+     * Retorna se determinado documento recebeu anexação.
+     */
+    public boolean isRecebeuAnexo() {
+        return contemMovimentacaoEmAlgumMobile(ExTipoDeMovimentacao.ANEXACAO);
+    }
+
+    private boolean contemMovimentacaoEmAlgumMobile(ExTipoDeMovimentacao tpmov) {
+        for (ExMobil mob : getExMobilSet()) {
+            if (mob.getExMovimentacaoSet() != null ) {
+                for (ExMovimentacao mov : mob.getExMovimentacaoSet()) {
+                    if ((mov.getExTipoMovimentacao() == tpmov)
+                            && !mov.isCancelada())
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean contemMovimentacaoReferenciaEmAlgumMobile(ExTipoDeMovimentacao tpmov) {
+        for (ExMobil mob : getExMobilSet()) {
+            if (mob.getExMovimentacaoReferenciaSet() != null ) {
+                for (ExMovimentacao mov : mob.getExMovimentacaoReferenciaSet()) {
+                    if ((mov.getExTipoMovimentacao() == tpmov)
+                            && !mov.isCancelada())
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
 
 	/**
 	 * Verifica se todos os móbiles do documento estão eliminados.
@@ -2797,14 +2821,23 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return false;
 	}
 
-	public Set<ExDocumento> getDocumentoETodosOsPaisDasVias() {
-		Set<ExDocumento> docs = new HashSet<ExDocumento>();
-		docs.add(this);
-		docs.addAll(getTodosOsPaisDasVias());
-		return docs;
-	}
+    public Set<ExDocumento> getDocumentoETodosOsPaisDasVias() {
+        return getDocumentoETodosOsPaisDasVias(new HashSet<ExDocumento>());
+    }
 
-	public List<ExDocumento> getTodosOsPaisDasVias() {
+    public Set<ExDocumento> getDocumentoETodosOsPaisDasVias(Set<ExDocumento> docs) {
+        if (!docs.contains(this)) {
+            docs.add(this);
+            docs.addAll(getTodosOsPaisDasVias(docs));
+        }
+        return docs;
+    }
+
+    public List<ExDocumento> getTodosOsPaisDasVias() {
+        return getTodosOsPaisDasVias(new HashSet<ExDocumento>());
+    }
+        
+    public List<ExDocumento> getTodosOsPaisDasVias(Set<ExDocumento> docs) {
 		List<ExDocumento> pais = new ArrayList<ExDocumento>();
 		if (!isExpediente())
 			return pais;
@@ -2814,8 +2847,8 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 			ExMobil pai = mob.getExMobilPai();
 			// impede loop infinito ao acessar documentos juntados a ele mesmo
 			if (pai != null
-					&& pai.getDoc().getIdDoc() != mob.getDoc().getIdDoc())
-				pais.addAll(pai.doc().getDocumentoETodosOsPaisDasVias());
+					&& pai.getDoc().getIdDoc() != mob.getDoc().getIdDoc() && !docs.contains(pai.doc()))
+				pais.addAll(pai.doc().getDocumentoETodosOsPaisDasVias(docs));
 		}
 		return pais;
 	}

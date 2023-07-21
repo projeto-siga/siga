@@ -93,12 +93,16 @@ public class ExPreenchimento extends AbstractExPreenchimento implements
 		}
 		return this.getIdPreenchimento().compareTo(o.getIdPreenchimento());
 	}
-	
+
 	public String descricaoNaLista(DpLotacao lotCorrente) {
 		if (Utils.equivale(lotCorrente, getDpLotacao()))
 			return getNomePreenchimento();
 		else
 			return (getDpLotacao() != null ? getDpLotacao().getSiglaCompleta() + ": " : "") + getNomePreenchimento();
+	}
+	
+	public String getSiglaDaLotacaoENomedoPreenchimento() {
+		return getDpLotacao().getSigla() + " - " + getNomePreenchimento();
 	}
 
 }

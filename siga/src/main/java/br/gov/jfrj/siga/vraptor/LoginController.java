@@ -1,17 +1,20 @@
 package br.gov.jfrj.siga.vraptor;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -23,6 +26,9 @@ import org.jboss.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -32,11 +38,9 @@ import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.base.Contexto;
-import br.gov.jfrj.siga.base.GeraMessageDigest;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.SigaVersion;
-import br.gov.jfrj.siga.cp.AbstractCpAcesso;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
@@ -44,10 +48,12 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
+import br.gov.jfrj.siga.model.enm.NivelDaConta;
 import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 @Controller
 public class LoginController extends SigaController {
+	private static final Logger log = Logger.getLogger("LoginController]");
 	HttpServletResponse response;
 	private ServletContext context;
 
@@ -281,6 +287,7 @@ public class LoginController extends SigaController {
 		try {
 			
 			String cpf = (String) request.getSession().getAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO);
+			String accessToken = (String) request.getSession().getAttribute(CallBackServlet.PUBLIC_ACCESSTOKEN);
 
 			if(cpf == null){
 				result.redirectTo(Contexto.urlBase(request) + "/siga/openIdServlet");	
@@ -302,7 +309,8 @@ public class LoginController extends SigaController {
 				
 				/******** TRATAR CÓDIGO PARA VERIFICAR O SELO DE CONFIABILIDADE ANTES DE EMITIR TOKEN DO SIGA ********/
 				/* Pode registrar no Token do SIGA o Nível e decidir com regras de Negócio o que pode fazer. Ou usar um PODE ou NAO PODE a partir de tal nível */
-				gravaCookieComToken(cpf, cont);
+				
+				checarNivelContaMinimo(cont, cpf, accessToken);
 			}
 				
 			} catch(AplicacaoException a){
@@ -312,6 +320,71 @@ public class LoginController extends SigaController {
 				throw new AplicacaoException("Não foi possivel acessar o ." + Prop.get("/siga.integracao.sso.nome") );
 		}
 	}
+
+	private void checarNivelContaMinimo(String cont, String cpf, String accessToken) throws Exception, AplicacaoException {
+		String nivelDaContaMinimoLido = null;
+		try {
+			nivelDaContaMinimoLido = Prop.get("/siga.integracao.sso.nivelDaContaMinimo");
+		} catch (Exception e) {
+			throw new AplicacaoException("Falta definição da propriedade siga.integracao.sso.nivelDaContaMinimo.");
+		}
+
+		if (NivelDaConta.valueOf(nivelDaContaMinimoLido).ordinal() != NivelDaConta.OPCIONAL.ordinal()) {
+			
+			List<NivelDaContaGovBr> niveisDaContaGovBr = getNiveisDeConta(accessToken, cpf);
+			
+			for (NivelDaContaGovBr nivelDaContaGovBr :niveisDaContaGovBr) {
+				int nivelDaContaGovBrLido = Integer.parseInt(nivelDaContaGovBr.id);
+				if(nivelDaContaGovBrLido >= NivelDaConta.valueOf(nivelDaContaMinimoLido).ordinal())
+				{
+					gravaCookieComToken(cpf, cont);
+					return;
+				}
+			}
+			throw new AplicacaoException("Nivel minimo " + nivelDaContaMinimoLido + " exigido para acesso a aplicação. Aumente o seu nivel no portal do GOV.BR.");
+			
+		}
+	}
+	
+	static class NivelDaContaGovBr 	{
+		public String id;
+		public Date dataAtualizacao;
+	}
+	
+	private List<NivelDaContaGovBr> getNiveisDeConta(String accessToken, String cpf) throws  Exception, AplicacaoException {
+		URL url = new URL(Prop.get("/siga.integracao.sso.nivelDaConta.dominio") + "/confiabilidades/v3/contas/" + cpf + "/niveis?response-type=ids");
+		log.debug("Invocando url para recuperar niveis da Conta :" + url); 
+		log.debug("Bearer " + accessToken);
+		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Accept", "application/json");
+		conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+		int responseCode = conn.getResponseCode();
+		log.debug("GET Response Code :: " + responseCode);
+		log.debug("GET Response Message :: " + conn.getResponseMessage());
+		List<NivelDaContaGovBr> niveisDaContaGovBr = null;
+		if (responseCode == HttpURLConnection.HTTP_OK) { // success
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String inputLine;
+			StringBuilder retornoIa = new StringBuilder();
+
+			while ((inputLine = in.readLine()) != null) {
+				retornoIa.append(inputLine);
+			}
+			in.close();
+			// print result
+			log.info(retornoIa.toString());
+			final ObjectMapper objectMapper = new ObjectMapper();
+			niveisDaContaGovBr = objectMapper.readValue(retornoIa.toString(), new TypeReference<List<NivelDaContaGovBr>>(){});	
+		} else {
+			throw new AplicacaoException("Erro na obtenção do Nivel da conta - httpErrocode : " + responseCode );
+		}
+		
+		conn.disconnect();
+		return niveisDaContaGovBr;
+		
+	}
+
 	
 	private boolean isSenhaUsuarioExpirada(String jsonUsuarioLogado) {		
 		try {

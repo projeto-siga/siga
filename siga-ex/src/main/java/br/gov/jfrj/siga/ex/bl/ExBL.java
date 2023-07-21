@@ -5168,41 +5168,42 @@ public class ExBL extends CpBL {
 			Pendencias p = mob.calcularTramitesPendentes();
 			
 			ExMovimentacao recebimento = null;
-			if (p.fIncluirCadastrante && (Utils.equivale(mob.getLotaTitular(), lotaTitular)
-					|| (mob.getLotaTitular() == null && Utils.equivale(mob.getTitular(), titular)))) {
-				recebimento = null;
-			} else {
-				// Localiza o recebimento que será concluído
-				
-				// Primeiro busca entre as notificações
-				for (ExMovimentacao r : p.recebimentosDeNotificacoesPendentes) {
+			// Localiza o recebimento que será concluído
+			
+			// Primeiro busca entre as notificações
+			for (ExMovimentacao r : p.recebimentosDeNotificacoesPendentes) {
+				if (r.isRespPreferencialmentePelaLotacao(titular, lotaTitular)) {
+					recebimento = r;
+					break;
+				}
+			}
+			// Tenta um outro recebimento qualquer
+			if (recebimento == null) {
+				for (ExMovimentacao r : p.recebimentosPendentes) {
 					if (r.isRespPreferencialmentePelaLotacao(titular, lotaTitular)) {
 						recebimento = r;
-						break;
 					}
 				}
-				// Tenta um outro recebimento qualquer
-				if (recebimento == null) {
-					for (ExMovimentacao r : p.recebimentosPendentes) {
-						if (r.isRespPreferencialmentePelaLotacao(titular, lotaTitular)) {
-							recebimento = r;
-						}
-					}
+				
+                if (recebimento == null)
+                    if (p.fIncluirCadastrante && (Utils.equivale(mob.getLotaTitular(), lotaTitular)
+                            || (mob.getLotaTitular() == null && Utils.equivale(mob.getTitular(), titular)))) {
+                        // Ok, pois se trata da conclusão do "trâmite" em posse do cadastrante.
+                    } else {
+                            throw new AplicacaoException("Não foi encontrado nenhum recebimento pendente para o usuário corrente ou sua lotação");
+                    }
 
-					// Se houver apenas um recebimento, produzir um erro, pois o 
-					int c = 0;
-					for (ExMovimentacao r : p.recebimentosPendentes) {
-						if (!p.recebimentosDeNotificacoesPendentes.contains(r)) {
-							c++;
-						}
+				// Se houver apenas um recebimento, produzir um erro, pois o 
+				int c = p.fIncluirCadastrante ? 1 : 0;
+				for (ExMovimentacao r : p.recebimentosPendentes) {
+					if (!p.recebimentosDeNotificacoesPendentes.contains(r)) {
+						c++;
 					}
-					if (c == 0)
-						throw new AplicacaoException("Não é permitido concluir o último recebimento, em vez disso, deve ser realizado o arquivamento");
 				}
-	
-				if (recebimento == null)
-					throw new AplicacaoException("Não foi encontrado nenhum recebimento pendente para o usuário corrente ou sua lotação");
+				if (c <= 1)
+					throw new AplicacaoException("Não é permitido concluir o último recebimento, em vez disso, deve ser realizado o arquivamento");
 			}
+	
 			
 			final ExMovimentacao mov = gerarMovimentacaoDeConclusao(cadastrante, lotaCadastrante, titular, lotaTitular, mob, dtMov,
 					dtMovIni, subscritor, recebimento);
@@ -5493,7 +5494,7 @@ public class ExBL extends CpBL {
 
 					if (!m.isApensadoAVolumeDoMesmoProcesso()) {
 
-						if (lotaResponsavel.isFechada())
+						if (lotaResponsavel != null && lotaResponsavel.isFechada())
 							throw new AplicacaoException("não é permitido tramitar documento para lotação fechada");
 
 						if (forcarTransferencia) {

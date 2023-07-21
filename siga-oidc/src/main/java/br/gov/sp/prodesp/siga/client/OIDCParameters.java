@@ -29,6 +29,7 @@ public class OIDCParameters {
 	private Boolean scopePhone = false;
 	private Boolean scopeAddress = false;
 	private Boolean scopeOfflineAccess = false;
+	private Boolean scopeGovbrConfiabilidades = true;
 	private String prompt = "";
 	private String codeChallengeMethod = "";
 	
@@ -116,6 +117,13 @@ public class OIDCParameters {
 	public void setScopeEmail(Boolean scopeEmail) {
 		this.scopeEmail = scopeEmail;
 	}
+	public Boolean getScopeGovBrConfiabilidades() {
+		return scopeGovbrConfiabilidades;
+	}
+	public void setScopeGovBrConfiabilidades(Boolean scopeGovbrConfiabilidades) {
+		this.scopeGovbrConfiabilidades = scopeGovbrConfiabilidades;
+	}	
+	
 	public Boolean getScopeProfile() {
 		return scopeProfile;
 	}
@@ -188,7 +196,7 @@ public class OIDCParameters {
 				+ tokenUri + ", userInfoUri=" + userInfoUri + ", clientId=" + clientId + ", clientSecret="
 				+ clientSecret + ", redirectUri=" + redirectUri + ", tokenEndpointAuthMethod=" + tokenEndpointAuthMethod
 				+ ", tokenEndpointAuthSigningAlg=" + tokenEndpointAuthSigningAlg + ", responseType=" + responseType
-				+ ", scopeOpenId=" + scopeOpenId + ", scopeEmail=" + scopeEmail + ", scopeProfile=" + scopeProfile
+				+ ", scopeOpenId=" + scopeOpenId + ", scopeEmail=" + scopeEmail + ", scopeGovbrConfiabilidades=" + scopeGovbrConfiabilidades + ", scopeProfile=" + scopeProfile
 				+ ", scopePhone=" + scopePhone + ", scopeAddress=" + scopeAddress + ", scopeOfflineAccess="
 				+ scopeOfflineAccess + ", prompt=" + prompt + ", codeChallengeMethod=" + codeChallengeMethod
 				+ ", maxAge=" + maxAge + ", maxAgeTimeUnit=" + maxAgeTimeUnit + ", idTokenHint=" + idTokenHint

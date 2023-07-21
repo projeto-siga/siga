@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import br.gov.jfrj.siga.model.enm.NivelDaConta;
+
 public class Prop {
 	public interface IPropertyProvider {
 		String getProp(String nome);
@@ -135,6 +137,8 @@ public class Prop {
 		provider.addPublicProperty("/siga.integracao.sso", null);
 		provider.addPublicProperty("/siga.integracao.sso.nome", "SSO");
 		provider.addPublicProperty("/siga.integracao.sso.dominio", null);
+		provider.addPublicProperty("/siga.integracao.sso.nivelDaConta.dominio", null);
+		
 		provider.addPublicProperty("/siga.integracao.sso.dominio.logout", get("/siga.integracao.sso.dominio") + "/logout");
 		provider.addPublicProperty("/siga.integracao.sso.context", null);
 		provider.addPublicProperty("/siga.integracao.sso.iss", "/");
@@ -142,6 +146,7 @@ public class Prop {
 		provider.addPrivateProperty("/siga.integracao.sso.cliente.id", null);
 		provider.addPrivateProperty("/siga.integracao.sso.client.secret", null);
 		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", get("/siga.base.url") + "/siga/callBack");
+		provider.addPublicProperty("/siga.integracao.sso.nivelDaContaMinimo",NivelDaConta.PRATA.toString());
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");

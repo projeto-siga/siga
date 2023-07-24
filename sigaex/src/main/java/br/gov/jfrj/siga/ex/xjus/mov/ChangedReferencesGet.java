@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.xjus.mov;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
@@ -104,7 +105,11 @@ public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGe
             List<Object[]> list = (List<Object[]>) q.getResultList();
             for (Object rs[] : list) {
                 Reference ref = new Reference();
-                Long id = (Long) (rs[0] instanceof Integer ? new Long((Integer) rs[0]) : rs[0]);
+                if (rs[0] instanceof Integer)
+                    rs[0] = new Long((Integer) rs[0]);
+                else if (rs[0] instanceof BigInteger)
+                    rs[0] = ((BigInteger) rs[0]).longValue();
+                Long id = (Long) rs[0];
                 Date dt = (Date) rs[1];
                 // System.out.println(SwaggerUtils.format(dt));
                 ref.id = XjusUtils.formatId(id);

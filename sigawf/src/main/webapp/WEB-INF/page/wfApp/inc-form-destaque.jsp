@@ -19,23 +19,23 @@
 						<c:if test="${not empty resp}">
 							<c:set var="resp" value=" &raquo; ${resp}" />
 						</c:if>
-						<button type="submit" name="indiceDoDesvio" value="${loop.index}"
-							class="btn-info btn mr-3">${empty desvio.nome ? 'Prosseguir' : desvio.nome}${resp}</button>
+						<button style="color: black;" type="submit" name="indiceDoDesvio" value="${loop.index}"
+							class="border-warning bg-warning btn btn-info mr-3">${empty desvio.nome ? 'Prosseguir' : desvio.nome}${resp}</button>
 					</c:forEach>
 					<c:if test="${empty td.definicaoDeDesvio}">
 						<c:set var="resp" value="${pi.obterProximoResponsavel()}" />
 						<c:if test="${not empty resp}">
 							<c:set var="resp" value=" &raquo; ${resp}" />
 						</c:if>
-						<button type="submit" name="indiceDoDesvio" value=""
-							class="btn-info btn mr-3">Prosseguir${resp}</button>
+						<button style="color: black;" type="submit" name="indiceDoDesvio" value=""
+							class="border-warning bg-warning btn btn-info mr-3">Prosseguir${resp}</button>
 					</c:if>
 				</div>
 			</c:if>
 			<c:if test="${not empty td.definicaoDeVariavel}">
 				<div class="col col-auto ${empty td.id ? '' : 'ml-auto'}">
-					<button type="submit" name="indiceDoDesvio" value="-1"
-						class="btn-info btn-${empty td.id ? 'primary' : 'light'}">Salvar</button>
+					<button style="color: black;" type="submit" name="indiceDoDesvio" value="-1"
+						class="border-warning bg-warning btn btn-${empty td.id ? 'primary' : 'light'}">Salvar</button>
 				</div>
 			</c:if>
 		</div>

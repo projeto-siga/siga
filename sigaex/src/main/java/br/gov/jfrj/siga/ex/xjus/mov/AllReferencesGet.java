@@ -15,7 +15,8 @@ import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
-	private static final String HQL = "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and (mov.exMobil.exDocumento.dtFinalizacao != null) and (mov.idMov > :id) order by mov.idMov";
+//    private static final String HQL = "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and (mov.exMobil.exDocumento.dtFinalizacao != null) and (mov.idMov > :id) order by mov.idMov";
+    private static final String HQL = "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and (mov.idMov > :id) order by mov.idMov";
 
 	@Override
 	@SuppressWarnings("unchecked")

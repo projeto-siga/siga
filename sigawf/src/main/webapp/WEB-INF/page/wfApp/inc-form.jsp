@@ -1,14 +1,8 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
-
 <div>
-	<c:if test="${empty td or piAnterior != pi}" >
-		<c:set var="td" value="${pi.definicaoDeTarefaCorrente}" scope="request"/>
-	</c:if>
-	<c:set var="piAnterior" value="${pi}" scope="request"/>
-	<c:set var="msgAviso" value="${pi.getMsgAviso(titular, lotaTitular)}" />
-	<c:set var="desabilitarFormulario" value="${pi.isDesabilitarFormulario(titular, lotaTitular)}" />
+	<%@ include file="inc-form/inc-form-vars.jsp"%>
 	<c:if test="${empty td.id or (not desabilitarFormulario and empty msgAviso)}"> 
-	<%@ include file="inc-form-top.jsp"%>
+	<%@ include file="inc-form/inc-form-top.jsp"%>
 		<%--<c:if test="${task.podePegarTarefa}"> --%>
 		<div class="row">
 			<c:if test="${not empty td.id}">
@@ -41,7 +35,5 @@
 		</div>
 		<%--</c:if> --%>
 	</c:if> 
-	<c:if test="${not empty td.id}">
-		<span style="color: red; font-weight: bold;"> ${msgAviso}</span>
-	</c:if>
+	<%@ include file="inc-form/inc-form-aviso.jsp"%>
 </div>

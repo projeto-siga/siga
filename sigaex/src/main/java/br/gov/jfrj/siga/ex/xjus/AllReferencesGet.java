@@ -16,13 +16,14 @@ import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
 import br.gov.jfrj.siga.base.Prop;
-import br.gov.jfrj.siga.base.XjusRecordServiceEnum;
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.ex.util.ExXjusRecordServiceEnum;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
+@AcessoPublico
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
     static public final long TIMEOUT_MILLISECONDS = 50000;
 

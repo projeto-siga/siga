@@ -1,40 +1,29 @@
 package br.gov.jfrj.siga.ex.xjus;
 
-import java.io.IOException;
+import javax.persistence.EntityManager;
 
-import com.crivano.swaggerservlet.SwaggerContext;
+import br.gov.jfrj.siga.context.ApiContextSupport;
+import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.hibernate.ExStarter;
 
-public class XjusRecordAPIContext implements br.jus.trf2.xjus.record.api.XjusRecordAPIContext {
-	public XjusRecordAPIContext() {
-		super();
-	}
+public class XjusRecordAPIContext extends ApiContextSupport
+        implements br.jus.trf2.xjus.record.api.XjusRecordAPIContext {
+    public XjusRecordAPIContext() {
+        super();
+    }
 
-	@Override
-	public void init(SwaggerContext ctx) {
-	}
+    public void atualizarCacheDeConfiguracoes() throws Exception {
+        Ex.getInstance().getConf().limparCacheSeNecessario();
+    }
 
-	@Override
-	public void onTryBegin() throws Exception {
+    public CpDao inicializarDao() {
+        return ExDao.getInstance();
+    }
 
-	}
+    public EntityManager criarEntityManager() {
+        return ExStarter.emf.createEntityManager();
+    }
 
-	@Override
-	public void onTryEnd() throws Exception {
-
-	}
-
-	@Override
-	public void onCatch(Exception e) throws Exception {
-		throw e;
-	}
-
-	@Override
-	public void onFinally() throws Exception {
-
-	}
-
-	@Override
-	public void close() throws IOException {
-
-	}
 }

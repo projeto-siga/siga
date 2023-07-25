@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -17,6 +18,7 @@ import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
+@AcessoPublico
 public class ChangedReferencesGet implements IXjusRecordAPI.IChangedReferencesGet {
 
     private static final String HQL = "select mov.idMov, case when mov.exMobil.exDocumento.dtAltDoc > mov.dtIniMov then mov.exMobil.exDocumento.dtAltDoc else mov.dtIniMov end as dt from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and mov.exMobil.exDocumento.dtFinalizacao != null and (((mov.exMobil.exDocumento.dtAltDoc = :dt or mov.dtIniMov = :dt) and mov.idMov > :id) or (mov.exMobil.exDocumento.dtAltDoc > :dt or mov.dtIniMov > :dt)) order by dt, mov.idMov";

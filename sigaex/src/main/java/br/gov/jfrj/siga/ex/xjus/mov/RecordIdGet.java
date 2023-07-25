@@ -7,6 +7,7 @@ import com.crivano.swaggerservlet.PresentableUnloggedException;
 
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
@@ -17,6 +18,7 @@ import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Facet;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Field;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
+@AcessoPublico
 public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 	@Override

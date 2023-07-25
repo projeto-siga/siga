@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 
+import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.context.AcessoPublico;
@@ -19,6 +20,7 @@ import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Facet;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Field;
+import br.jus.trf2.xjus.record.api.IXjusRecordAPI.IRecordIdGet.Response;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
 @AcessoPublico
@@ -31,12 +33,14 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
             try {
                 primaryKey = Long.valueOf(req.id);
             } catch (NumberFormatException nfe) {
-                throw new PresentableUnloggedException("REMOVED");
+                removed(resp);
+                return;
             }
             ExDocumento doc = ExDao.getInstance().consultar(primaryKey, ExDocumento.class, false);
 
             if (doc == null || doc.isCancelado() || doc.isSemEfeito()) {
-                throw new PresentableUnloggedException("REMOVED");
+                removed(resp);
+                return;
             }
 
             resp.id = req.id;
@@ -68,7 +72,11 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
         } finally {
             ExDao.freeInstance();
         }
-
+    }
+    
+    private void removed(Response resp) {
+        resp.status = "REMOVED";
+        CurrentRequest.get().getResponse().setStatus(206);
     }
 
     public void addField(Response resp, String name, String value) {

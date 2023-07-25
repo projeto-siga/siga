@@ -6821,12 +6821,8 @@ public class ExBL extends CpBL {
                HashMap<String, String> headers = new HashMap<>();
                try {
                 String response = IOUtils.toString(http.fetch(url, headers, 60000, null, "POST"), "UTF-8");
-                } catch (AplicacaoException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    log.info("Erro reindexando " + id + " no X-Jus");
                 }
            }
        });

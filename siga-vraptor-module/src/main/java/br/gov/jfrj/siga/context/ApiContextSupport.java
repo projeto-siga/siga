@@ -4,10 +4,9 @@ import static java.util.Objects.isNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.persistence.EntityManager;
-import javax.servlet.http.Cookie;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document.OutputSettings;
 
+import com.crivano.swaggerservlet.IUnloggedException;
 import com.crivano.swaggerservlet.SwaggerApiContextSupport;
 import com.crivano.swaggerservlet.SwaggerAuthorizationException;
 import com.crivano.swaggerservlet.SwaggerContext;
@@ -31,7 +31,6 @@ import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
-import br.gov.jfrj.siga.idp.jwt.AuthJwtFormFilter;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.dao.ModeloDao;
 import br.gov.jfrj.siga.uteis.SafeListCustom;
@@ -157,7 +156,14 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 	public void onCatch(Exception e) throws Exception {
 		if (em.getTransaction().isActive())
 			em.getTransaction().rollback();
-		if (!RequestLoggerFilter.isAplicacaoException(e)) {
+		
+    	if (e instanceof InvocationTargetException) { 
+            Throwable cause = e.getCause();
+            if (cause != null && cause instanceof Exception)
+                e = (Exception) cause;
+    	}
+		
+		if (!RequestLoggerFilter.isAplicacaoException(e) && !IUnloggedException.class.isAssignableFrom(e.getClass())) {
 			RequestLoggerFilter.logException(null, inicio, e);
 		}
 		ContextoPersistencia.removeAll();

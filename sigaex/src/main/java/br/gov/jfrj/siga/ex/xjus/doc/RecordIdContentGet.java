@@ -2,6 +2,7 @@ package br.gov.jfrj.siga.ex.xjus.doc;
 
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.ex.ExClassificacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 
+@AcessoPublico
 public class RecordIdContentGet implements IXjusRecordAPI.IRecordIdContentGet {
 
 	@Override

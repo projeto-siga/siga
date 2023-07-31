@@ -471,7 +471,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			CpSituacaoDeConfiguracaoEnum situacao = CpSituacaoDeConfiguracaoEnum.PODE;
 
 			CpConfiguracao conf = new CpConfiguracao();
-			conf.setLotacao(lot);
+			conf.setLotacao(lot.getLotacaoInicial());
 			conf.setCpTipoConfiguracao(tpConf);
 			conf.setCpSituacaoConfiguracao(situacao);
 			conf.setCpGrupo(daoGrupo(idCpGrupo));

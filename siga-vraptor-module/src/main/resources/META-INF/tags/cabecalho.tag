@@ -97,11 +97,13 @@ ${meta}
 
 <c:set var="collapse_Expanded" scope="request" value="collapsible expanded" />
 
+<<<<<<< HEAD
 <c:set var="siga_version"  scope="request" value="${f:sigaVersion()}" />
 
 <c:set var="siga_cliente_sso" scope="request" value="${f:resource('/siga.integracao.sso')}" />
-<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('/siga.integracao.sso.nome')}" />
-
+<c:set var="siga_cliente_sso_btn_txt" scope="request" value="${f:resource('/siga.integracao.sso.nome')}" /> 
+<c:set var="siga_version"  scope="request" value="11.0.3.33" />
+  
 <c:choose>
 	<c:when test="${siga_cliente == 'GOVSP'}">
 		<meta name="theme-color" content="#35b44">

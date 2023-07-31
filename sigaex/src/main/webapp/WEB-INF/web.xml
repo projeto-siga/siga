@@ -110,7 +110,6 @@
 	<filter-mapping>
 		<filter-name>ExFilter</filter-name>
 		<url-pattern>/webdav/*</url-pattern>
-		<url-pattern>/apis/*</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>

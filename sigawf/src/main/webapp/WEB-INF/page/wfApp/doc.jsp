@@ -11,8 +11,8 @@
 
 		<div id="quadro_destaque_tem_workflow_associado" class="card mb-3 border-warning">
 			<div class="card-header bg-warning">
-				<a style="color: black; text-decoration: underline;" href="${linkTo[WfAppController].procedimento(pi.id)}"
-					>${pi.sigla}</a> - 
+				<u><a class="text-dark" href="${linkTo[WfAppController].procedimento(pi.id)}"
+					>${pi.sigla}</a></u> - 
 				<strong>${pi.definicaoDeTarefaCorrente.nome}</strong>
 						<script type="text/javascript">
 							// Identifica o tipo de tarefa para condições no exibe.jsp

@@ -134,6 +134,9 @@ public class WfAppController extends WfController {
 	 * Cria uma instância de processo baseando-se na definição de processo escolhida
 	 * pelo usuário.
 	 * 
+	 * Opção Inciar Procedimento (/sigawf/app/iniciar/21), ao clicar em ok executa essa função.
+	 * Recebe como parametro o Documento Principal
+	 * 
 	 * @return
 	 * @throws Exception
 	 */

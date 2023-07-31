@@ -19,6 +19,10 @@ import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocJuntar;
 
 public enum WfTipoDeTarefa implements TaskKind {
+	/*
+	 * O código a seguir possibilita adicionar um novo tipo de tarefa nesse padrão:
+	 * TAREFA("descr", "grafico", "graphTitle", classe, exigirResponsavel, tramitarPrincipal, suportarVariaveis, suportarDesvios),
+	 */
 	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", "Aguardar Assinatura",
 			WfTarefaDocAguardarAssinatura.class, true, true, false, false),
 	//

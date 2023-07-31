@@ -227,7 +227,9 @@ public class WfAppController extends WfController {
 			List<WfProcedimento> tasks = mobilMap.get(principal);
 			tasks.add(pi);
 		}
+		String aparenciaBotao = "text-dark border-warning bg-warning";
 		result.include("mobilMap", mobilMap);
+		result.include("aparenciaBotao", aparenciaBotao);
 	}
 
 	/**

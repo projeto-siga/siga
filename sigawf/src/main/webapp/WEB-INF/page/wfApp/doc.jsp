@@ -47,7 +47,7 @@
 				<form method="POST"
 					action="${linkTo[WfAppController].continuar(pi.id)}?sigla=${param.sigla}"
 					style="margin: 0px; padding: 0px; border: 0px;" id="form${pi.id}">
-					<%@ include file="inc-form-destaque.jsp"%>
+					<%@ include file="inc-form.jsp"%>
 				</form>
 			</div>
 		</div>

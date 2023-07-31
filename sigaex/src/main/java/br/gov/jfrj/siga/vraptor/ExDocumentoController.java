@@ -824,14 +824,18 @@ public class ExDocumentoController extends ExController {
 				.withExMod(exDocumentoDTO.getModelo())
 				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
 			
+		    ExRef ref = null;
 			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
-			    ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
-			    ExRef ref = new ExRef(doc);
+			    ref = new ExRef(exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc());
+			} else if(exDocumentoDTO.getIdMobilAutuado() != null) {
+                ref = new ExRef(dao().consultar(exDocumentoDTO.getIdMobilAutuado(), ExMobil.class, false).doc());
+            }
+			if (ref != null) {
 			    Map<String, String> form = ref.getForm();
-				for(Entry<String,String> entry : form.entrySet()) {
-					if(!parFreeMarker.containsKey(entry.getKey()))
-						parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
-				}
+                for(Entry<String,String> entry : form.entrySet()) {
+                    if(!parFreeMarker.containsKey(entry.getKey()))
+                        parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
+                }
 			}
 		}
 

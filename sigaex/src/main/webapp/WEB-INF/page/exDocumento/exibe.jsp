@@ -120,7 +120,7 @@
 		
 	.tabela-ordenavel tbody a {
 		pointer-events: none;
-	}								
+	}						
 </style>						
 
 <script>

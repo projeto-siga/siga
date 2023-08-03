@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.hibernate.ExDao;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
+@AcessoPublico
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
 	private static final String HQL = "select doc.idDoc from ExDocumento doc where (doc.dtFinalizacao != null) and (doc.idDoc > :id) order by doc.idDoc";

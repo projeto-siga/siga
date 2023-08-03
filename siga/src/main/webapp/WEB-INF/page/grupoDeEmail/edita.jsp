@@ -360,7 +360,7 @@
 						<c:forEach var="conf" items="${confGestores}">
 							<div class="row">
 								<div class="col-sm-6">
-									${conf.lotacao.sigla} <span class="gt-cancel"><a href="excluirGestorGrupo?idConfGestor=${conf.id}&idCpGrupo=${idCpGrupo}">(excluir)</a></span>
+									${conf.lotacao.getLotacaoAtual().sigla} <span class="gt-cancel"><a href="excluirGestorGrupo?idConfGestor=${conf.id}&idCpGrupo=${idCpGrupo}">(excluir)</a></span>
 								</div>
 							</div>
 						</c:forEach>

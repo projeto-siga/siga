@@ -211,6 +211,7 @@ public class WfAppController extends WfController {
 	@Get
 	@Path("/app/doc")
 	public void doc(String sigla) throws Exception {
+		Boolean destaque = true;
 		Map<String, List<WfProcedimento>> mobilMap = new TreeMap<String, List<WfProcedimento>>();
 
 		List<WfProcedimento> taskInstances = Wf.getInstance().getBL().getTaskList(sigla);
@@ -228,6 +229,7 @@ public class WfAppController extends WfController {
 			tasks.add(pi);
 		}
 		result.include("mobilMap", mobilMap);
+		result.include("destaque", destaque);
 	}
 
 	/**

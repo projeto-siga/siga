@@ -83,6 +83,8 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 	private static final String PUBLIC_APP_LOGIN_SP = "public/app/loginSSO";
 	public  static final String PUBLIC_CPF_USER_SSO = "cpfUserSSO";
 	public  static final String PUBLIC_ACCESSTOKEN = "accessToken";
+	public static final String PUBLIC_NOME_USER_SSO = "nomeUserSSO";
+	public static final String PUBLIC_EMAIL_USER_SSO = "emailUserSSO";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -385,8 +387,12 @@ public class CallBackServlet extends HTTPRequestParametersInterceptorServlet {
 	 */
 	private void reqSession(JSONObject jsonObject, HttpServletRequest req, AccessToken accessToken) {
 		String cpf = (String) jsonObject.get("sub");
+		String nome = (String) jsonObject.get("name");
+		String email = (String) jsonObject.get("email");
 		if(!cpf.isEmpty()){
 			req.getSession().setAttribute(PUBLIC_CPF_USER_SSO, cpf);
+			req.getSession().setAttribute(PUBLIC_NOME_USER_SSO, nome);
+			req.getSession().setAttribute(PUBLIC_EMAIL_USER_SSO, email);
 			req.getSession().setAttribute(PUBLIC_ACCESSTOKEN, accessToken.getValue());
 			
 		}

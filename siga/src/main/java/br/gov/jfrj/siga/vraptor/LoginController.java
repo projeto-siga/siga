@@ -45,6 +45,7 @@ import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.cp.auth.ValidadorDeSenhaFabrica;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 import br.gov.jfrj.siga.gi.integracao.IntegracaoLdapViaWebService;
 import br.gov.jfrj.siga.gi.service.GiService;
@@ -288,14 +289,18 @@ public class LoginController extends SigaController {
 			
 			String cpf = (String) request.getSession().getAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO);
 			String accessToken = (String) request.getSession().getAttribute(CallBackServlet.PUBLIC_ACCESSTOKEN);
+			String nome = (String) request.getSession().getAttribute(CallBackServlet.PUBLIC_NOME_USER_SSO);
+			String email = (String) request.getSession().getAttribute(CallBackServlet.PUBLIC_EMAIL_USER_SSO);
+			boolean criarUsuarioExterno;
+			boolean usuarioPermitido = false;
 
 			if(cpf == null){
 				result.redirectTo(Contexto.urlBase(request) + "/siga/openIdServlet");	
 			}else{
 				
-				List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(cpf, true);
+				List<CpIdentidade> idsCpf = CpDao.getInstance().consultaIdentidadesCadastrante(cpf, true, false);
 				
-				boolean usuarioPermitido = false;
+				
 				for (CpIdentidade identCpf : idsCpf) {
 					
 					usuarioPermitido = true;
@@ -304,13 +309,38 @@ public class LoginController extends SigaController {
 						break;
 					}
 				}
-				if (!usuarioPermitido)
-					throw new ServletException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
+				try {
+					criarUsuarioExterno = Prop.getBool("/siga.usuario.externo.criar");
+				} catch (Exception e) {
+					throw new AplicacaoException("Usuário não existe. Falta definição da propriedade siga.usuario.externo.criar.");
+				}
+
+				if (!usuarioPermitido && !criarUsuarioExterno)
+					throw new AplicacaoException("Usuário não cadastrado ou sem permissão de acesso: " + cpf + ".");
+		
+		
 				
 				/******** TRATAR CÓDIGO PARA VERIFICAR O SELO DE CONFIABILIDADE ANTES DE EMITIR TOKEN DO SIGA ********/
 				/* Pode registrar no Token do SIGA o Nível e decidir com regras de Negócio o que pode fazer. Ou usar um PODE ou NAO PODE a partir de tal nível */
 				
-				checarNivelContaMinimo(cont, cpf, accessToken);
+				Boolean atingiuNivelMinimo =  atingiuNivelContaMinimo(cont, cpf, accessToken);
+				
+				if (!usuarioPermitido && criarUsuarioExterno) {
+					try {
+					String idOrgaoUsuarioExterno = Prop.get("/siga.usuario.externo.criar.no.id.orgao");
+					String idCargoOrgaoExterno = Prop.get("/siga.usuario.externo.criar.no.id.cargo");
+					String idLotacaoOrgaoExterno = Prop.get("/siga.usuario.externo.criar.no.id.lotacao");
+					new CpBL().criarUsuario(null, null, Long.parseLong(idOrgaoUsuarioExterno),Long.parseLong(idCargoOrgaoExterno), null, Long.parseLong(idLotacaoOrgaoExterno), nome,null, cpf, email, null,
+							null, null, null, null, "S");
+					} catch (Exception e) {
+						throw new AplicacaoException("Falta definição do conjuntos de propriedades siga.usuario.externo ou erro na criação do usuário." + e.getMessage());
+					}
+				}
+				
+				if (atingiuNivelMinimo) {
+					gravaCookieComToken(cpf, cont);
+				}
+				
 			}
 				
 			} catch(AplicacaoException a){
@@ -321,7 +351,8 @@ public class LoginController extends SigaController {
 		}
 	}
 
-	private void checarNivelContaMinimo(String cont, String cpf, String accessToken) throws Exception, AplicacaoException {
+	private Boolean atingiuNivelContaMinimo(String cont, String cpf, String accessToken) throws Exception, AplicacaoException {
+		Boolean atingiuNivel = true;
 		String nivelDaContaMinimoLido = null;
 		try {
 			nivelDaContaMinimoLido = Prop.get("/siga.integracao.sso.nivelDaContaMinimo");
@@ -331,19 +362,22 @@ public class LoginController extends SigaController {
 
 		if (NivelDaConta.valueOf(nivelDaContaMinimoLido).ordinal() != NivelDaConta.OPCIONAL.ordinal()) {
 			
+			atingiuNivel = false;
+			
 			List<NivelDaContaGovBr> niveisDaContaGovBr = getNiveisDeConta(accessToken, cpf);
 			
 			for (NivelDaContaGovBr nivelDaContaGovBr :niveisDaContaGovBr) {
 				int nivelDaContaGovBrLido = Integer.parseInt(nivelDaContaGovBr.id);
 				if(nivelDaContaGovBrLido >= NivelDaConta.valueOf(nivelDaContaMinimoLido).ordinal())
 				{
-					gravaCookieComToken(cpf, cont);
-					return;
+					atingiuNivel = true;
+					return atingiuNivel;
 				}
 			}
 			throw new AplicacaoException("Nivel minimo " + nivelDaContaMinimoLido + " exigido para acesso a aplicação. Aumente o seu nivel no portal do GOV.BR.");
 			
 		}
+		return atingiuNivel;
 	}
 	
 	static class NivelDaContaGovBr 	{

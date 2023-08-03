@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.crivano.swaggerservlet.PresentableUnloggedException;
 
+import br.gov.jfrj.siga.base.CurrentRequest;
 import br.gov.jfrj.siga.base.HtmlToPlainText;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
@@ -17,6 +19,7 @@ import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Facet;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Field;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
+@AcessoPublico
 public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 
 	@Override
@@ -26,18 +29,21 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 			try {
 				primaryKey = Long.valueOf(req.id);
 			} catch (NumberFormatException nfe) {
-				throw new PresentableUnloggedException("REMOVED");
+			    removed(resp);
+				return;
 			}
 			ExMovimentacao mov = ExDao.getInstance().consultar(primaryKey, ExMovimentacao.class, false);
 
 			if (mov == null || mov.isCancelada()) {
-				throw new PresentableUnloggedException("REMOVED");
+                removed(resp);
+                return;
 			}
 
 			ExDocumento doc = mov.getExDocumento();
 
             if (doc == null || doc.isCancelado() || doc.isSemEfeito()) {
-                throw new PresentableUnloggedException("REMOVED");
+                removed(resp);
+                return;
             }
 
 			Date dt = doc.getDtFinalizacao();
@@ -77,6 +83,11 @@ public class RecordIdGet implements IXjusRecordAPI.IRecordIdGet {
 		}
 
 	}
+
+    private void removed(Response resp) {
+        resp.status = "REMOVED";
+        CurrentRequest.get().getResponse().setStatus(206);
+    }
 
 	public void addField(Response resp, String name, String value) {
 		Field fld = new Field();

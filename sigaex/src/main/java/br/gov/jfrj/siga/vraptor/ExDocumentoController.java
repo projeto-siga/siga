@@ -202,7 +202,10 @@ public class ExDocumentoController extends ExController {
 				.novaInstancia().setSigla(sigla);
 		buscarDocumento(builder, false);
 
-		Ex.getInstance().getBL().atualizarDnmAcesso(builder.getMob().getDoc());
+		ExBL bl = Ex.getInstance().getBL();
+        ExDocumento doc = builder.getMob().getDoc();
+        bl.atualizarDnmNivelAcesso(doc);
+        bl.atualizarDnmAcesso(doc);
 
 		result.use(Results.http())
 				.body("Acesso: " + builder.getMob().doc().getDnmAcesso()

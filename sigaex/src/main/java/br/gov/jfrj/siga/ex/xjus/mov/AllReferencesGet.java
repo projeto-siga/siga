@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.cp.util.XjusUtils;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.hibernate.ExDao;
@@ -13,9 +14,11 @@ import br.jus.trf2.xjus.record.api.IXjusRecordAPI;
 import br.jus.trf2.xjus.record.api.IXjusRecordAPI.Reference;
 import br.jus.trf2.xjus.record.api.XjusRecordAPIContext;
 
+@AcessoPublico
 public class AllReferencesGet implements IXjusRecordAPI.IAllReferencesGet {
 
-	private static final String HQL = "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and (mov.exMobil.exDocumento.dtFinalizacao != null) and (mov.idMov > :id) order by mov.idMov";
+//    private static final String HQL = "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and (mov.exMobil.exDocumento.dtFinalizacao != null) and (mov.idMov > :id) order by mov.idMov";
+    private static final String HQL = "select mov.idMov from ExMovimentacao mov where mov.exTipoMovimentacao in :tpmovs and (mov.idMov > :id) order by mov.idMov";
 
 	@Override
 	@SuppressWarnings("unchecked")

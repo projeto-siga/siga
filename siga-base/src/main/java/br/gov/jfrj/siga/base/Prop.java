@@ -148,6 +148,14 @@ public class Prop {
 		provider.addPrivateProperty("/siga.integracao.sso.redirect.uri", get("/siga.base.url") + "/siga/callBack");
 		provider.addPublicProperty("/siga.integracao.sso.nivelDaContaMinimo",NivelDaConta.PRATA.toString());
 		/* Parâmetros para ativação de Login por SSO OAuth2/OIDC */
+		
+		
+		/* PArâmetros abaixo para criação de usuário externo autenticado via gov.br */
+		provider.addPublicProperty("/siga.usuario.externo.criar", "false");
+		provider.addPublicProperty("/siga.usuario.externo.criar.no.id.orgao",null);
+		provider.addPublicProperty("/siga.usuario.externo.criar.no.id.cargo",null);
+		provider.addPublicProperty("/siga.usuario.externo.criar.no.id.lotacao",null);
+		
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");
 

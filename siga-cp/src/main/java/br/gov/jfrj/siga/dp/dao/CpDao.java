@@ -1694,9 +1694,15 @@ public class CpDao extends ModeloDao {
 		}
 		return lista.get(0);
 	}
+	
+
+	public List<CpIdentidade> consultaIdentidadesCadastrante(final String nmUsuario, boolean fAtiva) {
+		return consultaIdentidadesCadastrante(nmUsuario,fAtiva, true);
+		
+	}
 
 	@SuppressWarnings("unchecked")
-	public List<CpIdentidade> consultaIdentidadesCadastrante(final String nmUsuario, boolean fAtiva)
+	public List<CpIdentidade> consultaIdentidadesCadastrante(final String nmUsuario, boolean fAtiva, boolean disparaExceptionQuandoSemIdentidade)
 			throws AplicacaoException {
 		try {
 			final Query qry = em()
@@ -1734,7 +1740,7 @@ public class CpDao extends ModeloDao {
 //			qry.setHint("org.hibernate.cacheable", true);
 //			qry.setHint("org.hibernate.cacheRegion", CACHE_QUERY_SECONDS);
 			final List<CpIdentidade> lista = (List<CpIdentidade>) qry.getResultList();
-			if (lista.size() == 0) {
+			if (lista.size() == 0 && disparaExceptionQuandoSemIdentidade) {
 				throw new AplicacaoException("Nao foi possivel localizar a identidade do usuario '" + nmUsuario + "'.");
 			}
 			return lista;

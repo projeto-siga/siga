@@ -7,6 +7,7 @@
 <%@ taglib uri="http://localhost/jeetags" prefix="siga"%>
 <%@ taglib uri="http://localhost/libstag" prefix="libs"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <%@page import="br.gov.jfrj.siga.ex.ExMovimentacao"%>
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
@@ -563,6 +564,29 @@
 							</div>
 							</tags:collapse>
 						</div>
+					</c:if>
+					
+					<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;VER:Ver;MAIS:Mais;VARS:Variáveis')}">
+						<c:if test="${not empty docVO.doc.form.keySet()}">
+							<div class="card-sidebar card bg-light mb-3">
+								<div class="card-header">Variáveis</div>
+								<div class="card-body">
+									<c:forEach var="key" items="${docVO.doc.form.keySet()}">
+										<p>
+											<b>${key}:</b> 
+											<c:choose>
+												<c:when test="${fn:length(docVO.doc.form[key]) > 100}">
+													<span title="<c:out value="${docVO.doc.form[key]}"/>"><c:out value="${fn:substring(docVO.doc.form[key], 0, 100)}"/></span>&hellip;
+												</c:when>
+												<c:otherwise>
+													<c:out value="${docVO.doc.form[key]}"/>
+												</c:otherwise>
+											</c:choose>
+										</p>
+									</c:forEach>
+								</div>
+							</div>
+						</c:if>
 					</c:if>
 					
 					<div class="gt-sidebar-content" id="gc">

@@ -30,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.xml.ws.http.HTTPException;
@@ -323,7 +324,7 @@ public class SigaHTTP {
        return fetch(URL, header, timeout, payload, payload != null ? "POST" : "GET");
    }
    
-	public InputStream fetch(String URL, HashMap<String, String> header,
+	public InputStream fetch(String URL, Map<String, String> header,
 			Integer timeout, String payload, String method) throws AplicacaoException {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(URL)

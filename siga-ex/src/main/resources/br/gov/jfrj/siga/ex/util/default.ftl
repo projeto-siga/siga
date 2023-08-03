@@ -5007,8 +5007,9 @@ ${texto}
     [/#if]
 [/#macro]
 
-[#macro group title="" info="" warning="" danger="" depend="" hidden=false atts={} innerGroup=false]
-    [#if !hidden]
+[#macro group title="" info="" warning="" danger="" depend="" hidden=false bypass=false atts={} innerGroup=false]
+    [#if bypass][#nested]
+    [#elseif !hidden]
     	</div>
     	[#local id=""/]
     	[#if depend?has_content]
@@ -6050,5 +6051,30 @@ Exemplos de utilização:
         document.getElementById('${var}${tipoSel}SelSpan').innerHTML = '${(descricaoInicial=="")?string(.vars[var+tipoSel+"Sel.descricao"]!, descricaoInicial)}';
         [/#if]
     </script>
+[/#macro]
+
+
+[#macro ai servico var params='' usuario=cadastrante.sigla botao='Gerar' explicacao='Clique no botão ao lado para enviar os dados informados no modelo e obter uma sugestão de preenchimento gerada pela Inteligência Artificial. Faça os ajustes necessários na sugestão obtida. Cada clique no botão gerará uma nova sugestão. Lembre-se: o uso da Inteligência Artificial possui custos, portanto, utilize com moderação.' timeout=120000]
+  <div class="col col-auto mt-4 mb-3"><button id="${var}_ai_button" class="btn btn-warning"><span style="font-size: 32pt;">&#x1F916;</span><br/>${botao}</button></div>
+  [@field var=(var + '_ai_run') kind='oculto' value='false' /]
+  [@group depend=var + '_ai_ajax' hidden=false && (.vars[var + '_ai_run']!'false') != 'true' innerGroup=false]
+    [#local payload]{
+    	"servico": ${servico?c},
+    	"usuario": ${usuario?c},
+    	"params": {[#list params?split(';') as param]${param?c}: ${(.vars[param]?c)!'""'}[#sep], [/#list]}
+    }[/#local]
+    [#local str=func.fetch('POST','https://xrp.com.br/app/aim/servico',payload,null,timeout) /]
+    <div id="${var + '_ai'}">${str}</div>
+    <div id="${var + '_ai_payload'}">${payload}</div>
+  [/@group]
+  <script>
+	  document.getElementById("${var}_ai_button").addEventListener("click", function(event){
+		event.preventDefault();
+		document.getElementById('${var}_ai_run').value = 'true';
+		sbmt('${var}_ai_ajax');
+		CKEDITOR.instances['${var}'].setData(document.getElementById('${var}_ai').innerHTML); 
+		document.getElementById('${var}_ai_run').value = 'false'; 
+	  });
+  </script>
 [/#macro]
 

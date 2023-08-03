@@ -95,6 +95,7 @@ import br.gov.jfrj.siga.ex.ExNivelAcesso;
 import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExPreenchimento;
 import br.gov.jfrj.siga.ex.ExProtocolo;
+import br.gov.jfrj.siga.ex.ExRef;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoMobil;
 import br.gov.jfrj.siga.ex.bl.AcessoConsulta;
@@ -826,15 +827,18 @@ public class ExDocumentoController extends ExController {
 				.withExMod(exDocumentoDTO.getModelo())
 				.withExFormaDoc(exDocumentoDTO.getModelo().getExFormaDocumento()).eval()) {
 			
+		    ExRef ref = null;
 			if(exDocumentoDTO.getMobilPaiSel().getId() != null) {
-				ExDocumento doc = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc();
-				
-				Map<String, String> form = Ex.getInstance().getBL().obterEntrevista(doc, false);
-				
-				for(Entry<String,String> entry : form.entrySet()) {
-					if(!parFreeMarker.containsKey(entry.getKey()))
-						parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
-				}
+			    ref = new ExRef(exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc());
+			} else if(exDocumentoDTO.getIdMobilAutuado() != null) {
+                ref = new ExRef(dao().consultar(exDocumentoDTO.getIdMobilAutuado(), ExMobil.class, false).doc());
+            }
+			if (ref != null) {
+			    Map<String, String> form = ref.getForm();
+                for(Entry<String,String> entry : form.entrySet()) {
+                    if(!parFreeMarker.containsKey(entry.getKey()))
+                        parFreeMarker.put(entry.getKey(), new String[] {entry.getValue()});
+                }
 			}
 		}
 

@@ -1255,7 +1255,10 @@ public class CpBL {
 		if (nmPessoa != null && !nmPessoa.matches(Texto.DpPessoa.NOME_REGEX_CARACTERES_PERMITIDOS))
 			throw new AplicacaoException("Nome com caracteres não permitidos");
 
-		Boolean podeAlterarOrgaoPessoa = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(identidadeCadastrante.getPessoaAtual(),
+		Boolean podeAlterarOrgaoPessoa = false;
+		
+		if (identidadeCadastrante != null)
+		        podeAlterarOrgaoPessoa = Cp.getInstance().getConf().podeUtilizarServicoPorConfiguracao(identidadeCadastrante.getPessoaAtual(),
 				identidadeCadastrante.getPessoaAtual().getLotacao(), 
 				"SIGA:Sistema Integrado de Gestão Administrativa;GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa;ALT:Alterar Órgão Cadastro Pessoa");
 		
@@ -1363,9 +1366,11 @@ public class CpBL {
 		ou.setIdOrgaoUsu(idOrgaoUsu);
 		ou = CpDao.getInstance().consultarPorId(ou);
 		
-		if (!"ZZ".equals(identidadeCadastrante.getCpOrgaoUsuario().getSigla())){
-			if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu()) && !podeAlterarOrgaoPessoa) {
-				throw new AplicacaoException("Usuário não pode cadastrar nesse órgão.");
+		if (identidadeCadastrante != null) {
+			if (!"ZZ".equals(identidadeCadastrante.getCpOrgaoUsuario().getSigla())){
+				if (!ou.getIdOrgaoUsu().equals(identidadeCadastrante.getCpOrgaoUsuario().getIdOrgaoUsu()) && !podeAlterarOrgaoPessoa) {
+					throw new AplicacaoException("Usuário não pode cadastrar nesse órgão.");
+				}
 			}
 		}
 				

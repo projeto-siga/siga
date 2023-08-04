@@ -610,7 +610,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
 									id="assunto" type="text" class="form-control"></section>
 								<section
-									ng-show="tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'EXECUTAR'"
+									ng-show="tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'JUNTAR' || tarefaItem.tipo == 'EXECUTAR'"
 									class="col col-12 form-group"> <label for="texto"
 									title="" class="mb-0">Texto<i
 									title="Preenchimento obrigatório"

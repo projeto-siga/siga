@@ -29,61 +29,56 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 	
 	@Override
 	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {
-			//1 - RECEBER DOCUMENTO PAI
-			//2 - RECEBER DOCUMENTO FILHO
-			
-			//3 - VERIFICAR SE PODE JUNTAR
-			
-			//JUNTAR TEM RESPONSÁVEL?
-			//PERGUNTAR QUEM DEVERÁ SER O RESPONSÁVEL APÓS JUNTAR?
-			//VAI TER PADRÃO OU O USUÁRIO VAI ESCOLHER?
-			//NO FRONT-END - COPIAR A FORMA COMO É FEITO NO TRAMITAR E DEIXAR O USUÁRIO ESCOLHER
 			String siglaDestino = null;
 			
-			System.out.println("td");
-			System.out.println(td);
-			System.out.println("pi");
-			System.out.println(pi);
-			System.out.println("engine");
-			System.out.println(engine);
-			System.out.println("pi.getPrincipal()");
-			System.out.println(pi.getPrincipal());
-			System.out.println("!Utils.empty(pi.getPrincipal())");
-			System.out.println(!Utils.empty(pi.getPrincipal()));
+			//TODO: resolver o erro "A via não pode ser juntada ao documento porque ele não pode ser movimentado."
+			//TODO: juntar o documento principal no documento informado pelo usuário.
+		
+			//TODO: RECEBER DOCUMENTO PAI
+			//TODO: Diminuir tamanho do campo no front-end
+			//Recebe a string digitada pelo usuário no campo texto que receberá o documento
+			String text = engine.getHandler().evalTemplate(pi, td.getText());
+			
+			//TODO: RECEBER DOCUMENTO FILHO
+			
+			//TODO: VERIFICAR SE PODE JUNTAR antes de tentar executar o procedimento
+			// no ExBl.java tem a referencia do código que faz isso
+			
+			//TODO: esclarecer essa questão:
+			//JUNTAR TEM RESPONSÁVEL? QUEM DEVERÁ SER O RESPONSÁVEL APÓS JUNTAR?
+			//VAI TER PADRÃO OU O USUÁRIO VAI ESCOLHER?
+			
+			//TODO: Refatoração - apagar comentários e códigos desnecessários
+			
 			
 		if (!Utils.empty(pi.getPrincipal())) {
 			WfResp destino = pi.calcResponsible(td);
+			/*
 			System.out.println("destino");
 			System.out.println(destino);
-			
+			*/
 			if (destino != null) {
-				System.out.println("destino.getPessoa()");
-				System.out.println(destino.getPessoa());
-				System.out.println("destino.getLotacao()");
-				System.out.println(destino.getLotacao());
 				
 				siglaDestino = SiglaParser.makeSigla(destino.getPessoa(), destino.getLotacao());
 				
-				System.out.println("siglaDestino");
-				System.out.println(siglaDestino);
+				
 			}
 			
 			
 			String documentoPrincipal = pi.getPrincipal();
-			System.out.println("documentoPrincipal");
-			System.out.println(documentoPrincipal);
-			/* Saída:
-			 * 17:49:28,482 INFO  [stdout] (default task-23) documentoPrincipal
-			   17:49:28,502 INFO  [stdout] (default task-23) OTZZ-MEM-2023/00005-A
-			 */
-			// TODO: A nova tarefa deve juntar o documento principal no documento informado pelo usuário.
+			// System.out.println("documentoPrincipal");
+			// System.out.println(documentoPrincipal);
+			/* Saída: OTZZ-MEM-2023/00005-A */
 			// String codigoDocumentoViaFilho = documentoPrincipal;
-			
 			
 			// Responsável é a pessoa que aparece no para
 			String codigoDocumentoViaFilho = "OTZZ-MEM-2023/00004-A";
 			String codigoDocumentoViaPai = "OTZZ-MEM-2023/00005-A";
 			String siglaCadastrante = null;
+			
+			//adicionada essa linha para tentar prevenir o erro "A via não pode ser juntada ao documento porque ele não pode ser movimentado."
+			//não resolveu
+			//siglaDestino = null;
 			
 
 			Service.getExService().juntar(codigoDocumentoViaFilho, codigoDocumentoViaPai, siglaDestino, siglaCadastrante);

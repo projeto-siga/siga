@@ -392,7 +392,7 @@ public class ExMovimentacaoVO extends ExVO {
 											+ "protocolo de acompanhamento. Deseja continuar?").build());
 						}
 				} else {
-					if (mov.getExMobil().isJuntado()
+					if (mov.getExMobil().isJuntado() && mov.getExDocumento().getExMobilPai().isAtendente(titular,lotaTitular)
 							&& Ex.getInstance().getComp()
 								.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, mov.getExDocumento())) {
 						addAcao(AcaoVO.builder().nome("Disponibilizar no Acompanhamento do Protocolo").nameSpace("/app/expediente/mov").acao("exibir_no_acompanhamento_do_protocolo")

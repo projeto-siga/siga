@@ -10,17 +10,14 @@ import org.mvel2.templates.TemplateRuntime;
 import com.crivano.jflow.Handler;
 import com.crivano.jflow.TaskResult;
 
-import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
-import br.gov.jfrj.siga.ex.service.ExService;
 import br.gov.jfrj.siga.wf.bl.Wf;
 import br.gov.jfrj.siga.wf.bl.WfBL;
 import br.gov.jfrj.siga.wf.dao.WfDao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
-import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 
 public class WfHandler implements Handler<WfProcedimento, WfResp> {
 
@@ -68,24 +65,36 @@ public class WfHandler implements Handler<WfProcedimento, WfResp> {
 	}
 
 	@Override
-	public void sendEmail(WfResp responsible, String subject, String text) {
-		List<String> destinatarios = new ArrayList<>();
-		if (responsible.getPessoa() != null) {
-			destinatarios.add(responsible.getPessoa().getEmailPessoaAtual());
-		} else if (responsible.getLotacao() != null) {
-			List<DpPessoa> l = null;
-			l = WfDao.getInstance().pessoasPorLotacao(responsible.getLotacao().getId(), false, true);
-			for (DpPessoa pessoa : l) {
-				destinatarios.add(pessoa.getEmailPessoaAtual());
-			}
-		}
-		try {
-			Correio.enviar(destinatarios.toArray(new String[destinatarios.size()]), subject, text);
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
+    public void sendEmail(WfResp responsible, String subject, String text) {
+		sendEmail(responsible, null, subject, text);
 	}
-
+		
+    public void sendEmail(WfResp responsible, String emails, String subject, String text) {
+        List<String> destinatarios = new ArrayList<>();
+        if (responsible.getPessoa() != null) {
+            destinatarios.add(responsible.getPessoa().getEmailPessoaAtual());
+        } else if (responsible.getLotacao() != null) {
+            List<DpPessoa> l = null;
+            l = WfDao.getInstance().pessoasPorLotacao(responsible.getLotacao().getId(), false, true);
+            for (DpPessoa pessoa : l) {
+                destinatarios.add(pessoa.getEmailPessoaAtual());
+            }
+        }
+        if (emails != null) {
+        	String a[] = emails.split(",");
+        	for (String email : a) {
+        		email = email.trim();
+        		if (!email.isEmpty())
+        			destinatarios.add(email);
+        	}
+        }
+        try {
+            Correio.enviar(destinatarios.toArray(new String[destinatarios.size()]), subject, text);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
 	@Override
 	public void afterPause(WfProcedimento pi, TaskResult result) {
 		boolean deveTramitarPrincipal = pi.getCurrentTaskDefinition() != null && pi.getCurrentTaskDefinition().getTipoDeTarefa().isTramitarPrincipal();

@@ -51,8 +51,6 @@ public enum WfTipoDeResponsavel implements ResponsibleKind {
 	//
 	PESSOA("Pessoa"),
 	//
-    EMAIL2("Pessoa Destinatario"),  //TODO
-	//
 	LOTACAO("Lotação"),
 	//
 	PROCEDIMENTO_TITULAR("Procedimento: Titular"),

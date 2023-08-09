@@ -365,7 +365,6 @@ public class WfProcedimento extends Objeto
                             getOrgaoUsuario(), tarefa.getDefinicaoDeResponsavel());
                     return new WfResp(r.getPessoa(), r.getLotacao());
                 case PESSOA:
-                case EMAIL2:  //TODO
                 case LOTACAO:
                     return new WfResp(tarefa.getPessoa(), tarefa.getLotacao());
                 case PROCEDIMENTO_TITULAR:
@@ -1038,4 +1037,5 @@ public class WfProcedimento extends Objeto
         return new SiglaAtendente(this);
     }
 
+    
 }

@@ -151,6 +151,8 @@ public class Notificador {
 		}
 		
 		if (mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.TRANSFERENCIA)
+				|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO
+				|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO
 				|| ((mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.ASSINATURA_DIGITAL_MOVIMENTACAO)
 						|| mov.getExTipoMovimentacao() ==(ExTipoDeMovimentacao.ASSINATURA_MOVIMENTACAO_COM_SENHA))  
 						&& (mov.getExMovimentacaoRef().getExTipoMovimentacao() ==(ExTipoDeMovimentacao.DESPACHO_INTERNO_TRANSFERENCIA) 
@@ -231,8 +233,11 @@ public class Notificador {
 			
 			if (dest.tipo == "P")
 				assunto = "Notificação Automática -"+ mov.getExMobil().getSigla() +"- Movimentação de Documento";			
-			else /* transferencia */ 
-				assunto = "Documento transferido para " + dest.sigla;
+			else /* transferencia / trâmite paralelo / notificação */ 
+				if (dest.tipo == "N")
+					assunto = "Notificação de documento para " + dest.sigla;
+				else
+					assunto = "Documento transferido para " + dest.sigla;
 
 			conteudoHTML.delete(0, conteudoHTML.length());
 			conteudo.delete(0, conteudo.length());
@@ -376,10 +381,15 @@ public class Notificador {
 			if (!emailsTemp.isEmpty())	
 				destinatariosEmail.add(new Destinatario("P", sigla, papel != null ? papel.getDescPapel() : null,
 						papel != null ? idMovPapel : null, null, null, emailsTemp));
-		} else { /* transferência */
-			if (!emailsTemp.isEmpty())	
-				destinatariosEmail.add(new Destinatario("T", sigla, null, null, mov.getExMobil().getSigla(), 
+		} else { /* transferência / trâmite paralelo / notifição*/
+			if (!emailsTemp.isEmpty()) {
+				if(mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO)
+					destinatariosEmail.add(new Destinatario("N", sigla, null, null, mov.getExMobil().getSigla(), 
+							mov.getExDocumento().getDescrDocumento(), emailsTemp));
+				else					
+					destinatariosEmail.add(new Destinatario("T", sigla, null, null, mov.getExMobil().getSigla(), 
 						mov.getExDocumento().getDescrDocumento(), emailsTemp));
+			}	
 		}	
 	}	
 	
@@ -453,7 +463,9 @@ public class Notificador {
 			}
 		
 			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
-					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA) {
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO) {
 				if (mov.getResp() != null) {
 					conteudo.append("Destinatário:  <b>"
 							+ mov.getResp().getNomePessoa()
@@ -516,7 +528,9 @@ public class Notificador {
 			}
 
 			if (mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA
-					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA) {
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO
+					|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO) {
 				if (mov.getResp() != null) {
 					conteudoHTML.append("<p>Destinatário:  <b>"
 							+ mov.getResp().getNomePessoa() + " (Matrícula: "
@@ -554,15 +568,21 @@ public class Notificador {
 		} else {
 			String mensagemTeste = Ex.getInstance().getBL().mensagemDeTeste();
 
-			conteudo.append("O documento ");
+			if (dest.tipo == "N")
+				conteudo.append("Foi enviada notificação a respeito do documento ");
+			else 
+				conteudo.append("O documento ");
 
 			conteudo.append(dest.siglaMobil);
 
 			conteudo.append(", com descrição '");
 
 			conteudo.append(dest.descrDocumento);
-
-			conteudo.append("', foi transferido para ");
+			
+			if (dest.tipo == "N")
+				conteudo.append("', para ");
+			else
+				conteudo.append("', foi transferido para ");
 
 			conteudo.append(dest.sigla);
 
@@ -580,16 +600,22 @@ public class Notificador {
 				conteudo.append("\n " + mensagemTeste + "\n");
 
 			conteudoHTML.append("<html><body>");
-
-			conteudoHTML.append("<p>O documento <b>");
+			
+			if (dest.tipo == "N")
+				conteudoHTML.append("<p>Foi enviada notificação a respeito do documento <b>");
+			else
+				conteudoHTML.append("<p>O documento <b>");
 
 			conteudoHTML.append(dest.siglaMobil);
 
 			conteudoHTML.append("</b>, com descrição '<b>");
 
 			conteudoHTML.append(dest.descrDocumento);
-
-			conteudoHTML.append("</b>', foi transferido para <b>");
+			
+			if (dest.tipo == "N")
+				conteudo.append("</b>', para <b>");
+			else
+				conteudoHTML.append("</b>', foi transferido para <b>");
 
 			conteudoHTML.append(dest.sigla);
 

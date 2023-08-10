@@ -378,10 +378,12 @@ public class ExMovimentacaoVO extends ExVO {
 
 				if (!mov.getExMobil().getExDocumento().getDescrDocumento()
 						.equals(mov.getExMobilRef().getExDocumento().getDescrDocumento()))
-					mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+			//		mensagemPos = " Descrição: " + mov.getExDocumento().getDescrDocumento();
+					mensagemPos =  mov.getExDocumento().getDescrDocumento();
 				
 				addAcao(AcaoVO.builder().nome(mov.getExMobil().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobil().getSigla())
-						.exp(new CpPodeSempre()).pre("Documento juntado: ").pos(mensagemPos).build());
+						.exp(new CpPodeSempre()).pos(mensagemPos).build());
+						//	.exp(new CpPodeSempre()).pre("Documento juntado: ").pos(mensagemPos).build());
 
 				if (mov.getExMobil().podeExibirNoAcompanhamento(titular, lotaTitular)) {
 						Set<ExMovimentacao> movs = mov.getExMobil().getMovsNaoCanceladas(ExTipoDeMovimentacao.EXIBIR_NO_ACOMPANHAMENTO_DO_PROTOCOLO);
@@ -392,7 +394,7 @@ public class ExMovimentacaoVO extends ExVO {
 											+ "protocolo de acompanhamento. Deseja continuar?").build());
 						}
 				} else {
-					if (mov.getExMobil().isJuntado() && mov.getExDocumento().getExMobilPai().isAtendente(titular,lotaTitular)
+					if (mov.getExMobil().isJuntado() && mov.getExDocumento().getExMobilPai()!= null && mov.getExDocumento().getExMobilPai().isAtendente(titular,lotaTitular)
 							&& Ex.getInstance().getComp()
 								.pode(ExPodeDisponibilizarNoAcompanhamentoDoProtocolo.class, titular, lotaTitular, mov.getExDocumento())) {
 						addAcao(AcaoVO.builder().nome("Disponibilizar no Acompanhamento do Protocolo").nameSpace("/app/expediente/mov").acao("exibir_no_acompanhamento_do_protocolo")

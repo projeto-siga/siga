@@ -178,7 +178,8 @@ public class MissaoController extends TpController {
 	@Path("/listarAvancado")
 	public void listarAvancado(Condutor condutorEscalado, EstadoMissao estadoMissao,  Calendar dataInicio, Calendar dataFim) throws Exception {
 		Condutor condutorEncontrado = Condutor.AR.findById(condutorEscalado.getId());
-		List<Missao> missoes = Missao.buscarTodasAsMissoesAvancado(condutorEncontrado, estadoMissao, dataInicio, dataFim);
+		CpOrgaoUsuario cpOrgaoUsuario = so.getLotaTitular().getOrgaoUsuario();
+		List<Missao> missoes = Missao.buscarTodasAsMissoesAvancado(condutorEncontrado, estadoMissao, dataInicio, dataFim,cpOrgaoUsuario);
 		EstadoMissao estMis = EstadoMissao.PROGRAMADA;
 		MenuMontador.instance(result).recuperarMenuMissoesAvancado();
 		validarListarParaCondutorEscalado(condutorEncontrado);

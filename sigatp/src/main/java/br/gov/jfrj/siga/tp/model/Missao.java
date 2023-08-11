@@ -295,10 +295,10 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 		return Missao.AR.find("condutor.id = :idCondutor AND estadoMissao NOT IN (:estadoMissao1,:estadoMissao2) order by dataHoraSaida", parametros).fetch();
 	}
 
-	public static List<Missao> buscarTodasAsMissoesAvancado(Condutor condutor, EstadoMissao estadoMissao, Calendar dataInicio, Calendar dataFim) throws Exception {
-		if ((condutor==null) && (estadoMissao==null) && (dataInicio==null && dataFim == null)) {
-			return new ArrayList<Missao>();
-		}
+	public static List<Missao> buscarTodasAsMissoesAvancado(Condutor condutor, EstadoMissao estadoMissao, Calendar dataInicio, Calendar dataFim, CpOrgaoUsuario orgaoUsuarioAutenticado) throws Exception {
+	//	if ((condutor==null) && (estadoMissao==null) && (dataInicio==null && dataFim == null)) {
+	//		return new ArrayList<Missao>();
+	//	}
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(FormatarDataHora.recuperaFormato("dd/MM/yyyy","yyyy-MM-dd"));
 //		String dataInicioFormatada = dataInicio != null ? "to_date('" + sdf.format(dataInicio.getTime()) + " " + START_00_00_00 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
@@ -315,7 +315,7 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 			dataFimFormatada = dataFim != null ? "to_date('" + sdf.format(dataFim.getTime()) + " " + END_23_59_59 + "', 'DD/MM/YYYY HH24:MI:SS')" : "";
 		}
 		
-        String qrl = (condutor != null) ? "condutor.id = " + condutor.getId() : "";
+        String qrl = (condutor != null) ? "condutor.id = " + condutor.getId() : "cpOrgaoUsuario.id = " + orgaoUsuarioAutenticado.getId();
         qrl += (!qrl.equals("") && (dataInicio!= null || dataFim!=null)) ? " AND" : "";
 	    qrl += ((!dataInicioFormatada.equals("") && !dataFimFormatada.equals("")) ? " dataHoraSaida BETWEEN " + dataInicioFormatada + " AND " + dataFimFormatada  : "");
 	    qrl += ((!dataInicioFormatada.equals("") && dataFimFormatada.equals("")) ? " dataHoraSaida >= " + dataInicioFormatada : "");

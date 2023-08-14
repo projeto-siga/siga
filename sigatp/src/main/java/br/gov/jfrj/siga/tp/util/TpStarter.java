@@ -10,6 +10,7 @@ import javax.persistence.Persistence;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
 
@@ -31,6 +32,9 @@ public class TpStarter {
 	@PostConstruct
 	public void init() {
 		log.info("INICIANDO sigatp.WAR");
+		SigaVersion.loadSigaVersion();
+		log.info("SIGATP Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
 		CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
 		emf = Persistence.createEntityManagerFactory("default");
 		new MigrationThread().start();

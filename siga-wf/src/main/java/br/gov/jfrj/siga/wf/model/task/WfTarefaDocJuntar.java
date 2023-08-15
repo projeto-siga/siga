@@ -1,16 +1,3 @@
-/* 
- * TODO: Desenvolver código do Juntar
- * O código nesse arquivo será executado quando um workflow
- * com uma tarefa do tipo Juntar for executado
-*/
-	//os métodos juntar e transferir ficam no arquivo:
-	//siga-ws/src/main/java/br/gov/jfrj/siga/ex/service/ExService.java
-	//Service.getExService().transferir executa o tramitar que era chamado de transferir
-	//Service.getExService().transferir(pi.getPrincipal(), siglaDestino, null, true);
-	//Service.getExService().juntar(pi.getPrincipal(), codigoDocumentoViaPai, codigoDocumentoViaFilho,
-	//siglaDestino, null, true);
-	// Executar um WF com uma task JUNTAR vai rodar o método abaixo:
-
 package br.gov.jfrj.siga.wf.model.task;
 
 import com.crivano.jflow.Engine;
@@ -20,70 +7,74 @@ import com.crivano.jflow.model.enm.TaskResultKind;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.util.Utils;
+import br.gov.jfrj.siga.dp.DpLotacao;
+import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.util.WfResp;
 
 public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimento> {
-	
+	/*TODO: 
+	   []1 - A nova tarefa deve juntar o documento principal no documento informado pelo usuário.
+ 	   []2 - O documento pai pode ser fixo (número preenchido na elaboração do diagrama) ou
+ 	   []3 - Obtido através do valor de uma variável váriável do WF (incluindo documentos criados pelo próprio workflow) ou campo constante de algum documento juntado ao principal.
+ 	   []3 - Também deve ser possível informar se o documento pai deve se tornar ou não o novo Principal do WF. 
+	 */
+	//TODO: Diminuir tamanho do campo no front-end
+	//TODO: Refatoração - apagar comentários e códigos desnecessários
 	@Override
 	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {
-			String siglaDestino = null;
+		String siglaDestino = "";
+		String siglaCadastrante = "";
+		String codigoDocumentoViaFilho = "";
+		String codigoDocumentoViaPai = "";
 			
-			//TODO: resolver o erro "A via não pode ser juntada ao documento porque ele não pode ser movimentado."
-			//TODO: juntar o documento principal no documento informado pelo usuário.
+		//TODO: RECEBE O DOCUMENTO PAI DIGITADO PELO USUÁRIO
+		//String text = engine.getHandler().evalTemplate(pi, td.getText());
+		String documento_pai = engine.getHandler().evalTemplate(pi, td.getSubject());
+		//TODO: Corrigir erro: text recebeu teste 09-08-23, tem que RECEBER DOCUMENTO FILHO
+		/*
+		 * No campo Tipo de resolponsável, a opção cadastrante retorna o que deverá sar cadastrado no [siglaCadastrante]
+		 * No campo Tipo de resolponsável, a opção lotaçãop do titular o que deverá sar cadastrado no [siglaResponsável]
+		 */
+		//DpPessoa titular = pi.getTitular();
+		//DpLotacao lotacaoDoTitular = pi.getLotaTitular();
+		//if (!Utils.empty(pi.getPrincipal())) { //pi.getprincipal = documento principal: OTZZ-MEM-2023/00004-A
 		
-			//TODO: RECEBER DOCUMENTO PAI
-			//TODO: Diminuir tamanho do campo no front-end
-			//Recebe a string digitada pelo usuário no campo texto que receberá o documento
-			String text = engine.getHandler().evalTemplate(pi, td.getText());
-			
-			//TODO: RECEBER DOCUMENTO FILHO
-			
-			//TODO: VERIFICAR SE PODE JUNTAR antes de tentar executar o procedimento
-			// no ExBl.java tem a referencia do código que faz isso
-			
-			//TODO: esclarecer essa questão:
-			//JUNTAR TEM RESPONSÁVEL? QUEM DEVERÁ SER O RESPONSÁVEL APÓS JUNTAR?
-			//VAI TER PADRÃO OU O USUÁRIO VAI ESCOLHER?
-			
-			//TODO: Refatoração - apagar comentários e códigos desnecessários
-			
-			
-		if (!Utils.empty(pi.getPrincipal())) {
+		String documentoPrincipal = pi.getPrincipal(); //pi.getprincipal = documento principal: OTZZ-MEM-2023/00004-A	
+		if (!Utils.empty(documentoPrincipal)) { 
 			WfResp destino = pi.calcResponsible(td);
-			/*
-			System.out.println("destino");
-			System.out.println(destino);
-			*/
-			if (destino != null) {
-				
-				siglaDestino = SiglaParser.makeSigla(destino.getPessoa(), destino.getLotacao());
-				
-				
-			}
 			
-			
-			String documentoPrincipal = pi.getPrincipal();
-			// System.out.println("documentoPrincipal");
-			// System.out.println(documentoPrincipal);
-			/* Saída: OTZZ-MEM-2023/00005-A */
+			if (destino != null) { 
+				//siglaDestino = SiglaParser.makeSigla(destino.getPessoa(), destino.getLotacao());
+				DpPessoa pessoa = destino.getPessoa(); // veio null
+				DpLotacao lotacao = destino.getLotacao(); // veio null
+				//siglaDestino = SiglaParser.makeSigla(pessoa, lotacao); //sigladestino = @ZZLTEST
+				try {
+				    siglaDestino = SiglaParser.makeSigla(pessoa, lotacao);
+				} catch (NullPointerException npe) {
+					siglaDestino = "";
+					}
+				}
 			// String codigoDocumentoViaFilho = documentoPrincipal;
+			//siglaDestino = "@ZZLTEST";
+			siglaCadastrante = siglaDestino;
+			codigoDocumentoViaFilho = "OTZZ-MEM-2023/00004-A"; // de onde vem doc filho?
+			codigoDocumentoViaPai = documento_pai;
 			
-			// Responsável é a pessoa que aparece no para
-			String codigoDocumentoViaFilho = "OTZZ-MEM-2023/00004-A";
-			String codigoDocumentoViaPai = "OTZZ-MEM-2023/00005-A";
-			String siglaCadastrante = null;
-			
-			//adicionada essa linha para tentar prevenir o erro "A via não pode ser juntada ao documento porque ele não pode ser movimentado."
-			//não resolveu
-			//siglaDestino = null;
-			
-
+			//Esse código deverá receber o documento selecionado pelo usuário em um combobox
+			codigoDocumentoViaPai = pi.getPrincipal();
+			//codigoDocumentoViaPai = "OTZZ-MEM-2023/00005-A";   // de onde vem doc pai?
+			//assert siglaDestino != null;
+			/*
+			 * codigoDocumentoPai = OTZZ-MEM-2023/00004-A
+			 * codigoDocumentoViaFilho = OTZZ-MEM-2023/00005-A
+			 * siglaDestino = ZZLTEST
+			 * siglaCadastrante = ZZLTEST
+			 */
 			Service.getExService().juntar(codigoDocumentoViaFilho, codigoDocumentoViaPai, siglaDestino, siglaCadastrante);
 		}
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 	}
-	
 }

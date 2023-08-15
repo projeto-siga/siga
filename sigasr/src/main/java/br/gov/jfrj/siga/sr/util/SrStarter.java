@@ -11,6 +11,7 @@ import javax.persistence.Persistence;
 
 import org.jboss.logging.Logger;
 
+import br.gov.jfrj.siga.base.SigaVersion;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.cp.util.SigaFlyway;
 import br.gov.jfrj.siga.sr.model.enm.SrTipoDeConfiguracao;
@@ -32,6 +33,9 @@ public class SrStarter {
     @PostConstruct
     public void init() {
         log.info("INICIANDO SIGASR.WAR");
+		SigaVersion.loadSigaVersion();
+		log.info("SIGASR Versão: v" + SigaVersion.SIGA_VERSION);
+		log.info("Data da Versão: v" + SigaVersion.SIGA_VERSION_DATE);
         CpTipoDeConfiguracao.mapear(CpTipoDeConfiguracao.values());
         CpTipoDeConfiguracao.mapear(SrTipoDeConfiguracao.values());
 

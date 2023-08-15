@@ -60,7 +60,10 @@
 			<groupId>siga</groupId>
 			<artifactId>siga-jwt</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>siga</groupId>
+			<artifactId>siga-oidc</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>siga</groupId>
 			<artifactId>siga-cp</artifactId>

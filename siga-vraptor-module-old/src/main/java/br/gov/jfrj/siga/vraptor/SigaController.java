@@ -32,6 +32,7 @@ import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.DpSubstituicao;
 import br.gov.jfrj.siga.dp.dao.CpDao;
+import br.gov.sp.prodesp.siga.servlet.CallBackServlet;
 
 public class SigaController {
 	protected SigaObjects so;
@@ -118,6 +119,7 @@ public class SigaController {
 		result.include("lotaTitular", getLotaTitular());
 		result.include("meusTitulares", getMeusTitulares());
 		result.include("identidadeCadastrante",getIdentidadeCadastrante());
+		result.include("logadoviaGovBr",(request.getSession().getAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO) != null?true:false));
 	}
 
 	protected List<DpSubstituicao> getMeusTitulares() {

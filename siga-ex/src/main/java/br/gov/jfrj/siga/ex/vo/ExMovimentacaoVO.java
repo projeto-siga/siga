@@ -350,10 +350,12 @@ public class ExMovimentacaoVO extends ExVO {
 
 			if (!mov.getExMobilRef().getExDocumento().getDescrDocumento()
 					.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-				mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
+				mensagemPos = mov.getExMobilRef().getExDocumento().getDescrDocumento();
+			//	mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
 
 			addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
-					.exp(new CpPodeSempre()).pre("Copia do documento: ").pos(mensagemPos).build());
+					.exp(new CpPodeSempre()).pos(mensagemPos).build());
+			//		.exp(new CpPodeSempre()).pre("Copia do documento: ").pos(mensagemPos).build());
 		}
 
 		if (exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA || exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA_EXTERNO) {
@@ -365,12 +367,15 @@ public class ExMovimentacaoVO extends ExVO {
 
 					if (!mov.getExMobilRef().getExDocumento().getDescrDocumento()
 							.equals(mov.getExMobil().getExDocumento().getDescrDocumento()))
-						mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
+						mensagemPos = mov.getExMobilRef().getExDocumento().getDescrDocumento();
+					//	mensagemPos = " Descrição: " + mov.getExMobilRef().getExDocumento().getDescrDocumento();
 
 					addAcao(AcaoVO.builder().nome(mov.getExMobilRef().getSigla()).nameSpace("/app/expediente/doc").acao("exibir").params("sigla", mov.getExMobilRef().getSigla())
-							.exp(new CpPodeSempre()).pre("Juntado ao documento: ").pos(mensagemPos).build());
+							.exp(new CpPodeSempre()).pos(mensagemPos).build());
+							//		.exp(new CpPodeSempre()).pre("Juntado ao documento: ").pos(mensagemPos).build());
 				} else {
-					descricao = "Juntado ao documento: " + mov.getDescrMov();
+					descricao = mov.getDescrMov();
+					// descricao = "Juntado ao documento: " + mov.getDescrMov();
 				}
 			} else {
 

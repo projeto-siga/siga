@@ -4,7 +4,6 @@ import com.crivano.jflow.Engine;
 import com.crivano.jflow.Task;
 import com.crivano.jflow.TaskResult;
 import com.crivano.jflow.model.enm.TaskResultKind;
-
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
@@ -16,8 +15,8 @@ import br.gov.jfrj.siga.wf.util.WfResp;
 
 public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimento> {	
 	/**
-	 * Esse método é responsável por Juntar 2 documentos recebidos na tarefa Juntar(Em um Workflow)
-	 * Junta o documento principal(Documento Filho) no documento informado pelo usuário(Documento Pai).
+	 * Esse método é responsável por Juntar 2 documentos recebidos na tarefa Juntar
+	 * Junta o documento principal(Filho) no documento informado pelo usuário(Pai).
 	 * O documento pai é fixo (número preenchido na elaboração do diagrama)
 	 *
 	 * @param td Tarefa.
@@ -25,32 +24,31 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 	 * @return TaskResult Resultado da execução da tarefa.
 	 */
 	@Override
-	public TaskResult execute(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) throws Exception {
+	public TaskResult execute(
+			WfDefinicaoDeTarefa td, 
+			WfProcedimento pi, 
+			Engine engine) throws Exception {
+		
 		String siglaDestino = "";
 		String siglaCadastrante = "";
 		String codigoDocumentoPai = "";
 		String codigoDocumentoPrincipal = "";
 		String codigoDocumentoFilho = "";
 		
-		//String codigoDocumentoViaPai = "";
-		//String documento_pai = engine.getHandler().evalTemplate(pi, td.getSubject());
-		//String codigoDocumentoPai = engine.getHandler().evalTemplate(pi, td.getSubject());
 		codigoDocumentoPai = recebeDocumentoPaiDaEntradaDoUsuario(td, pi, engine);
-		codigoDocumentoPrincipal = pi.getPrincipal(); //pi.getprincipal = documento principal: OTZZ-MEM-2023/00004-A	
+		codigoDocumentoPrincipal = pi.getPrincipal();	
 		codigoDocumentoFilho = codigoDocumentoPrincipal;
 		
 		if (!Utils.empty(codigoDocumentoPrincipal)) { 
 			WfResp responsavel = pi.calcResponsible(td);
-			//String sigla = geraSigla(destino);
-			//siglaCadastrante = siglaDestino;
-			siglaDestino = geraSiglaDoResponsavel(responsavel);	// siglaDestino = ZZLTEST
-			siglaCadastrante = geraSiglaDoResponsavel(responsavel); // siglaCadastrante = ZZLTEST
-			//codigoDocumentoViaFilho = "OTZZ-MEM-2023/00004-A"; //codigoDocumentoViaFilho = OTZZ-MEM-2023/00005-A // String codigoDocumentoViaFilho = documentoPrincipal;
-			//codigoDocumentoViaPai = documento_pai; // codigoDocumentoPai = OTZZ-MEM-2023/00005-A
-			//codigoDocumentoViaPai = pi.getPrincipal();
-			
-			
-			Service.getExService().juntar(codigoDocumentoFilho, codigoDocumentoPai, siglaDestino, siglaCadastrante);
+			siglaDestino = geraSiglaDoResponsavel(responsavel);
+			siglaCadastrante = geraSiglaDoResponsavel(responsavel);
+			assert codigoDocumentoPai != null && codigoDocumentoPai != "";
+			assert codigoDocumentoFilho != null && codigoDocumentoFilho != "";
+			Service.getExService().juntar(codigoDocumentoFilho, 
+					codigoDocumentoPai, 
+					siglaDestino, 
+					siglaCadastrante);
 		}
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 	}
@@ -59,9 +57,9 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 		String siglaDestino = "";
 		if (destino != null) { 
 			DpPessoa pessoa = destino.getPessoa();
-			DpLotacao lotacao = destino.getLotacao(); //siglaDestino = SiglaParser.makeSigla(pessoa, lotacao); //sigladestino = @ZZLTEST
+			DpLotacao lotacao = destino.getLotacao();
 			try {
-			    siglaDestino = SiglaParser.makeSigla(pessoa, lotacao); //siglaDestino = "@ZZLTEST";
+			    siglaDestino = SiglaParser.makeSigla(pessoa, lotacao);
 			} catch (NullPointerException npe) {
 				siglaDestino = "";
 				}
@@ -69,7 +67,9 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 		return siglaDestino;
 	}
 	
-	private String recebeDocumentoPaiDaEntradaDoUsuario(WfDefinicaoDeTarefa td, WfProcedimento pi, Engine engine) {
+	private String recebeDocumentoPaiDaEntradaDoUsuario(WfDefinicaoDeTarefa td, 
+			WfProcedimento pi, 
+			Engine engine) {
 	    try {
 	        return engine.getHandler().evalTemplate(pi, td.getSubject());
 	    } catch (NullPointerException npe) {

@@ -34,17 +34,44 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 		String codigoDocumentoPai = "";
 		String codigoDocumentoPrincipal = "";
 		String codigoDocumentoFilho = "";
+		Boolean DocumentoPaiSeraONovoPrincipal = false;
+		
+		//TODO: Também deve ser possível informar se o documento pai deve se tornar ou não o novo Principal do WF.
+			//TODO: #1 Alterar front-end, opção doc pai será o novo principal? passar info do front pro back
+			//TODO: #2 Alterar TarefaDocJuntar, receber true ou false - receber info no back e salvar na variavel
+		
+		//if (usuário selecionou sim no campo DocumentoPaiSeraONovoPrincipal){
+		//	DocumentoPaiSeraONovoPrincipal = true;
+		//}
+		// Foram testado: como true funcionou e como false funcionou
+		
+		//Exemplo de principal no banco de dados: String "OTZZ-MEM-2023/00005-A"
+		//Por padrão o documento principal é o selecionado na tela do procedimento, que é o documento filho também
+		
+		//Por padrão o documento principal é o documento filho
+		//Se o usuário marcar documento pai é o novo principal, muda isso
 		
 		codigoDocumentoPai = recebeDocumentoPaiDaEntradaDoUsuario(td, pi, engine);
-		codigoDocumentoPrincipal = pi.getPrincipal();	
+		assert codigoDocumentoPai != null && codigoDocumentoPai != "";
+		
+		codigoDocumentoPrincipal = pi.getPrincipal();
+		assert codigoDocumentoPrincipal != null;
+		
 		codigoDocumentoFilho = codigoDocumentoPrincipal;
+		assert codigoDocumentoFilho != null && codigoDocumentoFilho != "";
+		
+		if (DocumentoPaiSeraONovoPrincipal) {
+			pi.setPrincipal(codigoDocumentoPai);
+			assert pi.getPrincipal() == codigoDocumentoPai;
+		}
+			
 		
 		if (!Utils.empty(codigoDocumentoPrincipal)) { 
 			WfResp responsavel = pi.calcResponsible(td);
 			siglaDestino = geraSiglaDoResponsavel(responsavel);
 			siglaCadastrante = geraSiglaDoResponsavel(responsavel);
-			assert codigoDocumentoPai != null && codigoDocumentoPai != "";
-			assert codigoDocumentoFilho != null && codigoDocumentoFilho != "";
+			
+			
 			Service.getExService().juntar(codigoDocumentoFilho, 
 					codigoDocumentoPai, 
 					siglaDestino, 

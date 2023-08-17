@@ -12,6 +12,7 @@ import br.gov.jfrj.siga.parser.SiglaParser;
 import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.util.WfResp;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 
 public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimento> {	
 	/**
@@ -29,6 +30,8 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 			WfProcedimento pi, 
 			Engine engine) throws Exception {
 		
+		WfTipoDeResponsavel wfTipoDeResponsavel = WfTipoDeResponsavel.PRINCIPAL_LOTA_CADASTRANTE;
+		td.setTipoDeResponsavel(wfTipoDeResponsavel);
 		String siglaDestino = "";
 		String siglaCadastrante = "";
 		String codigoDocumentoPai = "";
@@ -67,6 +70,15 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 			
 		
 		if (!Utils.empty(codigoDocumentoPrincipal)) { 
+			
+			// TODO: Remover campo tipo de responsável do front
+			// TODO: Um tipo de responsável precisa ser passado senão o juntar vai dar erro
+			// Funcona corretamente com lota do cadastrante
+			
+			//responsavel precisa ser uma pessoa e/ou uma lotação
+			
+			//td.setLotacao(lotacao);
+			//td.setPessoa(pessoa);
 			WfResp responsavel = pi.calcResponsible(td);
 			siglaDestino = geraSiglaDoResponsavel(responsavel);
 			siglaCadastrante = geraSiglaDoResponsavel(responsavel);

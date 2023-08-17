@@ -260,7 +260,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="form-control"><option value="">[Próxima]</option></select>
 								<i></i> </section>
 								<section
-									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'JUNTAR' || tarefaItem.tipo == 'INCLUIR_AUXILIAR'"
+									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="tipoResponsavel" title="" class="label mb-0">Tipo
 									Resp.<i title="Preenchimento obrigatório"

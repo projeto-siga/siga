@@ -39,21 +39,6 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 		String codigoDocumentoFilho = "";
 		Boolean DocumentoPaiSeraONovoPrincipal = false;
 		
-		//TODO: Também deve ser possível informar se o documento pai deve se tornar ou não o novo Principal do WF.
-			//TODO: #1 Alterar front-end, opção doc pai será o novo principal? passar info do front pro back
-			//TODO: #2 Alterar TarefaDocJuntar, receber true ou false - receber info no back e salvar na variavel
-		
-		//if (usuário selecionou sim no campo DocumentoPaiSeraONovoPrincipal){
-		//	DocumentoPaiSeraONovoPrincipal = true;
-		//}
-		// Foram testado: como true funcionou e como false funcionou
-		
-		//Exemplo de principal no banco de dados: String "OTZZ-MEM-2023/00005-A"
-		//Por padrão o documento principal é o selecionado na tela do procedimento, que é o documento filho também
-		
-		//Por padrão o documento principal é o documento filho
-		//Se o usuário marcar documento pai é o novo principal, muda isso
-		
 		codigoDocumentoPai = recebeDocumentoPaiDaEntradaDoUsuario(td, pi, engine);
 		assert codigoDocumentoPai != null && codigoDocumentoPai != "";
 		
@@ -67,22 +52,11 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 			pi.setPrincipal(codigoDocumentoPai);
 			assert pi.getPrincipal() == codigoDocumentoPai;
 		}
-			
 		
 		if (!Utils.empty(codigoDocumentoPrincipal)) { 
-			
-			// TODO: Remover campo tipo de responsável do front
-			// TODO: Um tipo de responsável precisa ser passado senão o juntar vai dar erro
-			// Funcona corretamente com lota do cadastrante
-			
-			//responsavel precisa ser uma pessoa e/ou uma lotação
-			
-			//td.setLotacao(lotacao);
-			//td.setPessoa(pessoa);
 			WfResp responsavel = pi.calcResponsible(td);
 			siglaDestino = geraSiglaDoResponsavel(responsavel);
 			siglaCadastrante = geraSiglaDoResponsavel(responsavel);
-			
 			
 			Service.getExService().juntar(codigoDocumentoFilho, 
 					codigoDocumentoPai, 

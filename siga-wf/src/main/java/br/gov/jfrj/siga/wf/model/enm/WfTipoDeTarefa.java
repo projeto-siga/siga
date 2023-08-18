@@ -16,10 +16,13 @@ import br.gov.jfrj.siga.wf.model.task.WfTarefaDocIncluirCopia;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaSubprocedimento;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocJuntar;
 
 public enum WfTipoDeTarefa implements TaskKind {
-
-	//
+	/*
+	 * O código a seguir possibilita adicionar um novo tipo de tarefa nesse padrão:
+	 * TAREFA("descr", "grafico", "graphTitle", classe, exigirResponsavel, tramitarPrincipal, suportarVariaveis, suportarDesvios),
+	 */
 	AGUARDAR_ASSINATURA_PRINCIPAL("Aguardar Assinatura", "rectangle", "Aguardar Assinatura",
 			WfTarefaDocAguardarAssinatura.class, true, true, false, false),
 	//
@@ -45,8 +48,11 @@ public enum WfTipoDeTarefa implements TaskKind {
 	//
 	SUBPROCEDIMENTO("Subprocedimento", "rectangle", "Subprocedimento", WfTarefaSubprocedimento.class, false, true, false, false),
 	//
+	JUNTAR("Juntar", "rectangle", "Juntar", WfTarefaDocJuntar.class, true, true, false, false),
+	//
 	INCLUIR_AUXILIAR("Incluir Auxiliar", "rectangle", "Incluir Auxiliar", WfTarefaDocAguardarAuxiliar.class, true, true, false, false);
-
+	//
+	
 
 	private final String descr;
 

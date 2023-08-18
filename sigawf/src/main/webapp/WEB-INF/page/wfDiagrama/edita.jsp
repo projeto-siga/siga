@@ -221,6 +221,9 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										<option value="AGUARDAR_ASSINATURA_PRINCIPAL"
 											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 											Aguardar Assinatura</option>
+										<option value="JUNTAR"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Juntar</option>
 										<option value="INCLUIR_DOCUMENTO"
 											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 											Aguardar Juntada</option>
@@ -602,6 +605,13 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 								<section ng-show="tarefaItem.tipo == 'EMAIL'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="assunto" title="" class="label mb-0">Assunto<i
+									title="Preenchimento obrigatório"
+									class="label-clue fa fa-asterisk"></i></label> <input
+									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
+									id="assunto" type="text" class="form-control"></section>
+								<section ng-show="tarefaItem.tipo == 'JUNTAR'"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="documento_pai" title="" class="label mb-0">Documento pai:<i
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <input
 									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"

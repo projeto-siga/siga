@@ -4602,7 +4602,7 @@ public class ExBL extends CpBL {
 				});
 		}
 	}
-	
+
 	public void juntarDocumento(final DpPessoa cadastrante, final DpPessoa docTitular, final DpLotacao lotaCadastrante,
 			final String idDocExterno, final ExMobil mob, ExMobil mobPai, final Date dtMov, final DpPessoa subscritor,
 			final DpPessoa titular, final String idDocEscolha) {
@@ -4667,7 +4667,12 @@ public class ExBL extends CpBL {
 			if (mobPai.isArquivado())
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está arquivado");
 
-			if (!getComp().pode(ExPodeSerJuntado.class, docTitular, lotaCadastrante, mob.doc(), mobPai) && !getComp().pode(ExPodeMovimentar.class, docTitular, lotaCadastrante, mobPai))
+			Boolean podeSerJuntado = getComp().pode(ExPodeSerJuntado.class, docTitular, lotaCadastrante, mob.doc(), mobPai);
+			if (!podeSerJuntado) 
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser juntado.");
+			
+			Boolean podeSerMovimentado = getComp().pode(ExPodeMovimentar.class, docTitular, lotaCadastrante, mobPai);
+			if (!podeSerMovimentado) 
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
 			
 			if(mob.getDoc().isComposto() && !mobPai.getDoc().isComposto())

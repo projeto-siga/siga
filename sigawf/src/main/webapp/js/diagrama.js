@@ -1,5 +1,5 @@
 var app = angular.module('app', ['angucomplete-alt']);
-
+var exampleApp = angular.module('exampleApp', ['ckeditor']);
 // Create an AngularJS service called debounce
 app.factory('debounce', ['$timeout', '$q', function($timeout, $q) {
 	// The service is actually this function, which we call with the func
@@ -101,6 +101,7 @@ app
 						var td = {};
 						td.hisIde = t.id;
 						td.nome = t.titulo;
+						td.email = t.email;
 						td.assunto = t.assunto;
 						td.conteudo = t.conteudo;
 						td.tipoDeTarefa = t.tipo;
@@ -193,6 +194,7 @@ app
 						var td = {};
 						td.id = t.hisIde;
 						td.titulo = t.nome;
+						td.email = t.email;
 						td.assunto = t.assunto;
 						td.conteudo = t.conteudo;
 						td.tipo = t.tipoDeTarefa;

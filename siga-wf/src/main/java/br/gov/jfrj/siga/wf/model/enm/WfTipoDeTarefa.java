@@ -3,7 +3,6 @@ package br.gov.jfrj.siga.wf.model.enm;
 import com.crivano.jflow.Task;
 import com.crivano.jflow.model.TaskKind;
 import com.crivano.jflow.task.TaskDecision;
-import com.crivano.jflow.task.TaskEmail;
 import com.crivano.jflow.task.TaskEval;
 
 import br.gov.jfrj.siga.wf.model.task.WfTarefaArquivar;
@@ -13,6 +12,7 @@ import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAguardarJuntada;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAutuar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocCriar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocIncluirCopia;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaEmail;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaSubprocedimento;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
@@ -44,7 +44,7 @@ public enum WfTipoDeTarefa implements TaskKind {
 	//
 	EXECUTAR("Script", "rectangle", null, TaskEval.class, false, true, true, false),
 	//
-	EMAIL("Enviar E-mail Automático", "folder", null, TaskEmail.class, true, true, false, false),
+	EMAIL("Enviar E-mail Automático", "folder", null, WfTarefaEmail.class, true, true, false, false),
 	//
 	SUBPROCEDIMENTO("Subprocedimento", "rectangle", "Subprocedimento", WfTarefaSubprocedimento.class, false, true, false, false),
 	//

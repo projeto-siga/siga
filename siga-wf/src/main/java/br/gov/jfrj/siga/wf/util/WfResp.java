@@ -7,18 +7,21 @@ import com.crivano.jflow.model.Responsible;
 import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.wf.model.WfDefinicaoDeTarefa;
 
 public class WfResp implements Responsible {
 
 	private DpPessoa pessoa;
-
+ 
 	private DpLotacao lotacao;
-
+	
 	public WfResp(DpPessoa pessoa, DpLotacao lotacao) {
 		super();
 		this.pessoa = pessoa;
 		this.lotacao = lotacao;
+		
 	}
+		
 
 	@Override
 	public String getInitials() {
@@ -27,6 +30,7 @@ public class WfResp implements Responsible {
 		if (lotacao != null)
 			return lotacao.getSiglaCompleta();
 		return null;
+		
 	}
 	
 	public String getTooltip() {
@@ -61,7 +65,7 @@ public class WfResp implements Responsible {
 	public void setLotacao(DpLotacao lotacao) {
 		this.lotacao = lotacao;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(lotacao, pessoa);

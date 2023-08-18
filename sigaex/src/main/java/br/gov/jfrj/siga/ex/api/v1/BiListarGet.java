@@ -13,6 +13,10 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import com.crivano.swaggerservlet.SwaggerException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 
@@ -162,6 +166,14 @@ public class BiListarGet implements IBiListarGet {
 			}
 		} else
 			v = dd.getColuna(campo);
+		
+		if (v!=null) {
+			Document doc = Jsoup.parse(v);
+			Element p= doc.select("p").first();
+			 
+			v = (p!=null ? p.text():v); //some bold text
+		}
+		
 		sb.append(v == null ? "" : v.trim());
 
 	}

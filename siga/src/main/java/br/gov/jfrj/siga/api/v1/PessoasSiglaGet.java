@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.crivano.swaggerservlet.SwaggerException;
 
 import br.gov.jfrj.siga.api.v1.ISigaApiV1.IPessoasSiglaGet;
+import br.gov.jfrj.siga.base.util.Utils;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
 
@@ -22,6 +23,8 @@ public class PessoasSiglaGet implements IPessoasSiglaGet {
                     resp, null);
 
         Boolean exibirDadosSensiveis = PessoasGet.exibirDadosSensíveis(ctx);
+        if (!exibirDadosSensiveis && Utils.comparar(pes.getCpfFormatado(), ctx.getTitular().getCpfFormatado()) == 0)
+            exibirDadosSensiveis = true;
 
         resp.pessoa = PessoasGet.pessoaToResultadoPesquisa(pes, exibirDadosSensiveis);
     }

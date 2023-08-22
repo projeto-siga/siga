@@ -144,6 +144,9 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 
 	@Column(name = "DEFT_TX_PARAM2", length = 256)
 	private java.lang.String param2;
+	
+	@Column(name = "DEFT_TX_PARAM3", length = 256)
+	private java.lang.String param3;
 
 	@Transient
 	private java.lang.String hisIde;
@@ -582,6 +585,19 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 			tags.add("@" + Texto.slugify(getNome(), true, false));
 
 		return tags;
+	}
+	
+	
+	
+	
+	
+	
+	public java.lang.String getParam3(){
+		return param3;
+	}
+	
+	public void setEmail(java.lang.String email){
+		this.param3 = param3;
 	}
 
 	public java.lang.String getEmail() {

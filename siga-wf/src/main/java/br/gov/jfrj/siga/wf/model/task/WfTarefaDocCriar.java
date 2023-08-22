@@ -84,7 +84,7 @@ public class WfTarefaDocCriar extends
 	public boolean isAguardarAssinatura(WfDefinicaoDeTarefa td) {
 		return "AGUARDAR_ASSINATURA".equals(td.getParam2());
 	}
-
+	
 	public boolean isAguardarJuntada(WfDefinicaoDeTarefa td) {
 		return "AGUARDAR_JUNTADA".equals(td.getParam2());
 	}

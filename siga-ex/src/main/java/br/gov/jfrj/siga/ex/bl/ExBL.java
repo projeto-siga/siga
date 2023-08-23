@@ -995,6 +995,8 @@ public class ExBL extends CpBL {
 					ExTipoDeMovimentacao.AGENDAMENTO_DE_PUBLICACAO, cadastrante, lotaCadastrante, mob,
 					dtMov, subscritor, null, titular, lotaTitular, null);
 
+		    gerarIdDeMovimentacao(mov);
+			
 			mov.setResp(cadastrante);
 			mov.setLotaResp(lotaCadastrante);
 
@@ -2741,6 +2743,8 @@ public class ExBL extends CpBL {
 
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, titular, null, null);
+			
+            gerarIdDeMovimentacao(mov);
 
 			final ExMovimentacao ultMov = mob.getUltimaMovimentacao();
 
@@ -4946,6 +4950,8 @@ public class ExBL extends CpBL {
 		ExMovimentacao novaMov = new ExMovimentacao();
 		novaMov.setCadastrante(cadastrante);
 		if (mov.getConteudoTpMov() != null && mov.getConteudoBlobMov() != null) {
+			
+			gerarIdDeMovimentacao(novaMov);
 			novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
 			novaMov.setConteudoTpMov(mov.getConteudoTpMov());
 		}

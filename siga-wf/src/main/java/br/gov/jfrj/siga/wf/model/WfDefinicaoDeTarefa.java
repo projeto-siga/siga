@@ -145,7 +145,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	@Column(name = "DEFT_TX_PARAM2", length = 256)
 	private java.lang.String param2;
 	
-	@Column(name = "DEFT_TX_PARAM3", length = 256)
+	@Column(name = "DEFT_TX_PARAM3", length = 4)
 	private java.lang.String param3;
 
 	@Transient
@@ -560,6 +560,7 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	public void setParam2(java.lang.String param2) {
 		this.param2 = param2;
 	}
+	
 
 	public String getAncora() {
 		if (getDefinicaoDeProcedimento().getNome() != null && getNome() != null)
@@ -587,19 +588,14 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 		return tags;
 	}
 	
-	
-	
-	
-	
-	
 	public java.lang.String getParam3(){
 		return param3;
 	}
 	
-	public void setEmail(java.lang.String email){
+	public void setParam3(java.lang.String param3){
 		this.param3 = param3;
 	}
-
+	
 	public java.lang.String getEmail() {
 		return email;
 	}
@@ -607,5 +603,4 @@ public class WfDefinicaoDeTarefa extends HistoricoAuditavelSuporte
 	public void setEmail(java.lang.String email) {
 		this.email = email;
 	}
-
 }

@@ -78,15 +78,15 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 		
 	    try {
 	    	Handler handler = engine.getHandler();
-	    	String param2 = td.getParam3();
-	    	valorFormCampoDocumentoPaiSeraONovoPrincipal = handler.evalTemplate(pi, param2);
+	    	String param3 = td.getParam3();
+	    	valorFormCampoDocumentoPaiSeraONovoPrincipal = handler.evalTemplate(pi, param3);	
 	    } catch (NullPointerException npe) {
 	        System.err.println("Erro: Um valor nulo foi encontrado.");
 	    } catch (Exception e) {
 	        System.err.println("Erro: " + e.getMessage());
 	    }
 	    
-	    if (valorFormCampoDocumentoPaiSeraONovoPrincipal == "SIM") {
+	    if (valorFormCampoDocumentoPaiSeraONovoPrincipal.equals("SIM")) {
 			return true;
 		}
 		return false;

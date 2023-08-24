@@ -335,7 +335,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				 <!-- TODO -->  <section
 				                    ng-show="( tarefaItem.tipo == 'EMAIL' )"  
 				                    class="col col-12 col-md-3 col-lg-4 form.-group"> <label
-				                    for="email" title="" class="label mb-0">Endereço de e-mail</label>
+				                    for="email" title="" class="label mb-0">Endereços Adicionais</label>
 				                    <input ng-model="tarefaItem.email" name="email" id="email" type="email" class="form-control" placeholder="email@email.com">                       
 				                </section>
 				                <section

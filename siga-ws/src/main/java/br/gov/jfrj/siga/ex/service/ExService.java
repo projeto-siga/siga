@@ -26,14 +26,13 @@ import javax.jws.WebService;
 
 import br.gov.jfrj.siga.Remote;
 
-/* 
- * TODO: Adicionar o método juntar
- */
 @WebService(targetNamespace = "http://impl.service.ex.siga.jfrj.gov.br/")
 public interface ExService extends Remote {
 	
-	//TODO: Método copiado do transferir, mudar para executar o recurso juntar
-	//Parametros: Documento1, Documento2
+	@WebMethod
+	public Boolean alterarPrincipal(String codigoDocumentoViaFilho, String codigoDocumentoViaPai, 
+			String siglaDestino, String siglaCadastrante) throws Exception;
+	
 	@WebMethod
 	public Boolean juntar(String codigoDocumentoViaFilho, String codigoDocumentoViaPai, 
 			String siglaDestino, String siglaCadastrante) throws Exception;

@@ -1,6 +1,7 @@
 package br.gov.jfrj.siga.wf.model.task;
 
 import com.crivano.jflow.Engine;
+import com.crivano.jflow.Handler;
 import com.crivano.jflow.Task;
 import com.crivano.jflow.TaskResult;
 import com.crivano.jflow.model.enm.TaskResultKind;
@@ -37,7 +38,10 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 		String codigoDocumentoPai = "";
 		String codigoDocumentoPrincipal = "";
 		String codigoDocumentoFilho = "";
-		Boolean DocumentoPaiSeraONovoPrincipal = false;
+		Boolean documentoPaiSeraONovoPrincipal = false;
+		
+		documentoPaiSeraONovoPrincipal = isDocPaiNovoPrincipal(td, pi, engine);
+		assert documentoPaiSeraONovoPrincipal != null;
 		
 		codigoDocumentoPai = recebeDocumentoPaiDaEntradaDoUsuario(td, pi, engine);
 		assert codigoDocumentoPai != null && codigoDocumentoPai != "";
@@ -48,7 +52,7 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 		codigoDocumentoFilho = codigoDocumentoPrincipal;
 		assert codigoDocumentoFilho != null && codigoDocumentoFilho != "";
 		
-		if (DocumentoPaiSeraONovoPrincipal) {
+		if (documentoPaiSeraONovoPrincipal) {
 			pi.setPrincipal(codigoDocumentoPai);
 			assert pi.getPrincipal() == codigoDocumentoPai;
 		}
@@ -64,6 +68,28 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 					siglaCadastrante);
 		}
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
+	}
+	
+	public Boolean isDocPaiNovoPrincipal(WfDefinicaoDeTarefa td, 
+			WfProcedimento pi, 
+			Engine engine) {
+		
+		String valorFormCampoDocumentoPaiSeraONovoPrincipal = null;
+		
+	    try {
+	    	Handler handler = engine.getHandler();
+	    	String param3 = td.getParam3();
+	    	valorFormCampoDocumentoPaiSeraONovoPrincipal = handler.evalTemplate(pi, param3);	
+	    } catch (NullPointerException npe) {
+	        System.err.println("Erro: Um valor nulo foi encontrado.");
+	    } catch (Exception e) {
+	        System.err.println("Erro: " + e.getMessage());
+	    }
+	    
+	    if (valorFormCampoDocumentoPaiSeraONovoPrincipal.equals("SIM")) {
+			return true;
+		}
+		return false;
 	}
 	
 	private String geraSiglaDoResponsavel(WfResp destino) {

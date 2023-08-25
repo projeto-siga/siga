@@ -136,6 +136,12 @@ app
 							td.param = t.param;
 							td.param2 = t.param2;
 						}
+						
+						if (t.tipo == 'JUNTAR') {
+							td.param = t.param;
+							td.param2 = t.param2;
+							td.param3 = t.param3;
+						}
 
 						pd.definicaoDeTarefa.push(td);
 
@@ -237,6 +243,9 @@ app
 
 						if (t.param2)
 							td.param2 = '' + t.param2
+							
+						if (t.param3)
+							td.param3 = '' + t.param2
 
 						pd.tarefa.push(td);
 

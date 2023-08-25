@@ -31,6 +31,25 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 			WfProcedimento pi, 
 			Engine engine) throws Exception {
 		
+		// TODO: Adicionar campo doc pai fixo ou variável no front-end como foi feito pro outro campo
+		
+		// TODO: Armazenar seleção do usuario no campo param ou param2 como foi feito no param3
+			// TODO: Se essa solução não funcionar, criar novo campo no banco de dados exclusivo para esse valor
+		
+		String formCampoDocPaiFixoOuVariavel = "FIXO";
+		
+		// TODO: Receber valor do campo doc pai fixo ou variável e sakvar na variavel formCampoDocPaiFixoOuVariavel
+		// formCampoDocPaiFixoOuVariavel = informação recebida do frontend
+		assert formCampoDocPaiFixoOuVariavel == "FIXO" || formCampoDocPaiFixoOuVariavel == "VARIAVEL";
+		
+		// TODO: if documento pai é variavel, executa:
+		
+		// TODO: Código específico para documento pai variável
+		
+		assert formCampoDocPaiFixoOuVariavel != null;
+		assert isDocPaiVariavel(formCampoDocPaiFixoOuVariavel) == null;
+		assert docPaiVariavel() == null;
+		
 		WfTipoDeResponsavel wfTipoDeResponsavel = WfTipoDeResponsavel.PRINCIPAL_LOTA_CADASTRANTE;
 		td.setTipoDeResponsavel(wfTipoDeResponsavel);
 		String siglaDestino = "";
@@ -68,6 +87,24 @@ public class WfTarefaDocJuntar implements Task<WfDefinicaoDeTarefa, WfProcedimen
 					siglaCadastrante);
 		}
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
+	}
+	
+	private String isDocPaiVariavel(String formCampoDocPaiFixoOuVariavel) {
+		// TODO: Como funciona a passagem de variável de uma tarefa anterior para a nova através do workflow
+			//TODO: analizar anotações da explicação do Renato
+			//TODO: tirar dúvidas sobre como funciona
+		
+		// TODO: Verificar se usuário selecionou fixo ou variável
+		// TODO: Se for variável, execute o código abaixo
+		// TODO: Desenvolver código do Doc pai variável
+		
+		String saida = docPaiVariavel();
+		return saida;
+	}
+	
+	private String docPaiVariavel() {
+		// TODO: Desenvolver código do Doc pai variável
+		return null;
 	}
 	
 	public Boolean isDocPaiNovoPrincipal(WfDefinicaoDeTarefa td, 

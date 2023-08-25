@@ -207,6 +207,7 @@ public class ExServiceImpl implements ExService {
 		}
 	}
 
+	
 	public Boolean isAssinado(String codigoDocumento, String siglaCadastrante) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(false)) {
 			try {
@@ -1213,4 +1214,5 @@ public class ExServiceImpl implements ExService {
 					|| mobFilho.getMobilPrincipal().equals(mobPai.doc().getMobilGeral());
 		}
 	}
+
 }

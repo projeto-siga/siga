@@ -48,13 +48,22 @@ public abstract class SiglaParser {
 	public void setLotacao(DpLotacao lotaTitular) {
 		this.lotacao = lotaTitular;
 	}
-
+	
 	public static String makeSigla(DpPessoa pessoa, DpLotacao lotacao) {
 		if (pessoa != null && lotacao != null)
 			return pessoa.getSigla() + "@" + lotacao.getSiglaCompleta();
-		if (lotacao != null)
+		if (pessoa == null && lotacao != null)
 			return "@" + lotacao.getSiglaCompleta();
-		return pessoa.getSigla();
+		if (pessoa != null && lotacao == null) {
+			return pessoa.getSigla();
+		}
+
+		try {
+		    return pessoa.getSigla();
+		} catch (NullPointerException npe) {
+		    System.err.println("Erro: Objeto pessoa é nulo.");
+		    return null;
+		}
 
 	}
 

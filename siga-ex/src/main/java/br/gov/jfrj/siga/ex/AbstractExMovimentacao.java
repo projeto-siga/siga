@@ -867,14 +867,14 @@ public abstract class AbstractExMovimentacao extends ExArquivo implements Serial
 	public void setConteudoBlobMov(byte[] createBlob) {
 		if (createBlob != null) {
             if (getIdMov() == null)
-                throw new RuntimeException("Tentando gravar um conteúdo de movimentação quando ela ainda não tem ID.");
+            	throw new RuntimeException("Tentando gravar um conteúdo de movimentação quando ela ainda não tem ID.");
             if (getExMobil() == null)
                 throw new RuntimeException("Tentando gravar um conteúdo de movimentação quando ela ainda não tem móbile.");
-            if (cpArquivo.getOrgaoUsuario() == null && getExMobil() != null && getExMobil().doc() != null && getExMobil().doc().getOrgaoUsuario() != null) {
+            if (cpArquivo != null && cpArquivo.getOrgaoUsuario() == null && getExMobil() != null && getExMobil().doc() != null && getExMobil().doc().getOrgaoUsuario() != null) {
                 CpOrgaoUsuario orgaoUsuario = getExMobil().doc().getOrgaoUsuario();
                 if (orgaoUsuario != null)
                     cpArquivo.updateOrgaoUsuario(cpArquivo, orgaoUsuario);
-            }
+            }  
 			cpArquivo = CpArquivo.updateConteudo(cpArquivo, createBlob, getReferencia().replace(":", "-mov"), ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS);
 		}
 	}

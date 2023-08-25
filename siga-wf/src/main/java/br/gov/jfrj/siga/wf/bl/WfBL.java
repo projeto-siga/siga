@@ -59,6 +59,7 @@ import br.gov.jfrj.siga.wf.model.WfMovTransicao;
 import br.gov.jfrj.siga.wf.model.WfProcedimento;
 import br.gov.jfrj.siga.wf.model.enm.WfPrioridade;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDePrincipal;
+import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeTarefa;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVariavel;
 import br.gov.jfrj.siga.wf.model.enm.WfTipoDeVinculoComPrincipal;
@@ -162,7 +163,18 @@ public class WfBL extends CpBL {
 			if (td.getTipoDeTarefa() == null)
 				throwErroDeInicializacao(pi, td, "não foi possível identificar o tipo da tarefa");
 			if (td.getTipoDeTarefa().isExigirResponsavel()) {
+				
+				//TODO Se o tipo de tarefa for JUNTAR, não pedir o tipo de responsável pro usuário
+				//TODO Refatoração, extrair método se precisar
+				if (td.getTipoDeTarefa().getDescr() == "Juntar") {
+					WfTipoDeResponsavel wfTipoDeResponsavel = WfTipoDeResponsavel.PRINCIPAL_LOTA_CADASTRANTE;
+					td.setTipoDeResponsavel(wfTipoDeResponsavel);
+				}
+				
 				WfResp r = pi.calcResponsible(td);
+				
+
+				
 				if (r == null)
 					throwErroDeInicializacao(pi, td, "não foi possível calcular o responsável pela tarefa");
 			}

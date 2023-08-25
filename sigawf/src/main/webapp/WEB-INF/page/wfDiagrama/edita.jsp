@@ -27,10 +27,10 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 	<script src="/siga/bootstrap/js/bootstrap.bundle.min.js?v=4.1.1"
 		type="text/javascript"></script>
 
-
 	<script src="/siga/javascript/angularjs/1.8.2/angular.min.js"></script>
 
 	<script src="/siga/javascript/angucomplete-alt/angucomplete-alt.js"></script>
+	
 	
 	<style>
 		.taskrow:target {
@@ -92,8 +92,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				</div>
 				<div class="col col-md-3">
 					<div class="form-group" id="lotaResponsavel">
-						<label for="lotaResponsavel" title="" class="label">Lotação
-							Resp.</label>
+						<label for="lotaResponsavel" title="" class="label">Lotação Resp.</label>
 						<div minlength="1" selected-object="selectedObject"
 							focus-first="true" text-searching="Pesquisando Unidades..."
 							focus-out="$broadcast(!data.workflow.lotaResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
@@ -112,8 +111,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				</div>
 				<div class="col col-md-3">
 					<div class="form-group" id="responsavel">
-						<label for="responsavel" title="" class="label">Pessoa
-							Resp.</label>
+						<label for="responsavel" title="" class="label">Pessoa Resp.</label>
 						<div minlength="1" selected-object="selectedObject"
 							focus-first="true" text-searching="Pesquisando Pessoas..."
 							focus-out="$broadcast(!data.workflow.responsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
@@ -143,8 +141,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				<div class="col col-md-3"
 					ng-show="data.workflow.tipoDePrincipal != 'NENHUM'">
 					<div class="form-group">
-						<label for="tipoDeVinculoComPrincipal">Vínculo com o
-							Principal</label> <select
+						<label for="tipoDeVinculoComPrincipal">Vínculo com o Principal</label> <select
 							ng-model="data.workflow.tipoDeVinculoComPrincipal"
 							ng-options="item.id as item.descr for item in tiposDeVinculoComPrincipal"
 							class="form-control"></select>
@@ -205,14 +202,14 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 						</div>
 						<div class="col">
 							<div class="row">
-								<section class="col col-12 col-md-2 col-lg-2 form-group">
+								<section class="col col-12 col-md-2 col-lg-4 form-group">
 								<label for="tipo" title="" class="label mb-0">Tipo<i
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <select
 									ng-model="tarefaItem.tipo" ng-required="true"
 									class="form-control"><option value="FORMULARIO">Tarefa de Usuário</option>
 									<option value="DECISAO">Desvio Automático</option>
-									<option value="EMAIL">Enviar E-mail Automático</option>
+									<option value="EMAIL">Enviar e-mail</option>
 									<option value="EXECUTAR">Script</option>
 									<option value="SUBPROCEDIMENTO">Iniciar Procedimento</option>
 									<option value="CRIAR_DOCUMENTO">Criar Documento</option>
@@ -221,6 +218,9 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 										<option value="AGUARDAR_ASSINATURA_PRINCIPAL"
 											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 											Aguardar Assinatura</option>
+										<option value="JUNTAR"
+											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
+											Juntar</option>
 										<option value="INCLUIR_DOCUMENTO"
 											ng-if="data.workflow.tipoDePrincipal == 'DOCUMENTO'">
 											Aguardar Juntada</option>
@@ -241,7 +241,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 											Incluir Auxiliar</option>
 									</optgroup>
 								</select></section>
-								<section class="col col-12 col-md-2 col-lg-2 form-group">
+								<section class="col col-12 col-md-2 col-lg-4 form-group">
 								<label for="titulo" title="" class="label mb-0">Título<i
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <input
@@ -249,7 +249,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									id="titulo" type="text" class="form-control"></section>
 								<section
 									ng-show="(tarefaItem.tipo != 'FORMULARIO' && tarefaItem.tipo != 'DECISAO') || (tarefaItem.tipo == 'FORMULARIO' && (tarefaItem.desvio||[]).length == 0)"
-									class="col col-12 col-md-2 col-lg-2 form-group"> <label
+									class="col col-12 col-md-2 col-lg-3 form-group"> <label
 									for="depois" title="" class="label mb-0">Depois</label> <select
 									ng-selected="desvioItem.tarefa" ng-model="tarefaItem.depois"
 									ng-init=""
@@ -258,9 +258,8 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 								<i></i> </section>
 								<section
 									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR'"
-									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="tipoResponsavel" title="" class="label mb-0">Tipo
-									Resp.<i title="Preenchimento obrigatório"
+									class="col col-12 col-md-3 col-lg-4 form-group"> <label
+									for="tipoResponsavel" title="" class="label mb-0">Tipo Resp.<i title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i>
 								</label> <select ng-model="tarefaItem.tipoResponsavel"
 									ng-required="true" class="form-control">
@@ -269,53 +268,38 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									<option value="PESSOA">Pessoa</option>
 									<optgroup label="Procedimento">
 										<option value="PROCEDIMENTO_TITULAR">Titular</option>
-										<option value="PROCEDIMENTO_LOTA_TITULAR">Lotação do
-											Titular</option>
+										<option value="PROCEDIMENTO_LOTA_TITULAR">Lotação do Titular</option>
 									</optgroup>
 									<optgroup label="{{getPrincipalNome()}}"
 										ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
 										<option value="PRINCIPAL_CADASTRANTE">Cadastrante</option>
-										<option value="PRINCIPAL_LOTA_CADASTRANTE">Lotação do
-											Cadastrante</option>
+										<option value="PRINCIPAL_LOTA_CADASTRANTE">Lotação do Cadastrante</option>
 										<option value="PRINCIPAL_TITULAR">Titular</option>
-										<option value="PRINCIPAL_LOTA_TITULAR">Lotação do
-											Titular</option>
+										<option value="PRINCIPAL_LOTA_TITULAR">Lotação do Titular</option>
 										<option value="PRINCIPAL_SUBSCRITOR">Subscritor</option>
-										<option value="PRINCIPAL_LOTA_SUBSCRITOR">Lotação do
-											Subscritor</option>
+										<option value="PRINCIPAL_LOTA_SUBSCRITOR">Lotação do Subscritor</option>
 										<option value="PRINCIPAL_DESTINATARIO">Destinatário</option>
-										<option value="PRINCIPAL_LOTA_DESTINATARIO">Lotação
-											do Destinatário</option>
+										<option value="PRINCIPAL_LOTA_DESTINATARIO">Lotação	do Destinatário</option>
 										<option value="PRINCIPAL_GESTOR">Gestor</option>
-										<option value="PRINCIPAL_LOTA_GESTOR">Lotação do
-											Gestor</option>
-										<option value="PRINCIPAL_FISCAL_TECNICO">Fiscal
-											Técnico</option>
-										<option value="PRINCIPAL_LOTA_FISCAL_TECNICO">
-											Lotação do Fiscal Técnico</option>
-										<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO">
-											Fiscal Administrativo</option>
-										<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO">
-											Lotação do Fiscal Administrativo</option>
+										<option value="PRINCIPAL_LOTA_GESTOR">Lotação do Gestor</option>
+										<option value="PRINCIPAL_FISCAL_TECNICO">Fiscal Técnico</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_TECNICO"> Lotação do Fiscal Técnico</option>
+										<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO"> Fiscal Administrativo</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO"> Lotação do Fiscal Administrativo</option>
 										<option value="PRINCIPAL_INTERESSADO">Interessado</option>
-										<option value="PRINCIPAL_LOTA_INTERESSADO">Lotação do
-											Interessado</option>
+										<option value="PRINCIPAL_LOTA_INTERESSADO">Lotação do Interessado</option>
 										<option value="PRINCIPAL_AUTORIZADOR">Interessado</option>
-										<option value="PRINCIPAL_LOTA_AUTORIZADOR">Lotação do
-											Autorizador</option>
+										<option value="PRINCIPAL_LOTA_AUTORIZADOR">Lotação do Autorizador</option>
 										<option value="PRINCIPAL_REVISOR">Interessado</option>
-										<option value="PRINCIPAL_LOTA_REVISOR">Lotação do
-											Revisor</option>
+										<option value="PRINCIPAL_LOTA_REVISOR">Lotação do Revisor</option>
 										<option value="PRINCIPAL_LIQUIDANTE">Interessado</option>
-										<option value="PRINCIPAL_LOTA_LIQUIDANTE">Lotação do
-											Liquidante</option>
+										<option value="PRINCIPAL_LOTA_LIQUIDANTE">Lotação do Liquidante</option>
 									</optgroup>
 								</select> </section>
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'LOTACAO'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refUnidadeResponsavel" title="" class="label mb-0">Lotação
-									Resp.</label>
+									for="refUnidadeResponsavel" title="" class="label mb-0">Lotação Resp.</label>
 								<div minlength="1" selected-object="selectedObject"
 									focus-first="true" text-searching="Pesquisando Unidades..."
 									focus-out="$broadcast(!tarefaItem.refUnidadeResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
@@ -333,8 +317,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 								<section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'PESSOA'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
-									for="refPessoaResponsavel" title="" class="label mb-0">Pessoa
-									Resp.</label>
+									for="refPessoaResponsavel" title="" class="label mb-0">Pessoa Resp.</label>
 								<div minlength="1" selected-object="selectedObject"
 									focus-first="true" text-searching="Pesquisando Pessoas..."
 									focus-out="$broadcast(!tarefaItem.refPessoaResponsavel.originalObject ? 'angucomplete-alt:clearInput' : '');"
@@ -348,8 +331,14 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									name="refPessoaResponsavel" placeholder="Pesquisar Pessoa"
 									id="refPessoaResponsavel" class="angucomplete-ctrl p-0"
 									template-url="/siga/javascript/angucomplete-alt/custom-template.html"></div>
-								</section>
-								<section
+								</section>  
+				 <!-- TODO -->  <section
+				                    ng-show="( tarefaItem.tipo == 'EMAIL' )"  
+				                    class="col col-12 col-md-3 col-lg-4 form.-group"> <label
+				                    for="email" title="" class="label mb-0">Endereço de e-mail</label>
+				                    <input ng-model="tarefaItem.email" name="email" id="email" type="email" class="form-control" placeholder="email@email.com">                       
+				                </section>
+				                <section
 									ng-show="(tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR') && tarefaItem.tipoResponsavel == 'RESPONSAVEL'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="refResponsavel" title="" class="label mb-0">Responsável</label>
@@ -600,8 +589,15 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									</div>
 								</fieldset>
 								<section ng-show="tarefaItem.tipo == 'EMAIL'"
-									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									class="col col-12 col-md-3 col-lg-4 form-group"> <label
 									for="assunto" title="" class="label mb-0">Assunto<i
+									title="Preenchimento obrigatório"
+									class="label-clue fa fa-asterisk"></i></label> <input
+									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
+									id="assunto" type="text" class="form-control"></section>
+								<section ng-show="tarefaItem.tipo == 'JUNTAR'"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="documento_pai" title="" class="label mb-0">Documento pai:<i
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <input
 									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
@@ -613,7 +609,8 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <textarea
 									ng-model="tarefaItem.conteudo" name="texto" ng-required="true"
-									id="conteudo" class="form-control"></textarea> </section>
+									id="conteudo" class="form-control"></textarea> 
+								</section>
 							</div>
 						</div>
 					</div>

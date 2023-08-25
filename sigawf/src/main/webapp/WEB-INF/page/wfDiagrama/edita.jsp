@@ -420,6 +420,15 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 								<select ng-model="tarefaItem.param2"
 									ng-options="item.id as item.nome for item in [{id: 'NAO_AGUARDAR', nome: 'Não Aguardar'},{id: 'AGUARDAR_ASSINATURA', nome: 'Aguardar Assinatura'},{id: 'AGUARDAR_JUNTADA', nome: 'Aguardar Juntada ao Principal'}]"
 									class="form-control"></select> </section>
+									
+								<section ng-if="(tarefaItem.tipo == 'JUNTAR')"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="param3" title="" class="label mb-0">Novo Principal</label>
+								<select ng-model="tarefaItem.param3"
+									ng-options="item.id as item.nome for item in [{id: 'SIM', nome: 'SIM'},{id: 'NAO', nome: 'NAO'}]"
+									class="form-control"></select> </section>
+									
+	
 								<fieldset ng-show="tarefaItem.tipo == 'FORMULARIO'"
 									title="Variáveis" class="col col-12">
 									<header class="form-group juia">

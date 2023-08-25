@@ -999,6 +999,7 @@ public class ExBL extends CpBL {
 			
 			mov.setResp(cadastrante);
 			mov.setLotaResp(lotaCadastrante);
+	
 
 			mov.setDtDispPublicacao(dtDispPublicacao);
 			mov.setCadernoPublicacaoDje(tipoMateria);
@@ -4920,8 +4921,8 @@ public class ExBL extends CpBL {
 			case INCLUSAO_DE_COSIGNATARIO:
 			case ANEXACAO:
 			case ANOTACAO:
-				ExMovimentacao novaMov = duplicarMovimentacao(cadastrante, lotaCadastrante, mov);
-				novaMov.setExMobil(novoDoc.getMobilGeral());
+				ExMovimentacao novaMov = duplicarMovimentacao(cadastrante, lotaCadastrante, mov, novoDoc);
+	
 
 				try {
 					iniciarAlteracao();
@@ -4945,16 +4946,10 @@ public class ExBL extends CpBL {
 		return novoDoc;
 	}
 
-	private ExMovimentacao duplicarMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExMovimentacao mov)
+	private ExMovimentacao duplicarMovimentacao(DpPessoa cadastrante, DpLotacao lotaCadastrante, ExMovimentacao mov, ExDocumento novoDoc)
 			throws AplicacaoException {
 		ExMovimentacao novaMov = new ExMovimentacao();
 		novaMov.setCadastrante(cadastrante);
-		if (mov.getConteudoTpMov() != null && mov.getConteudoBlobMov() != null) {
-			
-			gerarIdDeMovimentacao(novaMov);
-			novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
-			novaMov.setConteudoTpMov(mov.getConteudoTpMov());
-		}
 		novaMov.setDescrMov(mov.getDescrMov());
 		novaMov.setDtIniMov(dao().dt());
 		novaMov.setDtMov(mov.getDtMov());
@@ -4972,7 +4967,14 @@ public class ExBL extends CpBL {
 		novaMov.setSubscritor(mov.getSubscritor());
 		novaMov.setTitular(mov.getTitular());
 		novaMov.setExPapel(mov.getExPapel());
+		novaMov.setExMobil(novoDoc.getMobilGeral());
 		acrescentarCamposDeAuditoria(novaMov);
+		if (mov.getConteudoTpMov() != null && mov.getConteudoBlobMov() != null) {
+			
+			gerarIdDeMovimentacao(novaMov);
+			novaMov.setConteudoBlobMov(mov.getConteudoBlobMov());
+			novaMov.setConteudoTpMov(mov.getConteudoTpMov());
+		}
 		return novaMov;
 	}
 	

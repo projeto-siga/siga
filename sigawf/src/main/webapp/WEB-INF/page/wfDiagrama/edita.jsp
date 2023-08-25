@@ -257,9 +257,49 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="form-control"><option value="">[Próxima]</option></select>
 								<i></i> </section>
 								<section
-									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'EMAIL' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR'"
+									ng-show="tarefaItem.tipo == 'FORMULARIO' || tarefaItem.tipo == 'INCLUIR_DOCUMENTO' || tarefaItem.tipo == 'CRIAR_DOCUMENTO' || tarefaItem.tipo == 'AUTUAR_DOCUMENTO' || tarefaItem.tipo == 'TRAMITAR_PRINCIPAL' || tarefaItem.tipo == 'INCLUIR_AUXILIAR'"
 									class="col col-12 col-md-3 col-lg-4 form-group"> <label
 									for="tipoResponsavel" title="" class="label mb-0">Tipo Resp.<i title="Preenchimento obrigatório"
+									class="label-clue fa fa-asterisk"></i>
+								</label> <select ng-model="tarefaItem.tipoResponsavel"
+									ng-required="true" class="form-control">
+									<option value="RESPONSAVEL">Tabelado</option>
+									<option value="LOTACAO">Lotação</option>
+									<option value="PESSOA">Pessoa</option>
+									<optgroup label="Procedimento">
+										<option value="PROCEDIMENTO_TITULAR">Titular</option>
+										<option value="PROCEDIMENTO_LOTA_TITULAR">Lotação do Titular</option>
+									</optgroup>
+									<optgroup label="{{getPrincipalNome()}}"
+										ng-if="data.workflow.tipoDePrincipal != 'NENHUM'">
+										<option value="PRINCIPAL_CADASTRANTE">Cadastrante</option>
+										<option value="PRINCIPAL_LOTA_CADASTRANTE">Lotação do Cadastrante</option>
+										<option value="PRINCIPAL_TITULAR">Titular</option>
+										<option value="PRINCIPAL_LOTA_TITULAR">Lotação do Titular</option>
+										<option value="PRINCIPAL_SUBSCRITOR">Subscritor</option>
+										<option value="PRINCIPAL_LOTA_SUBSCRITOR">Lotação do Subscritor</option>
+										<option value="PRINCIPAL_DESTINATARIO">Destinatário</option>
+										<option value="PRINCIPAL_LOTA_DESTINATARIO">Lotação	do Destinatário</option>
+										<option value="PRINCIPAL_GESTOR">Gestor</option>
+										<option value="PRINCIPAL_LOTA_GESTOR">Lotação do Gestor</option>
+										<option value="PRINCIPAL_FISCAL_TECNICO">Fiscal Técnico</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_TECNICO"> Lotação do Fiscal Técnico</option>
+										<option value="PRINCIPAL_FISCAL_ADMINISTRATIVO"> Fiscal Administrativo</option>
+										<option value="PRINCIPAL_LOTA_FISCAL_ADMINISTRATIVO"> Lotação do Fiscal Administrativo</option>
+										<option value="PRINCIPAL_INTERESSADO">Interessado</option>
+										<option value="PRINCIPAL_LOTA_INTERESSADO">Lotação do Interessado</option>
+										<option value="PRINCIPAL_AUTORIZADOR">Interessado</option>
+										<option value="PRINCIPAL_LOTA_AUTORIZADOR">Lotação do Autorizador</option>
+										<option value="PRINCIPAL_REVISOR">Interessado</option>
+										<option value="PRINCIPAL_LOTA_REVISOR">Lotação do Revisor</option>
+										<option value="PRINCIPAL_LIQUIDANTE">Interessado</option>
+										<option value="PRINCIPAL_LOTA_LIQUIDANTE">Lotação do Liquidante</option>
+									</optgroup>
+								</select> </section>
+								<section
+									ng-show="tarefaItem.tipo == 'EMAIL'"
+									class="col col-12 col-md-3 col-lg-4 form-group"> <label
+									for="tipoResponsavel" title="" class="label mb-0">Destinatário<i title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i>
 								</label> <select ng-model="tarefaItem.tipoResponsavel"
 									ng-required="true" class="form-control">
@@ -335,7 +375,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 				 <!-- TODO -->  <section
 				                    ng-show="( tarefaItem.tipo == 'EMAIL' )"  
 				                    class="col col-12 col-md-3 col-lg-4 form.-group"> <label
-				                    for="email" title="" class="label mb-0">Endereço de e-mail</label>
+				                    for="email" title="" class="label mb-0">Endereços Adicionais</label>
 				                    <input ng-model="tarefaItem.email" name="email" id="email" type="email" class="form-control" placeholder="email@email.com">                       
 				                </section>
 				                <section

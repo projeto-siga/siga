@@ -17,6 +17,7 @@ import br.gov.jfrj.siga.wf.model.task.WfTarefaFormulario;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaSubprocedimento;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaTramitar;
 import br.gov.jfrj.siga.wf.model.task.WfTarefaDocJuntar;
+import br.gov.jfrj.siga.wf.model.task.WfTarefaDocAlterarPrincipal;
 
 public enum WfTipoDeTarefa implements TaskKind {
 	/*
@@ -49,6 +50,8 @@ public enum WfTipoDeTarefa implements TaskKind {
 	SUBPROCEDIMENTO("Subprocedimento", "rectangle", "Subprocedimento", WfTarefaSubprocedimento.class, false, true, false, false),
 	//
 	JUNTAR("Juntar", "rectangle", "Juntar", WfTarefaDocJuntar.class, true, true, false, false),
+	//
+	ALTERAR_PRINCIPAL("Juntar", "rectangle", "Juntar", WfTarefaDocJuntar.class, true, true, false, false),
 	//
 	INCLUIR_AUXILIAR("Incluir Auxiliar", "rectangle", "Incluir Auxiliar", WfTarefaDocAguardarAuxiliar.class, true, true, false, false);
 	//

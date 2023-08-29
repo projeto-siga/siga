@@ -11,7 +11,7 @@
 
 	<properties>
 		<!-- Registro Centralizado da PATCH versão do SIGA -->
-		<patch.version>9</patch.version>
+		<patch.version>10</patch.version>
 		
  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  		<java.version>8</java.version> 

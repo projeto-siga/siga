@@ -58,8 +58,6 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
 
                 Not.of(new ExEstaSobrestado(mob)),
 
-                Not.of(new ExEstaJuntado(mob)),
-
                 Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
                 Or.of(
@@ -69,6 +67,8 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
                                 Not.of(new ExEstaArquivado(mob)),
 
                                 new ExEstaEmTramiteParalelo(mob),
+
+                                Not.of(new ExEstaJuntado(mob)),
 
                                 new ExPodeMovimentar(mob, titular, lotaTitular)),
 

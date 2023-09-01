@@ -2842,6 +2842,8 @@ public class ExBL extends CpBL {
 		form.put("folhaInicial", Integer.toString(folhaInicial));
 		form.put("folhaFinal", Integer.toString(folhaFinal));
 		form.put("textoMotivo", textoMotivo);
+		
+		gerarIdDeMovimentacao(movCanceladora);
 		movCanceladora.setConteudoBlobForm(urlEncodedFormFromMap(form));
 
 		// Gravar o Html //Nato
@@ -4672,13 +4674,9 @@ public class ExBL extends CpBL {
 			if (mobPai.isArquivado())
 				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele está arquivado");
 
-			Boolean podeSerJuntado = getComp().pode(ExPodeSerJuntado.class, docTitular, lotaCadastrante, mob.doc(), mobPai);
-			if (!podeSerJuntado) 
-				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser juntado.");
-			
-			Boolean podeSerMovimentado = getComp().pode(ExPodeMovimentar.class, docTitular, lotaCadastrante, mobPai);
-			if (!podeSerMovimentado) 
-				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");
+			if (!getComp().pode(ExPodeSerJuntado.class, docTitular, lotaCadastrante, mob.doc(), mobPai) 
+					&& !getComp().pode(ExPodeMovimentar.class, docTitular, lotaCadastrante, mobPai))			
+				throw new RegraNegocioException("A via não pode ser juntada ao documento porque ele não pode ser movimentado.");			
 			
 			if(mob.getDoc().isComposto() && !mobPai.getDoc().isComposto())
 				throw new RegraNegocioException("Não é permitido realizar a juntada de documento composto em documento avulso.");

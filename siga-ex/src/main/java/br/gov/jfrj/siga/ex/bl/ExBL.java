@@ -1657,7 +1657,8 @@ public class ExBL extends CpBL {
 			throw new AplicacaoException(
 					"Não é possível assinar o documento pois não está finalizado.");
 
-		boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
+        boolean fPreviamenteAssinado = !doc.isPendenteDeAssinatura();
+        boolean fPreviamenteAutenticado = doc.isAutenticadoENaoTemSubscritor();
 
 		if (!fPreviamenteAssinado) {
 			try {
@@ -1877,7 +1878,7 @@ public class ExBL extends CpBL {
 				throw new RuntimeException("Erro ao assinar documento: " + e.getLocalizedMessage(), e);
 			}
 	
-			depoisDeAssinar(cadastrante, lotaCadastrante, doc, mov, dtMov, juntar, tramitar, fPreviamenteAssinado,
+			depoisDeAssinar(cadastrante, lotaCadastrante, doc, mov, dtMov, juntar, tramitar, fPreviamenteAssinado, fPreviamenteAutenticado,
 					usuarioDoToken);
 		
 		} catch (final Exception e) {
@@ -1903,7 +1904,7 @@ public class ExBL extends CpBL {
     }
 
     private void depoisDeAssinar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExDocumento doc,
-			final ExMovimentacao mov, final Date dtMov, Boolean juntar, Boolean tramitar, boolean fPreviamenteAssinado,
+			final ExMovimentacao mov, final Date dtMov, Boolean juntar, Boolean tramitar, boolean fPreviamenteAssinado, boolean fPreviamenteAutenticado,
 			DpPessoa usuarioDoToken) {
 		try {
 			// Verifica se o documento possui documento pai e faz a juntada
@@ -1964,7 +1965,7 @@ public class ExBL extends CpBL {
 		// alterando o documento corrente. Aí, a sessão do hibernate não refletia mais os dados gravados
 		// no banco, e a tentativa de flush esbarrava em inconsistências.
 		try {
-			if (!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) {
+			if ((!fPreviamenteAssinado && doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha()) || (!fPreviamenteAutenticado && doc.isAutenticadoENaoTemSubscritor())) {
 				processarComandosEmTag(doc, "assinatura");
 			}
 		} catch (final Exception e) {
@@ -2062,7 +2063,8 @@ public class ExBL extends CpBL {
 				finalizar(cadastrante, lotaCadastrante, null, null, doc);
 			}
 			
-			boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
+            boolean fPreviamenteAssinado = doc.isAssinadoPorTodosOsSignatariosComTokenOuSenha();
+            boolean fPreviamenteAutenticado = doc.isAutenticadoENaoTemSubscritor();
 	
 			if (!doc.isFinalizado())
 				throw new AplicacaoException("não é possível registrar assinatura de um documento não finalizado");
@@ -2164,7 +2166,7 @@ public class ExBL extends CpBL {
 				throw new RuntimeException("Erro ao registrar assinatura: " + getRootCauseMessage(e), e);
 			}
 			
-			depoisDeAssinar(cadastrante, lotaCadastrante, doc, mov, dtMov, juntar, tramitar, fPreviamenteAssinado,
+			depoisDeAssinar(cadastrante, lotaCadastrante, doc, mov, dtMov, juntar, tramitar, fPreviamenteAssinado, fPreviamenteAutenticado,
 					subscritor);
 
 		} catch (final Exception e) {

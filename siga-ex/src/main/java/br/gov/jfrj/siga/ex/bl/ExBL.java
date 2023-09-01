@@ -7309,6 +7309,7 @@ public class ExBL extends CpBL {
 					ExTipoDeMovimentacao.ENCERRAMENTO_DE_VOLUME, cadastrante, lotaCadastrante, mob,
 					dtMov, subscritor, null, titular, null, null);
 
+			gerarIdDeMovimentacao(mov);
 			mov.setNmFuncaoSubscritor(nmFuncaoSubscritor);
 
 			// Gravar o Html

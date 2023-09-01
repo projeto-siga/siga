@@ -2842,6 +2842,8 @@ public class ExBL extends CpBL {
 		form.put("folhaInicial", Integer.toString(folhaInicial));
 		form.put("folhaFinal", Integer.toString(folhaFinal));
 		form.put("textoMotivo", textoMotivo);
+		
+		gerarIdDeMovimentacao(movCanceladora);
 		movCanceladora.setConteudoBlobForm(urlEncodedFormFromMap(form));
 
 		// Gravar o Html //Nato

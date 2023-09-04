@@ -2021,15 +2021,21 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		return set;
 	}
 
-	public boolean isAssinadoPorTodosOsSignatariosComTokenOuSenha() {
-		if (getSubscritor() == null)
-			return false;
-		for (DpPessoa pess : getSubscritorECosignatarios()) {
-			if (!isAssinadoPelaPessoaComTokenOuSenha(pess))
-				return false;
-		}
-		return true;
-	}
+    public boolean isAssinadoPorTodosOsSignatariosComTokenOuSenha() {
+        if (getSubscritor() == null)
+            return false;
+        for (DpPessoa pess : getSubscritorECosignatarios()) {
+            if (!isAssinadoPelaPessoaComTokenOuSenha(pess))
+                return false;
+        }
+        return true;
+    }
+
+    public boolean isAutenticadoENaoTemSubscritor() {
+        if (getSubscritor() != null)
+            return false;
+         return getAutenticacoesComTokenOuSenha().size() > 0;
+    }
 
 	@Override
 	public Set<ExMovimentacao> getAssinaturasDigitais() {

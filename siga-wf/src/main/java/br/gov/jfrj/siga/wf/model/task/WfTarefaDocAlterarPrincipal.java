@@ -17,7 +17,8 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 
 public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, WfProcedimento> {	
 	/**
-	 * Esse método é responsável por Alterar o documento principal
+	 * Esse método é responsável por Alterar o documento principal.
+	 * O documento preenchido no campo Documento Pai: Será o novo principal
 	 *
 	 * @param td Tarefa.
 	 * @param pi Procedimento.
@@ -37,7 +38,7 @@ public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, Wf
 		String codigoDocumentoPrincipal = "";
 		String codigoDocumentoFilho = "";
 		Boolean documentoPaiSeraONovoPrincipal = false;
-		
+		//TODO: Refatoração, remover código desnecessário
 		documentoPaiSeraONovoPrincipal = isDocPaiNovoPrincipal(td, pi, engine);
 		assert documentoPaiSeraONovoPrincipal != null;
 		
@@ -49,8 +50,12 @@ public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, Wf
 		
 		codigoDocumentoFilho = codigoDocumentoPrincipal;
 		assert codigoDocumentoFilho != null && codigoDocumentoFilho != "";
-		
+		//TODO: Refatoração, a condição abaixo será sempre true, if desnecessário
 		if (documentoPaiSeraONovoPrincipal) {
+			//TODO: Ref colocar o código que executa a funcionalidade
+			// na camada de serviços
+			//Altera o documento principal
+			//TODO: Alterar nome do campo no formulário
 			pi.setPrincipal(codigoDocumentoPai);
 			assert pi.getPrincipal() == codigoDocumentoPai;
 		}
@@ -67,13 +72,13 @@ public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, Wf
 		}
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
 	}
-	
+	//TODO: Refatoração, remover método desnecessário ou alterar
 	public Boolean isDocPaiNovoPrincipal(WfDefinicaoDeTarefa td, 
 			WfProcedimento pi, 
 			Engine engine) {
 		
 		return true;
-		
+		//TODO: Remover código comentado
 		/*
 		String valorFormCampoDocumentoPaiSeraONovoPrincipal = null;
 		

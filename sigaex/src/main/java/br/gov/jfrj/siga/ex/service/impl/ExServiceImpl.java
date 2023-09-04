@@ -206,7 +206,7 @@ public class ExServiceImpl implements ExService {
 			}
 		}
 	}
-	
+	//TODO: DESENVOLVER PARTE COMENTADA
 	public Boolean alterarPrincipal(String codigoDocumentoViaFilho, String codigoDocumentoViaPai, String siglaDestino,
 			String siglaCadastrante) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {
@@ -216,10 +216,10 @@ public class ExServiceImpl implements ExService {
 
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaCadastrante);
 				PessoaLotacaoParser destinoParser = new PessoaLotacaoParser(siglaDestino);
-				/*
-				Ex.getInstance().getBL().juntarDocumento(cadastranteParser.getPessoa(), cadastranteParser.getPessoa(),
+				
+				Ex.getInstance().getBL().alterarPrincipal(cadastranteParser.getPessoa(), cadastranteParser.getPessoa(),
 						cadastranteParser.getLotacao(), null, mobFilho, mobPai, null, destinoParser.getPessoa(),
-						destinoParser.getPessoa(), "1"); */
+						destinoParser.getPessoa(), "1");
 				return true;
 			} catch (Exception ex) {
 				Exception e = ctx.exceptionWithMessageFileAndLine(ex);

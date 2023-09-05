@@ -647,9 +647,16 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="label-clue fa fa-asterisk"></i></label> <input
 									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
 									id="assunto" type="text" class="form-control"></section>
-								<section ng-show="tarefaItem.tipo == 'JUNTAR' || tarefaItem.tipo == 'ALTERAR_PRINCIPAL'"
+								<section ng-show="tarefaItem.tipo == 'JUNTAR'"
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="documento_pai" title="" class="label mb-0">Documento pai:<i
+									title="Preenchimento obrigatório"
+									class="label-clue fa fa-asterisk"></i></label> <input
+									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"
+									id="assunto" type="text" class="form-control"></section>
+								<section ng-show="tarefaItem.tipo == 'ALTERAR_PRINCIPAL'"
+									class="col col-12 col-md-3 col-lg-3 form-group"> <label
+									for="novo_documento_principal" title="" class="label mb-0">Novo documento principal:<i
 									title="Preenchimento obrigatório"
 									class="label-clue fa fa-asterisk"></i></label> <input
 									ng-model="tarefaItem.assunto" name="assunto" ng-required="true"

@@ -85,7 +85,7 @@ public class ExTramiteBL {
                     || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
                     || t == ExTipoDeMovimentacao.TRAMITE_PARALELO
                     || t == ExTipoDeMovimentacao.NOTIFICACAO)) {
-                // Recebimento sem movRef limpa todos os pendentes até agora
+                // Trâmite sem movRef limpa todos os pendentes até agora
                 if (t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA || t == ExTipoDeMovimentacao.TRANSFERENCIA
                         || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
                         || t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA) {
@@ -97,7 +97,7 @@ public class ExTramiteBL {
                 }
                 p.tramitesPendentes.add(mov);
             }
-            if (t == ExTipoDeMovimentacao.RECEBIMENTO) {
+            if (t == ExTipoDeMovimentacao.RECEBIMENTO || t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
                 // Recebimento sem movRef limpa todos os pendentes até agora
                 if (mov.getExMovimentacaoRef() == null || !p.tramitesPendentes.contains(mov.getExMovimentacaoRef()))
                     p.tramitesPendentes.clear();
@@ -128,7 +128,8 @@ public class ExTramiteBL {
             }
             if ((t == ExTipoDeMovimentacao.TRANSFERENCIA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA
                     || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA
-                    || t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA)
+                    || t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
+                    || t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
                     && (Utils.equivaleENaoENulo(mov.getCadastrante(), mobil.doc().getCadastrante())
                             || Utils.equivaleENaoENulo(mov.getLotaCadastrante(), mobil.doc().getLotaCadastrante())
                             || Utils.equivaleENaoENulo(mov.getTitular(), mobil.doc().getCadastrante())

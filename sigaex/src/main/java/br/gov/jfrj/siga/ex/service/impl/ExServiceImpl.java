@@ -206,7 +206,7 @@ public class ExServiceImpl implements ExService {
 			}
 		}
 	}
-	//TODO: DESENVOLVER PARTE COMENTADA
+
 	public Boolean alterarPrincipal(String codigoDocumentoViaFilho, String codigoDocumentoViaPai, String siglaDestino,
 			String siglaCadastrante) throws Exception {
 		try (ExSoapContext ctx = new ExSoapContext(true)) {

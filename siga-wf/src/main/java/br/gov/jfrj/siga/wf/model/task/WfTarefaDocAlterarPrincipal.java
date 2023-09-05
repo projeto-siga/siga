@@ -18,7 +18,7 @@ import br.gov.jfrj.siga.wf.model.enm.WfTipoDeResponsavel;
 public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, WfProcedimento> {	
 	/**
 	 * Esse método é responsável por Alterar o documento principal.
-	 * O documento preenchido no campo Documento Pai: Será o novo principal
+	 * O documento preenchido no campo Documento Pai Será o novo principal
 	 *
 	 * @param td Tarefa.
 	 * @param pi Procedimento.
@@ -78,25 +78,6 @@ public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, Wf
 			Engine engine) {
 		
 		return true;
-		//TODO: Remover código comentado
-		/*
-		String valorFormCampoDocumentoPaiSeraONovoPrincipal = null;
-		
-	    try {
-	    	Handler handler = engine.getHandler();
-	    	String param3 = td.getParam3();
-	    	valorFormCampoDocumentoPaiSeraONovoPrincipal = handler.evalTemplate(pi, param3);	
-	    } catch (NullPointerException npe) {
-	        System.err.println("Erro: Um valor nulo foi encontrado.");
-	    } catch (Exception e) {
-	        System.err.println("Erro: " + e.getMessage());
-	    }
-	    
-	    if (valorFormCampoDocumentoPaiSeraONovoPrincipal.equals("SIM")) {
-			return true;
-		}
-		return false;
-		*/
 	}
 	
 	private String geraSiglaDoResponsavel(WfResp destino) {

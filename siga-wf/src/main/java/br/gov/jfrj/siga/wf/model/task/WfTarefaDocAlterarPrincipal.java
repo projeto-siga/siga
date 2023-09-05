@@ -37,10 +37,6 @@ public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, Wf
 		String codigoDocumentoPai = "";
 		String codigoDocumentoPrincipal = "";
 		String codigoDocumentoFilho = "";
-		Boolean documentoPaiSeraONovoPrincipal = false;
-		//TODO: Refatoração, remover código desnecessário
-		documentoPaiSeraONovoPrincipal = isDocPaiNovoPrincipal(td, pi, engine);
-		assert documentoPaiSeraONovoPrincipal != null;
 		
 		codigoDocumentoPai = recebeDocumentoPaiDaEntradaDoUsuario(td, pi, engine);
 		assert codigoDocumentoPai != null && codigoDocumentoPai != "";
@@ -50,15 +46,11 @@ public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, Wf
 		
 		codigoDocumentoFilho = codigoDocumentoPrincipal;
 		assert codigoDocumentoFilho != null && codigoDocumentoFilho != "";
-		//TODO: Refatoração, a condição abaixo será sempre true, if desnecessário
-		if (documentoPaiSeraONovoPrincipal) {
-			//TODO: Ref colocar o código que executa a funcionalidade
-			// na camada de serviços
-			//Altera o documento principal
-			//TODO: Alterar nome do campo no formulário
-			pi.setPrincipal(codigoDocumentoPai);
-			assert pi.getPrincipal() == codigoDocumentoPai;
-		}
+		
+		//Altera o documento principal
+		pi.setPrincipal(codigoDocumentoPai);
+		assert pi.getPrincipal() == codigoDocumentoPai;
+		
 		
 		if (!Utils.empty(codigoDocumentoPrincipal)) { 
 			WfResp responsavel = pi.calcResponsible(td);
@@ -71,13 +63,6 @@ public class WfTarefaDocAlterarPrincipal implements Task<WfDefinicaoDeTarefa, Wf
 					siglaCadastrante);
 		}
 		return new TaskResult(TaskResultKind.DONE, null, null, null, null);
-	}
-	//TODO: Refatoração, remover método desnecessário ou alterar
-	public Boolean isDocPaiNovoPrincipal(WfDefinicaoDeTarefa td, 
-			WfProcedimento pi, 
-			Engine engine) {
-		
-		return true;
 	}
 	
 	private String geraSiglaDoResponsavel(WfResp destino) {

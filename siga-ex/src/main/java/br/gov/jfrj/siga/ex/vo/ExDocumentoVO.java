@@ -553,7 +553,7 @@ public class ExDocumentoVO extends ExVO {
 
 			for (ExMovimentacaoVO exMovVO : mobVO.getMovs()) {
 				if (!exMovVO.isCancelada() && movimentacoesPermitidas.contains(exMovVO.getExTipoMovimentacao())) {
-					if (exMovVO.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA) {
+					if (exMovVO.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA && exMovVO.getMov() != null) {
 						juntadasRevertidas.add(exMovVO.getMov()
 								.getExMovimentacaoRef());
 						// Edson: se não gerou peça, nem mostra o

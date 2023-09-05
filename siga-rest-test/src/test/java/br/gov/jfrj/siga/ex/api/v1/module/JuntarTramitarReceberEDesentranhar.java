@@ -25,7 +25,7 @@ public class JuntarTramitarReceberEDesentranhar extends DocTest {
 
         Desentranhar.desentranhar(Pessoa.ZZ99998, sigla, "Juntado por engano.");
         consultar(Pessoa.ZZ99998, sigla);
-        contemMarca(CpMarcadorEnum.ASSINADO, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
+        contemMarca(CpMarcadorEnum.EM_ANDAMENTO, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
     }
 
 }

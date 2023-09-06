@@ -3119,7 +3119,10 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA 
 							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRAMITE_PARALELO 
 							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.NOTIFICACAO
-							|| mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA))
+                            || mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA
+                            
+                            // Nato: O desentranhamento é análogo à um recebimento, por isso é contemplado aqui.
+                            || mov.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA))
 				return true;
 		}
 

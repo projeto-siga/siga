@@ -43,6 +43,24 @@ public class DocTest extends AuthTest {
         contemMarca(idMarcador, null, null);
     }
 
+    public static void naoContemMarca(CpMarcadorEnum idMarcador, Pessoa pessoa,
+            Lotacao lotacao) {
+        Consultar.naoContemMarca(tlResp.get(), idMarcador, pessoa, lotacao);
+    }
+
+    public static void naoContemMarca(CpMarcadorEnum idMarcador, Pessoa pessoa) {
+        naoContemMarca(idMarcador, pessoa, null);
+    }
+
+    public static void naoContemMarca(CpMarcadorEnum idMarcador,
+            Lotacao lotacao) {
+        naoContemMarca(idMarcador, null, lotacao);
+    }
+
+    public static void naoContemMarca(CpMarcadorEnum idMarcador) {
+        naoContemMarca(idMarcador, null, null);
+    }
+
     public static void contemAcao(String acao, Boolean pode) {
         Consultar.contemAcao(tlResp.get(), acao, pode);
     }

@@ -2743,7 +2743,7 @@ public class ExBL extends CpBL {
 		try {
 			
 			iniciarAlteracao();
-
+			
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, titular, null, null);
 			
@@ -2788,9 +2788,9 @@ public class ExBL extends CpBL {
 			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
 				getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaVisTempDocsCompl(mob, cadastrante, lotaCadastrante);
 			}
-
+			
 			gravarMovimentacao(mov);
-
+			
 			concluirAlteracaoComRecalculoAcesso(mov);
 		} catch (RegraNegocioException e) {
 			cancelarAlteracao();

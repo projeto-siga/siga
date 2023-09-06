@@ -5,10 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
-import br.gov.jfrj.siga.ex.api.v1.AuthTest.Lotacao;
-import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 import br.gov.jfrj.siga.ex.api.v1.DocTest;
-import io.restassured.response.ValidatableResponse;
 
 public class TramitarEmParalelo extends DocTest {
 

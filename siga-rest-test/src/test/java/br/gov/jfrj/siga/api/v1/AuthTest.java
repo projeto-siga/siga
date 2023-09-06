@@ -1,4 +1,4 @@
-package br.gov.jfrj.siga.ex.api.v1;
+package br.gov.jfrj.siga.api.v1;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;

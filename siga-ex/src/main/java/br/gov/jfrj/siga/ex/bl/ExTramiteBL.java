@@ -12,7 +12,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
 
 public class ExTramiteBL {
-    
+
     public static class Pendencias {
         // Trâmite serial, paralelo e notificações
         public Set<ExMovimentacao> tramitesPendentes = new TreeSet<ExMovimentacao>();
@@ -22,12 +22,13 @@ public class ExTramiteBL {
         public Set<ExMovimentacao> tramitesDeNotificacoesPendentes = new TreeSet<ExMovimentacao>();
         // Somente notificações recebidas e ainda não concluídos
         public Set<ExMovimentacao> recebimentosDeNotificacoesPendentes = new TreeSet<ExMovimentacao>();
-        // Indica se o cadastrante do documento deve ser incluído na lista de atendentes 
+        // Indica se o cadastrante do documento deve ser incluído na lista de atendentes
         public boolean fIncluirCadastrante = true;
-        
+
         public SortedSet<ExMovimentacao> getRecebimentosPendentesSemNotificacoes() {
             SortedSet<ExMovimentacao> recebimentos = new TreeSet<>(new ExMovimentacaoRecebimentoComparator());
-            // Tenta selecionar um recebimento da lotação, que não seja de notificação, que será mantido
+            // Tenta selecionar um recebimento da lotação, que não seja de notificação, que
+            // será mantido
             for (ExMovimentacao r : recebimentosPendentes)
                 if (!recebimentosDeNotificacoesPendentes.contains(r)) {
                     recebimentos.add(r);
@@ -35,7 +36,7 @@ public class ExTramiteBL {
             return recebimentos;
         }
     }
-    
+
     public static Pendencias calcularTramitesPendentes(ExMobil mobil) {
         SortedSet<ExMovimentacao> movs = new TreeSet<>();
         if (mobil.isVolume()) {
@@ -116,6 +117,11 @@ public class ExTramiteBL {
                     p.tramitesPendentes.remove(mov.getExMovimentacaoRef());
                 p.recebimentosPendentes.add(mov);
             }
+            // A juntada deve desativar os trâmites que não sejam de notificação
+            if (t == ExTipoDeMovimentacao.JUNTADA) {
+                p.tramitesPendentes.removeIf(mv -> mv.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO);
+                p.recebimentosPendentes.removeIf(mv -> mv.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO);
+            }
             if (mov.getExMovimentacaoRef() != null) {
                 if (t == ExTipoDeMovimentacao.CONCLUSAO) {
                     // Existe a conclusão direta, que cancela um trâmite pendente, ou a conclusão
@@ -147,7 +153,7 @@ public class ExTramiteBL {
                             || Utils.equivaleENaoENulo(mov.getCadastrante(), mobil.getTitular())
                             || Utils.equivaleENaoENulo(mov.getLotaCadastrante(), mobil.getLotaTitular())
                             || Utils.equivaleENaoENulo(mov.getTitular(), mobil.getTitular())
-                            || Utils.equivaleENaoENulo(mov.getLotaTitular(), mobil.getLotaTitular()))) 
+                            || Utils.equivaleENaoENulo(mov.getLotaTitular(), mobil.getLotaTitular())))
                     || t == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
                 p.fIncluirCadastrante = false;
         }

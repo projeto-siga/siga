@@ -101,11 +101,8 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
 								ExTipoDeMovimentacao.PUBLICACAO_BOLETIM),
 
-                        new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-                                ExTipoDeMovimentacao.DISPONIBILIZACAO),
-
-                        new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
-                                ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA),
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
+								ExTipoDeMovimentacao.DISPONIBILIZACAO),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.CRIACAO)),
 

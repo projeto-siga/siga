@@ -41,7 +41,29 @@ public class Consultar extends DocTest {
 
     public static void contemMarca(ValidatableResponse resp, CpMarcadorEnum idMarcador, Pessoa pessoa,
             Lotacao lotacao) {
+        try {
+            resp.body(queryMarca(idMarcador, pessoa, lotacao), not(empty()));
+        } catch (AssertionError e) {
+            throw new AssertionError(
+                    "Não encontrei marca " + idMarcador.name() + " com pessoa "
+                            + (pessoa == null ? "nula" : pessoa.name()) + " e lotação "
+                            + (lotacao == null ? "nula" : lotacao.name()));
+        }
+    }
 
+    public static void naoContemMarca(ValidatableResponse resp, CpMarcadorEnum idMarcador, Pessoa pessoa,
+            Lotacao lotacao) {
+        try {
+            resp.body(queryMarca(idMarcador, pessoa, lotacao), empty());
+        } catch (AssertionError e) {
+            throw new AssertionError(
+                    "Encontrei marca " + idMarcador.name() + " com pessoa "
+                            + (pessoa == null ? "nula" : pessoa.name()) + " e lotação "
+                            + (lotacao == null ? "nula" : lotacao.name()));
+        }
+    }
+
+    private static String queryMarca(CpMarcadorEnum idMarcador, Pessoa pessoa, Lotacao lotacao) {
         String s = "marcas.findAll {it.idMarcador == " + idMarcador.getId();
 
         if (pessoa == null)
@@ -55,15 +77,7 @@ public class Consultar extends DocTest {
             s += " && it.idLotacaoIni == " + lotacao.getId();
 
         s += "}.id";
-
-        try {
-            resp.body(s, not(empty()));
-        } catch (AssertionError e) {
-            throw new AssertionError(
-                    "Não encontrei marca " + idMarcador.name() + " com pessoa "
-                            + (pessoa == null ? "nula" : pessoa.name()) + " e lotação "
-                            + (lotacao == null ? "nula" : lotacao.name()));
-        }
+        return s;
     }
 
     public static void contemMarca(ValidatableResponse resp, CpMarcadorEnum idMarcador, Lotacao lotacao) {
@@ -107,7 +121,8 @@ public class Consultar extends DocTest {
         } catch (AssertionError e) {
             throw new AssertionError(
                     "Não encontrei movimentação " + idTipoDeMovimentacao.name() + " com cadastrante "
-                            + (pessoaCadastrante == null ? "nula" : pessoaCadastrante.name()) + " e lotação cadastrante "
+                            + (pessoaCadastrante == null ? "nula" : pessoaCadastrante.name())
+                            + " e lotação cadastrante "
                             + (lotacaoCadastrante == null ? "nula" : lotacaoCadastrante.name()));
         }
     }

@@ -26,6 +26,7 @@ public class JuntarTramitarReceberEDesentranhar extends DocTest {
         Desentranhar.desentranhar(Pessoa.ZZ99998, sigla, "Juntado por engano.");
         consultar(Pessoa.ZZ99998, sigla);
         contemMarca(CpMarcadorEnum.EM_ANDAMENTO, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
+        naoContemMarca(CpMarcadorEnum.EM_ANDAMENTO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
 
         Tramitar.tramitarParaLotacao(Pessoa.ZZ99998, sigla, Lotacao.ZZLTEST);
 
@@ -45,8 +46,9 @@ public class JuntarTramitarReceberEDesentranhar extends DocTest {
         Receber.receber(Pessoa.ZZ99999, siglaPai);
 
         Desentranhar.desentranhar(Pessoa.ZZ99999, sigla, "Juntado por engano.");
-        consultar(Pessoa.ZZ99998, sigla);
+        consultar(Pessoa.ZZ99999, sigla);
         contemMarca(CpMarcadorEnum.EM_ANDAMENTO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
+        naoContemMarca(CpMarcadorEnum.EM_ANDAMENTO, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
         contemAcao("concluir_gravar", false);
     }
 

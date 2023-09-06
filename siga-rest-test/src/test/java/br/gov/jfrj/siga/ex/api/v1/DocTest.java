@@ -1,5 +1,6 @@
 package br.gov.jfrj.siga.ex.api.v1;
 
+import br.gov.jfrj.siga.api.v1.AuthTest;
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.ex.api.v1.unit.Consultar;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;

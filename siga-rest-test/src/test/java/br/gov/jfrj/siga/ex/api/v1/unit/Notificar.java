@@ -1,14 +1,11 @@
 package br.gov.jfrj.siga.ex.api.v1.unit;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 import org.junit.Test;
 
 import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.ex.api.v1.DocTest;
-import br.gov.jfrj.siga.ex.api.v1.AuthTest.Lotacao;
-import br.gov.jfrj.siga.ex.api.v1.AuthTest.Pessoa;
 import io.restassured.response.ValidatableResponse;
 
 public class Notificar extends DocTest {

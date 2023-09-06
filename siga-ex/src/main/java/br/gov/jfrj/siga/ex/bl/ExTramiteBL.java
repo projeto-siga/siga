@@ -9,6 +9,7 @@ import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExMovimentacao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
+import br.gov.jfrj.siga.ex.util.ExMovimentacaoRecebimentoComparator;
 
 public class ExTramiteBL {
     
@@ -23,6 +24,16 @@ public class ExTramiteBL {
         public Set<ExMovimentacao> recebimentosDeNotificacoesPendentes = new TreeSet<ExMovimentacao>();
         // Indica se o cadastrante do documento deve ser incluído na lista de atendentes 
         public boolean fIncluirCadastrante = true;
+        
+        public SortedSet<ExMovimentacao> getRecebimentosPendentesSemNotificacoes() {
+            SortedSet<ExMovimentacao> recebimentos = new TreeSet<>(new ExMovimentacaoRecebimentoComparator());
+            // Tenta selecionar um recebimento da lotação, que não seja de notificação, que será mantido
+            for (ExMovimentacao r : recebimentosPendentes)
+                if (!recebimentosDeNotificacoesPendentes.contains(r)) {
+                    recebimentos.add(r);
+                }
+            return recebimentos;
+        }
     }
     
     public static Pendencias calcularTramitesPendentes(ExMobil mobil) {

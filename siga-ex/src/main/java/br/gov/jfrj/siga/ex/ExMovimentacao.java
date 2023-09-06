@@ -425,7 +425,9 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 				ExTipoDeMovimentacao.CONFERENCIA_COPIA_DOCUMENTO,
 				ExTipoDeMovimentacao.JUNTADA, ExTipoDeMovimentacao.TRANSFERENCIA,
 				ExTipoDeMovimentacao.TRAMITE_PARALELO, ExTipoDeMovimentacao.NOTIFICACAO,
-				ExTipoDeMovimentacao.RECEBIMENTO, ExTipoDeMovimentacao.CONCLUSAO,
+				ExTipoDeMovimentacao.RECEBIMENTO, 
+				ExTipoDeMovimentacao.CONCLUSAO,
+				ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA,
 				ExTipoDeMovimentacao.MARCACAO });
 
 		// Trata o caso de alguma parâmetro ser null
@@ -435,7 +437,8 @@ public class ExMovimentacao extends AbstractExMovimentacao implements
 			return Integer.MAX_VALUE;
 		if (idTpMov != null && idTpMov2 == null)
 			return Integer.MIN_VALUE;
-		
+        if (idTpMov == idTpMov2)
+            return 0;	
 		int i = tpMovDesempate.indexOf(idTpMov);
 		int i2 = tpMovDesempate.indexOf(idTpMov2);
 		

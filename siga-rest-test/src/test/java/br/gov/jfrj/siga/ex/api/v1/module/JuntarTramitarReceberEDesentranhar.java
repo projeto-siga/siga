@@ -13,7 +13,7 @@ import br.gov.jfrj.siga.ex.api.v1.unit.Tramitar;
 public class JuntarTramitarReceberEDesentranhar extends DocTest {
 
     @Test
-    public void test_JuntarTramitarReceberEDesentranhar_OK() {
+    public void test_JuntarTramitarOPaiReceberEDesentranhar_OK() {
         String sigla = Criar.criarMemorando(Pessoa.ZZ99999);
         String siglaPai = Criar.criarMemorando(Pessoa.ZZ99999);
 
@@ -26,6 +26,28 @@ public class JuntarTramitarReceberEDesentranhar extends DocTest {
         Desentranhar.desentranhar(Pessoa.ZZ99998, sigla, "Juntado por engano.");
         consultar(Pessoa.ZZ99998, sigla);
         contemMarca(CpMarcadorEnum.EM_ANDAMENTO, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
+
+        Tramitar.tramitarParaLotacao(Pessoa.ZZ99998, sigla, Lotacao.ZZLTEST);
+
+    }
+
+    @Test
+    public void test_TramitarReceberJuntarTramitarOPaiReceberEDesentranhar_OK() {
+        String sigla = Criar.criarMemorando(Pessoa.ZZ99999);
+        Tramitar.tramitarParaLotacao(Pessoa.ZZ99999, sigla, Lotacao.ZZLTEST2);
+        Receber.receber(Pessoa.ZZ99998, sigla);
+
+        String siglaPai = Criar.criarMemorando(Pessoa.ZZ99998);
+        Juntar.juntar(Pessoa.ZZ99998, sigla, siglaPai);
+
+        Tramitar.tramitarParaLotacao(Pessoa.ZZ99998, siglaPai, Lotacao.ZZLTEST);
+
+        Receber.receber(Pessoa.ZZ99999, siglaPai);
+
+        Desentranhar.desentranhar(Pessoa.ZZ99999, sigla, "Juntado por engano.");
+        consultar(Pessoa.ZZ99998, sigla);
+        contemMarca(CpMarcadorEnum.EM_ANDAMENTO, Pessoa.ZZ99999, Lotacao.ZZLTEST);
+        contemAcao("concluir_gravar", false);
     }
 
 }

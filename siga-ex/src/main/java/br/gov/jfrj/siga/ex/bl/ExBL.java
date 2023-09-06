@@ -2743,6 +2743,30 @@ public class ExBL extends CpBL {
 		try {
 			
 			iniciarAlteracao();
+			
+	          // Concluir recebimentos pendentes já que o desentranhamento substituirá o recebimento
+            Pendencias p = mob.calcularTramitesPendentes();
+            SortedSet<ExMovimentacao> recebimentosPendentesSemNotificacoes = p.getRecebimentosPendentesSemNotificacoes();
+            if (recebimentosPendentesSemNotificacoes.size() == 1) {
+                ExMovimentacao pend = recebimentosPendentesSemNotificacoes.first();
+                final ExMovimentacao movConcl = criarNovaMovimentacao(
+                        ExTipoDeMovimentacao.CONCLUSAO, cadastrante, lotaCadastrante, mob, dtMov,
+                        titular, null, null, null, null);
+                movConcl.setResp(titular);
+                movConcl.setLotaResp(lotaCadastrante);
+                movConcl.setDestinoFinal(pend.getDestinoFinal());
+                movConcl.setLotaDestinoFinal(pend.getLotaDestinoFinal());
+                movConcl.setExMovimentacaoRef(pend);
+                
+                // Localiza a última movimentação de marcação de lotação, para cancelar ela com a conclusao
+                ExMovimentacao movAnterior = localizaMarcacaoDePasta(mob, pend);
+                if (movAnterior != null)
+                    gravarMovimentacaoCancelamento(movConcl, movAnterior);
+                else
+                    gravarMovimentacao(movConcl);
+            }
+
+
 
 			final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA,
 					cadastrante, lotaCadastrante, mob, dtMov, subscritor, null, titular, null, null);
@@ -2788,9 +2812,9 @@ public class ExBL extends CpBL {
 			if (getExConsTempDocCompleto().podeVisualizarTempDocComplCossigsSubscritor(cadastrante, lotaCadastrante)) {
 				getExConsTempDocCompleto().tratarFluxoDesentrDesfJuntadaVisTempDocsCompl(mob, cadastrante, lotaCadastrante);
 			}
-
+			
 			gravarMovimentacao(mov);
-
+			
 			concluirAlteracaoComRecalculoAcesso(mov);
 		} catch (RegraNegocioException e) {
 			cancelarAlteracao();

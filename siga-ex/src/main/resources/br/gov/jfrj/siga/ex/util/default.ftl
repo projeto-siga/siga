@@ -5406,8 +5406,8 @@ Exemplos de utilização:
 	    [#local suffix = "_" + selectTipo + "Sel.sigla" /]
     [/#if]
 	
-	[#-- trata cpf e cnpj --]
-	[#local isCpf = false isCnpj=false /]
+	[#-- trata cpf, cnpj e telefone--]
+	[#local isCpf = false isCnpj=false isTelefone=false /]
 	[#if kind == "cpf"]
 		[#local isCpf = true kind="texto" /]
 		[#local maxchars="14" /]
@@ -5416,6 +5416,10 @@ Exemplos de utilização:
 		[#local isCnpj = true kind="texto" /]
 		[#local maxchars="18" /]
 		[#local placeholder="00.000.000/000-00" /]
+	[#elseif kind == "telefone"]
+		[#local isTelefone = true kind="texto" /]
+		[#local maxchars="15" /]
+		[#local placeholder="(00) 00000-0000" /]
     [/#if]
 
     [#if maxchars != ""][#local maxchars_inc = " maxlength=\"" + maxchars + "\""][/#if]
@@ -5451,7 +5455,7 @@ Exemplos de utilização:
 			<input type="hidden" name="vars" value="${var}" />
 		
 			[#if kind == "texto"]
-				<input type="text" id="${var}" name="${var}" value="${v}" ${refresh_inc!} ${maxchars_inc!} ${placeholder_inc!} ${attsHtml} onkeyup="${onkeyup!}" class="form-control" [#if isCpf]data-formatar-cpf="true"[#elseif isCnpj]data-formatar-cnpj="true"[#else][/#if]/>
+				<input type="text" id="${var}" name="${var}" value="${v}" ${refresh_inc!} ${maxchars_inc!} ${placeholder_inc!} ${attsHtml} onkeyup="${onkeyup!}" class="form-control" [#if isCpf]data-formatar-cpf="true"[#elseif isCnpj]data-formatar-cnpj="true"[#elseif isTelefone]data-formatar-telefone="true"[#else][/#if]/>
 				[#if isCpf]    
 					<script>
 						function aplicarMascaraCPF(evento) {	     			             
@@ -5488,6 +5492,30 @@ Exemplos de utilização:
 						}
 						document.querySelector('input[name=${var}]').addEventListener('input', aplicarMascaraCNPJ);
 						document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraCNPJ);
+					</script> 
+          		[#elseif isTelefone]
+					<script>
+						function aplicarMascaraTELEFONE(evento) {	     			             
+							telefone = this.value.replace(/([^\d])/g, '');
+
+							//if (evento.type == 'change') {
+							//while (telefone.length < 11) {
+							//	telefone = '0' + telefone;
+							//}
+							//}                
+    						telefone = telefone.replace(/^(\d\d)(\d)/g,"($1) $2");
+                            if (telefone.length < 14) 
+                            {
+                            	telefone = telefone.replace(/(\d{4})(\d)/,"$1-$2");
+                            }
+                            else
+                            {
+                            	telefone = telefone.replace(/(\d{5})(\d)/,"$1-$2"); 
+                            }
+							this.value = telefone;
+						}
+						document.querySelector('input[name=${var}]').addEventListener('input', aplicarMascaraTELEFONE);
+						document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraTELEFONE);
 					</script> 
 				[/#if] 		
 			[#elseif kind == "checkbox"]

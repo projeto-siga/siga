@@ -858,10 +858,11 @@ public class ExBL extends CpBL {
 			mov.setLotaResp(lotaCadastrante);
 
 			mov.setDtDispPublicacao(dtDispPublicacao);
+			
 			mov.setDescrMov(
 					"Disponibilização prevista para " + new SimpleDateFormat("dd/MM/yy").format(dtDispPublicacao));
 			mov.setCadernoPublicacaoDje(tipoMateria);
-
+		    gerarIdDeMovimentacao(mov);
 			mov.setConteudoBlobXML("boletimadm",
 					PublicacaoDJEBL.gerarXMLPublicacao(mov, tipoMateria, lotPublicacao, descrPublicacao));
 

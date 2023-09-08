@@ -5496,22 +5496,16 @@ Exemplos de utilização:
           		[#elseif isTelefone]
 					<script>
 						function aplicarMascaraTELEFONE(evento) {	     			             
-							telefone = this.value.replace(/([^\d])/g, '');
-
-							//if (evento.type == 'change') {
-							//while (telefone.length < 11) {
-							//	telefone = '0' + telefone;
-							//}
-							//}                
-    						telefone = telefone.replace(/^(\d\d)(\d)/g,"($1) $2");
-                            if (telefone.length < 14) 
-                            {
-                            	telefone = telefone.replace(/(\d{4})(\d)/,"$1-$2");
-                            }
-                            else
-                            {
-                            	telefone = telefone.replace(/(\d{5})(\d)/,"$1-$2"); 
-                            }
+							telefone = this.value.replace(/([^\d])/g, '');               
+    							telefone = telefone.replace(/^(\d\d)(\d)/g,"($1) $2");
+						    	if (telefone.length < 14) 
+						    	{
+								telefone = telefone.replace(/(\d{4})(\d)/,"$1-$2");
+						    	}
+						    	else
+						    	{
+								telefone = telefone.replace(/(\d{5})(\d)/,"$1-$2"); 
+						    	}
 							this.value = telefone;
 						}
 						document.querySelector('input[name=${var}]').addEventListener('input', aplicarMascaraTELEFONE);

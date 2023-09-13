@@ -107,6 +107,10 @@
 					<c:set var="acao" value="assinar_gravar" />
 						<div class="card-footer" style="padding-top: 10px;">
 							<div id="dados-assinatura" style="visible: hidden">
+								<input
+									type="hidden" name="sigla_documento_principal"
+									value="/sigaex/app/expediente/doc/exibir?sigla=${siglaDocumentoPrincipal}" />
+									
 								<input type="hidden" name="ad_url_base" value="" /> <input
 									type="hidden" name="ad_url_next"
 									value="/sigaex/app/expediente/doc/exibir?sigla=${sigla}" /> <input

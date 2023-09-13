@@ -28,6 +28,7 @@ import br.gov.jfrj.siga.sinc.lib.NaoRecursivo;
 import br.gov.jfrj.siga.sinc.lib.Sincronizavel;
 import br.gov.jfrj.siga.sinc.lib.SincronizavelSuporte;
 import br.gov.jfrj.siga.wf.util.NaoSerializar;
+import br.gov.jfrj.siga.wf.util.WfHandler;
 import br.gov.jfrj.siga.wf.util.WfResp;
 
 @Entity
@@ -343,6 +344,13 @@ public class WfDefinicaoDeDesvio extends HistoricoAuditavelSuporte
 		return obterProximoResponsavel(pi, this);
 	}
 
+	
+	public String obterAttributeHtmlSeDesvioAtivo(WfProcedimento pi)
+	{
+		WfHandler handler = new WfHandler(pi.getTitular(), pi.getLotaTitular(), null);
+		return (this.getCondition() == null ? "" : (handler.evalCondition(pi, this.getCondition()) ? "":"hidden"));
+	}
+	
 	public static String obterProximoResponsavel(WfProcedimento pi, WfDefinicaoDeDesvio dd) {
 		WfDefinicaoDeTarefa td = pi.getCurrentTaskDefinition();
 		if (dd == null && td != null) {

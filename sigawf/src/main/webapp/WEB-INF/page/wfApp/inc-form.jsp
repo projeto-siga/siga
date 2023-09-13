@@ -169,10 +169,11 @@
 					<c:forEach var="desvio" items="${td.definicaoDeDesvio}"
 						varStatus="loop">
 						<c:set var="resp" value="${desvio.obterProximoResponsavel(pi)}" />
+						<c:set var="enabledoudisablesdesvio" value="${desvio.obterAttributeHtmlSeDesvioAtivo(pi)}" />
 						<c:if test="${not empty resp}">
 							<c:set var="resp" value=" &raquo; ${resp}" />
 						</c:if>
-						<button type="submit" name="indiceDoDesvio" value="${loop.index}"
+						<button type="submit" ${enabledoudisablesdesvio} name="indiceDoDesvio" value="${loop.index}"
 							class="${destaque ? 'text-dark border-warning bg-warning' : 'btn-info'} btn mr-3">${empty desvio.nome ? 'Prosseguir' : desvio.nome}${resp}</button>
 					</c:forEach>
 					<c:if test="${empty td.definicaoDeDesvio}">

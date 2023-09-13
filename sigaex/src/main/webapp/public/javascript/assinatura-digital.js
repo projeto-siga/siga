@@ -924,7 +924,9 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 		return;
 	}
 
-	oUrlNext = document.getElementsByName("ad_url_next")[0];
+	//oUrlNext = document.getElementsByName("ad_url_next")[0];
+	oUrlNext = document.getElementsByName("sigla_documento_principal")[0];
+	
 	if (oUrlNext == null) {
 		alert("element ad_url_next does not exist");
 		return;

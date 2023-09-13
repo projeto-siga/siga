@@ -174,7 +174,7 @@
 							<c:set var="resp" value=" &raquo; ${resp}" />
 						</c:if>
 						<button type="submit" ${enabledoudisablesdesvio} name="indiceDoDesvio" value="${loop.index}"
-							class="${destaque ? 'text-dark border-warning bg-warning' : 'btn-info'} btn mr-3">${empty desvio.nome ? 'Prosseguir' : desvio.nome}${resp}</button>
+							class="${destaque ? 'text-dark border-warning bg-warning' : 'btn-info'} btn mr-3 mb-2">${empty desvio.nome ? 'Prosseguir' : desvio.nome}${resp}</button>
 					</c:forEach>
 					<c:if test="${empty td.definicaoDeDesvio}">
 						<c:set var="resp" value="${pi.obterProximoResponsavel()}" />
@@ -182,14 +182,14 @@
 							<c:set var="resp" value=" &raquo; ${resp}" />
 						</c:if>
 						<button type="submit" name="indiceDoDesvio" value=""
-							class="${destaque ? 'text-dark border-warning bg-warning' : 'btn-info'} btn mr-3">Prosseguir${resp}</button>
+							class="${destaque ? 'text-dark border-warning bg-warning' : 'btn-info'} btn mr-3 mb-2">Prosseguir${resp}</button>
 					</c:if>
 				</div>
 			</c:if>
 			<c:if test="${not empty td.definicaoDeVariavel}">
 				<div class="col col-auto ${empty td.id ? '' : 'ml-auto'}">
 					<button type="submit" name="indiceDoDesvio" value="-1"
-						class="${destaque ? 'text-dark border-warning bg-warning' : 'btn-info'} btn mr-3 - ${empty td.id ? 'primary' : 'light'}">Salvar</button>
+						class="${destaque ? 'text-dark border-warning bg-warning' : 'btn-info'} btn mr-3 mb-2 - ${empty td.id ? 'primary' : 'light'}">Salvar</button>
 				</div>
 			</c:if>
 		</div>

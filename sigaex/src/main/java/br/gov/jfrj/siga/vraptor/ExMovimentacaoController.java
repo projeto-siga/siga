@@ -774,7 +774,20 @@ public class ExMovimentacaoController extends ExController {
 		afTramite.explicacao = AcaoVO.Helper.produzirExplicacao(podeTramitarPosAssinatura, podeTramitar);
 		
 		Ex.getInstance().getBL().atualizaDataPrimeiraAssinatura(doc, getCadastrante(), getTitular());
-
+		
+		String siglaDoDocumentoPai = null;
+		if (doc != null && doc.getExMobilPai() != null) {
+		    siglaDoDocumentoPai = doc.getExMobilPai().getSigla();
+		}
+		
+		if (siglaDoDocumentoPai != null) {
+			result.include("siglaDocumentoPrincipal", siglaDoDocumentoPai);
+		}
+		
+		if (siglaDoDocumentoPai == null) {
+			result.include("siglaDocumentoPrincipal", sigla); //se não tem doc pai, pega a sigla do documento
+		}
+		
 		result.include("sigla", sigla);
 		result.include("doc", doc);
 		result.include("titular", this.getTitular());

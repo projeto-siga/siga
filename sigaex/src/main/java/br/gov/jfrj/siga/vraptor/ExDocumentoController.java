@@ -627,7 +627,7 @@ public class ExDocumentoController extends ExController {
 		
 		// Preencher automaticamente o subscritor quando se tratar de novo documento
 		if ((isDocNovo) || (param("exDocumentoDTO.docFilho") != null)) {
-			if (exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO && !postback) {
+			if ((exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO || exDocumentoDTO.getIdTpDoc() == ExTipoDocumento.TIPO_DOCUMENTO_INTERNO_CAPTURADO) && !postback) {
 				DpPessoaSelecao subscritorSel = new DpPessoaSelecao();
 				subscritorSel.buscarPorObjeto(getCadastrante());
 				exDocumentoDTO.setSubscritorSel(subscritorSel);
@@ -2686,7 +2686,7 @@ public class ExDocumentoController extends ExController {
 			doc.setSubscritor(daoPes(exDocumentoDTO.getSubscritorSel().getId()));
 			doc.setLotaSubscritor(doc.getSubscritor().getLotacao());
 		} else {
-			if(SigaMessages.isSigaSP() && AcessoConsulta.ehPublicoExterno(getTitular()) && !doc.isExternoCapturado()) {
+			if (AcessoConsulta.ehPublicoExterno(getTitular()) && !doc.isExternoCapturado()) {
 				doc.setSubscritor(getTitular());
 				doc.setLotaSubscritor(getTitular().getLotacao());
 			} else {

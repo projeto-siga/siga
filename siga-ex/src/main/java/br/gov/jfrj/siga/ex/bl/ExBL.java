@@ -4732,8 +4732,10 @@ public class ExBL extends CpBL {
 			if (!movs.isEmpty())
 				removerPendenciaDeDevolucao(movs, mob);
 			
-			if (mobPai.isAcessoRestrito() && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mobPai.getDoc().getMobilGeral())) {
-				herdaRestricaoAcessoDocumentoPai(mob.getDoc().getMobilGeral(), mobPai.getDoc().getMobilGeral(), cadastrante, titular, dtMov);
+			if (idTpMov == ExTipoDeMovimentacao.JUNTADA) {			
+				if (mobPai.isAcessoRestrito() && Ex.getInstance().getComp().pode(ExPodeRestringirAcesso.class, cadastrante, lotaCadastrante, mobPai.getDoc().getMobilGeral())) {
+					herdaRestricaoAcessoDocumentoPai(mob.getDoc().getMobilGeral(), mobPai.getDoc().getMobilGeral(), cadastrante, titular, dtMov);
+				}
 			}
 			
 			concluirAlteracaoComRecalculoAcesso(mov);

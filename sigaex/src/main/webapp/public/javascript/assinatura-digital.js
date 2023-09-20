@@ -48,6 +48,7 @@ function TestarAssinaturaDigital() {
 // pagina
 //
 function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo) {
+	
 	if (gAssinando)
 		return;
 	gAssinando = true;
@@ -901,6 +902,38 @@ function Erro(err) {
 	return "Ocorreu um erro durante o processo de assinatura: " + err.message;
 }
 
+function getCheckboxJuntarElement() {
+	// Capture o elemento do checkbox usando document.getElementsByName ou document.getElementById.
+    var checkboxJuntarElement = document.getElementsByName("ad_juntar_0")[0];
+    
+    if(!checkboxJuntarElement) {
+        console.error("Element 'ad_juntar_0' not found");
+        return null;
+    }
+    
+    return checkboxJuntarElement;
+}
+
+function isChecked(element) {
+    if (!element) {
+        return false;
+    }
+    return element.checked;
+}
+
+function getRedirectionTargetElement(isJuntarChecked) {
+    if (isJuntarChecked) {
+    	console.log("Checkbox Juntar está marcado");
+        console.log("Redirecionando para o documento pai");
+        return document.getElementsByName("sigla_documento_principal")[0];
+    }
+    if (!isJuntarChecked){
+    	console.log("Checkbox Juntar não está marcado");
+        console.log("Redirecionando para o documento filho");
+        return document.getElementsByName("ad_url_next")[0];
+    }
+}
+
 function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 	process.reset();
 
@@ -923,9 +956,10 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 		alert("element ad_url_base does not exist");
 		return;
 	}
-
-	//oUrlNext = document.getElementsByName("ad_url_next")[0];
-	oUrlNext = document.getElementsByName("sigla_documento_principal")[0];
+	
+	var checkboxJuntar = getCheckboxJuntarElement();
+	var isCheckBoxJuntarChecked = isChecked(checkboxJuntar);
+	oUrlNext = getRedirectionTargetElement(isCheckBoxJuntarChecked);
 	
 	if (oUrlNext == null) {
 		alert("element ad_url_next does not exist");

@@ -781,12 +781,20 @@ public class ExMovimentacaoController extends ExController {
 		}
 		
 		if (siglaDoDocumentoPai != null) {
-			result.include("siglaDocumentoPrincipal", siglaDoDocumentoPai);
+			
+			//é uma juntada?
+			if (doc.getPai() != null && afJuntada.ativo) {
+				result.include("siglaDocumentoPrincipal", siglaDoDocumentoPai);
+			} else {
+				result.include("siglaDocumentoPrincipal", sigla); 
+			}
 		}
 		
 		if (siglaDoDocumentoPai == null) {
-			result.include("siglaDocumentoPrincipal", sigla); //se não tem doc pai, pega a sigla do documento
+			result.include("siglaDocumentoPrincipal", sigla); 
 		}
+
+				
 		
 		result.include("sigla", sigla);
 		result.include("doc", doc);

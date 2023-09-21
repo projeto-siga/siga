@@ -959,7 +959,15 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 	
 	var checkboxJuntar = getCheckboxJuntarElement();
 	var isCheckBoxJuntarChecked = isChecked(checkboxJuntar);
-	oUrlNext = getRedirectionTargetElement(isCheckBoxJuntarChecked);
+	var urlDoRedirecionamento = getRedirectionTargetElement(isCheckBoxJuntarChecked);
+	
+	//Define um valor padrão para o oUrlNext não ficar com o valor null
+	if (urlDoRedirecionamento == null){
+		oUrlNext = document.getElementsByName("ad_url_next")[0];
+	}
+	if (urlDoRedirecionamento != null){
+		oUrlNext = urlDoRedirecionamento;
+	}
 	
 	if (oUrlNext == null) {
 		alert("element ad_url_next does not exist");

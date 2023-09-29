@@ -1629,7 +1629,7 @@ public class ExDocumentoController extends ExController {
 			exDocumentoDto.setMsg(Ex
 					.getInstance()
 					.getBL()
-					.finalizar(getCadastrante(), getLotaCadastrante(),  
+					.finalizar(getCadastrante(), getLotaTitular(),  
 							getTitular(), getLotaTitular(), exDocumentoDto.getDoc()));
 			
 			if (exDocumentoDto.getDoc().getForm() != null) {
@@ -1949,7 +1949,7 @@ public class ExDocumentoController extends ExController {
 
 			if (!exDocumentoDTO.getDoc().isFinalizado()
 					&& exDocumentoDTO.isCapturado() && (exBL.getConf().podePorConfiguracao(so.getTitular(), so.getLotaTitular(), ExTipoDeConfiguracao.FINALIZAR_AUTOMATICAMENTE_CAPTURADOS)))
-				exBL.finalizar(getCadastrante(), getLotaCadastrante(),
+				exBL.finalizar(getCadastrante(), getLotaTitular(),
 						getTitular(), getLotaTitular(), exDocumentoDTO.getDoc());
 
 			lerEntrevista(exDocumentoDTO);

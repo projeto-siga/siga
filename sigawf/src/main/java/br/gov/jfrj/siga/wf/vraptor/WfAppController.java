@@ -340,6 +340,8 @@ public class WfAppController extends WfController {
 		result.include("piId", pi.getId());
 		result.include("pi", pi);
 		result.include("td", tdSuper);
+		result.include("editandoVariavel","true");
+		
 	}
 
 	@Transacional

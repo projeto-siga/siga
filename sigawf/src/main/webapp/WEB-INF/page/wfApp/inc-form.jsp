@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/page/include.jsp"%>
 <div>
-	<c:if test="${empty td or piAnterior != pi}" >
+	<c:if test="${empty td or (piAnterior != pi && editandoVariavel != true)}" >
         <c:set var="td" value="${pi.definicaoDeTarefaCorrente}" scope="request"/>
 </c:if>
 <c:set var="piAnterior" value="${pi}" scope="request"/>
@@ -12,8 +12,8 @@
 			<input type="hidden" value="${pi.id}" name="tiId" />
 			
 			<c:set var="fieldIndex" value="0" />
-			<c:forEach var="variavel" items="${td.definicaoDeVariavel}">
 		
+			<c:forEach var="variavel" items="${td.definicaoDeVariavel}">
 				<c:set var="valor" value="${pi.obterValorDeVariavel(variavel)}" />
 				<div class="form-group">
 					<c:choose>

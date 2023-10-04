@@ -2671,15 +2671,22 @@ public class CpDao extends ModeloDao {
 		if (u instanceof DpLotacao)
 			return (T) ((DpLotacao) u).getLotacaoAtual();
 		
+		if (u instanceof DpCargo)
+			return (T) ((DpCargo) u).getCargoAtual();
+		
+		if (u instanceof DpFuncaoConfianca)
+			return (T) ((DpFuncaoConfianca) u).getFuncaoConfiancaAtual();
+		
+		
 		String queryHisDtIni = "hisDtIni";
 		String queryHisIdIni = "hisIdIni";
-		if (u instanceof DpFuncaoConfianca) {
+	/*	if (u instanceof DpFuncaoConfianca) {
 			queryHisDtIni = "dataFimFuncao";
 			queryHisIdIni = "idFuncaoIni";
 		} else if (u instanceof DpCargo) {
 			queryHisDtIni = "dataFimCargo";
 			queryHisIdIni = "idCargoIni";
-		}
+		} */
 		
 		String clazz = u.getClass().getSimpleName();
 		clazz = clazz.split("\\$HibernateProxy\\$")[0];

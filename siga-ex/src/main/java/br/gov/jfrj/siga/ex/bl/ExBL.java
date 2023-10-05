@@ -4746,6 +4746,16 @@ public class ExBL extends CpBL {
 		}
 
 	}
+
+	public void alterarPrincipal(final DpPessoa cadastrante, final DpPessoa docTitular, final DpLotacao lotaCadastrante,
+			final String idDocExterno, final ExMobil mob, ExMobil mobPai, final Date dtMov, final DpPessoa subscritor,
+			final DpPessoa titular, final String idDocEscolha) {
+
+		if (idDocEscolha.equals("1")) {
+			if (mobPai == null)
+				throw new RegraNegocioException("Não foi selecionado um documento");
+		}
+	}
 	
 	public void herdaRestricaoAcessoDocumentoPai(ExMobil mobFilho, ExMobil mobPai, DpPessoa cadastrante, DpPessoa titular, Date dtMov)
 			throws AplicacaoException, SQLException {

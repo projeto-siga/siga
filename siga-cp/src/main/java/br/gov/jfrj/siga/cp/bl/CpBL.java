@@ -1857,9 +1857,9 @@ public class CpBL {
 		if (dataAtivacao != null)
 			dtAtivacao = Data.parse(dataAtivacao);
 
-		if (listaMarcadoresLotacaoEGerais.stream()
+		if ((listaMarcadoresLotacaoEGerais.stream()
 				.filter(mar -> mar.getDescrMarcador()
-						.equals(descricao)).count() > 0) 
+						.equals(descricao)).count() > 0) && id == null) 
 			throw new AplicacaoException ("Já existe um marcador Geral ou da " + msgLotacao 
 					+ " com este nome: " + descricao);
 

@@ -51,7 +51,7 @@ public enum WfTipoDeTarefa implements TaskKind {
 	//
 	JUNTAR("Juntar", "rectangle", "Juntar", WfTarefaDocJuntar.class, true, true, false, false),
 	//
-	ALTERAR_PRINCIPAL("Juntar", "rectangle", "Alterar Principal", WfTarefaDocAlterarPrincipal.class, true, true, false, false),
+	ALTERAR_PRINCIPAL("Alterar Principal", "rectangle", "Alterar Principal", WfTarefaDocAlterarPrincipal.class, true, true, false, false),
 	//
 	INCLUIR_AUXILIAR("Incluir Auxiliar", "rectangle", "Incluir Auxiliar", WfTarefaDocAguardarAuxiliar.class, true, true, false, false);
 	//

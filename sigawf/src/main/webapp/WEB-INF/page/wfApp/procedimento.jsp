@@ -134,14 +134,14 @@
 					</div>
 					<!-- Fim mapa tramitação -->
 				</c:if>
-
+				
 				<c:if test="${not empty pi.variaveis}">
 					<div class="card-sidebar card bg-light mb-3">
 						<div class="card-header">Variáveis</div>
 						<div class="card-body">
 							<c:forEach var="v" items="${pi.variaveisOrdenadas}">
 								<p>
-									<b>${v.nome}:</b> ${v.valorAsString}
+									${v.nome}: ${v.valorAsString}
 								</p>
 							</c:forEach>
 						</div>

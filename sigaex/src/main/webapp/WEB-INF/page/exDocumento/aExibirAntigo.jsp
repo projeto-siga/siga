@@ -573,7 +573,7 @@
 								<div class="card-body">
 									<c:forEach var="key" items="${docVO.doc.form.keySet()}">
 										<p>
-											<b>${key}:</b> 
+											${key}:
 											<c:choose>
 												<c:when test="${fn:length(docVO.doc.form[key]) > 100}">
 													<span title="<c:out value="${docVO.doc.form[key]}"/>"><c:out value="${fn:substring(docVO.doc.form[key], 0, 100)}"/></span>&hellip;

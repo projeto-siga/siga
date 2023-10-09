@@ -233,7 +233,7 @@
 	<div class="row mt-3">
 		<div class="col">
 			<form name="frm" action="exibir" theme="simple" method="POST">
-				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>	
+				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>
 				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 			</form>
 			<h2>
@@ -333,7 +333,29 @@
 							css += "TABLE.mov TR.encerramento_volume { background-color: rgb(255, 218, 218);}</style>";
 							$(css).appendTo("head");
 						</script>
-							<table class="table table-sm table-responsive-sm table-striped">
+						
+						<style>
+						.hidden-row {
+							display: none;
+						}
+						</style>
+						
+						<!-- Combobox Filtro por lotações -->
+						<select id="lotacaoSelect" multiple>
+							<c:forEach var="mov" items="${m.movs}">
+								<option value="${mov.mov.lotaCadastrante.sigla}">
+									${mov.mov.lotaCadastrante.sigla}
+								</option>
+							</c:forEach>
+						</select>
+						
+						<button onclick="filterTable()">Filtrar</button>
+						
+						<script
+							src="/sigaex/javascript/filtroHistoricoDeMovimentacoes.js">
+						</script>
+							
+							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
 										<th class="text-left">Data</th>

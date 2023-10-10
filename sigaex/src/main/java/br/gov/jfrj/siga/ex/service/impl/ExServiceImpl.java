@@ -671,8 +671,6 @@ public class ExServiceImpl implements ExService {
 				if (nomeModelo.matches("^\\d+$")) {
 					modelo = dao().consultar(Long.parseLong(nomeModelo), ExModelo.class, false);
 				} else {
-					if (nomeForma == null)
-						throw new AplicacaoException("O Tipo não foi informado.");
 					modelo = dao().consultarExModelo(nomeForma, nomeModelo);
 				}
 

@@ -183,6 +183,10 @@
 		<servlet-name>ExService</servlet-name>
 		<servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>ExServiceSei</servlet-name>
+		<servlet-class>br.gov.jfrj.siga.ex.service.impl.ExServiceSeiImpl</servlet-class>
+	</servlet>
 
 	<servlet>
 		<servlet-name>webdav</servlet-name>
@@ -222,6 +226,10 @@
 	<servlet-mapping>
 		<servlet-name>ExService</servlet-name>
 		<url-pattern>/servicos/ExService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExServiceSei</servlet-name>
+		<url-pattern>/servicos/ExServiceSei</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>webdav</servlet-name>

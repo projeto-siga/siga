@@ -1,3 +1,7 @@
+$(document).ready(function() {
+	$('#lotacaoSelect').select2();
+});
+
 function filterTable() {
 	// Pega valores das lotações selecionadas
 	const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);

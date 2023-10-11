@@ -334,14 +334,23 @@
 							$(css).appendTo("head");
 						</script>
 						
+						<!-- Biblioteca select2: combobox com seleção multipla -->
+						<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+						<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+						
+						<script src="/sigaex/javascript/filtroHistoricoDeMovimentacoes.js"></script>
 						<style>
 						.hidden-row {
 							display: none;
 						}
+						.select2-container {
+						    width: 15% !important;
+						}
 						</style>
 						
+						<label for="lotacaoSelect">Lotação:</label>
 						<!-- Combobox Filtro por lotações -->
-						<select id="lotacaoSelect" multiple>
+						<select id="lotacaoSelect" multiple="multiple">
 							<c:forEach var="mov" items="${m.movs}">
 								<option value="${mov.mov.lotaCadastrante.sigla}">
 									${mov.mov.lotaCadastrante.sigla}
@@ -350,10 +359,6 @@
 						</select>
 						
 						<button onclick="filterTable()">Filtrar</button>
-						
-						<script
-							src="/sigaex/javascript/filtroHistoricoDeMovimentacoes.js">
-						</script>
 							
 							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">

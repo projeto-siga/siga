@@ -358,7 +358,7 @@
 							</c:forEach>
 						</select>
 						
-						<button onclick="filterTable()" class="btn btn-info mr-3">Filtrar</button>
+						<button onclick="toggleFilter()" class="btn btn-info mr-3" id="filterButton">Filtrar</button>
 							
 							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">

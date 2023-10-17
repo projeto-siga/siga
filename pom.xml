@@ -11,8 +11,9 @@
 
 	<properties>
 		<!-- Registro Centralizado da PATCH versão do SIGA -->
-		<patch.version>7</patch.version>
-		
+
+		<patch.version>9</patch.version>
+
  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  		<java.version>8</java.version> 
 		<hibernate.version>5.3.7.Final</hibernate.version>

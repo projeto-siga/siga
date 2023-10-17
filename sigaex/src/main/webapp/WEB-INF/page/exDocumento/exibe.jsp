@@ -14,7 +14,6 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 
 <c:set var="exibirExplicacao" scope="request" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
-
 <siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
 <style>									
@@ -348,14 +347,13 @@
 						}
 						</style>
 						
-						<label for="lotacaoSelect">Lotação:</label>
 						<!-- Combobox Filtro por lotações -->
 						<select id="lotacaoSelect" multiple="multiple">
-							<c:forEach var="mov" items="${m.movs}">
-								<option value="${mov.mov.lotaCadastrante.sigla}">
-									${mov.mov.lotaCadastrante.sigla}
-								</option>
-							</c:forEach>
+						    <c:forEach var="mov" items="${m.movs}">
+						        <option value="${mov.mov.lotaCadastrante.sigla}">
+						            ${mov.mov.lotaCadastrante.sigla}
+						        </option>
+						    </c:forEach>
 						</select>
 						
 						<button onclick="toggleFilter()" class="btn btn-info mr-3" id="filterButton">Filtrar</button>

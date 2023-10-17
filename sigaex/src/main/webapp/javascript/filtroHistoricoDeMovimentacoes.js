@@ -2,6 +2,25 @@ $(document).ready(function() {
 	$('#lotacaoSelect').select2();
 });
 
+function removeDuplicateOptions() {
+    let select = document.getElementById('lotacaoSelect');
+    let seenOptions = new Set();
+
+    // Iterar sobre as opções da combobox em ordem reversa
+    for (let i = select.options.length - 1; i >= 0; i--) {
+        let optionValue = select.options[i].value;
+
+        // Se o valor já foi visto, remova a opção
+        if (seenOptions.has(optionValue)) {
+            select.remove(i);
+        } else {
+            seenOptions.add(optionValue);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', removeDuplicateOptions);
+
 function filterTable() {
 	// Pega valores das lotações selecionadas
 	const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);

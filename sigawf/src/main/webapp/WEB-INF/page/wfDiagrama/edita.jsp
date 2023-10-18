@@ -468,7 +468,7 @@ pageContext.setAttribute("tipoDeAcesso", WfTipoDeAcessoDeVariavel.values());
 									class="col col-12 col-md-3 col-lg-3 form-group"> <label
 									for="param3" title="" class="label mb-0">Novo Principal</label>
 								<select ng-model="tarefaItem.param3"
-									ng-options="item.id as item.nome for item in [{id: 'SIM', nome: 'SIM'},{id: 'NAO', nome: 'NAO'}]"
+									ng-options="item.id as item.nome for item in [{id: 'SIM', nome: 'Sim'},{id: 'NAO', nome: 'Não'}]"
 									class="form-control"></select> </section>
 									
 	

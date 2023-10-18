@@ -2,6 +2,13 @@ $(document).ready(function() {
 	$('#lotacaoSelect').select2();
 });
 
+function ordenaOpcoesOrdemAlfabetica(selectElement) {
+    const options = Array.from(selectElement.options);
+    options.sort((a, b) => a.text.localeCompare(b.text));
+    selectElement.innerHTML = '';
+    options.forEach(option => selectElement.add(option));
+}
+
 function removeDuplicateOptions() {
     let select = document.getElementById('lotacaoSelect');
     let seenOptions = new Set();
@@ -18,8 +25,6 @@ function removeDuplicateOptions() {
         }
     }
 }
-
-document.addEventListener('DOMContentLoaded', removeDuplicateOptions);
 
 function filterTable() {
 	// Pega valores das lotações selecionadas
@@ -60,3 +65,11 @@ function showAllRows() {
         row.classList.remove('hidden-row');
     });
 }
+
+function init() {
+    $('#lotacaoSelect').select2();
+    ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
+    removeDuplicateOptions();
+}
+
+document.addEventListener('DOMContentLoaded', init);

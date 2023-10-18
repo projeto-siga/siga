@@ -348,6 +348,7 @@
 						</style>
 						
 						<!-- Combobox Filtro por lotações -->
+						<label for="lotacaoSelect">Lotação:</label>
 						<select id="lotacaoSelect" multiple="multiple">
 						    <c:forEach var="mov" items="${m.movs}">
 						        <option value="${mov.mov.lotaCadastrante.sigla}">

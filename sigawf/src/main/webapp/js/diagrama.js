@@ -245,7 +245,7 @@ app
 							td.param2 = '' + t.param2
 							
 						if (t.param3)
-							td.param3 = '' + t.param2
+							td.param3 = '' + t.param3
 
 						pd.tarefa.push(td);
 

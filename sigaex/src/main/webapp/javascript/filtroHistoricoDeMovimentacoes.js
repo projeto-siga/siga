@@ -66,10 +66,38 @@ function showAllRows() {
     });
 }
 
+function getModelosFromSigaExAPI() {
+    $.ajax({
+        url: "/sigaex/api/v1/modelos/lista-hierarquica",
+        contentType: "application/json",
+        dataType: 'json',
+        success: function(result) {
+            if (result.list && result.list.length > 0) {
+                // Processa a lista de modelos
+                listItens(result.list);
+            } else {
+                console.log("Nenhum modelo encontrado.");
+            }
+        },
+        error: function(result) {
+            console.log("Erro ao buscar modelos: " + result.errormsg);
+        },
+    });
+}
+
+function listItens(modelos) {
+    modelos.forEach(function(modelo) {
+        console.log(modelo.nome);
+    });
+}
+
+
 function init() {
     $('#lotacaoSelect').select2();
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
+    //getModelosFromSigaExAPI();
 }
+
 
 document.addEventListener('DOMContentLoaded', init);

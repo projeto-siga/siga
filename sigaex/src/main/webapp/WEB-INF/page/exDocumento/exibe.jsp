@@ -357,6 +357,11 @@
 						    </c:forEach>
 						</select>
 						
+						<!-- Combobox Filtro por modelos -->
+						<label for="modeloSelect">Modelo:</label>
+						<select id="modeloSelect" multiple="multiple">
+						</select>
+						
 						<button onclick="toggleFilter()" class="btn btn-info mr-3" id="filterButton">Filtrar</button>
 						
 

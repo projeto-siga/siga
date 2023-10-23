@@ -1,5 +1,6 @@
 $(document).ready(function() {
 	$('#lotacaoSelect').select2();
+	//$('#modeloSelect').select2();
 });
 
 function ordenaOpcoesOrdemAlfabetica(selectElement) {
@@ -74,7 +75,7 @@ function getModelosFromSigaExAPI() {
         success: function(result) {
             if (result.list && result.list.length > 0) {
                 // Processa a lista de modelos
-                listItens(result.list);
+                addModelosToSelect(result.list);
             } else {
                 console.log("Nenhum modelo encontrado.");
             }
@@ -85,18 +86,23 @@ function getModelosFromSigaExAPI() {
     });
 }
 
-function listItens(modelos) {
+function addModelosToSelect(modelos) {
+    var select = document.getElementById('modeloSelect');
     modelos.forEach(function(modelo) {
-        console.log(modelo.nome);
+        var option = document.createElement('option');
+        option.value = modelo.idModelo;
+        option.text = modelo.nome;
+        select.appendChild(option);
     });
 }
 
 
 function init() {
     $('#lotacaoSelect').select2();
+    $('#modeloSelect').select2();
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
-    //getModelosFromSigaExAPI();
+    getModelosFromSigaExAPI();
 }
 
 

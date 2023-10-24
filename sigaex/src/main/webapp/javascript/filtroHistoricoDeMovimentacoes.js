@@ -49,6 +49,13 @@ let isFiltered = false;
 //alterna entre filtragem e ver todos
 //verifica o estado e decide se deve filtrar ou mostrar todas as linhas
 function toggleFilter() {
+	//Filtro por modelo
+	let modelosSelecionados = getModelosSelecionados(document.getElementById('modeloSelect'));
+	//console.log(modelosSelecionados);
+	movimentacao = null;
+	isMovDoModeloSelecionado = isMovimentacaoDoModeloSelecionado(modelosSelecionados[0], movimentacao);
+	//console.log(isMovDoModeloSelecionado);
+	
     if (isFiltered) {
         showAllRows();
         document.getElementById('filterButton').textContent = 'Filtrar';
@@ -96,6 +103,35 @@ function addModelosToSelect(modelos) {
     });
 }
 
+function getModelosSelecionados(selectElement) {
+    if (!selectElement) {
+        console.error('Elemento select não fornecido');
+        return [];
+    }
+    var selectedOptions = selectElement.selectedOptions;
+    var modelosSelecionados = Array.from(selectedOptions).map(function(option) {
+        return option.text;
+    });
+    return modelosSelecionados;
+}
+
+function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
+	let documentoDaMovimentacao = getDocumentoDaMovimentacao(movimentacao);
+    let modeloDoDocumento = getModeloDoDocumento(documentoDaMovimentacao);
+    return modeloDoDocumento === modeloSelecionado;
+}
+
+function getDocumentoDaMovimentacao(movimentacao) {
+    // TODO: Implementar lógica para extrair o documento da movimentação
+    let documento = 'DocumentoExemplo';
+    return documento;
+}
+
+function getModeloDoDocumento(documentoDaMovimentacao) {
+    // TODO: Implementar lógica para extrair o modelo da movimentação
+    let modelo = 'ModeloExemplo';
+    return modelo;
+}
 
 function init() {
     $('#lotacaoSelect').select2();
@@ -103,6 +139,7 @@ function init() {
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
     getModelosFromSigaExAPI();
+    
 }
 
 

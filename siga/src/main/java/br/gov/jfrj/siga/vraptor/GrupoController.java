@@ -563,6 +563,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			}
 		}
 
+
 		setItens(itgGrupos);
 		return "lista";
 	}
@@ -750,7 +751,7 @@ public abstract class GrupoController<T extends CpGrupo> extends
 			final List l = dao().consultarPorFiltro(flt);
 			if (l != null)
 				if (l.size() == 1)
-					return (DpLotacao) l.get(0);
+					return (CpGrupo) l.get(0);
 			return null;
 		} catch (Exception e) {
 			return null;

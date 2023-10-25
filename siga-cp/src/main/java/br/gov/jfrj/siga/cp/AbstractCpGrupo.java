@@ -43,14 +43,16 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 @NamedQueries({
 		@NamedQuery(name = "consultarCpGrupo", query = "from br.gov.jfrj.siga.cp.CpGrupo where dataFimGrupo is null order by siglaGrupo"),
 		@NamedQuery(name = "consultarQuantidadeCpGrupo", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo where hisAtivo = 1"),
-		@NamedQuery(name = "consultarQuantidadeCpGrupoPorCpTipoGrupoId", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo cpgrp where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) and cpgrp.hisAtivo = 1"),
+		@NamedQuery(name = "consultarQuantidadeCpGrupoPorCpTipoGrupoId", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo cpgrp where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) and 	(upper(cpgrp.siglaGrupo) like upper('%'||:nome||'%') or upper(cpgrp.dscGrupo) like upper('%'||:nome||'%'))	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cpgrp.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu) and cpgrp.hisAtivo = 1"),
 		@NamedQuery(name = "consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome", query = "select count(*) from br.gov.jfrj.siga.cp.CpGrupo cpgrp"
 				+ "		where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)"
-				+ "		and (upper(cpgrp.siglaGrupo) like upper('%'||:siglaGrupo||'%') or upper(cpgrp.dscGrupo) like upper('%'||:siglaGrupo||'%'))"
+				+ "		and (upper(cpgrp.siglaGrupo) like upper('%'||:nome||'%') or upper(cpgrp.dscGrupo) like upper('%'||:nome||'%'))"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cpgrp.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "		and cpgrp.hisAtivo = 1"),
 		@NamedQuery(name = "consultarCpGrupoPorCpTipoGrupoIdENome", query = "from br.gov.jfrj.siga.cp.CpGrupo cpgrp"
 				+ "		where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo)"
-				+ "		and (upper(cpgrp.siglaGrupo) like upper('%'||:siglaGrupo||'%') or upper(cpgrp.dscGrupo) like upper('%'||:siglaGrupo||'%'))"
+				+ "		and (upper(cpgrp.siglaGrupo) like upper('%'||:nome||'%') or upper(cpgrp.dscGrupo) like upper('%'||:nome||'%'))"
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cpgrp.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"
 				+ "		and cpgrp.hisAtivo = 1" + "		order by cpgrp.siglaGrupo"),
 		@NamedQuery(name = "consultarPorSiglaCpGrupo", query = "select g from br.gov.jfrj.siga.cp.CpGrupo g where"
 				+ "		upper(g.siglaGrupo) = upper(:siglaGrupo)"
@@ -58,6 +60,8 @@ import br.gov.jfrj.siga.sinc.lib.Desconsiderar;
 				+ "       	and g.hisAtivo = 1"),
 		@NamedQuery(name = "consultarCpGrupoPorCpTipoGrupoId", query = "from br.gov.jfrj.siga.cp.CpGrupo cpgrp "
 				+ " where ( cpgrp.cpTipoGrupo.idTpGrupo = :idTpGrupo) "
+				+ "		and (upper(cpgrp.siglaGrupo) like upper('%'||:nome||'%') or upper(cpgrp.dscGrupo) like upper('%'||:nome||'%'))"				
+				+ "  	and (:idOrgaoUsu = null or :idOrgaoUsu = 0L or cpgrp.orgaoUsuario.idOrgaoUsu = :idOrgaoUsu)"				
 				+ " and cpgrp.hisDtFim = null " + " order by cpgrp.siglaGrupo") })
 public abstract class AbstractCpGrupo extends HistoricoAuditavelSuporte {
 	@Id

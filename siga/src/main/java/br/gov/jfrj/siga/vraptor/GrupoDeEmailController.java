@@ -58,8 +58,7 @@ public class GrupoDeEmailController extends GrupoController {
 	public GrupoDeEmailController(HttpServletRequest request, Result result, SigaObjects so, EntityManager em) {
 		super(request, result, CpDao.getInstance(), so, em);
 		prepare();
-		
-		setItemPagina(10);
+
 	}
 
 	public int getIdTipoGrupo() {
@@ -220,8 +219,8 @@ public class GrupoDeEmailController extends GrupoController {
 	protected CpGrupoDaoFiltro createDaoFiltro() {
 		final CpGrupoDaoFiltro flt = new CpGrupoDaoFiltro();
 		flt.setIdTpGrupo(CpTipoGrupo.TIPO_GRUPO_GRUPO_DE_DISTRIBUICAO);
-		// flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
-		flt.setIdOrgaoUsu(getCadastrante().getOrgaoUsuario().getId());
+		flt.setNome(Texto.removeAcentoMaiusculas(getNome()));
+		flt.setIdOrgaoUsu(getOrgaoUsu());
 		return flt;
 	}
 	
@@ -243,14 +242,28 @@ public class GrupoDeEmailController extends GrupoController {
 	@Get
 	@Post
 	@Path("app/gi/grupoDeEmail/buscar")
-	public void busca(String sigla, String postback, String nome, Integer offset) throws Exception{
-		setNome(nome);
-		getP().setOffset(offset);
+	public void busca(String sigla, String nome, Long idOrgaoUsu, Integer paramoffset, String postback) throws Exception{
+		if (postback == null)
+			setOrgaoUsu(getLotaTitular().getOrgaoUsuario().getIdOrgaoUsu());
+		else
+			setOrgaoUsu(idOrgaoUsu);
+		
+		this.getP().setOffset(paramoffset);
+		
+		if (nome == null)
+			nome = "";
+		
 		super.aBuscar(nome, postback);
+		
 		result.include("param", getRequest().getParameterMap());
-		result.include("tamanho", getTamanho());
-		result.include("itens", getItens());
-		result.include("nome", getNome());
+		result.include("request",getRequest());
+		result.include("itens",getItens());
+		result.include("tamanho",getTamanho());
+		result.include("orgaosUsu", getOrgaosUsu());
+		result.include("idOrgaoUsu",getOrgaoUsu());
+		result.include("nome",nome);
+		result.include("postbak",postback);
+		result.include("offset",paramoffset);
 	}
 	
 	

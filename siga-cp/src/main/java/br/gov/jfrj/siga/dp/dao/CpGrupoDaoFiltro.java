@@ -24,6 +24,15 @@ public class CpGrupoDaoFiltro extends DaoFiltroSelecionavel {
 	private Integer idTpGrupo;
 	private Long idOrgaoUsu;
 	private String nome;
+	
+	public CpGrupoDaoFiltro() {}
+	
+	public CpGrupoDaoFiltro(String nome, Long idOrgaoUsu) {
+		this.nome = nome;
+		this.idOrgaoUsu = idOrgaoUsu;
+	}
+	
+	
 	/**
 	 * @return the idTpGrupo
 	 */

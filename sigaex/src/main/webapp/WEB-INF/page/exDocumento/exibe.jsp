@@ -14,7 +14,6 @@
 <%@page import="br.gov.jfrj.siga.ex.ExMobil"%>
 
 <c:set var="exibirExplicacao" scope="request" value="${libs:podeExibirRegraDeNegocioEmBotoes(titular, lotaTitular)}" />
-
 <siga:pagina titulo="${docVO.sigla}" popup="${param.popup}" >
 
 <style>									
@@ -233,7 +232,7 @@
 	<div class="row mt-3">
 		<div class="col">
 			<form name="frm" action="exibir" theme="simple" method="POST">
-				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>	
+				<input type="hidden" id="id" name="id"/> <input type="hidden" id="sigla" name="sigla"/>
 				<input type="hidden" id="visualizador" value="${f:resource('/sigaex.pdf.visualizador') }"/>
 			</form>
 			<h2>
@@ -333,7 +332,34 @@
 							css += "TABLE.mov TR.encerramento_volume { background-color: rgb(255, 218, 218);}</style>";
 							$(css).appendTo("head");
 						</script>
-							<table class="table table-sm table-responsive-sm table-striped">
+						
+						<!-- Biblioteca select2: combobox com seleção multipla -->
+						<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+						<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+						
+						<script src="/sigaex/javascript/filtroHistoricoDeMovimentacoes.js"></script>
+						<style>
+						.hidden-row {
+							display: none;
+						}
+						.select2-container {
+						    width: 15% !important;
+						}
+						</style>
+						
+						<!-- Combobox Filtro por lotações -->
+						<label for="lotacaoSelect">Lotação:</label>
+						<select id="lotacaoSelect" multiple="multiple">
+						    <c:forEach var="mov" items="${m.movs}">
+						        <option value="${mov.mov.lotaCadastrante.sigla}">
+						            ${mov.mov.lotaCadastrante.sigla}
+						        </option>
+						    </c:forEach>
+						</select>
+						
+						<button onclick="toggleFilter()" class="btn btn-info mr-3" id="filterButton">Filtrar</button>
+							
+							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>
 										<th class="text-left">Data</th>

@@ -467,6 +467,12 @@ public class Stamp {
 				contents.close();
 			}
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			
+			//* Foi necessário incluir as instruções abaixo porque documentos assinados digitalmente com assinatura atached fora do SIGA
+			//  estão vindo com proteção para gravação quando lisdos pelo reader pdf nativo.  Não ocorre no pdfjs.
+			if (doc.isEncrypted()) { //remove the security before adding protections
+				    doc.setAllSecurityToBeRemoved(true);
+			}
 			doc.save(baos);
 			doc.close();
 			baos.close();

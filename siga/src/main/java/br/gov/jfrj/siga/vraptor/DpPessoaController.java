@@ -679,6 +679,8 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 		
 		assertAcesso("GI:Módulo de Gestão de Identidade;CAD_PESSOA:Cadastrar Pessoa");
 		
+		proibirCadastroDePessoasExternasNaLotacaoAdmin(idLotacao, cpf);
+		
 
 		new CpBL().criarUsuario(id, getIdentidadeCadastrante(), idOrgaoUsu, idCargo, idFuncao, idLotacao, nmPessoa, dtNascimento, cpf, email, identidade,
 				orgaoIdentidade, ufIdentidade, dataExpedicaoIdentidade, nomeExibicao, enviarEmail);
@@ -688,6 +690,30 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 	}
 
 	
+	private void proibirCadastroDePessoasExternasNaLotacaoAdmin(Long idLotacao, String cpf2) {
+		// TODO Auto-generated method stub
+		if (Prop.get("/siga.admin.lotacao") != null && Prop.get("/siga.admin.orgaos") != null ) {
+			DpLotacao lotacao = dao().consultarLotacaoPorId(idLotacao);
+			if (lotacao.getLotacaoAtual().getSigla().equals(Prop.get("/siga.admin.lotacao"))) {
+				List<DpPessoa> pessoas = dao().listarPorCpf(Long.parseLong(cpf2.replace("-","").replace(".",""))); 
+				for (DpPessoa pessoa : pessoas) {
+					String[] orgaos = Prop.get("/siga.admin.orgaos").split(",");
+					for (String orgao : orgaos) {
+						if (pessoa.getOrgaoUsuario().getSiglaOrgaoUsu().equals(orgao)) {
+							return;
+						}
+						
+					}
+
+				}
+				throw new AplicacaoException("Não é permitido cadastrar pessoas na lotação " + Prop.get("/siga.admin.lotacao") + " que não são servidores de um dos órgãos " + Prop.get("/siga.admin.orgaos") + ".");
+
+			}
+		}
+		
+		
+	}
+
 	@Get({"/app/pessoa/check_nome_por_cpf"})
 	public void checkNome(String nome, String cpf, String id) throws AplicacaoException {
 		Long idd = 0L;
@@ -699,7 +725,7 @@ public class DpPessoaController extends SigaSelecionavelControllerSupport<DpPess
 			lista = dao().listarCpfAtivoInativo(Long.valueOf(cpf.replace(".", "").replace("-", "")));
 		}
 		
-		List<DpPessoa> pessoas = new ArrayList<DpPessoa>();
+		List<DpPessoa> pessoas = new ArrayList<DpPessoa>();	
 		for (DpPessoa dpPessoa : lista) {
 			if(!dpPessoa.getNomePessoa().equalsIgnoreCase(nome.trim()) && !idd.equals(dpPessoa.getId())) {
 				pessoas.add(dpPessoa);

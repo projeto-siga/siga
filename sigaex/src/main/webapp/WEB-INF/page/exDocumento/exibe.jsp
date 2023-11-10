@@ -346,7 +346,7 @@
 						    width: 15% !important;
 						}
 						</style>
-						
+						<!-- TODO: Aumentar tamanho do select horizontal -->
 						<!-- Combobox Filtro por lotações -->
 						<label for="lotacaoSelect">Lotação:</label>
 						<select id="lotacaoSelect" multiple="multiple">

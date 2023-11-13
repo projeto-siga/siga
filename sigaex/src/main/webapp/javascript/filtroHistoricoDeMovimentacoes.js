@@ -264,7 +264,7 @@ buscaModeloPorId('12345', 'your_jwt_token_here', function(err, modelo) {
 async function buscaIdPorSigla(sigla) {
     var siglaFormatted = formataSigla(sigla);
     try {
-        var documentoId = await consultaApiPorSigla(siglaFormatted);
+        let documentoId = await consultaApiPorSigla(siglaFormatted);
         return documentoId; // Return the ID from the API call
     } catch (error) {
         console.error('Erro ao buscar ID:', error);
@@ -293,29 +293,35 @@ async function consultaApiPorSigla(siglaFormatted) {
     return documento.id; // Assuming the API returns an object with an 'id' property
 }
 
-/*
-// Example usage:
-(async () => {
-    try {
-        var id = await buscaIdPorSigla('DOC123');
-        console.log('ID do documento:', id);
-        // Use the ID for further processing here
-    } catch (error) {
-        // Handle errors here
-        console.error('Erro ao obter ID do documento:', error);
-    }
-})();
-*/
+function getDocumentoBySigla(sigla) {
+    var siglaFormatted = formataSigla(sigla);
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: "/sigaex/api/v1/documentos/" + siglaFormatted,
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                resolve(result); // Resolve the promise with the result
+            },
+            error: function(xhr, status, error) {
+                reject(error); // Reject the promise with the error
+            }
+        });
+    });
+}
+
 function init() {
     $('#lotacaoSelect').select2();
     $('#modeloSelect').select2();
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
     getModelosFromSigaExAPI();
-    
-    
-    
-    
+
+    getDocumentoBySigla("OTZZ-PAR-2023/00001-A").then(function(documento) {
+        console.log("Documento encontrado:", JSON.stringify(documento));
+    }).catch(function(error) {
+        console.log("Erro ao buscar o documento:", error);
+    });
 }
 
 

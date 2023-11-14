@@ -3,6 +3,130 @@ $(document).ready(function() {
 	//$('#modeloSelect').select2();
 });
 
+function init() {
+    $('#lotacaoSelect').select2();
+    $('#modeloSelect').select2();
+    ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
+    removeDuplicateOptions();
+    getModelosFromSigaExAPI();
+	//em desenvolvimento
+    getDocumentoBySigla("OTZZ-PAR-2023/00001-A").then(function(documento) {
+        console.log("Documento encontrado:", JSON.stringify(documento));
+    }).catch(function(error) {
+        console.log("Erro ao buscar o documento:", error);
+    });
+}
+
+//alterna entre filtragem e ver todos
+//verifica o estado e decide se deve filtrar ou mostrar todas as linhas
+function toggleFilter() {
+    if (isFiltered) {
+        showAllRows();
+        document.getElementById('filterButton').textContent = 'Filtrar';
+        isFiltered = false;
+    } else {
+        filterTable(); // Filtra por lotação
+        filtraPorModelo() // Filtra por modelo
+        document.getElementById('filterButton').textContent = 'Ver Todos';
+        isFiltered = true;
+    }
+}
+
+//TODO: modelo(documento) = Obter o modelo de um documento
+//TODO: movimentações.filtroPorModelo(movimentaçõesDoDocumento, modeloSelecionado) = listar somente as movimentações que o documento seja do modelo selecionado
+function filtraPorModelo() {
+	//TODO: extrair para o toogleFilter() e receber como parametro na função
+	let modelosSelecionados = getModelosSelecionados();
+	const movimentacoes = getMovimentacoes()
+	
+	//TODO: Logica principal do filtro por modelo
+	/*
+	verifica se movimentação[1].documento.modelo == modeloSelecionado 
+	obter o documento de uma movimentação
+	obter o modelo de um documento
+	verificar se o modelo do documento é igual ao modeloSelecionado
+	se = , adiciona na listaFiltrada
+	se !=, não adiciona na listaFiltrada
+	*/
+	
+	//TODO: retorna o documento de cada movimentação
+	//loop: para cada movimentação em [movimentacoes]
+	let movimentacaoAtual = null
+	let documento = "documentoDaMovimentacao";
+	documento = getDocumentoDaMovimentacao(movimentacao);
+	
+	//TODO: retorna o modelo de cada documento
+	//#####################################################
+	//Retorna o modelo do documento
+	modelo = getModeloDoDocumento(documento);
+	console.log("modelo");
+	console.log(modelo);
+	//#####################################################
+	
+	if (movimentacoes.length > 0) {
+	    movimentacaoAtual = movimentacoes[0];
+	    console.log("movimentacaoAtual");
+	    console.log(movimentacaoAtual);
+	} else {
+	    console.error('Nenhuma linha encontrada');
+	}
+	
+	console.log(modelosSelecionados);
+	console.log("modeloAtual");
+	console.log(modeloAtual);
+	console.log("movimentacaoAtual");
+	console.log(movimentacaoAtual);
+	
+	//Para cada movimentação, faça:
+		isMovDoModeloSelecionado = isMovimentacaoDoModeloSelecionado(modeloAtual, movimentacaoAtual);
+		console.log(isMovDoModeloSelecionado);
+		if (isMovDoModeloSelecionado){
+			movimentacaoAtual.classList.remove('hidden-row'); // Mostra a linha
+		}
+		if (!isMovDoModeloSelecionado){
+			movimentacaoAtual.classList.add('hidden-row');    // Oculta a linha
+		}
+}
+
+function getModelosSelecionados() {
+	let selectElement = document.getElementById('modeloSelect');
+    if (!selectElement) {
+        console.error('Elemento select não fornecido');
+        return [];
+    }
+    var selectedOptions = selectElement.selectedOptions;
+    var modelosSelecionados = Array.from(selectedOptions).map(function(option) {
+        return option.text;
+    });
+    return modelosSelecionados;
+}
+
+function getMovimentacoes(){
+	return document.querySelectorAll('#movsTable tbody tr');
+}
+
+function getDocumentoDaMovimentacao(movimentacao) {
+    // Obtém a quarta célula (td) da movimentação
+    const celulaDocumento = movimentacao.cells[3];
+    
+    if (celulaDocumento) {
+        // Encontra o primeiro elemento <a> dentro da célula do documento
+        const elementoDocumento = celulaDocumento.querySelector('a');
+        
+        // Se o elemento <a> foi encontrado, extrai o texto do documento
+        if (elementoDocumento) {
+            const documento = elementoDocumento.textContent.trim();
+            return documento;
+        } else {
+            console.error('Elemento <a> não encontrado na célula do documento');
+            return null;
+        }
+    } else {
+        console.error('Célula do documento não encontrada');
+        return null;
+    }
+}
+
 function ordenaOpcoesOrdemAlfabetica(selectElement) {
     const options = Array.from(selectElement.options);
     options.sort((a, b) => a.text.localeCompare(b.text));
@@ -45,71 +169,6 @@ function filterTable() {
 
 let isFiltered = false;
 
-function getMovimentacoes(){
-	return document.querySelectorAll('#movsTable tbody tr');
-}
-
-function filtraPorModelo() {
-	let modelosSelecionados = getModelosSelecionados();
-	const movimentacoes = getMovimentacoes()
-	let modeloAtual = modelosSelecionados[0];
-	let movimentacaoAtual = null
-	
-	
-	//#####################################################
-	//Retorna o modelo do documento
-	
-	documento = "documentoDaMovimentacao";
-	modelo = getModeloDoDocumento(documento);
-	console.log("modelo");
-	console.log("modelo");
-	console.log("modelo");
-	console.log("modelo");
-	console.log(modelo);
-	//#####################################################
-	
-	if (movimentacoes.length > 0) {
-	    movimentacaoAtual = movimentacoes[0];
-	    console.log("movimentacaoAtual");
-	    console.log(movimentacaoAtual);
-	} else {
-	    console.error('Nenhuma linha encontrada');
-	}
-	
-	console.log(modelosSelecionados);
-	console.log("modeloAtual");
-	console.log(modeloAtual);
-	console.log("movimentacaoAtual");
-	console.log(movimentacaoAtual);
-	
-	
-	
-	//Para cada movimentação, faça:
-		isMovDoModeloSelecionado = isMovimentacaoDoModeloSelecionado(modeloAtual, movimentacaoAtual);
-		console.log(isMovDoModeloSelecionado);
-		if (isMovDoModeloSelecionado){
-			movimentacaoAtual.classList.remove('hidden-row'); // Mostra a linha
-		}
-		if (!isMovDoModeloSelecionado){
-			movimentacaoAtual.classList.add('hidden-row');    // Oculta a linha
-		}
-}
-
-//alterna entre filtragem e ver todos
-//verifica o estado e decide se deve filtrar ou mostrar todas as linhas
-function toggleFilter() {
-    if (isFiltered) {
-        showAllRows();
-        document.getElementById('filterButton').textContent = 'Filtrar';
-        isFiltered = false;
-    } else {
-        filterTable(); // Filtra por lotação
-        filtraPorModelo() // Filtra por modelo
-        document.getElementById('filterButton').textContent = 'Ver Todos';
-        isFiltered = true;
-    }
-}
-
 function showAllRows() {
     const tableRows = document.querySelectorAll('#movsTable tbody tr');
     tableRows.forEach(row => {
@@ -146,19 +205,6 @@ function addModelosToSelect(modelos) {
     });
 }
 
-function getModelosSelecionados() {
-	let selectElement = document.getElementById('modeloSelect');
-    if (!selectElement) {
-        console.error('Elemento select não fornecido');
-        return [];
-    }
-    var selectedOptions = selectElement.selectedOptions;
-    var modelosSelecionados = Array.from(selectedOptions).map(function(option) {
-        return option.text;
-    });
-    return modelosSelecionados;
-}
-
 function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
 	let documentoDaMovimentacao = getDocumentoDaMovimentacao(movimentacao);
 	console.log("documentoDaMovimentacao aaaa");
@@ -166,29 +212,6 @@ function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
     let modeloDoDocumento = getModeloDoDocumento(documentoDaMovimentacao);
     return modeloDoDocumento === modeloSelecionado;
 }
-
-function getDocumentoDaMovimentacao(movimentacao) {
-    // Obtém a quarta célula (td) da movimentação
-    const celulaDocumento = movimentacao.cells[3];
-    
-    if (celulaDocumento) {
-        // Encontra o primeiro elemento <a> dentro da célula do documento
-        const elementoDocumento = celulaDocumento.querySelector('a');
-        
-        // Se o elemento <a> foi encontrado, extrai o texto do documento
-        if (elementoDocumento) {
-            const documento = elementoDocumento.textContent.trim();
-            return documento;
-        } else {
-            console.error('Elemento <a> não encontrado na célula do documento');
-            return null;
-        }
-    } else {
-        console.error('Célula do documento não encontrada');
-        return null;
-    }
-}
-
 
 function getModeloDoDocumento(documentoDaMovimentacao) {
     //TODO: trocar o hardcoded pelo parametro real
@@ -309,20 +332,5 @@ function getDocumentoBySigla(sigla) {
         });
     });
 }
-
-function init() {
-    $('#lotacaoSelect').select2();
-    $('#modeloSelect').select2();
-    ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
-    removeDuplicateOptions();
-    getModelosFromSigaExAPI();
-
-    getDocumentoBySigla("OTZZ-PAR-2023/00001-A").then(function(documento) {
-        console.log("Documento encontrado:", JSON.stringify(documento));
-    }).catch(function(error) {
-        console.log("Erro ao buscar o documento:", error);
-    });
-}
-
 
 document.addEventListener('DOMContentLoaded', init);

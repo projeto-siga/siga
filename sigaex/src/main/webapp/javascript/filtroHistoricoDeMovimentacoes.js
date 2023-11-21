@@ -1,6 +1,5 @@
 $(document).ready(function() {
 	$('#lotacaoSelect').select2();
-	//$('#modeloSelect').select2();
 });
 
 function init() {
@@ -9,12 +8,6 @@ function init() {
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
     getModelosFromSigaExAPI();
-	//em desenvolvimento
-    getDocumentoBySigla("OTZZ-PAR-2023/00001-A").then(function(documento) {
-        console.log("Documento encontrado:", JSON.stringify(documento));
-    }).catch(function(error) {
-        console.log("Erro ao buscar o documento:", error);
-    });
 }
 
 //alterna entre filtragem e ver todos
@@ -31,61 +24,32 @@ function toggleFilter() {
         isFiltered = true;
     }
 }
+function removerAcentos(str) {
 
-//TODO: modelo(documento) = Obter o modelo de um documento
-//TODO: movimentações.filtroPorModelo(movimentaçõesDoDocumento, modeloSelecionado) = listar somente as movimentações que o documento seja do modelo selecionado
+    return str;
+}
+
 function filtraPorModelo() {
-	//TODO: extrair para o toogleFilter() e receber como parametro na função
-	let modelosSelecionados = getModelosSelecionados();
+	let modelosSelecionados = removerAcentos(getModelosSelecionados());
+	console.log("modelosSelecionados" + modelosSelecionados);
+	
 	const movimentacoes = getMovimentacoes()
+	console.log("movimentacoes" + movimentacoes);
 	
-	//TODO: Logica principal do filtro por modelo
-	/*
-	verifica se movimentação[1].documento.modelo == modeloSelecionado 
-	obter o documento de uma movimentação
-	obter o modelo de um documento
-	verificar se o modelo do documento é igual ao modeloSelecionado
-	se = , adiciona na listaFiltrada
-	se !=, não adiciona na listaFiltrada
-	*/
-	
-	//TODO: retorna o documento de cada movimentação
-	//loop: para cada movimentação em [movimentacoes]
-	let movimentacaoAtual = null
-	let documento = "documentoDaMovimentacao";
-	documento = getDocumentoDaMovimentacao(movimentacao);
-	
-	//TODO: retorna o modelo de cada documento
-	//#####################################################
-	//Retorna o modelo do documento
-	modelo = getModeloDoDocumento(documento);
-	console.log("modelo");
-	console.log(modelo);
-	//#####################################################
-	
-	if (movimentacoes.length > 0) {
-	    movimentacaoAtual = movimentacoes[0];
-	    console.log("movimentacaoAtual");
-	    console.log(movimentacaoAtual);
-	} else {
-	    console.error('Nenhuma linha encontrada');
-	}
-	
-	console.log(modelosSelecionados);
-	console.log("modeloAtual");
-	console.log(modeloAtual);
-	console.log("movimentacaoAtual");
-	console.log(movimentacaoAtual);
-	
-	//Para cada movimentação, faça:
-		isMovDoModeloSelecionado = isMovimentacaoDoModeloSelecionado(modeloAtual, movimentacaoAtual);
-		console.log(isMovDoModeloSelecionado);
-		if (isMovDoModeloSelecionado){
-			movimentacaoAtual.classList.remove('hidden-row'); // Mostra a linha
-		}
-		if (!isMovDoModeloSelecionado){
-			movimentacaoAtual.classList.add('hidden-row');    // Oculta a linha
-		}
+	movimentacoes.forEach(movimentacao => {
+        let documento = getDocumentoDaMovimentacao(movimentacao); // Obtenha o documento de cada movimentação
+        console.log("documento" + documento);
+        
+        let modeloDoDocumento = removerAcentos(getModeloDoDocumento(documento)); // Obtenha o modelo do documento
+		console.log(" modeloDoDocumento" +  modeloDoDocumento);
+		
+        if (modelosSelecionados.includes(modeloDoDocumento)) {
+			console.log("modelosSelecionados" +  modelosSelecionados);
+            movimentacao.classList.remove('hidden-row'); // Se o modelo estiver selecionado, mostre a linha
+        } else {
+            movimentacao.classList.add('hidden-row'); // Se não, oculte a linha
+        }
+    });
 }
 
 function getModelosSelecionados() {
@@ -125,6 +89,24 @@ function getDocumentoDaMovimentacao(movimentacao) {
         console.error('Célula do documento não encontrada');
         return null;
     }
+}
+
+function getModeloDoDocumento(documentoDaMovimentacao) {    
+    //TODO: trocar o mock pela lògica real buscando o conteudo do endpoint
+    let modeloMock = {
+        "OTZZ-MEM-2023/00137": "Memorando",
+        "OTZZ-DES-2023/00011-A": "Despacho",
+        "OTZZ-DES-2023/00021-A": "Despacho",
+        "OTZZ-DES-2023/00022-A": "Despacho",
+        "OTZZ-CAP-2023/00014-A": "Modelos Abrangentes: Declaração (Modelo livre) (Cap)",
+        "OTZZ-DES-2023/00024-A": "Despacho",
+        "OTZZ-CAP-2023/00015-A": "Modelos Abrangentes: Declaração (Modelo livre) (Cap)",
+        "OTZZ-PAR-2023/00001-A": "Parecer",
+    };
+	
+    let modelo = modeloMock[documentoDaMovimentacao] || 'Modelo Desconhecido';
+    
+    return modelo;
 }
 
 function ordenaOpcoesOrdemAlfabetica(selectElement) {
@@ -213,33 +195,10 @@ function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
     return modeloDoDocumento === modeloSelecionado;
 }
 
-function getModeloDoDocumento(documentoDaMovimentacao) {
-    //TODO: trocar o hardcoded pelo parametro real
-    let documento = "OTZZ-PAR-2023/00001-A";
-    
-    //TODO: Buscar o documento no backend
-    //Como buscar um documento pelo numero no backend
-    
-    //TODO: Buscar o modelo do documento no backend(documento)
-    let modelo = buscaModeloNoBackend(documento);
-    
-    
-    //TODO: salvar o modelo do documento na variável
-    
-    //modelo = document.getElementById('modeloTeste').textContent;  // assume que você tem um elemento com id 'modelo'
-    return modelo;
-}
-
 function buscaDocumentoNoBackend(numeroDoDocumento){
 	//TODO: busca documento no backend
 	let documento = null;
 	return documento;
-}
-
-function buscaModeloNoBackend(documento){
-	//TODO: busca modelo no backend
-	let modelo = null;
-	return modelo;
 }
 
 //TODO: Testar
@@ -267,21 +226,6 @@ function buscaModeloPorId(modeloId, jwt, callback) {
         }
     });
 }
-/*
-//TODO: Testar
-// Example
-buscaModeloPorId('12345', 'your_jwt_token_here', function(err, modelo) {
-    if(err) {
-        // Handle error
-        console.error(err);
-    } else {
-        // Process the fetched model
-        console.log('Modelo encontrado:', modelo);
-    }
-});
-*/
-
-//TODO: Testar as funções e validar a funcionalidade
 
 // This function prepares the acronym and initiates the API call
 async function buscaIdPorSigla(sigla) {

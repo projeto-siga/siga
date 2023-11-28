@@ -31,9 +31,10 @@ public class SrArquivo extends Objeto implements Comparable<SrArquivo>{
     private Long idArquivo;
 
     @Lob
+    @Column(name = "BLOB_ARQUIVO")
     private byte[] blob;
 
-    @Column(name = "MIME")
+    @Column(name = "MIME_ARQUIVO")
     private String mime;
 
     @Column(name = "NOME_ARQUIVO")

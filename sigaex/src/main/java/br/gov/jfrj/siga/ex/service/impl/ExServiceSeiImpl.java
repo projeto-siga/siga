@@ -268,7 +268,7 @@ public class ExServiceSeiImpl implements ExServiceSei {
 	public Unidade[] listarUnidades(String siglaSistema, String identificacaoServico, String idTipoProcedimento,
 			String idSerie) throws RemoteException {
 		try (ExSoapContext ctx = new ExSoapContext(false)) {
-			log.debug("Inicio - listando Unidades para o SERH");
+			System.out.println("Inicio - listando Unidades para o SERH");
 			List<Unidade> unidades = new ArrayList<>(); 
 			List<DpLotacao> lotacoes = listaDeUnidades();
 			for (DpLotacao lotacao: lotacoes) {
@@ -278,7 +278,7 @@ public class ExServiceSeiImpl implements ExServiceSei {
 				unidade.setDescricao(lotacao.getDescricao());
 				unidades.add(unidade);
 			}
-			log.debug("Fim - listando Unidades para o SERH");
+			System.out.println("Fim - listando Unidades para o SERH");
 			return unidades.toArray(new Unidade[unidades.size()]);
 
 		} catch (Exception ex) {

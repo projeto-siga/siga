@@ -111,6 +111,22 @@ function getDocumentoDaMovimentacao(movimentacao) {
 
 function getModeloDoDocumento(documentoDaMovimentacao) {
 	//TODO: inserir chamada do endpoint aqui
+	
+	/* desativado para fazer os 2 filtros funcionarem ao mesmo tempo
+	siglaDoDocumento = documentoDaMovimentacao;
+	
+	let documento = getDocumentoPelaSigla(formataSigla("OTZZ-DES-2023/00011-A"));
+	console.log("documento" + documento); //documentoOTZZ-PAR-2023/00001-A
+
+	let idDoDocumento = documento.id;
+	
+	let modeloDoDocumento = getModeloPeloIDdoDocumento(2);
+	console.log("modeloDoDocumento" + modeloDoDocumento);
+	*/
+	
+	
+    //TODO: trocar o mock pela lògica real buscando o conteudo do endpoint
+    //TODO: Modelos abrangente não ta vindo, corrigir erro
     /*
     let modeloMock = {
         "OTZZ-MEM-2023/00137": "Memorando",
@@ -239,5 +255,28 @@ function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
     let modeloDoDocumento = getModeloDoDocumento(documentoDaMovimentacao);
     return modeloDoDocumento === modeloSelecionado;
 }
+
+function buscaModeloPorId(modeloId, jwt, callback) {
+    $.ajax({
+        url: "/sigaex/api/v1/modelos/" + modeloId,
+        type: 'GET',
+        contentType: "application/json",
+        headers: {"Authorization": jwt},
+        dataType: 'json',
+        success: function(result) {
+            callback(null, result);
+        },
+        error: function (xhr, status, error) {
+            var errorMsg = "Erro na busca do modelo: ";
+            if (xhr.responseJSON && xhr.responseJSON.errormsg) {
+                errorMsg += xhr.responseJSON.errormsg;
+            } else {
+                errorMsg += "Status: " + status + ", Error: " + error;
+            }
+            callback(errorMsg, null);
+        }
+    });
+}
+
 
 document.addEventListener('DOMContentLoaded', init);

@@ -19,15 +19,15 @@ function toggleFilter() {
         isFiltered = false;
     } else {
 		//TODO: correção os 2 filtros não estão funcionando ao mesmo tempo
-        //filtraPorLotacao();
+        filtraPorLotacao();
         filtraPorModelo();
-        //filtraPorLotacaoEModelo();
         document.getElementById('filterButton').textContent = 'Ver Todos';
         isFiltered = true;
     }
 }
 
 function removerAcentos(str) {
+	//TODO: desenvolver lógica para tirar acento do modelo e prevenir erros nos filtros
     return str;
 }
 
@@ -111,22 +111,17 @@ function getDocumentoDaMovimentacao(movimentacao) {
 
 function getModeloDoDocumento(documentoDaMovimentacao) {
 	//TODO: inserir chamada do endpoint aqui
-	
 	/* desativado para fazer os 2 filtros funcionarem ao mesmo tempo
 	siglaDoDocumento = documentoDaMovimentacao;
-	
 	let documento = getDocumentoPelaSigla(formataSigla("OTZZ-DES-2023/00011-A"));
 	console.log("documento" + documento); //documentoOTZZ-PAR-2023/00001-A
-
 	let idDoDocumento = documento.id;
-	
 	let modeloDoDocumento = getModeloPeloIDdoDocumento(2);
 	console.log("modeloDoDocumento" + modeloDoDocumento);
 	*/
 	
-	
     //TODO: trocar o mock pela lògica real buscando o conteudo do endpoint
-    //TODO: Modelos abrangente não ta vindo, corrigir erro
+    //TODO: Corrigir abrangente não ta vindo, corrigir erro
     /*
     let modeloMock = {
         "OTZZ-MEM-2023/00137": "Memorando",
@@ -141,12 +136,10 @@ function getModeloDoDocumento(documentoDaMovimentacao) {
 	*/
 	let modelo = null;
     //modelo = modeloMock[documentoDaMovimentacao] || 'Modelo Desconhecido';
-    
     return modelo;
 }
 
 function getDocumentoPelaSigla(siglaDoDocumento){
-    //get documento na url pelo sigla
     url = "/sigaex/api/v1/documentos/{sigla}";
     url = url.replace("{sigla}", siglaDoDocumento);
     console.log("url" + url);
@@ -166,7 +159,6 @@ function getDocumentoPelaSigla(siglaDoDocumento){
 }
 
 function getModeloPeloIDdoDocumento(idDoDocumento){
-    //get modelo na url pelo id do documento
     url = "/sigaex/api/v1/documentos/{id}/modelo";
     url = url.replace("{id}", idDoDocumento);
     console.log("url" + url);
@@ -194,11 +186,9 @@ function ordenaOpcoesOrdemAlfabetica(selectElement) {
 function removeDuplicateOptions() {
     let select = document.getElementById('lotacaoSelect');
     let seenOptions = new Set();
-
     // Iterar sobre as opções da combobox em ordem reversa
     for (let i = select.options.length - 1; i >= 0; i--) {
         let optionValue = select.options[i].value;
-
         // Se o valor já foi visto, remova a opção
         if (seenOptions.has(optionValue)) {
             select.remove(i);
@@ -207,8 +197,6 @@ function removeDuplicateOptions() {
         }
     }
 }
-
-
 
 let isFiltered = false;
 
@@ -226,7 +214,6 @@ function getModelosFromSigaExAPI() {
         dataType: 'json',
         success: function(result) {
             if (result.list && result.list.length > 0) {
-                // Processa a lista de modelos
                 addModelosToSelect(result.list);
             } else {
                 console.log("Nenhum modelo encontrado.");
@@ -278,5 +265,52 @@ function buscaModeloPorId(modeloId, jwt, callback) {
     });
 }
 
+
+async function buscaIdPorSigla(sigla) {
+    var siglaFormatted = formataSigla(sigla);
+    try {
+        let documentoId = await consultaApiPorSigla(siglaFormatted);
+        return documentoId;
+    } catch (error) {
+        console.error('Erro ao buscar ID:', error);
+        throw error; 
+    }
+}
+
+function formataSigla(sigla) {
+    return sigla.replace("/", "").replace("-", "");
+}
+
+async function consultaApiPorSigla(siglaFormatted) {
+    var response = await fetch(`/sigaex/api/v1/documentos/${siglaFormatted}/detalhes`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer your_jwt_token_here"
+        }
+    });
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    var documento = await response.json();
+    return documento.id; 
+}
+
+function getDocumentoBySigla(sigla) {
+    var siglaFormatted = formataSigla(sigla);
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: "/sigaex/api/v1/documentos/" + siglaFormatted,
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                resolve(result);
+            },
+            error: function(xhr, status, error) {
+                reject(error);
+            }
+        });
+    });
+}
 
 document.addEventListener('DOMContentLoaded', init);

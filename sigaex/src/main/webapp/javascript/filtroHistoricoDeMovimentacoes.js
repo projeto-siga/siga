@@ -18,15 +18,33 @@ function toggleFilter() {
         document.getElementById('filterButton').textContent = 'Filtrar';
         isFiltered = false;
     } else {
-        filterTable(); // Filtra por lotação
-        filtraPorModelo() // Filtra por modelo
+		//TODO: correção os 2 filtros não estão funcionando ao mesmo tempo
+        //filtraPorLotacao();
+        filtraPorModelo();
+        //filtraPorLotacaoEModelo();
         document.getElementById('filterButton').textContent = 'Ver Todos';
         isFiltered = true;
     }
 }
-function removerAcentos(str) {
 
+function removerAcentos(str) {
     return str;
+}
+
+function filtraPorLotacao() {
+	// Pega valores das lotações selecionadas
+	const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);
+	const movimentacoes = getMovimentacoes();
+	
+	// Exibe ou esconde linhas baseado nos filtros selecionados
+	movimentacoes.forEach(row => {
+		const lotacaoCell = row.querySelector('td:nth-child(2)');
+		if (lotacaoCell && selectedLotacoes.includes(lotacaoCell.textContent.trim())) {
+			row.classList.remove('hidden-row'); // Mostra a linha
+		} else {
+			row.classList.add('hidden-row');    // Oculta a linha
+		}
+	});
 }
 
 function filtraPorModelo() {
@@ -91,8 +109,9 @@ function getDocumentoDaMovimentacao(movimentacao) {
     }
 }
 
-function getModeloDoDocumento(documentoDaMovimentacao) {    
-    //TODO: trocar o mock pela lògica real buscando o conteudo do endpoint
+function getModeloDoDocumento(documentoDaMovimentacao) {
+	//TODO: inserir chamada do endpoint aqui
+    /*
     let modeloMock = {
         "OTZZ-MEM-2023/00137": "Memorando",
         "OTZZ-DES-2023/00011-A": "Despacho",
@@ -103,10 +122,50 @@ function getModeloDoDocumento(documentoDaMovimentacao) {
         "OTZZ-CAP-2023/00015-A": "Modelos Abrangentes: Declaração (Modelo livre) (Cap)",
         "OTZZ-PAR-2023/00001-A": "Parecer",
     };
-	
-    let modelo = modeloMock[documentoDaMovimentacao] || 'Modelo Desconhecido';
+	*/
+	let modelo = null;
+    //modelo = modeloMock[documentoDaMovimentacao] || 'Modelo Desconhecido';
     
     return modelo;
+}
+
+function getDocumentoPelaSigla(siglaDoDocumento){
+    //get documento na url pelo sigla
+    url = "/sigaex/api/v1/documentos/{sigla}";
+    url = url.replace("{sigla}", siglaDoDocumento);
+    console.log("url" + url);
+    let documento = null;
+    $.ajax({
+        url: url,
+        contentType: "application/json",
+        dataType: 'json',
+        success: function(result) {
+            documento = result;
+        },
+        error: function(result) {
+            console.log("Erro ao buscar documento: " + result.errormsg);
+        },
+    });    
+    return documento;
+}
+
+function getModeloPeloIDdoDocumento(idDoDocumento){
+    //get modelo na url pelo id do documento
+    url = "/sigaex/api/v1/documentos/{id}/modelo";
+    url = url.replace("{id}", idDoDocumento);
+    console.log("url" + url);
+    let modelo = null;
+    $.ajax({
+        url: url,
+        contentType: "application/json",
+        dataType: 'json',
+        success: function(result) {
+            modelo = result;
+        },
+        error: function(result) {
+            console.log("Erro ao buscar modelo: " + result.errormsg);
+        },
+    });
 }
 
 function ordenaOpcoesOrdemAlfabetica(selectElement) {
@@ -133,21 +192,7 @@ function removeDuplicateOptions() {
     }
 }
 
-function filterTable() {
-	// Pega valores das lotações selecionadas
-	const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);
-	const movimentacoes = getMovimentacoes();
-	
-	// Exibe ou esconde linhas baseado nos filtros selecionados
-	movimentacoes.forEach(row => {
-		const lotacaoCell = row.querySelector('td:nth-child(2)');
-		if (lotacaoCell && selectedLotacoes.includes(lotacaoCell.textContent.trim())) {
-			row.classList.remove('hidden-row'); // Mostra a linha
-		} else {
-			row.classList.add('hidden-row');    // Oculta a linha
-		}
-	});
-}
+
 
 let isFiltered = false;
 
@@ -193,88 +238,6 @@ function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
 	console.log(documentoDaMovimentacao);
     let modeloDoDocumento = getModeloDoDocumento(documentoDaMovimentacao);
     return modeloDoDocumento === modeloSelecionado;
-}
-
-function buscaDocumentoNoBackend(numeroDoDocumento){
-	//TODO: busca documento no backend
-	let documento = null;
-	return documento;
-}
-
-//TODO: Testar
-function buscaModeloPorId(modeloId, jwt, callback) {
-    $.ajax({
-        url: "/sigaex/api/v1/modelos/" + modeloId, // Adjust the endpoint as needed
-        type: 'GET',
-        contentType: "application/json",
-        headers: {"Authorization": jwt}, // Include the JWT in the request header for authorization
-        dataType: 'json',
-        success: function(result) {
-            // If the API returns a result, invoke the callback with no error and the result
-            callback(null, result);
-        },
-        error: function (xhr, status, error) {
-            // Construct an error message based on the response
-            var errorMsg = "Erro na busca do modelo: ";
-            if (xhr.responseJSON && xhr.responseJSON.errormsg) {
-                errorMsg += xhr.responseJSON.errormsg;
-            } else {
-                errorMsg += "Status: " + status + ", Error: " + error;
-            }
-            // Invoke the callback with the error message
-            callback(errorMsg, null);
-        }
-    });
-}
-
-// This function prepares the acronym and initiates the API call
-async function buscaIdPorSigla(sigla) {
-    var siglaFormatted = formataSigla(sigla);
-    try {
-        let documentoId = await consultaApiPorSigla(siglaFormatted);
-        return documentoId; // Return the ID from the API call
-    } catch (error) {
-        console.error('Erro ao buscar ID:', error);
-        throw error; // Rethrow the error to be handled by the caller
-    }
-}
-
-// This function formats the acronym to be URL-safe
-function formataSigla(sigla) {
-    return sigla.replace("/", "").replace("-", "");
-}
-
-// This function performs the API call to retrieve the document ID
-async function consultaApiPorSigla(siglaFormatted) {
-    var response = await fetch(`/sigaex/api/v1/documentos/${siglaFormatted}/detalhes`, {
-        method: 'GET',
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer your_jwt_token_here" // Replace with your actual JWT
-        }
-    });
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-    var documento = await response.json();
-    return documento.id; // Assuming the API returns an object with an 'id' property
-}
-
-function getDocumentoBySigla(sigla) {
-    var siglaFormatted = formataSigla(sigla);
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: "/sigaex/api/v1/documentos/" + siglaFormatted,
-            contentType: "application/json",
-            dataType: 'json',
-            success: function(result) {
-                resolve(result); // Resolve the promise with the result
-            },
-            error: function(xhr, status, error) {
-                reject(error); // Reject the promise with the error
-            }
-        });
-    });
 }
 
 document.addEventListener('DOMContentLoaded', init);

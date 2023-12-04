@@ -276,6 +276,9 @@ public class ExServiceSeiImpl implements ExServiceSei {
 				unidade.setIdUnidade(String.valueOf(lotacao.getIdOrgaoUsuario()) + String.valueOf(lotacao.getId()));
 				unidade.setSigla(lotacao.getSiglaCompleta());
 				unidade.setDescricao(lotacao.getDescricao());
+				unidade.setSinProtocolo("N");
+				unidade.setSinArquivamento("N");
+				unidade.setSinOuvidoria("N");				
 				unidades.add(unidade);
 			}
 			System.out.println("Fim - listando Unidades para o SERH");

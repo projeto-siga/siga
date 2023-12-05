@@ -2723,6 +2723,43 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
+  #//TODO: Remover campo assinatura digital         
+  /documentos/{id}/consultar-modelo:
+    get:
+      description: Verificar modelo do documento
+      tags: [ consulta ]
+      parameters:
+        - name: id
+          in: path
+          description: Id do documento
+          type: string
+          required: true
+        - name: assinaturaDigital
+          in: query
+          description: Flag para verificação de assinatura digital ou senha
+          type: boolean
+          default: false
+          required: false
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idDoc:
+                description: Id do documento
+                type: string
+              idModelo:
+                description: Id do modelo do documento
+                type: string  
+              status:
+                type: string
+                default: "ERRO!"  
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+          
   /documentos/localizar/mais-recente:
     get:
       description: "Exibe dados do móbil mais recente que atende às condições desejadas."

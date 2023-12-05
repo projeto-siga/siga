@@ -1591,6 +1591,45 @@ public interface IExApiV1 {
 
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
     }
+    
+    
+    //TODO: Suportar sigla como entrada
+    //TODO: Deve retornar o id do documento pela sigla
+    //TODO: Deve retornar o modelo correto
+    //TODO: Remover campo não usado
+    public interface IDocumentosIdConsultarModeloGet extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String id;
+            public Boolean assinaturaDigital;
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public String idDoc;
+            public String idModelo;
+            //public String idMov;
+            public String status;
+        }
+
+        public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+    }
+    
+    
+    
+    /*
+    public interface IDocumentosSiglaModeloGet extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public String sigla;
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public String idDoc;
+            public String idModelo;
+            public String status;
+        }
+
+        public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+    }
+	*/
 
     public interface IDocumentosLocalizarMaisRecenteGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {

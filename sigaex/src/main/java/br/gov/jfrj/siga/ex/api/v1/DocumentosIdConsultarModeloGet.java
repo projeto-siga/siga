@@ -15,20 +15,42 @@ import java.util.Set;
 
 @AcessoPublico
 public class DocumentosIdConsultarModeloGet implements IExApiV1.IDocumentosIdConsultarModeloGet {
-
-    @Override
+	
+	@Override
     public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
+        Long idDoDocumento = Long.valueOf(req.id);
+        //TODO: Deverá ser possível passar a sigla do documento e retornar o modelo
+        resp.idModelo = obterModeloDoDocumento(idDoDocumento);
+        resp.status = "Ok";
+    }
+	
+	private String obterModeloDoDocumento(Long idDoDocumento) throws AplicacaoException {
+		//Código equivalente a select ID_MOD from ex_documento where ID_DOC = 2
+        ExDocumento exDocumento = ExDao.getInstance().consultarExDocumentoPorId(idDoDocumento);
+        if (exDocumento == null) {
+            throw new AplicacaoException("Documento não encontrado com o ID: " + idDoDocumento);
+        }
+
+        Long idDoModeloDoDocumento = exDocumento.getExModelo().getIdMod();
+        if (idDoModeloDoDocumento == null) {
+            throw new AplicacaoException("Modelo do documento não encontrado para o ID: " + idDoDocumento);
+        }
+
+        return idDoModeloDoDocumento.toString();
+    }
+	
+	@Override
+    public String getContext() {
+        return "verificar assinatura";
+    }
+}	
+	
+    //@Override
+    //public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception {
     	
         //TODO: Suportar sigla como entrada
-        //TODO: Deve retornar o id do documento pela sigla
-        //TODO: Deve retornar o modelo corretp
-    	resp.status = "Ok";
-    	/*
-    	 * Código equivalente a select ID_MOD from ex_documento where ID_DOC = 2
-    	 */
-    	//TODO: 2 receber a sigla do documento como entrada
-    	//TODO: 3 Mudar nome do endpoint para o nome correto
-    	
+        
+
     	/*
     	String siglaDoDocumento = "aaa";
     	
@@ -98,31 +120,12 @@ public class DocumentosIdConsultarModeloGet implements IExApiV1.IDocumentosIdCon
             resp.status = "ERRO!";
         }
 		*/
-    }
+    //}
 
     /*
     private int obterIdDoModeloDoDocumento(String siglaDoDocumento) {
 		// TODO Auto-generated method stub
-    	
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	System.out.println("######################## idDoDocumento ####################################");
-    	
+    	    	
 		return 0;
 	}
 	*/
-
-	@Override
-    public String getContext() {
-        return "verificar assinatura";
-    }
-}

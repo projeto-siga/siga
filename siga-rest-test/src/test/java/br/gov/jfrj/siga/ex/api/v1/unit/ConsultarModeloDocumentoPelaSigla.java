@@ -23,6 +23,8 @@ public class ConsultarModeloDocumentoPelaSigla extends DocTest {
         return resp;
     }
 
+    //TODO: Criar documento ao invés de usar fixo
+    
     @Test
     public void test_status_OK() {
         //Pessoa pessoa = Pessoa.ZZ99999;
@@ -45,8 +47,26 @@ public class ConsultarModeloDocumentoPelaSigla extends DocTest {
         assertNotNull("O ID do modelo do documento deve ser retornado", idModelo);
     }
     
+    //TODO: Criar um modelo no documento de teste ou usar mock-test
+    /*
+     * Funciona se no BD tiver esses dados
+     * Documento com id = 2 e id_modelo = 26
+     */
+    @Test
+    public void test_retorna_o_modelo_correto() {
+    	String idDocumento = "2";
+    	String idModeloExpected = "26";
+    	
+        ValidatableResponse response = consultarModeloDocumentoPelaSigla(Pessoa.ZZ99999, idDocumento);
+        String idModeloRetornado = response.extract().path("idModelo");
+        
+        
+        assertEquals("O modelo do documento deve ser o esperado", idModeloExpected, idModeloRetornado);
+    }
+    
     //TODO: Suportar sigla como entrada
     //TODO: Deve retornar o id do documento pela sigla
+    //TODO: Deve retornar um modelo
     //TODO: Deve retornar o modelo correto
     
 /*

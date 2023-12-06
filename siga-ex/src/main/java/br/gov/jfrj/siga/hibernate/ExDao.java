@@ -2773,6 +2773,24 @@ public class ExDao extends CpDao {
 		
 		return query.getResultList();
 	}
+	
+	public Long consultarIdDocumentoPorSigla(String sigla) {
+	    String sql = "SELECT d.ID_DOC " +
+	                 "FROM ex_documento d " +
+	                 "JOIN ex_mobil m ON d.ID_DOC = m.ID_DOC " +
+	                 "WHERE m.DNM_SIGLA = :sigla";
+
+	    Query query = em().createNativeQuery(sql);
+	    query.setParameter("sigla", sigla);
+
+	    List<?> resultado = query.getResultList();
+	    if (!resultado.isEmpty()) {
+	        // Converte o resultado para Long
+	        return ((Number) resultado.get(0)).longValue();
+	    }
+	    return null;
+	}
+
 
 	public List<ExDocumento> consultarDocumentosPorModeloEData(ExModelo mod, Date dataIniInclusive, Date dataFimExclusive){		
 		if (dataIniInclusive == null)

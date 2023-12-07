@@ -10,64 +10,44 @@ function init() {
     getModelosFromSigaExAPI();
 }
 
-//alterna entre filtragem e ver todos
-//verifica o estado e decide se deve filtrar ou mostrar todas as linhas
 function toggleFilter() {
     if (isFiltered) {
         showAllRows();
         document.getElementById('filterButton').textContent = 'Filtrar';
         isFiltered = false;
     } else {
-		//TODO: correção os 2 filtros não estão funcionando ao mesmo tempo
-        filtraPorLotacao();
-        filtraPorModelo();
+        applyCombinedFilters();
         document.getElementById('filterButton').textContent = 'Ver Todos';
         isFiltered = true;
     }
 }
 
+function applyCombinedFilters() {
+    const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);
+    const isLotacaoFilterActive = selectedLotacoes.length > 0;
+
+    const modelosSelecionados = removerAcentos(getModelosSelecionados());
+    const isModeloFilterActive = modelosSelecionados.length > 0;
+
+    const movimentacoes = getMovimentacoes();
+
+    movimentacoes.forEach(row => {
+        const lotacaoMatches = !isLotacaoFilterActive || selectedLotacoes.includes(row.querySelector('td:nth-child(2)').textContent.trim());
+        const documento = getDocumentoDaMovimentacao(row);
+        const modeloDoDocumento = removerAcentos(getModeloDoDocumento(documento));
+        const modeloMatches = !isModeloFilterActive || modelosSelecionados.includes(modeloDoDocumento);
+
+        if (lotacaoMatches && modeloMatches) {
+            row.classList.remove('hidden-row');
+        } else {
+            row.classList.add('hidden-row');
+        }
+    });
+}
+
 function removerAcentos(str) {
 	//TODO: desenvolver lógica para tirar acento do modelo e prevenir erros nos filtros
     return str;
-}
-
-function filtraPorLotacao() {
-	// Pega valores das lotações selecionadas
-	const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);
-	const movimentacoes = getMovimentacoes();
-	
-	// Exibe ou esconde linhas baseado nos filtros selecionados
-	movimentacoes.forEach(row => {
-		const lotacaoCell = row.querySelector('td:nth-child(2)');
-		if (lotacaoCell && selectedLotacoes.includes(lotacaoCell.textContent.trim())) {
-			row.classList.remove('hidden-row'); // Mostra a linha
-		} else {
-			row.classList.add('hidden-row');    // Oculta a linha
-		}
-	});
-}
-
-function filtraPorModelo() {
-	let modelosSelecionados = removerAcentos(getModelosSelecionados());
-	console.log("modelosSelecionados" + modelosSelecionados);
-	
-	const movimentacoes = getMovimentacoes()
-	console.log("movimentacoes" + movimentacoes);
-	
-	movimentacoes.forEach(movimentacao => {
-        let documento = getDocumentoDaMovimentacao(movimentacao); // Obtenha o documento de cada movimentação
-        console.log("documento" + documento);
-        
-        let modeloDoDocumento = removerAcentos(getModeloDoDocumento(documento)); // Obtenha o modelo do documento
-		console.log(" modeloDoDocumento" +  modeloDoDocumento);
-		
-        if (modelosSelecionados.includes(modeloDoDocumento)) {
-			console.log("modelosSelecionados" +  modelosSelecionados);
-            movimentacao.classList.remove('hidden-row'); // Se o modelo estiver selecionado, mostre a linha
-        } else {
-            movimentacao.classList.add('hidden-row'); // Se não, oculte a linha
-        }
-    });
 }
 
 function getModelosSelecionados() {
@@ -109,21 +89,14 @@ function getDocumentoDaMovimentacao(movimentacao) {
     }
 }
 
-function getModeloDoDocumento(documentoDaMovimentacao) {
-	//TODO: inserir chamada do endpoint aqui
-	/* desativado para fazer os 2 filtros funcionarem ao mesmo tempo
-	siglaDoDocumento = documentoDaMovimentacao;
-	let documento = getDocumentoPelaSigla(formataSigla("OTZZ-DES-2023/00011-A"));
-	console.log("documento" + documento); //documentoOTZZ-PAR-2023/00001-A
-	let idDoDocumento = documento.id;
-	let modeloDoDocumento = getModeloPeloIDdoDocumento(2);
-	console.log("modeloDoDocumento" + modeloDoDocumento);
-	*/
-	
-    //TODO: trocar o mock pela lògica real buscando o conteudo do endpoint
-    //TODO: Corrigir abrangente não ta vindo, corrigir erro
-    /*
-    let modeloMock = {
+function getModeloDoDocumento(SiglaDoDocumentoDaMovimentacao) {
+	let idDoModelo = getIdDoModeloDoDocumentoBySigla(SiglaDoDocumentoDaMovimentacao);
+	let modelo = null;
+	//modelo = getTextoDoModeloByID(idDoModelo);
+	//TODO: Implementar a função getTextoDoModeloByID(idDoModelo) e descomentar linha acima
+
+	/*
+	let modeloMock = {
         "OTZZ-MEM-2023/00137": "Memorando",
         "OTZZ-DES-2023/00011-A": "Despacho",
         "OTZZ-DES-2023/00021-A": "Despacho",
@@ -133,10 +106,89 @@ function getModeloDoDocumento(documentoDaMovimentacao) {
         "OTZZ-CAP-2023/00015-A": "Modelos Abrangentes: Declaração (Modelo livre) (Cap)",
         "OTZZ-PAR-2023/00001-A": "Parecer",
     };
-	*/
-	let modelo = null;
-    //modelo = modeloMock[documentoDaMovimentacao] || 'Modelo Desconhecido';
+    modelo = modeloMock[SiglaDoDocumentoDaMovimentacao] || 'Modelo Desconhecido';
+    */
     return modelo;
+}
+
+function getIdDoModeloDoDocumentoBySigla(sigla) {
+    var xhr = new XMLHttpRequest();
+    var url = window.location.origin + '/sigaex/api/v1/documentos/' + compactarSigla(sigla) + '/consultar-modelo';
+    
+    xhr.open('GET', url, false); // false para requisição síncrona
+    try {
+        xhr.send();
+        if (xhr.status === 200) {
+            var resposta = JSON.parse(xhr.responseText);
+            return resposta.idModelo;
+        } else {
+            console.error('Erro na API: ' + xhr.status);
+            return 'Modelo Desconhecido';
+        }
+    } catch (erro) {
+        console.error('Erro na requisição: ' + erro);
+        return 'Modelo Desconhecido';
+    }
+}
+
+function compactarSigla(sigla) {
+    if (sigla === null || sigla === undefined) {
+        return null;
+    }
+    return sigla.replace(/-/g, "").replace(/\//g, "");
+}
+
+
+function getDocumentoBySigla(sigla) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/sigaex/api/v1/documentos/" + compactarSigla(sigla), false); // false para requisição síncrona
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    try {
+        xhr.send();
+        if (xhr.status === 200) {
+            return JSON.parse(xhr.responseText);
+        } else {
+            console.error('Erro ao buscar documento: ' + xhr.statusText);
+            return null;
+        }
+    } catch (err) {
+        console.error('Erro ao buscar documento: ' + err);
+        return null;
+    }
+}
+
+function getModeloById(id) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/sigaex/api/v1/modelos/" + id, false); // false para requisição síncrona
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    try {
+        xhr.send();
+        if (xhr.status === 200) {
+            return JSON.parse(xhr.responseText);
+        } else {
+            console.error('Erro ao buscar modelo: ' + xhr.statusText);
+            return null;
+        }
+    } catch (err) {
+        console.error('Erro ao buscar modelo: ' + err);
+        return null;
+    }
+}
+
+function formataSigla(sigla) {
+	if (sigla === null || sigla === undefined) {
+        return null;
+    }
+    return sigla.replace("/", "").replace("-", "");
+}
+
+function compactarSigla(sigla) {
+    if (sigla === null || sigla === undefined) {
+        return null;
+    }
+    return sigla.replace(/-/g, "").replace(/\//g, "");
 }
 
 function getDocumentoPelaSigla(siglaDoDocumento){
@@ -156,24 +208,6 @@ function getDocumentoPelaSigla(siglaDoDocumento){
         },
     });    
     return documento;
-}
-
-function getModeloPeloIDdoDocumento(idDoDocumento){
-    url = "/sigaex/api/v1/documentos/{id}/modelo";
-    url = url.replace("{id}", idDoDocumento);
-    console.log("url" + url);
-    let modelo = null;
-    $.ajax({
-        url: url,
-        contentType: "application/json",
-        dataType: 'json',
-        success: function(result) {
-            modelo = result;
-        },
-        error: function(result) {
-            console.log("Erro ao buscar modelo: " + result.errormsg);
-        },
-    });
 }
 
 function ordenaOpcoesOrdemAlfabetica(selectElement) {
@@ -243,29 +277,6 @@ function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
     return modeloDoDocumento === modeloSelecionado;
 }
 
-function buscaModeloPorId(modeloId, jwt, callback) {
-    $.ajax({
-        url: "/sigaex/api/v1/modelos/" + modeloId,
-        type: 'GET',
-        contentType: "application/json",
-        headers: {"Authorization": jwt},
-        dataType: 'json',
-        success: function(result) {
-            callback(null, result);
-        },
-        error: function (xhr, status, error) {
-            var errorMsg = "Erro na busca do modelo: ";
-            if (xhr.responseJSON && xhr.responseJSON.errormsg) {
-                errorMsg += xhr.responseJSON.errormsg;
-            } else {
-                errorMsg += "Status: " + status + ", Error: " + error;
-            }
-            callback(errorMsg, null);
-        }
-    });
-}
-
-
 async function buscaIdPorSigla(sigla) {
     var siglaFormatted = formataSigla(sigla);
     try {
@@ -275,10 +286,6 @@ async function buscaIdPorSigla(sigla) {
         console.error('Erro ao buscar ID:', error);
         throw error; 
     }
-}
-
-function formataSigla(sigla) {
-    return sigla.replace("/", "").replace("-", "");
 }
 
 async function consultaApiPorSigla(siglaFormatted) {
@@ -294,23 +301,6 @@ async function consultaApiPorSigla(siglaFormatted) {
     }
     var documento = await response.json();
     return documento.id; 
-}
-
-function getDocumentoBySigla(sigla) {
-    var siglaFormatted = formataSigla(sigla);
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: "/sigaex/api/v1/documentos/" + siglaFormatted,
-            contentType: "application/json",
-            dataType: 'json',
-            success: function(result) {
-                resolve(result);
-            },
-            error: function(xhr, status, error) {
-                reject(error);
-            }
-        });
-    });
 }
 
 document.addEventListener('DOMContentLoaded', init);

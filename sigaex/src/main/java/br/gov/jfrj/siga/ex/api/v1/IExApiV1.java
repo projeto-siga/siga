@@ -1605,6 +1605,7 @@ public interface IExApiV1 {
             public String idDoc;
             public String siglaDocumento;
             public String idModelo;
+            public String nomeDoModelo;
             public String status;
         }
 

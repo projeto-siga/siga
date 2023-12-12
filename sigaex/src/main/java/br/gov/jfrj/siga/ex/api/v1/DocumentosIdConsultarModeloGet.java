@@ -28,6 +28,7 @@ public class DocumentosIdConsultarModeloGet implements IExApiV1.IDocumentosIdCon
         Long IdDoModeloDoDocumento = obterModeloDoDocumento(idDoDocumento);
 		resp.idModelo = IdDoModeloDoDocumento.toString();
 		resp.status = "Ok";
+		resp.nomeDoModelo = obterNomeDoModeloDoDocumento(idDoDocumento);
     }
 	
 	private Long obterModeloDoDocumento(Long idDoDocumento) throws AplicacaoException {
@@ -41,8 +42,27 @@ public class DocumentosIdConsultarModeloGet implements IExApiV1.IDocumentosIdCon
         if (idDoModeloDoDocumento == null) {
             throw new AplicacaoException("Modelo do documento não encontrado para o ID: " + idDoDocumento);
         }
-
+        
         return idDoModeloDoDocumento;
+    }
+	
+	private String obterNomeDoModeloDoDocumento(Long idDoDocumento) throws AplicacaoException {
+
+        ExDocumento exDocumento = ExDao.getInstance().consultarExDocumentoPorId(idDoDocumento);
+        if (exDocumento == null) {
+            throw new AplicacaoException("Documento não encontrado com o ID: " + idDoDocumento);
+        }
+
+        //Long idDoModeloDoDocumento = exDocumento.getExModelo().getIdMod();
+        String nomeDoModelo = exDocumento.getExModelo().getNmMod();
+        System.out.println(nomeDoModelo);
+        //if (idDoModeloDoDocumento == null) {
+        //    throw new AplicacaoException("Modelo do documento não encontrado para o ID: " + idDoDocumento);
+        //}
+        
+        
+
+        return nomeDoModelo;
     }
 	/*
 	private Long getIdDoDocumentoBySigla(String sigla) throws AplicacaoException {

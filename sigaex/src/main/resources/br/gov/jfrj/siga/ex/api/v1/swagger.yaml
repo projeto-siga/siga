@@ -2722,8 +2722,7 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-            
-  #//TODO: Remover campo assinatura digital         
+                     
   /documentos/{id}/consultar-modelo:
     get:
       description: Verificar modelo do documento
@@ -2748,6 +2747,9 @@ paths:
                 type: string
               idModelo:
                 description: Id do modelo do documento
+                type: string  
+              nomeDoModelo:
+                description: Nome do modelo do documento
                 type: string  
               status:
                 type: string

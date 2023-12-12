@@ -21,6 +21,8 @@ package br.gov.jfrj.siga.ex.service.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
@@ -31,6 +33,7 @@ import org.jboss.logging.Logger;
 
 import br.gov.jfrj.siga.Service;
 import br.gov.jfrj.siga.base.Prop;
+import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.ex.ExDocumento;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -255,12 +258,35 @@ public class ExServiceSeiImpl implements ExServiceSei {
 		mob = (ExMobil) dao().consultarPorSigla(filter);
 		return mob;
 	}
+	
+	private List<DpLotacao> listaDeUnidades() {
+		List<DpLotacao> lotacoes = dao().listarLotacoes();
+		return lotacoes;
+	}
 
 	@Override
 	public Unidade[] listarUnidades(String siglaSistema, String identificacaoServico, String idTipoProcedimento,
 			String idSerie) throws RemoteException {
+		try (ExSoapContext ctx = new ExSoapContext(false)) {
+			System.out.println("Inicio - listando Unidades para o SERH");
+			List<Unidade> unidades = new ArrayList<>(); 
+			List<DpLotacao> lotacoes = listaDeUnidades();
+			for (DpLotacao lotacao: lotacoes) {
+				Unidade unidade = new Unidade();
+				unidade.setIdUnidade(String.valueOf(lotacao.getIdOrgaoUsuario()) + String.valueOf(lotacao.getId()));
+				unidade.setSigla(lotacao.getSiglaCompleta());
+				unidade.setDescricao(lotacao.getDescricao());
+				unidade.setSinProtocolo("N");
+				unidade.setSinArquivamento("N");
+				unidade.setSinOuvidoria("N");				
+				unidades.add(unidade);
+			}
+			System.out.println("Fim - listando Unidades para o SERH");
+			return unidades.toArray(new Unidade[unidades.size()]);
 
-		return null;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	@Override

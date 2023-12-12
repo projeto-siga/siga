@@ -1035,6 +1035,9 @@ public class ExDao extends CpDao {
 			
 			Date dt = super.consultarDataEHoraDoServidor();
 			Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+			amanha.setHours(0);
+			amanha.setMinutes(0);
+			amanha.setSeconds(0);
 			sql.setParameter("amanha", amanha, TemporalType.DATE);
 			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
 			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni()); 

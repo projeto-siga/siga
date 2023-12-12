@@ -252,8 +252,11 @@ public class ExMarcadorBL {
 					&& marcador.getIdFinalidade().getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.MENOR_DATA)
 				dtIni = mov.getDtParam1().before(mov.getDtParam2()) ? mov.getDtParam1() : mov.getDtParam2();
 			if (dtIni == null && mov.getDtParam1() != null
-					&& marcador.getIdFinalidade().getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA)
+					&& marcador.getIdFinalidade().getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA) {
 				dtIni = mov.getDtParam1();
+			}
+
+			     
 			if (dtIni == null && mov.getDtParam2() != null
 					&& marcador.getIdFinalidade().getIdTpExibicao() == CpMarcadorTipoExibicaoEnum.DATA_LIMITE)
 				dtIni = mov.getDtParam2();

@@ -109,7 +109,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 				+ " para agrupar documentos de interesse de " + SigaMessages.getMessage("usuario.pessoa") + " ou " + SigaMessages.getMessage("usuario.lotacao") 
 				+ " definida, a partir de uma data definida",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.VIA_ESPECIFICA_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.MENOR_DATA,
+			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA,
 			CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA, CpMarcadorTipoTextoEnum.OPCIONAL, false, false);
 
 	private final Integer id;

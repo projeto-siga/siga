@@ -40,7 +40,7 @@ public class ExPodeAnexarArquivoAuxiliar extends CompositeExpressionSupport {
 	protected Expression create() {
 		return
 
-		new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+		new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR).withExMod(mob.doc().getExModelo())
 				.withExTpMov(ExTipoDeMovimentacao.ANEXACAO_DE_ARQUIVO_AUXILIAR);
 	}
 }

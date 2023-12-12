@@ -171,6 +171,8 @@ public class Prop {
 		provider.addPublicProperty("/siga.ldap.dn.usuarios", null);
 		provider.addPublicProperty("/siga.ldap.keystore", null);
 		provider.addPublicProperty("/siga.ldap.modo.escrita", null);
+		provider.addPublicProperty("/siga.admin.lotacao", null);		
+		provider.addPublicProperty("/siga.admin.orgaos", null);
 		provider.addPublicProperty("/siga.ldap.orgaos", null);
 		if (get("/siga.ldap.orgaos") != null) {
 			for (String s : get("/siga.ldap.orgaos").split(",")) {

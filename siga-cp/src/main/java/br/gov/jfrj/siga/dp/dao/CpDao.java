@@ -957,7 +957,6 @@ public class CpDao extends ModeloDao {
 			final Query query;
 			if (o.getNome() != null) {
 				query = em().createNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoIdENome");
-				query.setParameter("siglaGrupo", o.getNome());
 			} else {
 				query = em().createNamedQuery("consultarQuantidadeCpGrupoPorCpTipoGrupoId");
 			}
@@ -967,6 +966,20 @@ public class CpDao extends ModeloDao {
 			} else {
 				query.setParameter("idTpGrupo", 0);
 			}
+			
+			String s = o.getNome();
+			if (s != null)
+				s = s.replace(' ', '%');
+			else
+				s = "";
+			query.setParameter("nome", s);
+			
+			if (o.getIdOrgaoUsu() != null)
+				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
+			else
+				query.setParameter("idOrgaoUsu", 0L);
+			
+			
 			final int l = ((Long) query.getSingleResult()).intValue();
 			return l;
 		} catch (final NullPointerException e) {
@@ -978,9 +991,13 @@ public class CpDao extends ModeloDao {
 	public List<CpGrupo> consultarPorFiltro(final CpGrupoDaoFiltro o, final int offset, final int itemPagina) {
 		try {
 			final Query query;
+			String s = null;
 			if (o.getNome() != null) {
 				query = em().createNamedQuery("consultarCpGrupoPorCpTipoGrupoIdENome");
-				query.setParameter("siglaGrupo", o.getNome());
+				s = o.getNome();
+			} else if (o.getSigla() != null) {
+				query = em().createNamedQuery("consultarCpGrupoPorCpTipoGrupoIdENome");
+				s = o.getSigla();
 			} else {
 				query = em().createNamedQuery("consultarCpGrupoPorCpTipoGrupoId");
 			}
@@ -995,6 +1012,19 @@ public class CpDao extends ModeloDao {
 			} else {
 				query.setParameter("idTpGrupo", 0);
 			}
+
+			if (s != null)
+				s = s.replace(' ', '%');
+			else
+				s = "";
+			
+			query.setParameter("nome", s);
+
+			if (o.getIdOrgaoUsu() != null)
+				query.setParameter("idOrgaoUsu", o.getIdOrgaoUsu());
+			else
+				query.setParameter("idOrgaoUsu", 0L);
+			
 			final List<CpGrupo> l = query.getResultList();
 			return l;
 		} catch (final NullPointerException e) {

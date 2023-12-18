@@ -119,7 +119,9 @@
 		
 	.tabela-ordenavel tbody a {
 		pointer-events: none;
-	}						
+	}
+	
+							
 </style>						
 
 <script>
@@ -346,11 +348,11 @@
 						    width: 15% !important;
 						}
 						</style>
-						<!--<p id="testetestetest">${modelosss}</p>-->
-						<!--<p id="modeloTeste22">ddddddddddd</p>-->
-						<!-- TODO: Aumentar tamanho do select horizontal -->
+						
+
 						<!-- Combobox Filtro por lotações -->
 						<label for="lotacaoSelect">Lotação:</label>
+
 						<select id="lotacaoSelect" multiple="multiple">
 						    <c:forEach var="mov" items="${m.movs}">
 						        <option value="${mov.mov.lotaCadastrante.sigla}">
@@ -358,15 +360,18 @@
 						        </option>
 						    </c:forEach>
 						</select>
-						
-						<!-- Combobox Filtro por modelos -->
+
 						<label for="modeloSelect">Modelo:</label>
+						
 						<select id="modeloSelect" multiple="multiple">
 						</select>
 						
-						<button onclick="toggleFilter()" class="btn btn-info mr-3" id="filterButton">Filtrar</button>
+						<!-- Botão Filtrar -->
+						<button onclick="applyFilter()" class="btn btn-info mr-3" id="filterButton" style="display: inline-block;">Filtrar</button>
 						
-
+						<!-- Botão Ver todos -->
+						<button onclick="showAll()" class="btn btn-info mr-3" id="showAllButton" style="display:none;">Ver Todos</button>
+		
 						
 							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">

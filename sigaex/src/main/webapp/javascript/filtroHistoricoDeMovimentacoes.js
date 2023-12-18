@@ -10,16 +10,23 @@ function init() {
     getModelosFromSigaExAPI();
 }
 
-function toggleFilter() {
-    if (isFiltered) {
-        showAllRows();
-        document.getElementById('filterButton').textContent = 'Filtrar';
-        isFiltered = false;
-    } else {
-        applyCombinedFilters();
-        document.getElementById('filterButton').textContent = 'Ver Todos';
-        isFiltered = true;
-    }
+function applyFilter() {
+    applyCombinedFilters();
+    document.getElementById('showAllButton').style.display = 'inline-block';
+    isFiltered = true;
+}
+
+function showAll() {
+    showAllRows();
+    document.getElementById('showAllButton').style.display = 'none';
+    isFiltered = false;
+}
+
+function showAllRows() {
+    const movimentacoes = getMovimentacoes();
+    movimentacoes.forEach(row => {
+        row.classList.remove('hidden-row');
+    });
 }
 
 function applyCombinedFilters() {

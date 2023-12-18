@@ -90,40 +90,8 @@ function getDocumentoDaMovimentacao(movimentacao) {
 }
 
 function getModeloDoDocumento(SiglaDoDocumentoDaMovimentacao) {
-	//let idDoModelo = getIdDoModeloDoDocumentoBySigla(SiglaDoDocumentoDaMovimentacao);
-	//let nomeDoModelo = "Ofício";
-	let nomeDoModelo = "teste";
-	nomeDoModelo = getNomeDoModeloDoDocumentoBySigla(SiglaDoDocumentoDaMovimentacao);
-	//getNomeDoModeloDoDocumentoBySigla ta retornando sempre memorando
-	
-	//modelo = getTextoDoModeloByID(idDoModelo);
-	//TODO: Implementar a função getTextoDoModeloByID(idDoModelo) e descomentar linha acima
-
-	//linhas abaixo trocam o retorno do banco de dados pelo Mock
-	/*
-	let modeloMock = {
-        "OTZZ-MEM-2023/00137": "Memorando",
-        "OTZZ-DES-2023/00011-A": "Despacho",
-        "OTZZ-DES-2023/00021-A": "Despacho",
-        "OTZZ-DES-2023/00022-A": "Despacho",
-        "OTZZ-CAP-2023/00014-A": "Modelos Abrangentes: Declaração (Modelo livre) (Cap)",
-        "OTZZ-DES-2023/00024-A": "Despacho",
-        "OTZZ-CAP-2023/00015-A": "Modelos Abrangentes: Declaração (Modelo livre) (Cap)",
-        "OTZZ-PAR-2023/00001-A": "Parecer",
-    };
-    nomeDoModelo = modeloMock[SiglaDoDocumentoDaMovimentacao] || 'Modelo Desconhecido';
-    */
-    //.log na linhas abaixo printa na tela o nome do modelo de cada item do historico de movimentações
-    console.log("SiglaDoDocumentoDaMovimentacao");
-    console.log(SiglaDoDocumentoDaMovimentacao);
-   	console.log("nomeDoModelo");
-	console.log(nomeDoModelo);
-	
+	let nomeDoModelo = getNomeDoModeloDoDocumentoBySigla(SiglaDoDocumentoDaMovimentacao);	
     return nomeDoModelo;
-}
-
-function getNomeDoModelo(idDoModelo){
-	return "Ofício";
 }
 
 function getNomeDoModeloDoDocumentoBySigla(sigla) {
@@ -136,7 +104,6 @@ function getNomeDoModeloDoDocumentoBySigla(sigla) {
         if (xhr.status === 200) {
             var resposta = JSON.parse(xhr.responseText);
             return resposta.nomeDoModelo;
-            //return resposta.idModelo;
         } else {
             console.error('Erro na API: ' + xhr.status);
             return 'Modelo Desconhecido';
@@ -287,8 +254,6 @@ function addModelosToSelect(modelos) {
 
 function isMovimentacaoDoModeloSelecionado(modeloSelecionado, movimentacao) {
 	let documentoDaMovimentacao = getDocumentoDaMovimentacao(movimentacao);
-	//console.log("documentoDaMovimentacao aaaa");
-	//console.log(documentoDaMovimentacao);
     let modeloDoDocumento = getModeloDoDocumento(documentoDaMovimentacao);
     return modeloDoDocumento === modeloSelecionado;
 }

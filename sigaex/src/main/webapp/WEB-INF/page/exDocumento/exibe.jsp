@@ -360,7 +360,14 @@
 						        </option>
 						    </c:forEach>
 						</select>
-
+						
+						<!-- Combobox Filtro por Especie-->
+						<label for="especieSelect">Especie:</label>
+						
+						<select id="especieSelect" multiple="multiple">
+						</select>
+						
+						<!-- Combobox Filtro por Modelo-->
 						<label for="modeloSelect">Modelo:</label>
 						
 						<select id="modeloSelect" multiple="multiple">

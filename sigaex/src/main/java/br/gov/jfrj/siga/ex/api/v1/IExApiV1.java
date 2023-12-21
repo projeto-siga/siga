@@ -202,6 +202,18 @@ public interface IExApiV1 {
         public Boolean selected;
     }
 
+    public static class ModeloListaHierarquicaEspecieItem implements ISwaggerModel {
+        public String idModelo;
+        public String idModeloInicial;
+        public String nome;
+        public String descr;
+        public Long level;
+        public String keywords;
+        public Boolean group;
+        public Boolean selected;
+        public String especie;
+    }
+    
     public static class ClassificacaoItem implements ISwaggerModel {
         public String idClassificacao;
         public String sigla;
@@ -260,6 +272,21 @@ public interface IExApiV1 {
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
     }
 
+    public interface IModelosListaHierarquicaEspecieGet extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            public Boolean isEditandoAnexo;
+            public Boolean isCriandoSubprocesso;
+            public String siglaMobPai;
+            public Boolean isAutuando;
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public List<ModeloListaHierarquicaEspecieItem> list = new ArrayList<>();
+        }
+
+        public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+    }
+    
     public interface IDocumentosSiglaModelosParaIncluirGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
             public String sigla;
@@ -1592,10 +1619,6 @@ public interface IExApiV1 {
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
     }
     
-    //TODO: Renomear id para sigla
-    //TODO: Suportar sigla como entrada
-    //TODO: Deve retornar o id do documento pela sigla
-    //TODO: Deve retornar o modelo correto
     public interface IDocumentosIdConsultarModeloGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
             public String id;
@@ -1611,25 +1634,24 @@ public interface IExApiV1 {
 
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
     }
-    
-    
-    
-    /*
-    public interface IDocumentosSiglaModeloGet extends ISwaggerMethod {
+
+    public interface IDocumentosIdConsultarEspecieGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
-            public String sigla;
+            public String id;
         }
 
         public static class Response implements ISwaggerResponse {
             public String idDoc;
+            public String siglaDocumento;
             public String idModelo;
+            public String nomeDoModelo;
             public String status;
+            public String especie;
         }
 
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
     }
-	*/
-
+    
     public interface IDocumentosLocalizarMaisRecenteGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {
             public String modelo;

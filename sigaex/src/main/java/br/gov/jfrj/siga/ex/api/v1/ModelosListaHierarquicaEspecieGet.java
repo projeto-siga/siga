@@ -50,11 +50,6 @@ public class ModelosListaHierarquicaEspecieGet implements IModelosListaHierarqui
 			mi.selected = m.getSelected();
 			mi.keywords = m.getKeywords();
 			mi.especie = m.getEspecie();
-			System.out.println("##################");
-			System.out.println("##################");
-			System.out.println(mi);
-			System.out.println("##################");
-			System.out.println("##################");
 			resp.list.add(mi);
 		}
 	}
@@ -62,22 +57,10 @@ public class ModelosListaHierarquicaEspecieGet implements IModelosListaHierarqui
 	private ListaHierarquicaEspecie getListaHierarquicaEspecie(List<ExModelo> modelos) {
 		ListaHierarquicaEspecie lh = new ListaHierarquicaEspecie();
 		for (ExModelo m : modelos) {
-			//TODO remover os system out println
-			System.out.println("##################");
-			System.out.println("##################");
-			System.out.println(m);
-			System.out.println("##################");
-			System.out.println("##################");
-			System.out.println(m.getIdInicial().toString());
-			System.out.println(m.getNmMod());
-			System.out.println(m.getDescMod());
-			System.out.println(m.getId());
-			System.out.println(false);
 			String especie = "";
 			if (m.getExFormaDocumento() != null ) {
 				if (m.getExFormaDocumento().getDescricao() != null) {
 					especie = m.getExFormaDocumento().getDescricao();
-					System.out.println(m.getExFormaDocumento().getDescricao());
 				}
 			}
 			

@@ -1346,7 +1346,7 @@ public class LdapBL implements OperadorSemHistorico {
 			attrs.put("distinguishedName", adUsuario.getNomeCompleto());
 
 			attrs.put("userPrincipalName", adUsuario.getSigla() + conf.getUserPrincipalNameDomain());
-			attrs.put("displayName", Texto.inciaisMaiuscula(adUsuario.getNomeExibicao()));
+			attrs.put("displayName", Texto.inciaisMaiuscula(adUsuario.getNomeResolucaoEmail()));
 			attrs.put("extensionAttribute1", adUsuario.getTipoPessoa());
 
 			// script de inicialização do usuário

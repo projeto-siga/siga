@@ -41,6 +41,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
 import br.gov.jfrj.siga.dp.DpPessoa;
+import br.gov.jfrj.siga.ex.bl.Ex;
+import br.gov.jfrj.siga.ex.logic.ExPodeOtimizarQuadroDeExpedientes;
 import br.gov.jfrj.siga.hibernate.ExDao;
 
 @Controller
@@ -64,9 +66,9 @@ public class ExGadgetController extends ExController {
 	public void execute(final String idTpMarcadorExcluir,     boolean apenasQuadro)
 			throws Exception {
 
-		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular() );
+		List listEstados = dao().consultarPaginaInicial(getTitular(), getLotaTitular(), Ex.getInstance().getComp().pode(ExPodeOtimizarQuadroDeExpedientes.class, getTitular(), getLotaTitular()) );
 		
-		if (listEstados.size()>0){
+		if (!listEstados.isEmpty()){
 		
 			String idTpMarcadorIgnoradosQuadroQuantitativo = "7,8,9,10,11,12,13,16,18,20,21,22,26,32,50,51,62,63,64";
 			String idTpMarcadorExcluidos = (StringUtils.isNotBlank(idTpMarcadorExcluir) ? idTpMarcadorExcluir+"," : "" )+ idTpMarcadorIgnoradosQuadroQuantitativo;

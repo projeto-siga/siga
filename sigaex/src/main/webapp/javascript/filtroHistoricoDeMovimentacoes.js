@@ -9,11 +9,14 @@ function init() {
     
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
+    
+    //Ao carregar a página, busca os dados e preenche selects com listas de Espécies e Modelos
     getModelosFromSigaExAPI();
     getEspeciesFromSigaExAPI();
 }
 
 function getEspeciesFromSigaExAPI() {
+	//Busca espécies no endpoint /sigaex/api/v1/modelos/lista-hierarquica-especie
     $.ajax({
         url: "/sigaex/api/v1/modelos/lista-hierarquica-especie",
         contentType: "application/json",
@@ -21,8 +24,10 @@ function getEspeciesFromSigaExAPI() {
         success: function(result) {
             if (result.list && result.list.length > 0) {
 				addEspeciesToSelect(result.list);
-				//console.log("addEspeciesToSelect(result.list);");
-				//console.log(result.list);                
+				
+				//TODO
+				console.log("addEspeciesToSelect(result.list);");
+				console.log(result.list);                
             } else {
                 console.log("Nenhum modelo encontrado.");
             }
@@ -40,20 +45,22 @@ function addEspeciesToSelect(modelos) {
         option.value = modelo.idModelo;
         //consultar as especies de todos os documentos
         option.text = modelo.especie;
-		/*
+        
+		//TODO
         console.log("modelo");
         console.log(modelo);
         console.log(modelo.idModelo);
         console.log(modelo.especie);
         console.log(modelo.nome);
-        */
+        
         select.appendChild(option);
     });
 }
 
 function applyFilter() {
     applyCombinedFilters();
-    document.getElementById('showAllButton').style.display = 'inline-block';
+    //Exibe o botão "Ver todos"
+    document.getElementById('showAllButton').style.display = 'inline-block'; 
     isFiltered = true;
 }
 
@@ -71,6 +78,7 @@ function showAllRows() {
 }
 
 function applyCombinedFilters() {
+	//Usuario clica no botão filtrar e chama essa função
     const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);
     const isLotacaoFilterActive = selectedLotacoes.length > 0;
 
@@ -81,19 +89,26 @@ function applyCombinedFilters() {
     const isEspecieFilterActive = especiesSelecionadas.length > 0;
 	
     const movimentacoes = getMovimentacoes();
-
+	
+	//Para cada movimentação
     movimentacoes.forEach(row => {
         const lotacaoMatches = !isLotacaoFilterActive || selectedLotacoes.includes(row.querySelector('td:nth-child(2)').textContent.trim());
         const documento = getDocumentoDaMovimentacao(row);
         const modeloDoDocumento = removerAcentos(getModeloDoDocumento(documento));
         
+        //Busca a espécie do documento da movimentação atual
         const especieDoDocumento = removerAcentos(getEspecieDoDocumento(documento));
-        /*
+        
+        //TODO
         console.log("modeloDoDocumento");
         console.log(modeloDoDocumento);
         console.log("epecieDoDocumento");
         console.log(especieDoDocumento);
-        */
+        
+        //Obtem a lista de especies selecionada no Selectbox(Que vieram do Endpoint)
+        //Obtem a lista dos documentos das movimentações
+        //Verifica se movimentaçãoAtual/documento/especie está entre as especies selecionadas
+        	//Se estiver, exibe 
         const modeloMatches = !isModeloFilterActive || modelosSelecionados.includes(modeloDoDocumento);
         
         const especieMatches = !isEspecieFilterActive || especiesSelecionadas.includes(especieDoDocumento);
@@ -124,6 +139,7 @@ function getModelosSelecionados() {
 }
 
 function getEspeciesSelecionadas() {
+	//Busca somente as espécies selecionadas pelo usuário
 	let selectElement = document.getElementById('especieSelect');
     if (!selectElement) {
         console.error('Elemento select não fornecido');
@@ -168,6 +184,7 @@ function getModeloDoDocumento(SiglaDoDocumentoDaMovimentacao) {
 }
 
 function getEspecieDoDocumento(SiglaDoDocumentoDaMovimentacao) {
+	//Retorna a espécie de um documento
 	let especie = getEspecieDoDocumentoBySigla(SiglaDoDocumentoDaMovimentacao);	
     return especie;
 }
@@ -372,7 +389,7 @@ async function buscaIdPorSigla(sigla) {
 }
 
 async function consultaApiPorSigla(siglaFormatted) {
-    var response = await fetch(`/sigaex/api/v1/documentos/${siglaFormatted}/detalhes`, {
+    var response = await fetch('/sigaex/api/v1/documentos/${siglaFormatted}/detalhes', {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",

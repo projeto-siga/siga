@@ -124,7 +124,7 @@
 					</span> 
 				</div> 
 				<c:if test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos')}">
-					<c:if test="${!ehPublicoExterno || (siga_cliente == 'GOVSP' && ehPublicoExterno && podeNovoDocumento)}">
+					<c:if test="${!ehPublicoExterno || (ehPublicoExterno && podeNovoDocumento)}">
 						<div class="col col-12 col-sm-4 col-md-auto ml-md-auto mb-2">
 							<a href="expediente/doc/editar" class="btn btn-success form-control"> <i class="fas fa-plus-circle mr-1"></i>
 								<fmt:message key="documento.novo"/></a>

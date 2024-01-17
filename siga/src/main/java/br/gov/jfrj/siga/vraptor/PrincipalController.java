@@ -72,7 +72,7 @@ public class PrincipalController extends SigaController {
 				return;
 			} else {
 				if (podeExibirMesaVirtual(getTitular(), getLotaTitular())) {
-					String paginaInicialUrl1 = this.request.getScheme() + "://"  + this.request.getServerName() + ":" + + this.request.getServerPort() + "/sigaex/app/mesa" + SigaLibsEL.getMesaVersao(getTitular(), getLotaTitular());
+					String paginaInicialUrl1 =  Prop.get("/siga.base.url") + "/sigaex/app/mesa" + SigaLibsEL.getMesaVersao(getTitular(), getLotaTitular());
 					result.redirectTo(paginaInicialUrl1 + ((exibirAcessoAnterior != null && exibirAcessoAnterior) ? "?exibirAcessoAnterior=true" : ""));
 				    return;
 				}

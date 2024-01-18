@@ -5,14 +5,14 @@ $(document).ready(function() {
 function init() {
     $('#lotacaoSelect').select2();
     $('#modeloSelect').select2();
-    $('#especieSelect').select2();
+    //$('#especieSelect').select2();
     
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
     
     //Ao carregar a página, busca os dados e preenche selects com listas de Espécies e Modelos
     getModelosFromSigaExAPI();
-    getEspeciesFromSigaExAPI();
+    //getEspeciesFromSigaExAPI();
 }
 
 function getEspeciesFromSigaExAPI() {
@@ -26,8 +26,8 @@ function getEspeciesFromSigaExAPI() {
 				addEspeciesToSelect(result.list);
 				
 				//TODO
-				console.log("addEspeciesToSelect(result.list);");
-				console.log(result.list);                
+				//console.log("addEspeciesToSelect(result.list);");
+				//console.log(result.list);                
             } else {
                 console.log("Nenhum modelo encontrado.");
             }
@@ -47,11 +47,11 @@ function addEspeciesToSelect(modelos) {
         option.text = modelo.especie;
         
 		//TODO
-        console.log("modelo");
-        console.log(modelo);
-        console.log(modelo.idModelo);
-        console.log(modelo.especie);
-        console.log(modelo.nome);
+        //console.log("modelo");
+        //console.log(modelo);
+        //console.log(modelo.idModelo);
+        //console.log(modelo.especie);
+        //console.log(modelo.nome);
         
         select.appendChild(option);
     });
@@ -85,8 +85,9 @@ function applyCombinedFilters() {
     const modelosSelecionados = removerAcentos(getModelosSelecionados());
     const isModeloFilterActive = modelosSelecionados.length > 0;
 	
-	const especiesSelecionadas = removerAcentos(getEspeciesSelecionadas());
-    const isEspecieFilterActive = especiesSelecionadas.length > 0;
+	//const especiesSelecionadas = removerAcentos(getEspeciesSelecionadas());
+	const isEspecieFilterActive = false;
+    //const isEspecieFilterActive = especiesSelecionadas.length > 0;
 	
     const movimentacoes = getMovimentacoes();
 	
@@ -97,13 +98,13 @@ function applyCombinedFilters() {
         const modeloDoDocumento = removerAcentos(getModeloDoDocumento(documento));
         
         //Busca a espécie do documento da movimentação atual
-        const especieDoDocumento = removerAcentos(getEspecieDoDocumento(documento));
+        //const especieDoDocumento = removerAcentos(getEspecieDoDocumento(documento));
         
         //TODO
-        console.log("modeloDoDocumento");
-        console.log(modeloDoDocumento);
-        console.log("epecieDoDocumento");
-        console.log(especieDoDocumento);
+        //console.log("modeloDoDocumento");
+        //console.log(modeloDoDocumento);
+        //console.log("epecieDoDocumento");
+        //console.log(especieDoDocumento);
         
         //Obtem a lista de especies selecionada no Selectbox(Que vieram do Endpoint)
         //Obtem a lista dos documentos das movimentações
@@ -111,9 +112,10 @@ function applyCombinedFilters() {
         	//Se estiver, exibe 
         const modeloMatches = !isModeloFilterActive || modelosSelecionados.includes(modeloDoDocumento);
         
-        const especieMatches = !isEspecieFilterActive || especiesSelecionadas.includes(especieDoDocumento);
+        //const especieMatches = !isEspecieFilterActive || especiesSelecionadas.includes(especieDoDocumento);
 		
-		if (lotacaoMatches && modeloMatches && especieMatches) {
+		//if (lotacaoMatches && modeloMatches && especieMatches) {
+		if (lotacaoMatches && modeloMatches) {
             row.classList.remove('hidden-row');
         } else {
             row.classList.add('hidden-row');

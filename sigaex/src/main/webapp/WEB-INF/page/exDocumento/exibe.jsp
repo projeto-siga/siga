@@ -351,9 +351,9 @@
 						
 
 						<!-- Combobox Filtro por lotações -->
-						<label for="lotacaoSelect">Lotação:</label>
+						<label disabled for="lotacaoSelect">Lotação:</label>
 
-						<select id="lotacaoSelect" multiple="multiple">
+						<select disabled id="lotacaoSelect" multiple="multiple">
 						    <c:forEach var="mov" items="${m.movs}">
 						        <option value="${mov.mov.lotaCadastrante.sigla}">
 						            ${mov.mov.lotaCadastrante.sigla}
@@ -362,22 +362,22 @@
 						</select>
 						
 						<!-- Combobox Filtro por Especie-->
-						<label for="especieSelect">Especie:</label>
+						<label disabled for="especieSelect">Especie:</label>
 						
-						<select id="especieSelect" multiple="multiple">
+						<select disabled id="especieSelect" multiple="multiple">
 						</select>
 						
 						<!-- Combobox Filtro por Modelo-->
-						<label for="modeloSelect">Modelo:</label>
+						<label disabled for="modeloSelect">Modelo:</label>
 						
-						<select id="modeloSelect" multiple="multiple">
+						<select disabled id="modeloSelect" multiple="multiple">
 						</select>
 						
 						<!-- Botão Filtrar -->
-						<button onclick="applyFilter()" class="btn btn-info mr-3" id="filterButton" style="display: inline-block;">Filtrar</button>
+						<button disabled onclick="applyFilter()" class="btn btn-info mr-3" id="filterButton" style="display: inline-block;">Filtrar</button>
 						
 						<!-- Botão Ver todos -->
-						<button onclick="showAll()" class="btn btn-info mr-3" id="showAllButton" style="display:none;">Ver Todos</button>
+						<button disabled onclick="showAll()" class="btn btn-info mr-3" id="showAllButton" style="display:none;">Ver Todos</button>
 		
 						
 							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">

@@ -111,7 +111,6 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 			validarPreenchimentoDestino(req, resp);
 
 			DpPessoa cadastrante = ctx.getCadastrante();
-			DpLotacao lotaCadastrante = ctx.getLotaCadastrante();
 			DpPessoa titular = ctx.getTitular();
 			DpLotacao lotaTitular = ctx.getLotaTitular();
 
@@ -130,7 +129,7 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 					orgaoExterno, // CpOrgao orgaoExterno
 					observacao, // String obsOrgao
 					cadastrante, // DpPessoa cadastrante
-					lotaCadastrante, // DpLotacao lotaCadastrante
+					lotaTitular, // DpLotacao lotaCadastrante
 					mob, // ExMobil mob
 					dt, // final Date dtMov
 					dt, // Date dtMovIni

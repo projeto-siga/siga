@@ -119,7 +119,9 @@
 		
 	.tabela-ordenavel tbody a {
 		pointer-events: none;
-	}						
+	}
+	
+							
 </style>						
 
 <script>
@@ -347,8 +349,10 @@
 						}
 						</style>
 						
+
 						<!-- Combobox Filtro por lotações -->
 						<label for="lotacaoSelect">Lotação:</label>
+
 						<select id="lotacaoSelect" multiple="multiple">
 						    <c:forEach var="mov" items="${m.movs}">
 						        <option value="${mov.mov.lotaCadastrante.sigla}">
@@ -357,8 +361,26 @@
 						    </c:forEach>
 						</select>
 						
-						<button onclick="toggleFilter()" class="btn btn-info mr-3" id="filterButton">Filtrar</button>
-							
+						<!-- Combobox Filtro por Especie-->
+						<!-- 
+						<label disabled for="especieSelect">Especie:</label>
+						
+						<select disabled id="especieSelect" multiple="multiple">
+						</select>
+						-->
+						<!-- Combobox Filtro por Modelo-->
+						<label for="modeloSelect">Modelo:</label>
+						
+						<select id="modeloSelect" multiple="multiple">
+						</select>
+						
+						<!-- Botão Filtrar -->
+						<button onclick="applyFilter()" class="btn btn-info mr-3" id="filterButton" style="display: inline-block;">Filtrar</button>
+						
+						<!-- Botão Ver todos -->
+						<button onclick="showAll()" class="btn btn-info mr-3" id="showAllButton" style="display:none;">Ver Todos</button>
+		
+						
 							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>

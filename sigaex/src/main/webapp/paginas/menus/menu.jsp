@@ -7,7 +7,7 @@
 <%@ taglib uri="http://localhost/libstag" prefix="fx"%>
 
 <c:if
-	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (f:resource('/siga.local') eq 'GOVSP' && f:podeCriarNovoExterno(titular, titular.lotacao)))}">
+	test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;DOC:Módulo de Documentos') && (!fx:ehPublicoExterno(titular) || (fx:ehPublicoExterno(titular) && f:podeCriarNovoExterno(titular, titular.lotacao)))}">
 	<li class="nav-item dropdown"><a href="javascript:void(0);"
 		class="nav-link dropdown-toggle" data-toggle="dropdown">
 			Documentos </a>
@@ -17,9 +17,17 @@
 			<c:if test="${!ehPublicoExterno && f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA:Sistema Integrado de Gestão Administrativa;DOC:Módulo de Documentos;PESQ:Pesquisar')}">
                 <li><a class="dropdown-item"
                     href="/sigaex/app/expediente/doc/listar?primeiraVez=sim">Pesquisar</a></li>
-            </c:if>
-			<li><a class="dropdown-item" href="/sigaex/app/mesa${fx:getMesaVersao(titular,lotaTitular)}">Mesa
+            </c:if> 
+			<c:choose>
+ 				<c:when test="${!exibirMesaVirtualComoPadrao}">
+				<li><a class="dropdown-item" href="/sigaex/app/mesa${fx:getMesaVersao(titular,lotaTitular)}">Mesa
 					Virtual </a></li>
+				 </c:when>	
+				<c:otherwise>
+    				<li><a class="dropdown-item" href="/siga/app/principal?exibirAcessoAnterior=false&&redirecionar=false">Quadro
+					Quantitativo </a></li>
+				</c:otherwise>
+			</c:choose>	
 			
 			<c:if test="${not empty meusDelegados && f:podeDelegarVisualizacao(cadastrante, cadastrante.lotacao)}">
 				<li class="dropdown-submenu"><a href="javascript:void(0);"

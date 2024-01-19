@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>siga-doc</artifactId>
 		<groupId>siga</groupId>
-		<version>11.3-SNAPSHOT</version>
+		<version>11.4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>siga-dump</artifactId>

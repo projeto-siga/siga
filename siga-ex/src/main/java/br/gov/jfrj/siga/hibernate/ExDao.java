@@ -97,6 +97,7 @@ import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2Ant;
+import br.gov.jfrj.siga.ex.logic.ExPodeOtimizarQuadroDeExpedientes;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
 import br.gov.jfrj.siga.hibernate.query.ext.IExMobilDaoFiltro;
@@ -1016,11 +1017,11 @@ public class ExDao extends CpDao {
 		return query.getResultList();
 	}
 
-	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot , Integer idTipoForma ) {
+	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot , Integer idTipoForma) {
 		 
 		List listEstadosReduzida = new ArrayList<Object[]>();
 		
-		for (Object o : consultarPaginaInicial( pes,  lot  )) {
+		for (Object o : consultarPaginaInicial( pes,  lot, false  )) {
 			if (Long.valueOf(idTipoForma) ==   ((Object[]) o)[8]  )  {
 				listEstadosReduzida.add(o);
 			}
@@ -1029,20 +1030,71 @@ public class ExDao extends CpDao {
 		return listEstadosReduzida;
 	}
 	
-	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot ) {
+	public List consultarPaginaInicial(DpPessoa pes, DpLotacao lot, boolean isOtimizada) {
 		try {
-			Query sql = em().createNamedQuery("consultarPaginaInicial");
 			
-			Date dt = super.consultarDataEHoraDoServidor();
-			Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
-			amanha.setHours(0);
-			amanha.setMinutes(0);
-			amanha.setSeconds(0);
-			sql.setParameter("amanha", amanha, TemporalType.DATE);
-			sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
-			sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni()); 
+			List result = null;
 			
-			List result = sql.getResultList();
+		//	isOtimizada = true;
+			
+			if (isOtimizada) {
+				
+				Query sql = em().createNamedQuery("consultarPaginaInicialPessoa");
+				
+				Date dt = super.consultarDataEHoraDoServidor();
+				Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+				amanha.setHours(0);
+				amanha.setMinutes(0);
+				amanha.setSeconds(0);
+				sql.setParameter("amanha", amanha, TemporalType.DATE);
+				sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
+				List resultPessoa = sql.getResultList();
+				
+		 		Query sql1 = em().createNamedQuery("consultarPaginaInicialLotacao");
+				sql1.setParameter("amanha", amanha, TemporalType.DATE);
+				sql1.setParameter("idLotacaoIni", pes.getIdLotacaoIni());
+				List resultLotacao = sql1.getResultList(); 
+				
+				for (Object oPessoa : resultPessoa) {
+					Object [] oPessoaCampos = (Object[]) oPessoa;
+					for (Object oLotacao : resultLotacao) {
+						Object [] oLotacaoCampos = (Object[]) oLotacao;
+						if (oPessoaCampos[0] == oLotacaoCampos[0] && oPessoaCampos[8] == oLotacaoCampos[8]) {
+							oPessoaCampos[3] = oLotacaoCampos[3];
+							resultLotacao.remove(oLotacao);
+							break;
+						}
+						
+					}
+					
+				}
+				
+				result = resultPessoa;
+				
+				if (! resultLotacao.isEmpty()) {
+					for (Object oLotacao : resultLotacao) {
+						result.add(oLotacao);
+					}
+				}
+							
+			} else {
+			
+			
+				Query sql = em().createNamedQuery("consultarPaginaInicial");
+				
+				Date dt = super.consultarDataEHoraDoServidor();
+				Date amanha = new Date(dt.getTime() + 24*60*60*1000L);
+				amanha.setHours(0);
+				amanha.setMinutes(0);
+				amanha.setSeconds(0);
+				sql.setParameter("amanha", amanha, TemporalType.DATE);
+				sql.setParameter("idPessoaIni", pes.getIdPessoaIni());
+				sql.setParameter("idLotacaoIni", lot.getIdLotacaoIni()); 
+				result = sql.getResultList();
+				
+			}	
+			
+
 			
 			result.sort(new Comparator() {
 
@@ -2776,6 +2828,24 @@ public class ExDao extends CpDao {
 		
 		return query.getResultList();
 	}
+	
+	public Long consultarIdDocumentoPorSigla(String sigla) {
+	    String sql = "SELECT d.ID_DOC " +
+	                 "FROM ex_documento d " +
+	                 "JOIN ex_mobil m ON d.ID_DOC = m.ID_DOC " +
+	                 "WHERE m.DNM_SIGLA = :sigla";
+
+	    Query query = em().createNativeQuery(sql);
+	    query.setParameter("sigla", sigla);
+
+	    List<?> resultado = query.getResultList();
+	    if (!resultado.isEmpty()) {
+	        // Converte o resultado para Long
+	        return ((Number) resultado.get(0)).longValue();
+	    }
+	    return null;
+	}
+
 
 	public List<ExDocumento> consultarDocumentosPorModeloEData(ExModelo mod, Date dataIniInclusive, Date dataFimExclusive){		
 		if (dataIniInclusive == null)

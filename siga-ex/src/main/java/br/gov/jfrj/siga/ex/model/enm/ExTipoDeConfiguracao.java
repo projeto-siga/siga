@@ -616,7 +616,14 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 					ExParamCfg.TIPO_FORMA_DOCUMENTO, ExParamCfg.FORMA_DOCUMENTO, ExParamCfg.MODELO },
 			new Enum[] { CpParamCfg.SITUACAO }, 
 			new CpSituacaoDeConfiguracaoEnum[] {CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE},
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);	
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+	
+	
+	OTIMIZAR_QUERY_QUADRO(66, "Otimizar Quadro de Expedientes", "Esta configuração tem o objetivo de otimizar a exibição do quadro de expedientes",
+			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
  
 	
 	private final int id; 

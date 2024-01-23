@@ -1052,7 +1052,7 @@ public class ExDao extends CpDao {
 				
 		 		Query sql1 = em().createNamedQuery("consultarPaginaInicialLotacao");
 				sql1.setParameter("amanha", amanha, TemporalType.DATE);
-				sql1.setParameter("idLotacaoIni", pes.getIdLotacaoIni());
+				sql1.setParameter("idLotacaoIni", lot.getIdLotacaoIni());
 				List resultLotacao = sql1.getResultList(); 
 				
 				for (Object oPessoa : resultPessoa) {

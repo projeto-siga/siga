@@ -25,6 +25,7 @@ package br.gov.jfrj.siga.dp.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -2977,7 +2978,7 @@ public class CpDao extends ModeloDao {
 		if (ativos == null || ativos) {
 			Predicate predicateNullHisDtFim = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtFim"));
 			Predicate predicateNullHisDtIni = criteriaBuilder.isNull(cpMarcadorRoot.get("hisDtIni"));
-			Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Date>get("hisDtIni"), criteriaBuilder.currentDate());
+			Predicate predicateHisDtIniLeToday = criteriaBuilder.lessThan(cpMarcadorRoot.<Timestamp>get("hisDtIni"), criteriaBuilder.currentTimestamp());
 			criteriaQuery.where(criteriaBuilder
 					.and(predicateAnd, predicateNullHisDtFim, 
 							criteriaBuilder.or(predicateNullHisDtIni, predicateHisDtIniLeToday)));

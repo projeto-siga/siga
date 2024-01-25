@@ -462,7 +462,7 @@ public class Mesa2Ant {
 						if ( iMobs + 1000 < iMobsFim )
 							iMobsFim = iMobs + 1000;
 						List<Object[]> refs = dao.listarMovimentacoesMesa(
-								listIdMobil.subList(iMobs, iMobsFim), trazerComposto);
+								listIdMobil.subList(iMobs, iMobsFim), titular, lotaTitular, trazerComposto);
 			
 						for (Object[] ref : refs) {
 							incluiMovimentacoesMesa(map, ref);

@@ -95,8 +95,11 @@ import br.gov.jfrj.siga.ex.ExTipoSequencia;
 import br.gov.jfrj.siga.ex.ExTpDocPublicacao;
 import br.gov.jfrj.siga.ex.ExVia;
 import br.gov.jfrj.siga.ex.BIE.ExBoletimDoc;
+import br.gov.jfrj.siga.ex.bl.Ex;
 import br.gov.jfrj.siga.ex.bl.ExBL;
 import br.gov.jfrj.siga.ex.bl.Mesa2Ant;
+import br.gov.jfrj.siga.ex.logic.ExPodeBuscarUltimaMovimentacaoPorId;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarData;
 import br.gov.jfrj.siga.ex.logic.ExPodeOtimizarQuadroDeExpedientes;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.MascaraUtil;
@@ -2542,10 +2545,40 @@ public class ExDao extends CpDao {
 		return l;
 	}
 	
-	public List listarMovimentacoesMesa(List<Long> listIdMobil, boolean trazerComposto) {
+	public List listarMovimentacoesMesa(List<Long> listIdMobil, DpPessoa titular, DpLotacao lotaTitular, boolean trazerComposto) {
 //		long tempoIni = System.nanoTime();
 		List<List<String>> l = new ArrayList<List<String>> ();
-		Query query = em()
+		Query query = null;
+		boolean podeBuscarUltimaMovimentacaoPorId = Ex
+				.getInstance()
+				.getComp()
+				.pode(ExPodeBuscarUltimaMovimentacaoPorId.class,titular, lotaTitular);
+
+		if (podeBuscarUltimaMovimentacaoPorId) {
+			query = em()
+					.createQuery(
+							"select "
+							+ "mob, "
+							+ (trazerComposto ? " frm.isComposto, " : "0, ")
+							+ "(select movUltima from ExMovimentacao movUltima "
+							+ " where movUltima.exMobil.idMobil = mob.idMobil and movUltima.idMov = ("
+							+ " 	select max(movUltima1.idMov) from ExMovimentacao movUltima1"
+							+ " 		where movUltima1.exMobil.idMobil = mob.idMobil " 
+							+ " 		and movUltima1.exMovimentacaoCanceladora.idMov = null ) ), "
+							+ "(select movTramite from ExMovimentacao movTramite"
+							+ " where movTramite.exMobil.idMobil = mob.idMobil and movTramite.idMov = ("
+							+ " 	select max(movTramite1.idMov) from ExMovimentacao movTramite1"
+							+ " 		where movTramite1.exTipoMovimentacao = :tpmov "
+							+ "			and movTramite1.exMobil.idMobil = mob.idMobil " 
+							+ " 		and movTramite1.exMovimentacaoCanceladora.idMov = null ) ), "
+							+ "doc "
+							+ "from ExMobil mob "
+							+ "inner join mob.exDocumento doc "
+							+ (trazerComposto ? "inner join doc.exFormaDocumento frm " : "")
+							+ "where mob.idMobil in (:listIdMobil) "
+				);
+		} else {
+		query = em()
 				.createQuery(
 						"select "
 						+ "mob, "
@@ -2567,6 +2600,7 @@ public class ExDao extends CpDao {
 						+ (trazerComposto ? "inner join doc.exFormaDocumento frm " : "")
 						+ "where mob.idMobil in (:listIdMobil) "
 				);
+		}
 		query.setParameter("tpmov", ExTipoDeMovimentacao.TRANSFERENCIA);
 		if (listIdMobil != null) {
 			query.setParameter("listIdMobil", listIdMobil);

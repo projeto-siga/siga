@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$('#lotacaoSelect').select2();
-	
+	document.getElementById('showAllButton').style.display = 'none';
 	//se o js carregar, tira a classe css padrão que foi carrega no exibe.jsp
 	$('#lotacaoSelect').select2().removeClass('default-select');
 	$('#modeloSelect').select2().removeClass('default-select');
@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 function init() {
     $('#lotacaoSelect').select2();
-     $('#modeloSelect').select2(); 
+    $('#modeloSelect').select2(); 
     //$('#especieSelect').select2();
     
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
@@ -29,9 +29,7 @@ function getEspeciesFromSigaExAPI() {
         dataType: 'json',
         success: function(result) {
             if (result.list && result.list.length > 0) {
-				addEspeciesToSelect(result.list);
-				//console.log("addEspeciesToSelect(result.list);");
-				//console.log(result.list);                
+				addEspeciesToSelect(result.list);              
             } else {
                 console.log("Nenhum modelo encontrado.");
             }
@@ -47,15 +45,9 @@ function addEspeciesToSelect(modelos) {
     modelos.forEach(function(modelo) {
         var option = document.createElement('option');        
         option.value = modelo.idModelo;
+        
         //consultar as especies de todos os documentos
         option.text = modelo.especie;
-        
-        //console.log("modelo");
-        //console.log(modelo);
-        //console.log(modelo.idModelo);
-        //console.log(modelo.especie);
-        //console.log(modelo.nome);
-        
         select.appendChild(option);
     });
 }
@@ -102,10 +94,6 @@ function applyCombinedFilters() {
         
         //Busca a espécie do documento da movimentação atual
         //const especieDoDocumento = removerAcentos(getEspecieDoDocumento(documento));
-        //console.log("modeloDoDocumento");
-        //console.log(modeloDoDocumento);
-        //console.log("epecieDoDocumento");
-        //console.log(especieDoDocumento);
         
         //Obtem a lista de especies selecionada no Selectbox(Que vieram do Endpoint)
         //Obtem a lista dos documentos das movimentações

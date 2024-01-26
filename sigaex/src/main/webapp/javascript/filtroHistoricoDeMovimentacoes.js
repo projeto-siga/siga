@@ -1,10 +1,16 @@
 $(document).ready(function() {
 	$('#lotacaoSelect').select2();
+	
+	//se o js carregar, tira a classe css padrão que foi carrega no exibe.jsp
+	$('#lotacaoSelect').select2().removeClass('default-select');
+	$('#modeloSelect').select2().removeClass('default-select');
+	//$('#lotacaoSelect').select2().removeClass('default-select');
+	
 });
 
 function init() {
     $('#lotacaoSelect').select2();
-    $('#modeloSelect').select2();
+     $('#modeloSelect').select2(); 
     //$('#especieSelect').select2();
     
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
@@ -24,8 +30,6 @@ function getEspeciesFromSigaExAPI() {
         success: function(result) {
             if (result.list && result.list.length > 0) {
 				addEspeciesToSelect(result.list);
-				
-				//TODO
 				//console.log("addEspeciesToSelect(result.list);");
 				//console.log(result.list);                
             } else {
@@ -46,7 +50,6 @@ function addEspeciesToSelect(modelos) {
         //consultar as especies de todos os documentos
         option.text = modelo.especie;
         
-		//TODO
         //console.log("modelo");
         //console.log(modelo);
         //console.log(modelo.idModelo);
@@ -99,8 +102,6 @@ function applyCombinedFilters() {
         
         //Busca a espécie do documento da movimentação atual
         //const especieDoDocumento = removerAcentos(getEspecieDoDocumento(documento));
-        
-        //TODO
         //console.log("modeloDoDocumento");
         //console.log(modeloDoDocumento);
         //console.log("epecieDoDocumento");

@@ -623,7 +623,14 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
 			new Enum[] { CpParamCfg.SITUACAO }, 
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
-			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true);
+			CpSituacaoDeConfiguracaoEnum.NAO_PODE, true),
+	
+	
+	BUSCAR_ULTIMA_MOV_POR_ID(67, "Buscar Última Movimentação do Documento por ID e não por Timestamp", "Esta configuração tem o objetivo de mudar a forma como a mesa busca a última movimentação de um documento.",
+			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
+			new Enum[] { CpParamCfg.SITUACAO }, 
+			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
+			CpSituacaoDeConfiguracaoEnum.PODE, true);
  
 	
 	private final int id; 

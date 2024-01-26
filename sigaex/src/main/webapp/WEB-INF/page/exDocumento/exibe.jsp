@@ -347,13 +347,28 @@
 						.select2-container {
 						    width: 15% !important;
 						}
+						
+						 /* Estilo padrão para comboboxes */
+						select {
+						    width: 15%; /* ou qualquer outro tamanho desejado */
+						    height: 25px; /* altura fixa */
+						    overflow: hidden; /* para evitar que o conteúdo se expanda verticalmente */
+						}
+						
+						/* Define tamanho padrão que se mantem mesmo que o js não carregue */
+						.default-select {
+						    width: 15%;
+						    height: 25px;
+						    /* padding: 4px 8px; */
+						}
+						
 						</style>
 						
 
 						<!-- Combobox Filtro por lotações -->
 						<label for="lotacaoSelect">Lotação:</label>
 
-						<select id="lotacaoSelect" multiple="multiple">
+						<select id="lotacaoSelect" class="default-select" multiple="multiple">
 						    <c:forEach var="mov" items="${m.movs}">
 						        <option value="${mov.mov.lotaCadastrante.sigla}">
 						            ${mov.mov.lotaCadastrante.sigla}
@@ -371,7 +386,7 @@
 						<!-- Combobox Filtro por Modelo-->
 						<label for="modeloSelect">Modelo:</label>
 						
-						<select id="modeloSelect" multiple="multiple">
+						<select id="modeloSelect" class="default-select" multiple="multiple">
 						</select>
 						
 						<!-- Botão Filtrar -->

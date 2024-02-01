@@ -345,33 +345,41 @@
 								display: none;
 							}
 							.select2-container {
-							    width: 40% !important;
+								width: 100% !important; /* Alterado de 40% para 100% */
 							}
-							
+						
 							 /* Estilo padrão para comboboxes */
 							select {
-							    width: 40%; /* ou qualquer outro tamanho desejado */
-							    height: 25px; /* altura fixa */
-							    overflow: hidden; /* para evitar que o conteúdo se expanda verticalmente */
+								width: 100%; /* Alterado de 40% para 100% */
+								height: 25px;
+								overflow: hidden;
 							}
-							
+						
 							/* Define tamanho padrão que se mantem mesmo que o js não carregue */
 							.default-select {
-							    width: 40%;
-							    height: 25px;
-							    /* padding: 4px 8px; */
+								width: 100%; /* Alterado de 40% para 100% */
+								height: 25px;
 							}
-							
+						
 							.select2-container--default .select2-selection--multiple .select2-selection__choice {
 								display: block;
 							}
-							
+						
 							.select-responsivo {
-						        width: 100%; /* Define a largura para ocupar 100% do espaço do elemento pai */
-						    }
-						    
-						    
+								width: 100%;
+							}
+						
+							/* Estilos adicionais para a label e div envolvente */
+							.filtro-div {
+								display: flex;
+								flex-direction: column; /* Faz com que os itens dentro da div sejam empilhados verticalmente */
+							}
+						
+							.filtro-label {
+								margin-bottom: 5px; /* Espaço entre a label e o select */
+							}
 						</style>
+						
 						
 
 						<!-- Combobox Filtro por lotações -->
@@ -393,13 +401,13 @@
 						<select disabled id="especieSelect" multiple="multiple">
 						</select>
 						-->
-						<!-- Combobox Filtro por Modelo-->
-							<div class="col-12 col-md-4" style="min-width: 200px;">
-								<label for="modeloSelect">Modelo:</label>
-								
-								<select id="modeloSelect" class="default-select" multiple="multiple">
-								</select>
-							</div>
+						<!-- Combobox Filtro por Modelo -->
+						<div class="col-12 col-md-4 filtro-div" style="min-width: 200px;">
+							<label for="modeloSelect" class="filtro-label">Modelo:</label>
+							
+							<select id="modeloSelect" class="default-select" multiple="multiple">
+							</select>
+						</div>
 							
 							<!--<div class="col-12 col-md-2" style="background-color: yellow; min-width: 200px; display: flex;flex-wrap: wrap;">-->
 								<div class="col-6 col-md-2" style="min-width: 100px;">

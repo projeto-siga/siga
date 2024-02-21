@@ -386,6 +386,15 @@
             </c:forEach>
         </select>
     </div>
+    
+    <!-- Combobox Filtro por Espécie-->
+    <div class="col-12 col-md-4" style="flex: 1; min-width: 200px;"> <!-- Ajustado para flex: 1 -->
+        <label for="especieSelect">Espécie:</label>
+        
+        <select id="especieSelect" class="default-select" multiple="multiple">
+        </select>
+    </div>
+    
     <!-- Combobox Filtro por Modelo-->
     <div class="col-12 col-md-4" style="flex: 1; min-width: 200px;"> <!-- Ajustado para flex: 1 -->
         <label for="modeloSelect">Modelo:</label>

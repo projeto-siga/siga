@@ -649,11 +649,32 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-
+            
+  /especies:
+    get:
+      summary: Obtem a lista de todas as especies.
+      tags: [especie]
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/EspecieItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /modelos/lista-hierarquica-especie:
     get:
       summary: "Obtem a lista hierárquica de modelos que o usuário pode criar. Os nomes dos modelos devem estar cadastrados no formato Grupo: Nome do Modelo (separado por dois pontos)"
-      tags: [modelo]
+      tags: [especie]
       security:
         - Bearer: []
       parameters: 
@@ -3488,6 +3509,21 @@ definitions:
       nome:
         type: string
       descr:
+        type: string
+        
+  EspecieItem:
+    description: Lista especies disponíveis.
+    type: object
+    properties:
+      idFormaDoc:
+        type: string
+      descrFormaDoc:
+        type: string
+      siglaFormaDoc:
+        type: string
+      idTipoFormaDoc:
+        type: int
+      isComposto:
         type: string
 
   PreenchimentoItem:

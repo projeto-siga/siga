@@ -1634,6 +1634,19 @@ public interface IExApiV1 {
 
         public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
     }
+    
+    public interface IEspeciesGet extends ISwaggerMethod {
+        public static class Request implements ISwaggerRequest {
+            
+        }
+
+        public static class Response implements ISwaggerResponse {
+            public List<?> especies;
+            public String status;
+        }
+
+        public void run(Request req, Response resp, ExApiV1Context ctx) throws Exception;
+    }
 
     public interface IDocumentosIdConsultarEspecieGet extends ISwaggerMethod {
         public static class Request implements ISwaggerRequest {

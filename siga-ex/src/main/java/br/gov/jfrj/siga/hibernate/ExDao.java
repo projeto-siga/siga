@@ -2879,6 +2879,16 @@ public class ExDao extends CpDao {
 	    }
 	    return null;
 	}
+	
+	public List<?> consultarEspecies() {
+		String sql = "select * from ex_forma_documento";
+		Query query = em().createNativeQuery(sql);	
+	    List<?> resultado = query.getResultList();
+	   if (!resultado.isEmpty()) {
+		   return resultado;
+	   }
+	   return null;
+	}
 
 
 	public List<ExDocumento> consultarDocumentosPorModeloEData(ExModelo mod, Date dataIniInclusive, Date dataFimExclusive){		

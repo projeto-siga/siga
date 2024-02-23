@@ -1,45 +1,60 @@
 $(document).ready(function() {
 	$('#lotacaoSelect').select2();
-	
+	document.getElementById('showAllButton').style.display = 'none';
 	//se o js carregar, tira a classe css padrão que foi carrega no exibe.jsp
 	$('#lotacaoSelect').select2().removeClass('default-select');
 	$('#modeloSelect').select2().removeClass('default-select');
-	//$('#lotacaoSelect').select2().removeClass('default-select');
+	$('#especieSelect').select2().removeClass('default-select');
 	
 });
 
 function init() {
     $('#lotacaoSelect').select2();
-     $('#modeloSelect').select2(); 
-    //$('#especieSelect').select2();
+    $('#modeloSelect').select2(); 
+    $('#especieSelect').select2();
     
     ordenaOpcoesOrdemAlfabetica(document.getElementById('lotacaoSelect'));
     removeDuplicateOptions();
     
     //Ao carregar a página, busca os dados e preenche selects com listas de Espécies e Modelos
     getModelosFromSigaExAPI();
-    //getEspeciesFromSigaExAPI();
+    getEspeciesFromSigaExAPINovo();
 }
 
-function getEspeciesFromSigaExAPI() {
-	//Busca espécies no endpoint /sigaex/api/v1/modelos/lista-hierarquica-especie
+function getEspeciesFromSigaExAPINovo() {
+	//Busca espécies no endpoint /sigaex/api/v1/especies
     $.ajax({
-        url: "/sigaex/api/v1/modelos/lista-hierarquica-especie",
+        url: "/sigaex/api/v1/especies",
         contentType: "application/json",
         dataType: 'json',
         success: function(result) {
-            if (result.list && result.list.length > 0) {
-				addEspeciesToSelect(result.list);
-				//console.log("addEspeciesToSelect(result.list);");
-				//console.log(result.list);                
+
+			if (result && result.especies && Array.isArray(result.especies)) {
+
+				addRetornoEndpointEspeciesNoSelect(result.especies);
+				
+				      
             } else {
-                console.log("Nenhum modelo encontrado.");
+                console.log("Nenhuma especie encontrada.");
             }
         },
         error: function(result) {
-            console.log("Erro ao buscar modelos: " + result.errormsg);
+            console.log("Erro ao buscar especies: " + result.errormsg);
         },
     });
+}
+
+function addRetornoEndpointEspeciesNoSelect(especies) {
+    var select = document.getElementById('especieSelect');
+    // Utiliza um loop for para iterar sobre o array de espécies
+    for (var i = 0; i < especies.length; i++) {
+        var especie = especies[i];
+        var option = document.createElement('option');
+        option.value = especie[0]; // ID da espécie
+        //option.text = especie[1] + ' (' + especie[2] + ')'; // Nome e abreviação da espécie
+        option.text = especie[1]; // Texto da Espécie
+        select.appendChild(option);
+    }
 }
 
 function addEspeciesToSelect(modelos) {
@@ -47,15 +62,9 @@ function addEspeciesToSelect(modelos) {
     modelos.forEach(function(modelo) {
         var option = document.createElement('option');        
         option.value = modelo.idModelo;
+        
         //consultar as especies de todos os documentos
         option.text = modelo.especie;
-        
-        //console.log("modelo");
-        //console.log(modelo);
-        //console.log(modelo.idModelo);
-        //console.log(modelo.especie);
-        //console.log(modelo.nome);
-        
         select.appendChild(option);
     });
 }
@@ -83,45 +92,62 @@ function showAllRows() {
 function applyCombinedFilters() {
 	//Usuario clica no botão filtrar e chama essa função
     const selectedLotacoes = Array.from(document.getElementById('lotacaoSelect').selectedOptions).map(option => option.value);
-    const isLotacaoFilterActive = selectedLotacoes.length > 0;
+    let isLotacaoFilterActive = false;
+    isLotacaoFilterActive = selectedLotacoes.length > 0;
 
     const modelosSelecionados = removerAcentos(getModelosSelecionados());
-    const isModeloFilterActive = modelosSelecionados.length > 0;
+    let isModeloFilterActive = false;
+    isModeloFilterActive = modelosSelecionados.length > 0;
 	
-	//const especiesSelecionadas = removerAcentos(getEspeciesSelecionadas());
-	const isEspecieFilterActive = false;
-    //const isEspecieFilterActive = especiesSelecionadas.length > 0;
+	const especiesSelecionadas = removerAcentos(getEspeciesSelecionadas());
+	let isEspecieFilterActive = false;
+    isEspecieFilterActive = especiesSelecionadas.length > 0;
 	
     const movimentacoes = getMovimentacoes();
 	
-	//Para cada movimentação
     movimentacoes.forEach(row => {
         const lotacaoMatches = !isLotacaoFilterActive || selectedLotacoes.includes(row.querySelector('td:nth-child(2)').textContent.trim());
         const documento = getDocumentoDaMovimentacao(row);
         const modeloDoDocumento = removerAcentos(getModeloDoDocumento(documento));
         
         //Busca a espécie do documento da movimentação atual
-        //const especieDoDocumento = removerAcentos(getEspecieDoDocumento(documento));
-        //console.log("modeloDoDocumento");
-        //console.log(modeloDoDocumento);
-        //console.log("epecieDoDocumento");
-        //console.log(especieDoDocumento);
+        const especieDoDocumento = removerAcentos(getEspecieDoDocumento(documento));
         
         //Obtem a lista de especies selecionada no Selectbox(Que vieram do Endpoint)
         //Obtem a lista dos documentos das movimentações
         //Verifica se movimentaçãoAtual/documento/especie está entre as especies selecionadas
         	//Se estiver, exibe 
         const modeloMatches = !isModeloFilterActive || modelosSelecionados.includes(modeloDoDocumento);
-        
-        //const especieMatches = !isEspecieFilterActive || especiesSelecionadas.includes(especieDoDocumento);
-		
-		//if (lotacaoMatches && modeloMatches && especieMatches) {
-		if (lotacaoMatches && modeloMatches) {
+        if (especiesSelecionadas[0] == especieDoDocumento){
+			console.log("especiesSelecionadas[0] == especieDoDocumento");
+		} else{
+			 console.log("especiesSelecionadas[0] != especieDoDocumento")
+		}
+	
+		const especieMatches = !isEspecieFilterActive || podeAplicarFiltroPorEspecie(especiesSelecionadas, especieDoDocumento);
+
+		if (lotacaoMatches && modeloMatches && especieMatches) {
             row.classList.remove('hidden-row');
         } else {
             row.classList.add('hidden-row');
         }
     });
+}
+
+function podeAplicarFiltroPorEspecie(listaDeEspeciesSelecionadas, especieDoDocumentoAtual){
+	// Verifica se os parâmetros fornecidos são válidos
+    if (listaDeEspeciesSelecionadas && especieDoDocumentoAtual) {
+        // Itera sobre a lista de espécies selecionadas
+        for (let i = 0; i < listaDeEspeciesSelecionadas.length; i++) {
+            // Compara a espécie atual da lista com a espécie do documento
+            if (listaDeEspeciesSelecionadas[i] == especieDoDocumentoAtual) {
+                // Se encontrar uma correspondência, retorna verdadeiro
+                return true;
+            }
+        }
+    }
+    // Se chegar ao final do loop sem encontrar correspondência, retorna falso
+    return false;
 }
 
 function removerAcentos(str) {
@@ -182,6 +208,7 @@ function getDocumentoDaMovimentacao(movimentacao) {
 }
 
 function getModeloDoDocumento(SiglaDoDocumentoDaMovimentacao) {
+	//Retorna o modelo de um documento
 	let nomeDoModelo = getNomeDoModeloDoDocumentoBySigla(SiglaDoDocumentoDaMovimentacao);	
     return nomeDoModelo;
 }

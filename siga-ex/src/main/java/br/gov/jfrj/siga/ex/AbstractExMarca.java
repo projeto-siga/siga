@@ -81,7 +81,8 @@ import br.gov.jfrj.siga.dp.CpMarca;
 				"               mard.ordem, "+
 				"               mard.idCor, "+
 				"               mard.idIcone , "+
-				"               tpForma.idTipoFormaDoc "+
+				"               tpForma.idTipoFormaDoc, "+
+				"               mard.hisIdIni" +
 				"        FROM   ExMarca marca "+
 				"               JOIN marca.cpMarcador marcador "+
 				"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
@@ -113,7 +114,8 @@ import br.gov.jfrj.siga.dp.CpMarca;
 				"               mard.ordem, "+
 				"               mard.idCor, "+
 				"               mard.idIcone , "+
-				"               tpForma.idTipoFormaDoc "+
+				"               tpForma.idTipoFormaDoc, "+
+				"               mard.hisIdIni" +				
 				"        FROM   ExMarca marca "+
 				"               JOIN marca.cpMarcador marcador "+
 				"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+

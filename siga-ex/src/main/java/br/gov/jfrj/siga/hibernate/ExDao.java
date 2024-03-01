@@ -1062,7 +1062,7 @@ public class ExDao extends CpDao {
 					Object [] oPessoaCampos = (Object[]) oPessoa;
 					for (Object oLotacao : resultLotacao) {
 						Object [] oLotacaoCampos = (Object[]) oLotacao;
-						if (oPessoaCampos[0] == oLotacaoCampos[0] && oPessoaCampos[8] == oLotacaoCampos[8]) {
+						if ((oPessoaCampos[9] == oLotacaoCampos[9] || oPessoaCampos[0] == oLotacaoCampos[0] || oPessoaCampos[1] == oLotacaoCampos[1]) && oPessoaCampos[8] == oLotacaoCampos[8]) {
 							oPessoaCampos[3] = oLotacaoCampos[3];
 							resultLotacao.remove(oLotacao);
 							break;

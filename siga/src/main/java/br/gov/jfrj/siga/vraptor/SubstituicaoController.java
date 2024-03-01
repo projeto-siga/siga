@@ -322,45 +322,49 @@ public class SubstituicaoController extends SigaController {
 
 			subst = dao().gravar(subst);
 			
-			Set<DpPessoa> pessoasParaEnviarEmail = new HashSet<DpPessoa>();
-			
-			String textoEmail = "Informamos que a matrícula: "  + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
-			        + " - " + getCadastrante().getNomePessoa()  
-					+ " cadastrou uma substituição da ";
-					
+			/* Não enviar email para substituição a lotaçõ externa */
+			if (subst.getLotaTitular() != null && (subst.getLotaTitular().getIsExternaLotacao() == null || subst.getLotaTitular().getIsExternaLotacao() == 0))
+			{
+				Set<DpPessoa> pessoasParaEnviarEmail = new HashSet<DpPessoa>();
+				
+				String textoEmail = "Informamos que a matrícula: "  + getCadastrante().getSesbPessoa() + getCadastrante().getMatricula()
+				        + " - " + getCadastrante().getNomePessoa()  
+						+ " cadastrou uma substituição da ";
 						
-					if (tipoSubstituto == 1) {
-						textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula() + " - " + subst.getSubstituto().getNomePessoa();
-						pessoasParaEnviarEmail.add(subst.getSubstituto());
+							
+						if (tipoSubstituto == 1) {
+							textoEmail = textoEmail + " matrícula: " + subst.getSubstituto().getSesbPessoa() + subst.getSubstituto().getMatricula() + " - " + subst.getSubstituto().getNomePessoa();
+							pessoasParaEnviarEmail.add(subst.getSubstituto());
+							
+						} else {
+							textoEmail = textoEmail + " lotação: " + subst.getLotaSubstituto().getSigla() + " - " + subst.getLotaSubstituto().getNomeLotacao();
+							pessoasParaEnviarEmail.addAll(subst.getLotaSubstituto().getDpPessoaLotadosSet());
+						}
 						
-					} else {
-						textoEmail = textoEmail + " lotação: " + subst.getLotaSubstituto().getSigla() + " - " + subst.getLotaSubstituto().getNomeLotacao();
-						pessoasParaEnviarEmail.addAll(subst.getLotaSubstituto().getDpPessoaLotadosSet());
-					}
-					
-					textoEmail = textoEmail + " para";
-					
-					if (tipoTitular ==1) {
-						textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula() + " - " + subst.getTitular().getNomePessoa();;
-						pessoasParaEnviarEmail.add(subst.getTitular());
-					} else {
-						textoEmail = textoEmail + " lotação: " + subst.getLotaTitular().getSigla() + " - " + subst.getLotaTitular().getNomeLotacao();
-						pessoasParaEnviarEmail.addAll(subst.getLotaTitular().getDpPessoaLotadosSet());
-					}
-			
-					textoEmail = textoEmail + " com inicio em " + subst.getDtIniSubstDDMMYY().toString() + " e término em " + subst.getDtFimSubstDDMMYY().toString() + "."
-					+ "\n\n Atenção: esta é uma "
-					+ "mensagem automática. Por favor, não responda.";
-					
-			String assunto = "Cadastro de Substituição";
-					
-			List<String> listaDeEmails= new ArrayList<String>();
-			listaDeEmails.add(getCadastrante().getEmailPessoa());
-			for (DpPessoa pessoa : pessoasParaEnviarEmail)	{
-				listaDeEmails.add(pessoa.getEmailPessoa()); 
+						textoEmail = textoEmail + " para";
+						
+						if (tipoTitular ==1) {
+							textoEmail = textoEmail + " matricula: " + subst.getTitular().getSesbPessoa() + subst.getTitular().getMatricula() + " - " + subst.getTitular().getNomePessoa();;
+							pessoasParaEnviarEmail.add(subst.getTitular());
+						} else {
+							textoEmail = textoEmail + " lotação: " + subst.getLotaTitular().getSigla() + " - " + subst.getLotaTitular().getNomeLotacao();
+							pessoasParaEnviarEmail.addAll(subst.getLotaTitular().getDpPessoaLotadosSet());
+						}
+				
+						textoEmail = textoEmail + " com inicio em " + subst.getDtIniSubstDDMMYY().toString() + " e término em " + subst.getDtFimSubstDDMMYY().toString() + "."
+						+ "\n\n Atenção: esta é uma "
+						+ "mensagem automática. Por favor, não responda.";
+						
+				String assunto = "Cadastro de Substituição";
+						
+				List<String> listaDeEmails= new ArrayList<String>();
+				listaDeEmails.add(getCadastrante().getEmailPessoa());
+				for (DpPessoa pessoa : pessoasParaEnviarEmail)	{
+					listaDeEmails.add(pessoa.getEmailPessoa()); 
+				}
+				
+				Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, textoEmail);
 			}
-			
-			Correio.enviar(listaDeEmails.toArray(new String[listaDeEmails.size()]),assunto, textoEmail);
 			
 			result.redirectTo(this).lista();
 

@@ -174,7 +174,7 @@ public class BiListarGet implements IBiListarGet {
 			v = (p!=null ? p.text():v); //some bold text
 		}
 		
-		sb.append(v == null ? "" : v.trim());
+		sb.append(v == null ? "" : v.trim().replaceAll("\n|\r\n", "%0A"));
 
 	}
 

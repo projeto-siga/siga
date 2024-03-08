@@ -67,11 +67,11 @@
 			else
 				this.beenSubmitted = true;
 		});
- 		$('.campoData').datepicker({
+ 	/*	$('.campoData').datepicker({
            	onSelect: function(){
                    ${onSelect}
 			}
-		});
+		}); */
 
 		//$('.autogrow').css('overflow', 'hidden').autogrow();
 	});

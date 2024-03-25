@@ -26,7 +26,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 				+ " e estará visível, a partir de uma data definida, para quem receber o documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
-			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
+			CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	GERAL_PRAZOS(4, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral com Prazos",

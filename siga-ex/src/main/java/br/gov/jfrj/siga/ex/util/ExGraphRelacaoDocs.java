@@ -83,6 +83,13 @@ public class ExGraphRelacaoDocs extends ExGraph {
 				setLabel(" " + ExTipoDeVinculo.CANCELAMENTO.getAcaoInversa() + " ");
 				setDirected(true);
 				setAoContrario(true);
+			} else if (tipo.equals("sem efeito")) {
+				setTooltip("Sem efeito");
+				setEstilo(ESTILO_TRACEJADO);
+				setCor("red");
+				setLabel(" " + ExTipoDeVinculo.SEM_EFEITO.getAcaoInversa() + " ");
+				setDirected(true);
+				setAoContrario(true);	
 			} else if (tipo.equals("juntada")) {
 				setTooltip("Juntada");
 				setEstilo(ESTILO_TRACEJADO);
@@ -148,10 +155,20 @@ public class ExGraphRelacaoDocs extends ExGraph {
 			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
 			adicionar(new TransicaoMob(mobBase, vinculado, "cancelamento"));
 		}
+		
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.SEM_EFEITO, false)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(mobBase, vinculado, "sem efeito"));
+		}
 
 		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.CANCELAMENTO, true)) {
 			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
 			adicionar(new TransicaoMob(vinculado, mobBase, "cancelamento"));
+		}
+		
+		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.SEM_EFEITO, true)) {
+			adicionar(new NodoMob(vinculado, pessVendo, mobBase.doc()));
+			adicionar(new TransicaoMob(vinculado, mobBase, "sem efeito"));
 		}
 
 		for (ExMobil vinculado : mobBase.getVinculados(ExTipoDeVinculo.REVOGACAO, false)) {
@@ -251,7 +268,15 @@ public class ExGraphRelacaoDocs extends ExGraph {
 				} else {
 					cat = ExTipoDeVinculo.CANCELAMENTO.getAcaoInversa();
 					mobilAAdicionar = tMob.mob1;
-				}
+				}			
+			} else if (tMob.tipo.equals("sem efeito")) {
+				if (tMob.mob1.equals(mobBase)) {
+					cat = ExTipoDeVinculo.SEM_EFEITO.getAcao();
+					mobilAAdicionar = tMob.mob2;
+				} else {
+					cat = ExTipoDeVinculo.SEM_EFEITO.getAcaoInversa();
+					mobilAAdicionar = tMob.mob1;
+				}					
 			} else if (tMob.tipo.equals("juntada")) {
 				cat = "Juntado ao documento";
 				mobilAAdicionar = tMob.mob1;
@@ -306,7 +331,9 @@ public class ExGraphRelacaoDocs extends ExGraph {
 				|| key.equals(ExTipoDeVinculo.REVOGACAO.getAcao())
 				|| key.equals(ExTipoDeVinculo.REVOGACAO.getAcaoInversa())
 				|| key.equals(ExTipoDeVinculo.CANCELAMENTO.getAcao())
-				|| key.equals(ExTipoDeVinculo.CANCELAMENTO.getAcaoInversa());
+				|| key.equals(ExTipoDeVinculo.CANCELAMENTO.getAcaoInversa())
+				|| key.equals(ExTipoDeVinculo.SEM_EFEITO.getAcao())
+				|| key.equals(ExTipoDeVinculo.SEM_EFEITO.getAcaoInversa());
 	}
 
 }

@@ -12,7 +12,9 @@ public enum ExTipoDeVinculo implements IEnumWithId {
 
 	REVOGACAO(3, "Revogação", "Revogado por", "Revoga"),
 
-	CANCELAMENTO(4, "Cancelamento", "Cancelado por", "Cancela");
+	CANCELAMENTO(4, "Cancelamento", "Cancelado por", "Cancela"),
+	
+	SEM_EFEITO (5, "Sem efeito", "Tornado sem efeito por", "Torna sem efeito");
 
 	private final int id;
 	private final String descr;

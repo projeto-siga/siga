@@ -26,7 +26,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 				+ " e estará visível, a partir de uma data definida, para quem receber o documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
-			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
+			CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA, CpMarcadorTipoInteressadoEnum.ATENDENTE,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	GERAL_PRAZOS(4, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral com Prazos",
@@ -51,7 +51,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 				+ SigaMessages.getMessage("usuario.pessoa") + " definida, independente da localização do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_GERAL, CpMarcadorTipoAplicacaoEnum.GERAL,
 			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA,
-			CpMarcadorTipoExibicaoEnum.MENOR_DATA, CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA,
+			CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA , CpMarcadorTipoInteressadoEnum.LOTACAO_OU_PESSOA,
 			CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	GERAL_LIMITE_XOR(6, CpMarcadorFinalidadeGrupoEnum.GERAL, "Geral Com Data Limite e Mutuamente Exclusiva",
@@ -74,7 +74,7 @@ public enum CpMarcadorFinalidadeEnum implements IEnumWithId {
 				+ " da minha " + SigaMessages.getMessage("usuario.lotacao") 
 				+ " e estará visível, a partir de uma data definida, para quem receber qualquer via do documento",
 			CpTipoMarcadorEnum.TIPO_MARCADOR_LOTACAO, CpMarcadorTipoAplicacaoEnum.TODAS_AS_VIAS_OU_ULTIMO_VOLUME,
-			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.IMEDIATA,
+			CpMarcadorTipoDataEnum.OBRIGATORIA, CpMarcadorTipoDataEnum.DESATIVADA, CpMarcadorTipoExibicaoEnum.DATA_PLANEJADA,
 			CpMarcadorTipoInteressadoEnum.ATENDENTE, CpMarcadorTipoTextoEnum.OPCIONAL, false, false),
 	//
 	LOCAL_DIRECIONADA(102, CpMarcadorFinalidadeGrupoEnum.LOCAL, "Local Direcionada",

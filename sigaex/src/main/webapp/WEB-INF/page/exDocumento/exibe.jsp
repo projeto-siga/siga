@@ -119,7 +119,9 @@
 		
 	.tabela-ordenavel tbody a {
 		pointer-events: none;
-	}						
+	}
+	
+							
 </style>						
 
 <script>
@@ -336,29 +338,84 @@
 						<!-- Biblioteca select2: combobox com seleção multipla -->
 						<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 						<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-						
 						<script src="/sigaex/javascript/filtroHistoricoDeMovimentacoes.js"></script>
-						<style>
-						.hidden-row {
-							display: none;
-						}
-						.select2-container {
-						    width: 15% !important;
-						}
-						</style>
 						
-						<!-- Combobox Filtro por lotações -->
-						<label for="lotacaoSelect">Lotação:</label>
-						<select id="lotacaoSelect" multiple="multiple">
-						    <c:forEach var="mov" items="${m.movs}">
-						        <option value="${mov.mov.lotaCadastrante.sigla}">
-						            ${mov.mov.lotaCadastrante.sigla}
-						        </option>
-						    </c:forEach>
-						</select>
+<script src="/sigaex/javascript/filtroHistoricoDeMovimentacoes.js"></script>
+
+<style>
+    .hidden-row {
+        display: none;
+    }
+    .select2-container {
+        width: 100% !important; /* Ajustado para ocupar 100% */
+    }
+    
+    /* Estilo padrão para comboboxes */
+    select {
+        width: 100%; /* Ajustado para ocupar 100% */
+        height: 25px; /* altura fixa */
+        overflow: hidden; /* para evitar que o conteúdo se expanda verticalmente */
+    }
+    
+    /* Define tamanho padrão que se mantem mesmo que o js não carregue */
+    .default-select {
+        width: 100%; /* Ajustado para ocupar 100% */
+        height: 25px;
+        /* padding: 4px 8px; */
+    }
+    
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        display: block;
+    }
+    
+    .select-responsivo {
+        width: 100%; /* Define a largura para ocupar 100% do espaço do elemento pai */
+    }
+</style>
+
+<!-- Combobox Filtro por lotações -->
+<div style="display: flex; flex-wrap: wrap; align-items: center;">
+    <div class="col-12 col-md-4" style="flex: 1; min-width: 200px;"> <!-- Ajustado para flex: 1 -->
+        <label for="lotacaoSelect">Lotação:</label>
+
+        <select id="lotacaoSelect" class="default-select" multiple="multiple">
+            <c:forEach var="mov" items="${m.movs}">
+                <option value="${mov.mov.lotaCadastrante.sigla}">
+                    ${mov.mov.lotaCadastrante.sigla}
+                </option>
+            </c:forEach>
+        </select>
+    </div>
+    
+    <!-- Combobox Filtro por Espécie-->
+    <div class="col-12 col-md-4" style="flex: 1; min-width: 200px;"> <!-- Ajustado para flex: 1 -->
+        <label for="especieSelect">Espécie:</label>
+        
+        <select id="especieSelect" class="default-select" multiple="multiple">
+        </select>
+    </div>
+    
+    <!-- Combobox Filtro por Modelo-->
+    <div class="col-12 col-md-4" style="flex: 1; min-width: 200px;"> <!-- Ajustado para flex: 1 -->
+        <label for="modeloSelect">Modelo:</label>
+        
+        <select id="modeloSelect" class="default-select" multiple="multiple">
+        </select>
+    </div>
+    
+    <div class="col-6 col-md-2" style="min-width: 100px;">
+        <!-- Botão Filtrar -->
+        <button onclick="applyFilter()" class="btn btn-info mr-3" id="filterButton" style="display: inline-block; margin-top: 10px;">Filtrar</button>
+    </div>
+    <div class="col-6 col-md-2" style="min-width: 100px;">
+        <!-- Botão Ver todos -->
+        <div class="col-12 col-md-1" style="min-width: 1%; display: flex; flex-wrap: wrap;">
+            <button onclick="showAll()" class="btn btn-info mr-3" id="showAllButton" style="display:inline-block; margin-top: 10px;">Ver Todos</button>
+        </div>
+    </div>
+</div>
+
 						
-						<button onclick="toggleFilter()" class="btn btn-info mr-3" id="filterButton">Filtrar</button>
-							
 							<table id="movsTable" class="table table-sm table-responsive-sm table-striped">
 								<thead class="${thead_color} align-middle text-center">
 									<tr>

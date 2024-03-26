@@ -111,7 +111,6 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 			validarPreenchimentoDestino(req, resp);
 
 			DpPessoa cadastrante = ctx.getCadastrante();
-			DpLotacao lotaCadastrante = ctx.getLotaCadastrante();
 			DpPessoa titular = ctx.getTitular();
 			DpLotacao lotaTitular = ctx.getLotaTitular();
 
@@ -125,12 +124,14 @@ public class DocumentosSiglaTramitarPost implements IDocumentosSiglaTramitarPost
 			String observacao = Objects.isNull(orgaoExterno) ? null : req.observacao;
 			Date dtDevolucao = this.getDataDevolucao(req, resp);
 			Date dt = ExDao.getInstance().consultarDataEHoraDoServidor();
+			DpLotacao lotaTransf = lotaTitular == null ? lotaCadastrante : lotaTitular;
 
 			Ex.getInstance().getBL().transferir(//
 					orgaoExterno, // CpOrgao orgaoExterno
 					observacao, // String obsOrgao
 					cadastrante, // DpPessoa cadastrante
-					lotaCadastrante, // DpLotacao lotaCadastrante
+					lotaTitular, // DpLotacao lotaCadastrante
+					lotaTransf, // DpLotacao lotaCadastrante
 					mob, // ExMobil mob
 					dt, // final Date dtMov
 					dt, // Date dtMovIni

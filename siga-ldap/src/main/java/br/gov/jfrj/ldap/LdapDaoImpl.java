@@ -110,6 +110,7 @@ public class LdapDaoImpl implements ILdapDao {
 		try {
 			contexto.createSubcontext(dn, atributos);
 		} catch (Exception e) {
+			log.info("Exceção ao tentar escrever no AD: " + e.getMessage());
 			throw new AplicacaoException("Não foi possível incluir o objeto "
 					+ dn, 9, e);
 		}

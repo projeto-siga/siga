@@ -54,11 +54,13 @@ public class PrincipalController extends SigaController {
 
 	@Get("app/principal")
 
-	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) {
+	public void principal(Boolean exibirAcessoAnterior, Boolean redirecionar) throws Exception {
 		
-		result.include("ehPublicoExterno", getCadastrante().isUsuarioExterno());
+		result.include("ehPublicoExterno", getTitular().isUsuarioExterno());
+		result.include("exibirMesaVirtualComoPadrao", podeExibirMesaVirtual(getTitular(), getLotaTitular()) );
 		
-		if (redirecionar == null || redirecionar) {
+		
+		if (redirecionar == null || redirecionar ) {
 			String paginaInicialUrl = Prop.get("/siga.pagina.inicial.url");
 			
 			if (paginaInicialUrl != null) {
@@ -68,6 +70,12 @@ public class PrincipalController extends SigaController {
 				
 				result.redirectTo(paginaInicialUrl + ((exibirAcessoAnterior != null && exibirAcessoAnterior) ? "?exibirAcessoAnterior=true" : ""));
 				return;
+			} else {
+				if (podeExibirMesaVirtual(getTitular(), getLotaTitular())) {
+					String paginaInicialUrl1 =  Prop.get("/siga.base.url") + "/sigaex/app/mesa" + SigaLibsEL.getMesaVersao(getTitular(), getLotaTitular());
+					result.redirectTo(paginaInicialUrl1 + ((exibirAcessoAnterior != null && exibirAcessoAnterior) ? "?exibirAcessoAnterior=true" : ""));
+				    return;
+				}
 			}
 		}
 		
@@ -258,6 +266,12 @@ public class PrincipalController extends SigaController {
 				.withIdTpConf(CpTipoDeConfiguracao.UTILIZAR_PESQUISA_GENERICA_VIA_XJUS)
 				.withOrgaoObjeto(lotacao.getLotacaoAtual().getOrgaoUsuario())
 				.eval());
+	}
+	
+	private boolean podeExibirMesaVirtual(DpPessoa pessoa, DpLotacao lotacao) throws Exception {
+		return  new CpPodePorConfiguracao(pessoa, lotacao)
+				.withIdTpConf(CpTipoDeConfiguracao.EXIBIR_MESA_VIRTUAL)
+				.eval();
 	}
 
 }

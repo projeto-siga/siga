@@ -140,7 +140,8 @@ public class Objeto extends ObjetoBase{
 	}
 
 	public void delete() {
-		try {
+		em().remove(this);
+/*		try {
 			avoidCascadeSaveLoops.set(new HashSet<Objeto>());
 			try {
 				saveAndCascade(true);
@@ -168,7 +169,7 @@ public class Objeto extends ObjetoBase{
 			throw e;
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
-		}
+		} */
 	}
 
 	public Object _key() {
@@ -293,8 +294,9 @@ public class Objeto extends ObjetoBase{
 	private static void cascadeOrphans(Objeto base,
 			PersistentCollection persistentCollection, boolean willBeSaved)
 			throws UnexpectedException {
-		SessionImpl session = ((SessionImpl) em().getDelegate());
-		PersistenceContext pc = session.getPersistenceContext();
+		Session session = (Session) (em().getDelegate());
+		SessionImplementor sessionImpl = (SessionImplementor) session;
+		PersistenceContext pc =  sessionImpl.getPersistenceContext();
 		CollectionEntry ce = pc.getCollectionEntry(persistentCollection);
 
 		if (ce != null) {
@@ -305,7 +307,7 @@ public class Objeto extends ObjetoBase{
 					EntityEntry entry = pc.getEntry(base);
 					String entityName = entry.getEntityName();
 					entityName = ((EntityType) ct)
-							.getAssociatedEntityName(session.getFactory());
+							.getAssociatedEntityName(sessionImpl.getFactory());
 					if (ce.getSnapshot() != null) {
 						Collection orphans = ce.getOrphans(entityName,
 								persistentCollection);

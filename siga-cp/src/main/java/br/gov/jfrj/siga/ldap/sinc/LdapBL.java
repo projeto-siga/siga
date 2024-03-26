@@ -1346,7 +1346,7 @@ public class LdapBL implements OperadorSemHistorico {
 			attrs.put("distinguishedName", adUsuario.getNomeCompleto());
 
 			attrs.put("userPrincipalName", adUsuario.getSigla() + conf.getUserPrincipalNameDomain());
-			attrs.put("displayName", Texto.inciaisMaiuscula(adUsuario.getNomeExibicao()));
+			attrs.put("displayName", Texto.inciaisMaiuscula(adUsuario.getNomeResolucaoEmail()));
 			attrs.put("extensionAttribute1", adUsuario.getTipoPessoa());
 
 			// script de inicialização do usuário
@@ -1578,7 +1578,12 @@ public class LdapBL implements OperadorSemHistorico {
 		}
 
 		attrs.put("homeMDB", homeMDB);
-		attrs.put("msExchMailboxTemplateLink", templateLink);
+		
+		// Atributo abaixo foi comentado após equipe de infra apontar problema na tentativa de inclusão de usuario pelo GI
+		// de DEZ/2023.
+		// javax.naming.InvalidNameException: CN=RJ63462,OU=Usuarios,OU=Gestao de Identidade,DC=corp,DC=jfrj,DC=gov,DC=br: 
+		// [LDAP: error code 34 - 00000057: LdapErr: DSID-0C090EF7, comment: Error in attribute conversion operation, data 0, v23f0
+//		attrs.put("msExchMailboxTemplateLink", templateLink);
 
 		attrs.put("homeMTA", conf.getHomeMTA());
 		attrs.put("msExchUserAccountControl", "0");

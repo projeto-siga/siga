@@ -650,6 +650,53 @@ paths:
           schema:
             $ref: "#/definitions/Error"
             
+  /especies:
+    get:
+      summary: Obtem a lista de todas as especies.
+      tags: [especie]
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/EspecieItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
+  /modelos/lista-hierarquica-especie:
+    get:
+      summary: "Obtem a lista hierárquica de modelos que o usuário pode criar. Os nomes dos modelos devem estar cadastrados no formato Grupo: Nome do Modelo (separado por dois pontos)"
+      tags: [especie]
+      security:
+        - Bearer: []
+      parameters: 
+        - $ref: "#/parameters/isEditandoAnexo"
+        - $ref: "#/parameters/isCriandoSubprocesso"
+        - $ref: "#/parameters/siglaMobPai"
+        - $ref: "#/parameters/isAutuando"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/ModeloListaHierarquicaEspecieItem"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+            
   /documentos/{sigla}/modelos-para-incluir:
     get:
       summary: Obtem a lista de modelos que o usuário pode incluir em determinado documento
@@ -2722,7 +2769,82 @@ paths:
           description: Error ocurred
           schema:
             $ref: "#/definitions/Error"
-            
+                     
+  /documentos/{id}/consultar-modelo:
+    get:
+      description: Verificar modelo do documento
+      tags: [ consulta ]
+      parameters:
+        - name: id
+          in: path
+          description: Id do documento
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idDoc:
+                description: Id do documento
+                type: string
+              siglaDocumento:
+                description: Sigla do documento
+                type: string
+              idModelo:
+                description: Id do modelo do documento
+                type: string  
+              nomeDoModelo:
+                description: Nome do modelo do documento
+                type: string  
+              status:
+                type: string
+                default: "ERRO!"  
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+
+  /documentos/{id}/consultar-especie:
+    get:
+      description: Verificar especie do documento
+      tags: [ consulta ]
+      parameters:
+        - name: id
+          in: path
+          description: Id do documento
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              idDoc:
+                description: Id do documento
+                type: string
+              siglaDocumento:
+                description: Sigla do documento
+                type: string
+              idModelo:
+                description: Id do modelo do documento
+                type: string  
+              nomeDoModelo:
+                description: Nome do modelo do documento
+                type: string  
+              status:
+                type: string
+                default: "ERRO!"  
+              especie:
+                description: Especie do documento
+                type: string  
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/Error"
+          
   /documentos/localizar/mais-recente:
     get:
       description: "Exibe dados do móbil mais recente que atende às condições desejadas."
@@ -3387,6 +3509,21 @@ definitions:
       nome:
         type: string
       descr:
+        type: string
+        
+  EspecieItem:
+    description: Lista especies disponíveis.
+    type: object
+    properties:
+      idFormaDoc:
+        type: string
+      descrFormaDoc:
+        type: string
+      siglaFormaDoc:
+        type: string
+      idTipoFormaDoc:
+        type: int
+      isComposto:
         type: string
 
   PreenchimentoItem:

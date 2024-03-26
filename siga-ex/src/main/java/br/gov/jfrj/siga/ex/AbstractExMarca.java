@@ -69,7 +69,75 @@ import br.gov.jfrj.siga.dp.CpMarca;
 		"ORDER  BY mard.idFinalidade, "+
 		"          mard.ordem, "+
 		"          mard.descrMarcador")
-})
+,
+		 @NamedQuery(name = "consultarPaginaInicialPessoa", query = "SELECT mard.idMarcador, "+
+				"               mard.descrMarcador, "+
+				"               Sum(CASE "+
+				"                     WHEN marca.dpPessoaIni.idPessoa = :idPessoaIni THEN 1 "+
+				"                     ELSE 0 "+
+				"                   END) as cont_pessoa, "+
+				"               Sum(0) as cont_lota,        "+
+				"               mard.idFinalidade, "+
+				"               mard.ordem, "+
+				"               mard.idCor, "+
+				"               mard.idIcone , "+
+				"               tpForma.idTipoFormaDoc, "+
+				"               mard.hisIdIni" +
+				"        FROM   ExMarca marca "+
+				"               JOIN marca.cpMarcador marcador "+
+				"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
+				"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
+				"        WHERE  ( marca.dtIniMarca IS NULL "+
+				"                  OR marca.dtIniMarca < :amanha ) "+
+				"               AND ( marca.dtFimMarca IS NULL "+
+				"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
+				"               AND marca.dpPessoaIni.idPessoa = :idPessoaIni "+
+				"               AND marca.cpTipoMarca.idTpMarca = 1 "+
+				"        GROUP  BY mard.idMarcador, "+
+				"                  mard.descrMarcador, "+
+				"                  mard.idFinalidade, "+
+				"                  mard.ordem, "+
+				"                  mard.idCor, "+
+				"                  mard.idIcone, "+
+				"                  tpForma.idTipoFormaDoc "+
+				"ORDER  BY mard.idFinalidade, "+
+				"          mard.ordem, "+
+				"          mard.descrMarcador")
+	,	 @NamedQuery(name = "consultarPaginaInicialLotacao", query = "SELECT mard.idMarcador, "+
+				"               mard.descrMarcador, "+
+				"               Sum(0)  as cont_pessoa, "+
+				"               Sum(CASE "+
+				"                     WHEN marca.dpLotacaoIni.idLotacao = :idLotacaoIni THEN 1 "+
+				"                     ELSE 0 "+
+				"                   END) as cont_lota, "+
+				"               mard.idFinalidade, "+
+				"               mard.ordem, "+
+				"               mard.idCor, "+
+				"               mard.idIcone , "+
+				"               tpForma.idTipoFormaDoc, "+
+				"               mard.hisIdIni" +				
+				"        FROM   ExMarca marca "+
+				"               JOIN marca.cpMarcador marcador "+
+				"               JOIN CpMarcador mard on (mard.hisIdIni = marcador.hisIdIni and mard.hisAtivo = 1)"+
+				"               JOIN marca.exMobil.exDocumento.exFormaDocumento.exTipoFormaDoc tpForma "+
+				"        WHERE  ( marca.dtIniMarca IS NULL "+
+				"                  OR marca.dtIniMarca < :amanha ) "+
+				"               AND ( marca.dtFimMarca IS NULL "+
+				"                      OR marca.dtFimMarca > CURRENT_DATE ) "+
+				"               AND marca.dpLotacaoIni.idLotacao = :idLotacaoIni "+
+				"               AND marca.cpTipoMarca.idTpMarca = 1 "+
+				"        GROUP  BY mard.idMarcador, "+
+				"                  mard.descrMarcador, "+
+				"                  mard.idFinalidade, "+
+				"                  mard.ordem, "+
+				"                  mard.idCor, "+
+				"                  mard.idIcone, "+
+				"                  tpForma.idTipoFormaDoc "+
+				"ORDER  BY mard.idFinalidade, "+
+				"          mard.ordem, "+
+				"          mard.descrMarcador")
+		}
+		)
 public class AbstractExMarca extends CpMarca {
 
 	@ManyToOne(fetch = FetchType.LAZY)

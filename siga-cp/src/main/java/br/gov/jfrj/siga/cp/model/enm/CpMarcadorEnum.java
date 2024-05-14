@@ -26,7 +26,7 @@ public enum CpMarcadorEnum {
 	//
 	JUNTADO(9, "Juntado", "fas fa-lock", "", CpMarcadorGrupoEnum.OUTROS),
 	//
-	JUNTADO_EXTERNO(16, "Juntado Externo", "fas fa-lock", "", CpMarcadorGrupoEnum.OUTROS),
+//	JUNTADO_EXTERNO(16, "Juntado Externo", "fas fa-lock", "", CpMarcadorGrupoEnum.OUTROS),
 	//
 	CANCELADO(CpMarcador.ID_MARCADOR_CANCELADO, SigaMessages.getMessage("marcador.cancelado.label"), "fas fa-ban", "",
 			CpMarcadorGrupoEnum.OUTROS),

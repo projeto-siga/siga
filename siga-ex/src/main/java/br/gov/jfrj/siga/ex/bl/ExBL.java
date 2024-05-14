@@ -2754,7 +2754,7 @@ public class ExBL extends CpBL {
 
 			mov.setDescrMov(textoMotivo);
 
-			if (!mob.sofreuMov(ExTipoDeMovimentacao.JUNTADA_EXTERNO,
+			if (!mob.sofreuMov(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO,
 					ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)) {
 				mov.setExMovimentacaoRef(
 						mov.getExMobil().getUltimaMovimentacao(ExTipoDeMovimentacao.JUNTADA));
@@ -2781,7 +2781,7 @@ public class ExBL extends CpBL {
 				}
 			} else {
 				mov.setExMovimentacaoRef(
-						mov.getExMobil().getUltimaMovimentacao(ExTipoDeMovimentacao.JUNTADA_EXTERNO));
+						mov.getExMobil().getUltimaMovimentacao(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO));
 				mov.setResp(mob.getExDocumento().getTitular());
 				mov.setLotaResp(mob.getExDocumento().getLotaTitular());
 			}
@@ -4695,7 +4695,7 @@ public class ExBL extends CpBL {
 			if (idDocEscolha.equals("1")) {
 				idTpMov = ExTipoDeMovimentacao.JUNTADA;
 			} else if (idDocEscolha.equals("2")) {
-				idTpMov = ExTipoDeMovimentacao.JUNTADA_EXTERNO;
+				idTpMov = ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO;
 			} else
 				throw new AplicacaoException("Opção inválida.");
 

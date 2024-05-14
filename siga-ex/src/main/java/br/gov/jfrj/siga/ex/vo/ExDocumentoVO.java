@@ -484,9 +484,7 @@ public class ExDocumentoVO extends ExVO {
 		movimentacoesPermitidas
 				.add(ExTipoDeMovimentacao.JUNTADA);
 		movimentacoesPermitidas
-				.add(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO);
-		movimentacoesPermitidas
-				.add(ExTipoDeMovimentacao.JUNTADA_EXTERNO);
+				.add(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO);		
 		movimentacoesPermitidas
 				.add(ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
 		movimentacoesPermitidas

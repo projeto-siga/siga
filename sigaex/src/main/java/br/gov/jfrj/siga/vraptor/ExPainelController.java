@@ -366,6 +366,7 @@ public class ExPainelController extends ExController {
 		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.TRAMITE_PARALELO);
 		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.NOTIFICACAO);
 		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.JUNTADA);
+		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO);
 		tpMovimentacoesCancelaveis.add(ExTipoDeMovimentacao.MARCACAO);
 	}
 

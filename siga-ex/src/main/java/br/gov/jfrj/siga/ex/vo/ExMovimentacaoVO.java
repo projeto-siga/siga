@@ -356,7 +356,7 @@ public class ExMovimentacaoVO extends ExVO {
 					.exp(new CpPodeSempre()).pre("Copia do documento: ").pos(mensagemPos).build());
 		}
 
-		if (exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA || exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA_EXTERNO) {
+		if (exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA || exTipoMovimentacao == ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO) {
 			descricao = null;
 			if (originadaAqui) {
 				if (mov.getExMobilRef() != null) {
@@ -632,8 +632,8 @@ public class ExMovimentacaoVO extends ExVO {
 			case JUNTADA:
 				classe = "juntada";
 				break;
-			case JUNTADA_EXTERNO:
-				classe = "juntada_externo";
+			case JUNTADA_A_DOCUMENTO_EXTERNO:
+				classe = "juntada_a_documento_externo";
 				break;
 			case CANCELAMENTO_JUNTADA:
 				classe = "desentranhamento";

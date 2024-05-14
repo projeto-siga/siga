@@ -1098,7 +1098,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	/**
 	 * Verifica se um Mobil está juntado a outro. Um Mobil está em juntado a
 	 * outro quando ele possui movimentações não canceladas dos tipos: JUNTADA
-	 * ou JUNTADA_EXTERNO e não possuem movimentação de cancelamento de juntada.
+	 * ou JUNTADA_A_DOCUMENTO_EXTERNO e não possuem movimentação de cancelamento de juntada.
 	 * 
 	 * @return Verdadeiro se o Mobil está juntado a outro e Falso caso
 	 *         contrário.
@@ -1107,7 +1107,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	public boolean isJuntado() {
 
 		return sofreuMov(new ITipoDeMovimentacao[] { ExTipoDeMovimentacao.JUNTADA,
-				ExTipoDeMovimentacao.JUNTADA_EXTERNO },
+				ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO },
 
 				ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
 
@@ -1150,7 +1150,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	/**
 	 * Verifica se um Mobil está juntado a outro mobil do tipo externo. Um Mobil
 	 * está em juntado a outro mobil do tipo externo quando ele possui
-	 * movimentaçao não cancelada do tipo: JUNTADA_EXTERNO e não possue
+	 * movimentaçao não cancelada do tipo: JUNTADA_A_DOCUMENTO_EXTERNO e não possue
 	 * movimentação de cancelamento de juntada.
 	 * 
 	 * @return Verdadeiro se o Mobil está juntado a outro mobil do tipo externo
@@ -1159,9 +1159,9 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 */
 	public boolean isJuntadoExterno() {
 
-		return sofreuMov(ExTipoDeMovimentacao.JUNTADA_EXTERNO,
+		return sofreuMov(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO,
 
-				ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
+				ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO);
 
 	}
 
@@ -1796,7 +1796,8 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				if (!movRef.isCancelada())
 					if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
 						b = true;
-					else if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA)
+					else if (movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA
+								|| movRef.getExTipoMovimentacao() == ExTipoDeMovimentacao.CANCELAMENTO_DE_MOVIMENTACAO)
 						b = false;
 			}
 		}

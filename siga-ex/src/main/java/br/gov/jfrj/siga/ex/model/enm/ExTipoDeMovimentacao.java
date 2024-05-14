@@ -34,9 +34,7 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	//
 	ASSINATURA_DIGITAL_DOCUMENTO(11, "Assinatura"),
 	//
-	JUNTADA(12, "Juntada"),
-	//
-	JUNTADA_EXTERNO(31, "Desentranhamento"),
+	JUNTADA(12, "Juntada"),	
 	//
 	CANCELAMENTO_JUNTADA(13, "Desentranhamento"),
 	//

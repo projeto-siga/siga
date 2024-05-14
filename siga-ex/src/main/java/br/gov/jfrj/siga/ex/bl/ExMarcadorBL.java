@@ -117,8 +117,8 @@ public class ExMarcadorBL {
 				m = CpMarcadorEnum.SOBRESTADO.getId();
 			if (t == ExTipoDeMovimentacao.JUNTADA)
 				m = CpMarcadorEnum.JUNTADO.getId();
-			if (t == ExTipoDeMovimentacao.JUNTADA_EXTERNO)
-				m = CpMarcadorEnum.JUNTADO_EXTERNO.getId();
+			if (t == ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO)
+				m = CpMarcadorEnum.JUNTADO_A_DOCUMENTO_EXTERNO.getId();
 			if (t == ExTipoDeMovimentacao.APENSACAO && apensadoAVolumeDoMesmoProcesso)
 				m = CpMarcadorEnum.APENSADO.getId();
 			if (t == ExTipoDeMovimentacao.TRANSFERENCIA_EXTERNA || t == ExTipoDeMovimentacao.DESPACHO_TRANSFERENCIA_EXTERNA) {

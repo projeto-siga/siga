@@ -118,7 +118,7 @@ public class ExTramiteBL {
                 p.recebimentosPendentes.add(mov);
             }
             // A juntada deve desativar os trâmites que não sejam de notificação
-            if (t == ExTipoDeMovimentacao.JUNTADA) {
+            if (t == ExTipoDeMovimentacao.JUNTADA || t == ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO) {
                 p.tramitesPendentes.removeIf(mv -> mv.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO);
                 p.recebimentosPendentes.removeIf(mv -> mv.getExTipoMovimentacao() != ExTipoDeMovimentacao.NOTIFICACAO);
             }

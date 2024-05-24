@@ -470,7 +470,8 @@ public class Documento {
 				String sigla = mob.getSigla();
 				if (an.getArquivo() instanceof ExMovimentacao) {
 					ExMovimentacao m = (ExMovimentacao) an.getArquivo();
-					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA)
+					if (m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA 
+							|| m.getExTipoMovimentacao() == ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO )
 						sigla = m.getExMobil().getSigla();
 				} else {
 					sigla = an.getMobil().getSigla();

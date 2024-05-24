@@ -147,7 +147,7 @@
 														</c:choose>
 													</span>
 												</c:if>
-												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA_EXTERNO'}">
+												<c:if test="${mov.exTipoMovimentacao == 'JUNTADA_A_DOCUMENTO_EXTERNO'}">
 													<span style="font-size: .8rem;color: #9e9e9e;"
 														>| documento desentranhado ${mov.exMobil}
 													</span>

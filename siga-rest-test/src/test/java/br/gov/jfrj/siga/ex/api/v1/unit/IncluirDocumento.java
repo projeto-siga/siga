@@ -89,6 +89,7 @@ public class IncluirDocumento extends DocTest {
         contemAcao("assinar", false);
         contemAcao("cancelar_juntada", true);
         contemMovimentacao(ExTipoDeMovimentacao.JUNTADA, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
+        contemMovimentacao(ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO, Pessoa.ZZ99998, Lotacao.ZZLTEST2);
     }
 
 }

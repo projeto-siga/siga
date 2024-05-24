@@ -1679,7 +1679,7 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
 		if (arquivosNumerados != null) {
 			ExMovimentacao movimentacao;
 			ITipoDeMovimentacao[] tpIdMovs = { ExTipoDeMovimentacao.JUNTADA,
-					ExTipoDeMovimentacao.JUNTADA_EXTERNO,
+					ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO,
 					ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA };			
 			
 			for (ExArquivoNumerado arquivoNumerado : arquivosNumerados) {				

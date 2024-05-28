@@ -175,7 +175,7 @@ public class ExMarcadorBL {
 
 		acrescentarMarcadoresManuais();
 
-		if (m == CpMarcadorEnum.JUNTADO.getId() || m == CpMarcadorEnum.APENSADO.getId()) {
+		if (m == CpMarcadorEnum.JUNTADO.getId() || m == CpMarcadorEnum.JUNTADO_A_DOCUMENTO_EXTERNO.getId() || m == CpMarcadorEnum.APENSADO.getId()) {
 			if (!mob.isEliminado())
 				acrescentarMarca(m, dt, null, null);
 		} else {

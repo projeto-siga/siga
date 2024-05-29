@@ -381,20 +381,16 @@ public class RequisicaoTransporte extends TpModel implements Comparable<Requisic
         int year = Calendar.getInstance().get(Calendar.YEAR);
 
         StringBuilder query = new StringBuilder();
-        query.append("SELECT req FROM RequisicaoTransporte req WHERE req.id = ");
-        query.append("(SELECT MAX(r.id) FROM RequisicaoTransporte r WHERE r.numero = ");
-        query.append("(SELECT MAX(rt.numero) FROM RequisicaoTransporte rt ");
-        query.append("WHERE cpOrgaoUsuario.id = " + orgaoUsuario.getId());
-        query.append(" AND YEAR(dataHora) = " + year);
-        query.append(" AND r.cpOrgaoUsuario.id = rt.cpOrgaoUsuario.id");
-        query.append(" AND YEAR(r.dataHora) = YEAR(rt.dataHora)))");
+        query.append("select max(req.numero) FROM RequisicaoTransporte req ");
+        query.append("WHERE req.cpOrgaoUsuario.id = " + orgaoUsuario.getId());
+        query.append("AND YEAR(req.dataHora) = " + year);
 
         Query qry = AR.em().createQuery(query.toString());
         try {
-            Object obj = qry.getSingleResult();
-            this.numero = ((RequisicaoTransporte) obj).numero + 1;
+	        Long i = (Long) qry.getSingleResult();
+	        this.setNumero((i == null ? 0 : i) + 1);
         } catch (NoResultException ex) {
-            this.numero = Long.valueOf(1);
+            this.setNumero(Long.valueOf(1));
         }
     }
 

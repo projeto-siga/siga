@@ -228,19 +228,15 @@ public class Missao extends TpModel implements ConvertableEntity, Comparable<Mis
 	public void setSequence(Object cpOrgaoUsuarioObject) {
 		CpOrgaoUsuario cpOrgaoUsuarioObj = (CpOrgaoUsuario) cpOrgaoUsuarioObject;
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		String qrl = "SELECT m FROM Missao m where m.numero = ";
-		qrl = qrl + "(SELECT MAX(t.numero) FROM Missao t";
+		String qrl = "select max(t.numero) from Missao t";
 		qrl = qrl + " where cpOrgaoUsuario.id = " + cpOrgaoUsuarioObj.getId();
 		qrl = qrl + " and YEAR(dataHora) = " + year;
-		qrl = qrl + " and m.cpOrgaoUsuario.id = t.cpOrgaoUsuario.id";
-		qrl = qrl + " and YEAR(m.dataHora) = YEAR(t.dataHora)";
-		qrl = qrl + ") order by m.numero desc";
 		Query qry = AR.em().createQuery(qrl);
 		try {
-			Object obj = qry.getResultList().get(0);
-			this.numero = ((Missao) obj).numero + 1;
+	        Long i = (Long) qry.getSingleResult();
+	        this.setNumero((i == null ? 0 : i) + 1);
 		} catch (IndexOutOfBoundsException ex) {
-			this.numero = Long.valueOf(1L);
+			this.setNumero(Long.valueOf(1L));
 		}
 	}
 

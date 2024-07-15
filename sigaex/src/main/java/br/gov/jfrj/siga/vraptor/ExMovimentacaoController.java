@@ -156,6 +156,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeIncluirCossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeIndicarPermanente;
 import br.gov.jfrj.siga.ex.logic.ExPodeJuntar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMigrarSEI;
 import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
 import br.gov.jfrj.siga.ex.logic.ExPodePedirPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicar;
@@ -728,6 +729,32 @@ public class ExMovimentacaoController extends ExController {
 		Ex.getInstance()
 				.getBL()
 				.sobrestar(getCadastrante(), getLotaTitular(),
+						builder.getMob(), mov.getDtMov(), null,
+						mov.getSubscritor());
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	
+	@Transacional
+	@Get("app/expediente/mov/migrarSEI")
+	public void migrarSEIGravar(final String sigla) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		buscarDocumento(builder);
+
+		final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+				.construir(dao());
+
+		Ex.getInstance().getComp().afirmar("Acesso permitido somente a usuários autorizados.",
+				ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), builder.getMob());
+		
+		Ex.getInstance().getComp().afirmar("Via não pode ser migrada",
+				ExPodeMigrarSEI.class, getTitular(), getLotaTitular(), builder.getMob());
+
+		Ex.getInstance()
+				.getBL()
+				.migrarSEI(getCadastrante(), getLotaTitular(),
 						builder.getMob(), mov.getDtMov(), null,
 						mov.getSubscritor());
 		ExDocumentoController.redirecionarParaExibir(result, sigla);

@@ -64,6 +64,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeIndicarPermanente;
 import br.gov.jfrj.siga.ex.logic.ExPodeJuntar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMigrarSEI;
 import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
@@ -456,6 +457,11 @@ public class ExMobilVO extends ExVO {
 
 		addAcao(AcaoVO.builder().nome("Indicar para Guarda Permanente").descr("Marcar o documento para ser recolhido ao Arquivo Permanente.").icone("building_go").nameSpace("/app/expediente/mov").acao("indicar_permanente")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeIndicarPermanente(mob, titular, lotaTitular)).classe("once").build());
+		
+		if (Prop.isTRF2()) {
+			addAcao(AcaoVO.builder().nome("Migrar SEI").descr("Migrar o documento para o Sistema SEI.").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("migrarSEI")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeMigrarSEI(mob, titular, lotaTitular)).classe("once").build());
+		}	
 
 		addAcao(AcaoVO.builder().nome("Reverter Ind. Guarda Permanente").icone("building_delete").nameSpace("/app/expediente/mov").acao("reverter_indicacao_permanente")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReverterIndicacaoPermanente(mob, titular, lotaTitular)).classe("once").build());

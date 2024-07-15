@@ -81,6 +81,10 @@ public class Prop {
 	public static boolean isGovSP() {
 		return "GOVSP".equals(get("/siga.local"));
 	}
+	
+	public static boolean isTRF2() {
+		return "TRF2".equals(get("/siga.local"));
+	}
 
 	public static Date getData(String nome) {
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yy");

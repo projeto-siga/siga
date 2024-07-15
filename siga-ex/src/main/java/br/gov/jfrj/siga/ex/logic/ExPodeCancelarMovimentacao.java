@@ -62,6 +62,8 @@ public class ExPodeCancelarMovimentacao extends CompositeExpressionSupport {
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.APENSACAO),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.DESAPENSACAO),
+						
+						new ExMovimentacaoEDoTipo(exUltMovNaoCanc, ExTipoDeMovimentacao.MIGRACAO_SEI),
 
 						new ExMovimentacaoEDoTipo(exUltMovNaoCanc,
 								ExTipoDeMovimentacao.INCLUSAO_EM_EDITAL_DE_ELIMINACAO),

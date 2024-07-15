@@ -11,20 +11,21 @@ import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
-public class ExPodeSobrestar extends CompositeExpressionSupport {
 
+public class ExPodeMigrarSEI extends CompositeExpressionSupport {
+	
 	private ExMobil mob;
 	private DpPessoa titular;
 	private DpLotacao lotaTitular;
 
-	public ExPodeSobrestar(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+	public ExPodeMigrarSEI(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
 		this.mob = mob;
 		this.titular = titular;
 		this.lotaTitular = lotaTitular;
 	}
 
 	/**
-	 * Retorna se é possível fazer sobrestar um móbil, segundo as regras a seguir:
+	 * Retorna se é possível fazer migrar para o SEI um móbil, segundo as regras a seguir:
 	 * 
 	 * 
 	 * <ul>
@@ -45,18 +46,24 @@ public class ExPodeSobrestar extends CompositeExpressionSupport {
 	 */
 	@Override
 	protected Expression create() {
-		return And.of(new ExEstaFinalizado(mob.doc()),
+		return And.of(
+				
+				new ExEProcesso(mob.doc()),
+				
+				new ExEstaAssinadoPorTodosOsSignatariosComTokenOuSenha(mob.doc()),
 
-				Or.of(new ExEMobilVia(mob), new ExEMobilUltimoVolume(mob)),
+				new ExEMobilUltimoVolume(mob),
 
 				new ExPodeMovimentar(mob, titular, lotaTitular),
 
 				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaApensadoAVolumeDoMesmoProcesso(mob)),
 				Not.of(new ExEstaSemEfeito(mob.doc())), Not.of(new ExEstaEmTramiteParalelo(mob)),
-				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaMigradoSEI(mob)),
-				Not.of(new ExEstaJuntado(mob)), Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
+				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaSobrestado(mob)), 
+				Not.of(new ExEstaJuntado(mob)), Not.of(new ExEstaMigradoSEI(mob)),
+				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.SOBRESTAR, titular,
+				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.MIGRACAO_SEI, titular,
 						lotaTitular));
 	}
+
 }

@@ -104,7 +104,8 @@ public abstract class ExSelecionavelController<T extends Selecionavel, DaoFiltro
 				CpMarcadorEnum.REVISAR.getId(),
 				CpMarcadorEnum.SEM_EFEITO.getId(),
 				CpMarcadorEnum.SOBRESTADO.getId(), 
-				CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId()
+				CpMarcadorEnum.TRANSFERIDO_A_ORGAO_EXTERNO.getId(),
+				CpMarcadorEnum.MIGRADO_PARA_SEI.getId()
 		};
 		if (ultMovIdEstadoDoc != null) {
 			ArrayList<Long> a = new ArrayList<>();

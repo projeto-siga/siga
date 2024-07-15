@@ -200,7 +200,9 @@ public enum CpMarcadorEnum {
 	//
 	DEMANDA_JUDICIAL_MEDIA(1009, "Demanda Judicial Prioridade Média", "fas fa-tag", "", CpMarcadorGrupoEnum.ALERTA),
 	//
-	DEMANDA_JUDICIAL_ALTA(1010, "Demanda Judicial Prioridade Alta", "fas fa-tag", "", CpMarcadorGrupoEnum.ALERTA);
+	DEMANDA_JUDICIAL_ALTA(1010, "Demanda Judicial Prioridade Alta", "fas fa-tag", "", CpMarcadorGrupoEnum.ALERTA),
+	//
+	MIGRADO_PARA_SEI(77, "Migrado para o SEI", "fas fa-hourglass-start", "", CpMarcadorGrupoEnum.ACOMPANHANDO);
 
 	private CpMarcadorEnum(int id, String nome, String icone, String descricao, CpMarcadorGrupoEnum grupo) {
 		this.id = id;

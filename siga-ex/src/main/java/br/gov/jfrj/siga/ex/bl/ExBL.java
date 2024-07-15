@@ -1443,6 +1443,35 @@ public class ExBL extends CpBL {
 		}
 	}
 
+	
+	public void migrarSEI(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov, Date dtMovIni,
+			DpPessoa subscritor) throws AplicacaoException {
+
+		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
+		for (ExMobil m : set) {
+			if (!m.getExDocumento().isFinalizado())
+				throw new AplicacaoException("não é possível migrar um documento não finalizado");
+		}
+
+		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
+		try {
+			iniciarAlteracao();
+
+			for (ExMobil m : set) {
+				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.MIGRACAO_SEI,
+						cadastrante, lotaCadastrante, m, dtMov, subscritor, null, null, null, dt);
+				gravarMovimentacao(mov);
+				concluirAlteracaoParcial(m);
+			}
+			concluirAlteracao();
+		} catch (final Exception e) {
+			cancelarAlteracao();
+			throw new RuntimeException("Erro ao migrar documento.", e);
+		}
+	}
+	
+	
+	
 	public void avaliarReclassificar(final DpPessoa cadastrante, final DpLotacao lotaCadastrante, final ExMobil mob,
 									 final Date dtMov, final DpPessoa subscritor, final ExClassificacao novaClassif, 
 									 final String motivo, boolean fAvaliacao) {
@@ -4647,6 +4676,10 @@ public class ExBL extends CpBL {
 
 			if (mobPai.isSobrestado())
 				throw new RegraNegocioException("Não é possível juntar um documento a um volume sobrestado.");
+			
+			if (mobPai.isMigradoSEI())
+				throw new RegraNegocioException("Não é possível juntar a um documento migrado para o SEI.");
+			
 
 			// Verifica se o documeto pai já estáapensado a este documento
 			for (ExMobil apenso : mob.getApensos()) {
@@ -7175,6 +7208,9 @@ public class ExBL extends CpBL {
 		if (!mob.isVolumeEncerrado() && mobMestre.isVolumeEncerrado())
 			throw new AplicacaoException("não é possível apensar um volume aberto a um volume encerrado");
 
+		if (mobMestre.isMigradoSEI())
+			throw new AplicacaoException("não é possível apensar a um documento migrado para o SEI");
+		
 		if (mobMestre.isSobrestado())
 			throw new AplicacaoException("não é possível apensar a um documento Sobrestado");
 

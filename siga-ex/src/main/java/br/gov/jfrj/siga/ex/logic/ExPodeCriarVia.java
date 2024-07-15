@@ -60,6 +60,8 @@ public class ExPodeCriarVia extends CompositeExpressionSupport {
 				new ExEExpediente(mob.doc()),
 
 				Not.of(new ExEstaEliminado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaPendenteDeColaboracao(mob)),
 

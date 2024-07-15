@@ -77,6 +77,8 @@ public class ExPodeCopiar extends CompositeExpressionSupport {
 				Not.of(new ExEstaEncerrado(mob)),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),
 

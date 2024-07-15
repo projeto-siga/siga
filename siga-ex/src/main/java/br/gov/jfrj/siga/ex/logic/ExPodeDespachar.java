@@ -62,6 +62,8 @@ public class ExPodeDespachar extends CompositeExpressionSupport {
 				Not.of(new ExEstaApensadoAVolumeDoMesmoProcesso(mob)),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaPendenteDeAnexacao(mob)),
 

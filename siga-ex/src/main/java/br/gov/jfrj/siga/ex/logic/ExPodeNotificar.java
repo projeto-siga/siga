@@ -54,6 +54,8 @@ public class ExPodeNotificar extends CompositeExpressionSupport {
 								new ExEInternoFolhaDeRosto(mob.doc()))),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaEmEditalDeEliminacao(mob)),
 

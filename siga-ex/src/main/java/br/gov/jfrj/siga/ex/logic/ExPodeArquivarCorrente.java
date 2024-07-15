@@ -79,7 +79,7 @@ public class ExPodeArquivarCorrente extends CompositeExpressionSupport {
 				
 				Not.of(new ExEstaEmTramiteParalelo(mob)), Not.of(new ExEstaArquivado(mob)),
 
-				Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaJuntado(mob)),
+				Not.of(new ExEstaSobrestado(mob)), Not.of(new ExEstaMigradoSEI(mob)), Not.of(new ExEstaJuntado(mob)),
 
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 

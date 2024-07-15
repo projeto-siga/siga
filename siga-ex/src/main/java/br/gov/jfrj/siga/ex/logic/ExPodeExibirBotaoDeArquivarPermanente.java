@@ -56,6 +56,8 @@ public class ExPodeExibirBotaoDeArquivarPermanente extends CompositeExpressionSu
 				Not.of(new ExEstaSemEfeito(mob.doc())), 
 				
 				Not.of(new ExEstaEliminado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
 

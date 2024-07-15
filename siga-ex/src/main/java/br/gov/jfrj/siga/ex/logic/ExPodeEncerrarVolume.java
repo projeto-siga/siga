@@ -57,6 +57,8 @@ public class ExPodeEncerrarVolume extends CompositeExpressionSupport {
 				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				new ExPodeMovimentar(mob, titular, lotaTitular),
 

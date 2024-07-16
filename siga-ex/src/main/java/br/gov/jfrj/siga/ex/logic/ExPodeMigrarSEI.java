@@ -9,6 +9,7 @@ import com.crivano.jlogic.Or;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.ex.ExMobil;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 
@@ -60,10 +61,13 @@ public class ExPodeMigrarSEI extends CompositeExpressionSupport {
 				Not.of(new ExEstaSemEfeito(mob.doc())), Not.of(new ExEstaEmTramiteParalelo(mob)),
 				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaSobrestado(mob)), 
 				Not.of(new ExEstaJuntado(mob)), Not.of(new ExEstaMigradoSEI(mob)),
-				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
-
-				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.MIGRACAO_SEI, titular,
-						lotaTitular));
+				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),				
+		
+		        new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
+		                .withExFormaDoc(mob.doc().getExFormaDocumento())
+	                    .withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
+		                .withExTpMov(ExTipoDeMovimentacao.REGISTRO_MIGRACAO_SEI));		                
+		                
 	}
 
 }

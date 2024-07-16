@@ -115,7 +115,7 @@ public class ExMarcadorBL {
 				m = CpMarcadorEnum.REMETIDO_PARA_PUBLICACAO.getId();
 			if (t == ExTipoDeMovimentacao.SOBRESTAR)
 				m = CpMarcadorEnum.SOBRESTADO.getId();
-			if (t == ExTipoDeMovimentacao.MIGRACAO_SEI)
+			if (t == ExTipoDeMovimentacao.REGISTRO_MIGRACAO_SEI)
 				m = CpMarcadorEnum.MIGRADO_PARA_SEI.getId();
 			if (t == ExTipoDeMovimentacao.JUNTADA)
 				m = CpMarcadorEnum.JUNTADO.getId();

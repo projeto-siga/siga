@@ -1450,7 +1450,7 @@ public class ExBL extends CpBL {
 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.getExDocumento().isFinalizado())
-				throw new AplicacaoException("não é possível migrar um documento não finalizado");
+				throw new AplicacaoException("não é possível registrar a migração um documento não finalizado");
 		}
 
 		Date dt = dtMovIni != null ? dtMovIni : dao().dt();
@@ -1458,7 +1458,7 @@ public class ExBL extends CpBL {
 			iniciarAlteracao();
 
 			for (ExMobil m : set) {
-				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.MIGRACAO_SEI,
+				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.REGISTRO_MIGRACAO_SEI,
 						cadastrante, lotaCadastrante, m, dtMov, subscritor, null, null, null, dt);
 				gravarMovimentacao(mov);
 				concluirAlteracaoParcial(m);

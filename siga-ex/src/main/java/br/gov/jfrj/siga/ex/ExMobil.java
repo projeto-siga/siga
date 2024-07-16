@@ -1003,7 +1003,7 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 	 * Verifica se o mobil está migrado
 	 */
 	public boolean isMigradoSEI() {
-		return sofreuMov(ExTipoDeMovimentacao.MIGRACAO_SEI,
+		return sofreuMov(ExTipoDeMovimentacao.REGISTRO_MIGRACAO_SEI,
 				null);
 	}
 	/**

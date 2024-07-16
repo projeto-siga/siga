@@ -10,7 +10,7 @@ import br.gov.jfrj.siga.cp.model.enm.ITipoDeMovimentacao;
 public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 
 	CRIACAO(1, "Criação"),
-	//
+	//	
 	ANEXACAO(2, "Anexação"),
 	//
 	TRANSFERENCIA(3, "Transferência"),
@@ -205,7 +205,7 @@ public enum ExTipoDeMovimentacao implements ITipoDeMovimentacao {
 	
 	CANCELAR_PUBLICACAO_DOE(97, "Cancelar Publicação DOE"),
 	
-	MIGRACAO_SEI(98, "Migração para o SEI");
+	REGISTRO_MIGRACAO_SEI(98, "Registro de Migração para o SEI");
 
 	private final int id;
 	private final String descr;

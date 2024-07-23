@@ -45,7 +45,7 @@ public class ExPodeVincular extends CompositeExpressionSupport {
 	protected Expression create() {
 
 		return And.of(
-
+				
 				Or.of(new ExEMobilVia(mob), new ExEMobilVolume(mob)),
 
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),

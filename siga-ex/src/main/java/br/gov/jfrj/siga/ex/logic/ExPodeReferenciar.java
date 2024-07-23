@@ -48,6 +48,8 @@ public class ExPodeReferenciar extends CompositeExpressionSupport {
 		return And.of(
 
 				new ExEMobilGeral(mob),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 

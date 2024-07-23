@@ -31,6 +31,8 @@ public class ExPodeGerarProtocolo extends CompositeExpressionSupport {
 				Not.of(new ExEstaCancelado(doc)),
 
 				Not.of(new ExEstaArquivadoDoc(doc)),
+				
+				Not.of(new ExEstaMigradoSEI(doc.getUltimoVolumeOuGeral())),
 
 				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.GERAR_PROTOCOLO, titular,
 						lotaTitular));

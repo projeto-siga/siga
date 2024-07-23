@@ -459,8 +459,11 @@ public class ExMobilVO extends ExVO {
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeIndicarPermanente(mob, titular, lotaTitular)).classe("once").build());
 		
 		if (Prop.isTRF2()) {
+		//	addAcao(AcaoVO.builder().nome("Registrar migração SEI").descr("Registrar migração do documento para o Sistema SEI.").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("migrarSEI")
+		//			.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeMigrarSEI(mob, titular, lotaTitular)).msgConfirmacao("ATENÇÃO: antes de prosseguir esta operação verifique se está anexada neste processo informação com o novo número do processo no SEI em que o seu dossiê integral em .pdf foi incluído para prosseguimento. Após você confirmá-la, este processo SIGA-DOC permanecerá disponível somente para consulta e nenhuma outra operação poderá ser realizada. O cancelamento dessa situação poderá ser realizado somente mediante abertura de chamado pelo gestor da unidade justificadamente. Deseja prosseguir?").classe("once").build());
+
 			addAcao(AcaoVO.builder().nome("Registrar migração SEI").descr("Registrar migração do documento para o Sistema SEI.").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("migrarSEI")
-					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeMigrarSEI(mob, titular, lotaTitular)).msgConfirmacao("ATENÇÃO: antes de prosseguir esta operação verifique se está anexada neste processo informação com o novo número do processo no SEI em que o seu dossiê integral em .pdf foi incluído para prosseguimento. Após você confirmá-la, este processo SIGA-DOC permanecerá disponível somente para consulta e nenhuma outra operação poderá ser realizada. O cancelamento dessa situação poderá ser realizado somente mediante abertura de chamado pelo gestor da unidade justificadamente e, preferencialmente, somente para registro do término do processo no SEI e arquivamento. Deseja confirmar o sobrestamento no SIGA-DOC em razão da migração para o SEI?").classe("once").build());
+		 			.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeMigrarSEI(mob, titular, lotaTitular)).classe("once").build());
 		}	
 
 		addAcao(AcaoVO.builder().nome("Reverter Ind. Guarda Permanente").icone("building_delete").nameSpace("/app/expediente/mov").acao("reverter_indicacao_permanente")

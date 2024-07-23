@@ -68,6 +68,8 @@ public class ExPodeRedefinirNivelDeAcesso extends CompositeExpressionSupport {
 
 				And.of(
 
+						Not.of(new ExEstaMigradoSEI(mob)),
+						
 						/*
 						 * Não permite redefinir acesso para documentos que foram publicados no portal
 						 * da transparencia

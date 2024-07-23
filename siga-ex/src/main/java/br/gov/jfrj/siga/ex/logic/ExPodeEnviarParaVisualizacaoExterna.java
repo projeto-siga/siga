@@ -34,7 +34,9 @@ public class ExPodeEnviarParaVisualizacaoExterna extends CompositeExpressionSupp
 
         return And.of(
 
-                new ExEstaFinalizado(mob.getDoc()),
+				Not.of(new ExEstaMigradoSEI(mob)),
+        		
+        		new ExEstaFinalizado(mob.getDoc()),
 
                 new ExEstaAssinadoOuAutenticadoComTokenOuSenhaERegistros(mob.getDoc()),
 

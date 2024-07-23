@@ -1445,8 +1445,9 @@ public class ExBL extends CpBL {
 
 	
 	public void migrarSEI(DpPessoa cadastrante, final DpLotacao lotaCadastrante, ExMobil mob, Date dtMov, Date dtMovIni,
-			DpPessoa subscritor) throws AplicacaoException {
+			DpPessoa subscritor, String descrMov) throws AplicacaoException {
 
+	
 		SortedSet<ExMobil> set = mob.getMobilEApensosExcetoVolumeApensadoAoProximo();
 		for (ExMobil m : set) {
 			if (!m.getExDocumento().isFinalizado())
@@ -1460,6 +1461,7 @@ public class ExBL extends CpBL {
 			for (ExMobil m : set) {
 				final ExMovimentacao mov = criarNovaMovimentacao(ExTipoDeMovimentacao.REGISTRO_MIGRACAO_SEI,
 						cadastrante, lotaCadastrante, m, dtMov, subscritor, null, null, null, dt);
+				mov.setDescrMov(descrMov);
 				gravarMovimentacao(mov);
 				concluirAlteracaoParcial(m);
 			}

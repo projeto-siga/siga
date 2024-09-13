@@ -788,9 +788,9 @@ public class ExMovimentacaoController extends ExController {
 			throw new AplicacaoException("Não foi informado o número do processo SEI");
 		}
 		else {
-		    boolean validaProcesso = descrMov.matches("[0-9]{7}\\-[0-9]{2}\\.[0-9]{4}\\.4\\.02\\.8000");
+		    boolean validaProcesso = descrMov.matches("[0-9]{7}\\-[0-9]{2}\\.[0-9]{4}\\.4\\.02\\.800[0-2]{1}");
 		    if (!validaProcesso) {
-		    	throw new AplicacaoException("Formato inválido de processo SEI. Processos SEI seguem esse o formato XXXXXXX-XX.YYYY.4.02.8000 onde X são números e YYYY correspondem ao ano. Exemplo : 0024567-55.2024.4.02.8000.");
+		    	throw new AplicacaoException("Formato inválido de processo SEI. Processos SEI seguem esse o formato XXXXXXX-XX.YYYY.4.02.8000 ou XXXXXXX-XX.YYYY.4.02.8001 ou XXXXXXX-XX.YYYY.4.02.8002 onde X são números e YYYY correspondem ao ano. Exemplo : 0024567-55.2024.4.02.8000.");
 		    }
 		    descrMovLocal = "Registro da migração do processo SEI numero : " + descrMovLocal;
 		}

@@ -1760,6 +1760,8 @@ public class ExDocumentoController extends ExController {
 				throw new AplicacaoException(
 						"Documento capturado não pode ser gravado sem que seja informado o arquivo " + (tokenArquivo != null ? ".":"PDF."));
 
+			if(!exDocumentoDTO.isCriandoAnexo()) {
+			
 			if (!ex.getConf().podePorConfiguracao(getTitular(),
 					getLotaTitular(),
 					exDocumentoDTO.getDoc().getExTipoDocumento(),
@@ -1781,6 +1783,7 @@ public class ExDocumentoController extends ExController {
 				}
 
 				throw new AplicacaoException("Operação não permitida");
+			}
 			}
 
 			// System.out.println("monitorando gravacao IDDoc "

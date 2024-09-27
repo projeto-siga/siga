@@ -7001,12 +7001,21 @@ public class ExBL extends CpBL {
 		} else {
 			if (protegido) {
 				provSet = new ArrayList<ExModelo>();
+				for (ExModelo mod : modeloSetFinal) {
+					if (getConf().podePorConfiguracao(titular, lotaTitular, mod, ExTipoDeConfiguracao.CRIAR))
+						provSet.add(mod);
+				}
+				modeloSetFinal = provSet;
+			}
+			
+			/*if (protegido) {
+				provSet = new ArrayList<ExModelo>();
 				for (ExModelo mod : modeloSetFinal)
 					if (getConf().podePorConfiguracao(titular, lotaTitular, mod,
 							ExTipoDeConfiguracao.CRIAR_COMO_NOVO))
 						provSet.add(mod);
 				modeloSetFinal = provSet;
-			}
+			}*/
 		}
 
 		if (autuando) {
@@ -7016,14 +7025,7 @@ public class ExBL extends CpBL {
 					provSet.add(mod);
 			modeloSetFinal = provSet;
 		}
-		if (protegido) {
-			provSet = new ArrayList<ExModelo>();
-			for (ExModelo mod : modeloSetFinal) {
-				if (getConf().podePorConfiguracao(titular, lotaTitular, mod, ExTipoDeConfiguracao.CRIAR))
-					provSet.add(mod);
-			}
-			modeloSetFinal = provSet;
-		}
+		
 		if (headerValue != null && modeloSetFinal.size() > 1) {
 			ExModelo mod = new ExModelo();
 			mod.setIdMod(0L);

@@ -80,8 +80,8 @@ public class ExPodeEditar extends CompositeExpressionSupport {
 
 						new ExTemPerfil(doc, ExPapel.PAPEL_REVISOR, titular, lotaTitular)),
 
-				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
-						.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.CRIAR),
+			/*	new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
+						.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.CRIAR),*/
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 						.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.EDITAR));

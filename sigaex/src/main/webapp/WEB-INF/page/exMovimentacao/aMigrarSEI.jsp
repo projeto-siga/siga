@@ -51,7 +51,8 @@
 					</div>
 					<div class="row">
 						<div class="col-sm">
-							<p class="text-justify" style="color:red;"><b>ATENÇÃO: antes de prosseguir esta operação verifique se está anexada neste processo informação com o novo número do processo no SEI em que o seu dossiê integral em .pdf foi incluído para prosseguimento. Após você confirmá-la, este processo SIGA-DOC permanecerá disponível somente para consulta e nenhuma outra operação poderá ser realizada. O cancelamento dessa situação poderá ser realizado somente mediante abertura de chamado pelo gestor da unidade justificadamente. Deseja prosseguir?</b></p>
+							<p class="text-justify" style="color:red;"><b>ATENÇÃO: antes de prosseguir com esta operação verifique: 1) Se não há processo(s) apensado(s) a este. Se for o caso, é necessário realizar a DESAPENSAÇÃO de todos primeiramente. 
+							                                              2) Se está anexada neste processo informação com o novo número do processo no SEI em que o seu dossiê integral em .pdf foi incluído para prosseguimento. Após você confirmá-la, este processo SIGA-DOC permanecerá disponível somente para consulta e nenhuma outra operação poderá ser realizada. O cancelamento dessa situação poderá ser realizado somente mediante abertura de chamado pelo gestor da unidade justificadamente. Deseja prosseguir?</b></p>
 							
 							
 						</div>

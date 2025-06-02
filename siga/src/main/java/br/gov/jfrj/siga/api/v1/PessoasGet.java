@@ -161,6 +161,7 @@ public class PessoasGet implements IPessoasGet {
 		
 		if(exibirDadosSensiveis) {
 			pessoa.email = p.getEmailPessoaAtual();
+			pessoa.cpf = p.getCpfFormatado();
 		}
 
 		// Orgao Pessoa

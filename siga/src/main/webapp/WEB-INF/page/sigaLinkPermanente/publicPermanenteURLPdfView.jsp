@@ -13,6 +13,7 @@
 	<script>
 		$(document).ready(function() {
 			sigaSpinner.mostrar();
+			carregarCompleto();
 		});
 		
 		function carregarCompleto() {
@@ -47,7 +48,7 @@
 				  </div>
 				  <div class="card-body bg-secondary text-white p-0">
 					  <c:url var='pdf' value='/pdfjs/web/viewer.html?file=/siga/public/app/sigalinkStream/${jwt}' />
-					  <iframe id="framePdf" src="${pdf}" align="center" style="width: 100%; height: 75vh; border: none;" onload='javascript:carregarCompleto();sigaSpinner.ocultar();'  allowfullscreen>
+					  <iframe id="framePdf" src="${pdf}" align="center" style="width: 100%; height: 75vh; border: none;" onload='sigaSpinner.ocultar();'  allowfullscreen>
 					  	<h5>Carregando PDF...</h5>
 					  </iframe>
 					  </div>

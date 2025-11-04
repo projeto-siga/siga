@@ -22,16 +22,16 @@
 		}
 	</script>
 
-	<div id="pdfContainer" class="container content pt-2 pb-2">
+	<div id="pdfContainer" class="container-fluid content pt-2 pb-2">
 		<div class="row justify-content-center">
-			<div class="col col-sm-12 col-md-8">
+			<div class="col">
 				<div class="card">
 				  <div class="card-header bg-danger text-white">
 				  	<div class="row">
 				  		<div class="col">
 				  			<h5><i class="fa fa-file-pdf" aria-hidden="true"></i> ${sigla}</h5>
 				  		</div>
-				  		<div class="col text-right">
+				  		<div class="col text-right d-none">
 						  	<div class="form-group m-0">
 							  <span class="switch switch-sm">
 							    <input type="checkbox" class="switch" id="completo" name="completo" onchange="javascript:carregarCompleto();">
@@ -46,8 +46,8 @@
 
 				  </div>
 				  <div class="card-body bg-secondary text-white p-0">
-					  <c:url var='pdf' value='/pdfjs/web/viewer.html?file=/siga/public/app/sigalinkStream/${jwt}' />
-					  <iframe id="framePdf" src="${pdf}" width="100%" height="500" align="center" style="border: none;" onload='sigaSpinner.ocultar();'  allowfullscreen>
+					  <c:url var='pdf' value='/pdfjs/web/viewer.html?file=/siga/public/app/sigalinkStream/${jwt}?completo=1&volumes=1' />
+					  <iframe id="framePdf" src="${pdf}" align="center" style="width: 100%; height: 75vh; border: none;" onload='sigaSpinner.ocultar();'  allowfullscreen>
 					  	<h5>Carregando PDF...</h5>
 					  </iframe>
 					  </div>

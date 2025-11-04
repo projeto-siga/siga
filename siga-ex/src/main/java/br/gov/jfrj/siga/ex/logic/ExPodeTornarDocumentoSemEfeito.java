@@ -56,6 +56,9 @@ public class ExPodeTornarDocumentoSemEfeito extends CompositeExpressionSupport {
 				new ExEEletronico(mob.doc()),
 
 				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
+				
+				Not.of(
+						And.of(new ExEProcesso(mob.doc()), new ExEstaMigradoSEI(mob.doc().getUltimoVolume()))),
 
 				If.of(new ExECapturado(mob.doc()),
 

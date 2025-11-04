@@ -40,7 +40,9 @@ public class ExPodeDuplicar extends CompositeExpressionSupport {
 		return And.of(
 
 				Not.of(new ExEstaEliminado(mob)),
-
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
+				
 				new ExPodeAcessarDocumento(mob, titular, lotaTitular),
 				
 				new CpELotacaoAtiva(lotaTitular),

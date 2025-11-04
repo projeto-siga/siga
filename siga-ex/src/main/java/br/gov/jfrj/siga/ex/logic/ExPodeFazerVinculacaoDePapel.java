@@ -38,6 +38,8 @@ public class ExPodeFazerVinculacaoDePapel extends CompositeExpressionSupport {
 	protected Expression create() {
 		return And.of(
 
+				Not.of(new ExEstaMigradoSEI(mob)),
+				
 				Not.of(new ExEstaCancelado(mob.doc())),
 
 				Not.of(new ExEstaSemEfeito(mob.doc())),

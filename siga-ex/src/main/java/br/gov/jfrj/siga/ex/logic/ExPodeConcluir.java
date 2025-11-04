@@ -57,6 +57,8 @@ public class ExPodeConcluir extends CompositeExpressionSupport {
                 Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
 
                 Not.of(new ExEstaSobrestado(mob)),
+                
+                Not.of(new ExEstaMigradoSEI(mob)),
 
                 Not.of(new ExEstaEmTransito(mob, titular, lotaTitular)),
 

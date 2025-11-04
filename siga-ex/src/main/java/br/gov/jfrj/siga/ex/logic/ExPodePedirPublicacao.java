@@ -66,6 +66,8 @@ public class ExPodePedirPublicacao extends CompositeExpressionSupport {
 						new ExMobPodeAtenderPedidoPublicacao(mob, titular, lotaTitular)),
 
 				Not.of(new ExEstaPendenteDeAssinatura(doc)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaSolicitadaPublicacaoNoDiario(doc)),
 

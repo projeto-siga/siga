@@ -61,6 +61,8 @@ public class ExPodeDefinirPrazoAssinatura extends CompositeExpressionSupport {
 				Not.of(new ExEstaArquivado(mob)),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withExMod(mob.doc().getExModelo())
 						.withExFormaDoc(mob.doc().getExFormaDocumento()).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)

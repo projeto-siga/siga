@@ -51,6 +51,8 @@ public class ExPodeCancelarDocumento extends CompositeExpressionSupport {
 				new ExEstaFinalizado(doc),
 
 				Or.of(Not.of(new ExEEletronico(doc)), new ExEstaPendenteDeAssinatura(doc)),
+				
+				If.of(new ExEProcesso(doc), Not.of(new ExEstaMigradoSEI(doc.getUltimoVolume())), Not.of(new ExEstaCancelado(doc))),
 
 				If.of(new ExECapturado(doc),
 

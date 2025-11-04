@@ -47,8 +47,11 @@ public class ExPodeCriarSubprocesso extends CompositeExpressionSupport {
 		return And.of(
 
 				new ExEProcesso(mob.doc()), new ExEMobilGeral(mob), Not.of(new ExTemMobilPai(mob.doc())),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaCancelado(mob.doc())), Not.of(new ExEstaSemEfeito(mob.doc())),
+				
 				Not.of(new ExEstaArquivado(mob)), Not.of(new ExEstaPendenteDeAssinatura(mob.doc())),
 
 				new ExPodeAcessarDocumento(mob, titular, lotaTitular),

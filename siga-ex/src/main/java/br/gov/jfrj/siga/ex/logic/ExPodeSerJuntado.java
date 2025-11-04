@@ -64,6 +64,8 @@ public class ExPodeSerJuntado extends CompositeExpressionSupport {
 				Not.of(new ExEMobilVolumeEncerrado(mobPai)),
 
 				Not.of(new ExEstaJuntado(mobPai)),
+				
+				Not.of(new ExEstaMigradoSEI(mobPai)),
 
 				Not.of(new ExEstaEmTransito(mobPai, titular, lotaTitular)),
 

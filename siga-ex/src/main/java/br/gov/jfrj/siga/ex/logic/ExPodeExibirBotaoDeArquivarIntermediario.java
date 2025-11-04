@@ -56,7 +56,7 @@ public class ExPodeExibirBotaoDeArquivarIntermediario extends CompositeExpressio
 				Not.of(new ExEstaPendenteDeAssinatura(mob.doc())), Not.of(new ExEstaArquivado(mob)),
 				new ExTemTemporalidadeIntermediario(mob), Not.of(new ExEstaArquivadoIntermediario(mob)),
 				Not.of(new ExEstaArquivadoPermanente(mob)), Not.of(new ExEstaEmEditalDeEliminacao(mob)),
-				Not.of(new ExEstaEmTramiteParalelo(mob)),
+				Not.of(new ExEstaEmTramiteParalelo(mob)), Not.of(new ExEstaMigradoSEI(mob)),
 
 				new ExPodeMovimentarPorConfiguracao(ExTipoDeMovimentacao.ARQUIVAMENTO_INTERMEDIARIO,
 						titular, lotaTitular));

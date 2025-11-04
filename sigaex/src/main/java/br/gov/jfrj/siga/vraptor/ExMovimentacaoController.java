@@ -156,6 +156,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeIncluirCossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeIndicarPermanente;
 import br.gov.jfrj.siga.ex.logic.ExPodeJuntar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
+import br.gov.jfrj.siga.ex.logic.ExPodeMigrarSEI;
 import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
 import br.gov.jfrj.siga.ex.logic.ExPodePedirPublicacao;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicar;
@@ -730,6 +731,75 @@ public class ExMovimentacaoController extends ExController {
 				.sobrestar(getCadastrante(), getLotaTitular(),
 						builder.getMob(), mov.getDtMov(), null,
 						mov.getSubscritor());
+		ExDocumentoController.redirecionarParaExibir(result, sigla);
+	}
+	
+	
+	@Get("/app/expediente/mov/migrarSEI")
+	public void aMigrarSEI(final String sigla, final String descrMov) {
+		final BuscaDocumentoBuilder documentoBuilder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		final ExDocumento documento = buscarDocumento(documentoBuilder);
+
+		final ExMovimentacaoBuilder movimentacaoBuilder = ExMovimentacaoBuilder
+				.novaInstancia().setMob(documentoBuilder.getMob());
+
+		final ExMovimentacao movimentacao = movimentacaoBuilder
+				.construir(dao());
+
+		Ex.getInstance().getComp().afirmar("Não é possível fazer o registro de Migração do Processo para o SEI",  ExPodeMigrarSEI.class, getTitular(), getLotaTitular(), documentoBuilder.getMob());
+		
+		String descricaoMov = movimentacaoBuilder.getDescrMov();
+		if (descricaoMov == null) {
+			descricaoMov = descrMov;
+		}
+				
+		result.include("sigla", sigla);
+		result.include("dtMovString", movimentacaoBuilder.getDtMovString());
+		result.include("mob", documentoBuilder.getMob());
+		result.include("mov", movimentacao);
+		result.include("doc", documento);
+		result.include("descrMov", descricaoMov);
+		result.include("subscritorSel", movimentacaoBuilder.getSubscritorSel());
+		result.include("titularSel", movimentacaoBuilder.getTitularSel());
+	}
+	
+	@Transacional
+	@Post("app/expediente/mov/migrarSEIGravar")
+	public void migrarSEIGravar(final String sigla, final String descrMov) {
+		final BuscaDocumentoBuilder builder = BuscaDocumentoBuilder
+				.novaInstancia().setSigla(sigla);
+
+		String descrMovLocal = descrMov;
+		
+		buscarDocumento(builder);
+
+		final ExMovimentacao mov = ExMovimentacaoBuilder.novaInstancia()
+				.construir(dao());
+		
+		Ex.getInstance().getComp().afirmar("Acesso permitido somente a usuários autorizados.",
+				ExPodeAcessarDocumento.class, getTitular(), getLotaTitular(), builder.getMob());
+		
+		Ex.getInstance().getComp().afirmar("Via não pode ser migrada",
+				ExPodeMigrarSEI.class, getTitular(), getLotaTitular(), builder.getMob());
+		
+		if (descrMovLocal == null) {
+			throw new AplicacaoException("Não foi informado o número do processo SEI");
+		}
+		else {
+		    boolean validaProcesso = descrMov.matches("[0-9]{7}\\-[0-9]{2}\\.[0-9]{4}\\.4\\.02\\.800[0-2]{1}");
+		    if (!validaProcesso) {
+		    	throw new AplicacaoException("Formato inválido de processo SEI. Processos SEI seguem esse o formato XXXXXXX-XX.YYYY.4.02.8000 ou XXXXXXX-XX.YYYY.4.02.8001 ou XXXXXXX-XX.YYYY.4.02.8002 onde X são números e YYYY correspondem ao ano. Exemplo : 0024567-55.2024.4.02.8000.");
+		    }
+		    descrMovLocal = "Registro da migração do processo SEI numero : " + descrMovLocal;
+		}
+		
+		Ex.getInstance()
+				.getBL()
+				.migrarSEI(getCadastrante(), getLotaTitular(),
+						builder.getMob(), mov.getDtMov(), null,
+						mov.getSubscritor(), descrMovLocal);
 		ExDocumentoController.redirecionarParaExibir(result, sigla);
 	}
 		

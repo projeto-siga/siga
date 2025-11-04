@@ -66,7 +66,7 @@ public class ExPodeAgendarPublicacao extends CompositeExpressionSupport {
 
 				Not.of(new ExEstaEliminado(mob)),
 
-				Not.of(new ExEstaEliminado(mob)),
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaArquivado(mob)),
 

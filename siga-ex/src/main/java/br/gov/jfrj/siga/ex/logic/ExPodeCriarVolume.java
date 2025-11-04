@@ -58,7 +58,7 @@ public class ExPodeCriarVolume extends CompositeExpressionSupport {
 
 								new ExEstaEmTransito(ultVolume, titular, lotaTitular),
 
-								new ExEstaSobrestado(ultVolume))),
+								new ExEstaSobrestado(ultVolume), new ExEstaMigradoSEI(ultVolume))),
 
 				Not.of(new ExEstaArquivado(mob)),
 

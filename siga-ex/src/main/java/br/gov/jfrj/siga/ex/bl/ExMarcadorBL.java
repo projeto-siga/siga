@@ -115,6 +115,8 @@ public class ExMarcadorBL {
 				m = CpMarcadorEnum.REMETIDO_PARA_PUBLICACAO.getId();
 			if (t == ExTipoDeMovimentacao.SOBRESTAR)
 				m = CpMarcadorEnum.SOBRESTADO.getId();
+			if (t == ExTipoDeMovimentacao.REGISTRO_MIGRACAO_SEI)
+				m = CpMarcadorEnum.MIGRADO_PARA_SEI.getId();
 			if (t == ExTipoDeMovimentacao.JUNTADA)
 				m = CpMarcadorEnum.JUNTADO.getId();
 			if (t == ExTipoDeMovimentacao.JUNTADA_A_DOCUMENTO_EXTERNO)
@@ -165,7 +167,7 @@ public class ExMarcadorBL {
 		}
 
 		if (!apensadoAVolumeDoMesmoProcesso && !mob.doc().isPendenteDeAssinatura() && !mob.isJuntado()
-				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado()) {
+				&& !mob.isEliminado() && !mob.isEmTransitoExterno() && !mob.isArquivado() && !mob.isSobrestado() && !mob.isMigradoSEI()) {
 			calcularMarcadoresDeTramite();
 		}
 		calcularMarcadoresDeNotificacao();
@@ -175,7 +177,7 @@ public class ExMarcadorBL {
 
 		acrescentarMarcadoresManuais();
 
-		if (m == CpMarcadorEnum.JUNTADO.getId() || m == CpMarcadorEnum.APENSADO.getId()) {
+		if (m == CpMarcadorEnum.JUNTADO.getId() || m == CpMarcadorEnum.JUNTADO_A_DOCUMENTO_EXTERNO.getId() || m == CpMarcadorEnum.APENSADO.getId()) {
 			if (!mob.isEliminado())
 				acrescentarMarca(m, dt, null, null);
 		} else {

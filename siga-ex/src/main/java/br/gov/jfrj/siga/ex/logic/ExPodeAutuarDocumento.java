@@ -65,6 +65,8 @@ public class ExPodeAutuarDocumento extends CompositeExpressionSupport {
 				Not.of(new ExEstaArquivado(mob)),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEMobilGeral(mob)),
 

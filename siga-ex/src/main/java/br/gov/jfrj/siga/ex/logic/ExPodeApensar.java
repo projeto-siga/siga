@@ -70,6 +70,8 @@ public class ExPodeApensar extends CompositeExpressionSupport {
 				Not.of(new ExEstaArquivado(mob)),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.MOVIMENTAR)
 						.withExTpMov(ExTipoDeMovimentacao.APENSACAO)

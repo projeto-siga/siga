@@ -58,6 +58,8 @@ public class ExPodeExibirBotaoDeAgendarPublicacaoNoBoletim extends CompositeExpr
 				new ExEstaFinalizado(mob.doc()),
 
 				Not.of(new ExEstaEliminado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEInternoFolhaDeRosto(mob.doc())),
 

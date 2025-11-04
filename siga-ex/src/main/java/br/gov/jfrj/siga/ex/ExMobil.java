@@ -998,6 +998,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 				ExTipoDeMovimentacao.DESOBRESTAR);
 	}
 
+	
+	/**
+	 * Verifica se o mobil está migrado
+	 */
+	public boolean isMigradoSEI() {
+		return sofreuMov(ExTipoDeMovimentacao.REGISTRO_MIGRACAO_SEI,
+				null);
+	}
 	/**
 	 * Verifica se um Mobil está em trânsito. Um Mobil está em trânsito quando
 	 * ele possui movimentações não canceladas dos tipos: TRANSFERENCIA,

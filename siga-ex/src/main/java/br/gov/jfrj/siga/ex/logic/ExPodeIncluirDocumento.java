@@ -66,6 +66,8 @@ public class ExPodeIncluirDocumento extends CompositeExpressionSupport {
 				Not.of(new ExEstaEncerrado(mob)),
 
 				Not.of(new ExEstaSobrestado(mob)),
+				
+				Not.of(new ExEstaMigradoSEI(mob)),
 
 				Not.of(new ExEstaJuntado(mob)),
 

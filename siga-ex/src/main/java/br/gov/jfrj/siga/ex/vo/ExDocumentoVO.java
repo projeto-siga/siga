@@ -33,6 +33,7 @@ import java.util.TreeSet;
 import com.crivano.jlogic.And;
 
 import br.gov.jfrj.siga.base.AcaoVO;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
 import br.gov.jfrj.siga.base.util.Texto;
 import br.gov.jfrj.siga.base.util.Utils;
@@ -82,6 +83,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeGerarProtocolo;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirCossignatario;
 import br.gov.jfrj.siga.ex.logic.ExPodeOrdemAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodePedirPublicacao;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicar;
 import br.gov.jfrj.siga.ex.logic.ExPodePublicarPortalDaTransparencia;
 import br.gov.jfrj.siga.ex.logic.ExPodeRedefinirNivelDeAcesso;
@@ -93,6 +95,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeSolicitarAssinatura;
 import br.gov.jfrj.siga.ex.logic.ExPodeTornarDocumentoSemEfeito;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 import br.gov.jfrj.siga.ex.logic.ExTemAnexos;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.ExGraphColaboracao;
 import br.gov.jfrj.siga.ex.util.ExGraphRelacaoDocs;
@@ -728,6 +731,8 @@ public class ExDocumentoVO extends ExVO {
 
 		ExMobil mob = doc.getMobilGeral();
 		
+		ExPodePorConfiguracao exPodePorConfiguracao = new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.INIBIR_ACOES);
+
 		vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie"))
 				.descr("Exibe um índice de todos os documentos juntados.")
 				.icone("folder_magnify")
@@ -743,6 +748,17 @@ public class ExDocumentoVO extends ExVO {
 				.params("arquivo", doc.getReferenciaPDF())
 				.params("nomeAcao", SigaMessages.getMessage("documento.ver.impressao"))
 				.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
+		
+		
+		if (Prop.isTRF2() && exPodePorConfiguracao.eval() ) {
+		
+			vo.addAcao(AcaoVO.builder().nome("Download").descr("Faz o download do arquivo de formato livre associado a este documento.").icone("arrow_down").nameSpace("/app/arquivo").acao("downloadFormatoLivre")
+					.params("sigla", doc.getCodigoCompacto()).exp(new ExPodeFazerDownloadFormatoLivre(doc)).classe("once").build());
+		
+			vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).descr("Exibe mais detalhes e possibilita auditar todas as movimentações.").icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
+					.params("sigla", mob.getCodigoCompacto()).exp(new CpPodeSempre()).msgConfirmacao(doc.getNumUltimoMobil() < 20 ? "" : "Exibir todos os " + doc.getNumUltimoMobil() + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?").classe("once").build());
+
+		} else {
 		
 		vo.addAcao(AcaoVO.builder().nome("Fina_lizar").icone("lock").descr("Conclui a elaboração do documento fazendo com que ele deixe de ser temporário (TMP) e atribui seu código definitivo.").nameSpace("/app/expediente/doc").acao("finalizar")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeFinalizar(doc, titular, lotaTitular)).classe("once").build());
@@ -856,6 +872,7 @@ public class ExDocumentoVO extends ExVO {
 		
 		vo.addAcao(AcaoVO.builder().nome("Download").descr("Faz o download do arquivo de formato livre associado a este documento.").icone("arrow_down").nameSpace("/app/arquivo").acao("downloadFormatoLivre")
 				.params("sigla", doc.getCodigoCompacto()).exp(new ExPodeFazerDownloadFormatoLivre(doc)).classe("once").build());
+	}
 	}
 
 	private boolean mostrarEnviarSiafem(ExDocumento doc) {

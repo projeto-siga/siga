@@ -66,6 +66,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeJuntar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMarcar;
 import br.gov.jfrj.siga.ex.logic.ExPodeMigrarSEI;
 import br.gov.jfrj.siga.ex.logic.ExPodeNotificar;
+import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.ex.logic.ExPodeReclassificar;
 import br.gov.jfrj.siga.ex.logic.ExPodeReferenciar;
@@ -76,6 +77,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeTramitarEmParalelo;
 import br.gov.jfrj.siga.ex.logic.ExPodeTransferir;
 import br.gov.jfrj.siga.ex.logic.ExPodeVisualizarImpressao;
 import br.gov.jfrj.siga.ex.logic.ExTemAnexos;
+import br.gov.jfrj.siga.ex.model.enm.ExTipoDeConfiguracao;
 import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 
 public class ExMobilVO extends ExVO {
@@ -373,8 +375,16 @@ public class ExMobilVO extends ExVO {
 	 * @throws Exception
 	 */
 	private void addAcoes(ExMobil mob, DpPessoa titular, DpLotacao lotaTitular) {
+		
+		ExPodePorConfiguracao exPodePorConfiguracao = new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.INIBIR_ACOES);
 
+		ExPodePorConfiguracao exPodePorConfiguracaoParaArquivo = new ExPodePorConfiguracao(titular, lotaTitular).withIdTpConf(ExTipoDeConfiguracao.EXIBIR_ACOES_ARQUIVO);
+
+
+		
 		if (!mob.isGeral()) {
+			
+			if (Prop.isTRF2() && exPodePorConfiguracao.eval() ) {
 
 			addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.dossie"))
 					.descr("Exibe um índice de todos os documentos juntados.")
@@ -395,6 +405,59 @@ public class ExMobilVO extends ExVO {
 					.params("nomeAcao", SigaMessages.getMessage("documento.ver.impressao"))
 					.exp(new ExPodeVisualizarImpressao(mob, titular, lotaTitular)).classe("once").build());
 
+			addAcao(AcaoVO.builder().nome("_Tramitar").descr("Enviar o documento para outra lotação ou pessoa.").icone("email_go").nameSpace("/app/expediente/mov").acao("transferir")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeTransferir(mob, titular, lotaTitular)).build());
+
+			addAcao(AcaoVO.builder().nome("Receber").descr("Receber o documento, indicando que o trâmite está concluído.").icone("email_open").nameSpace("/app/expediente/mov").acao("receber")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReceber(mob, titular, lotaTitular)).classe("once").build());
+
+			if (exPodePorConfiguracaoParaArquivo.eval())
+			{	
+				addAcao(AcaoVO.builder().nome("Desapensar").descr("Cancelar o vínculo de apensação existente.").icone("link_delete").nameSpace("/app/expediente/mov").acao("desapensar")
+						.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeDesapensar(mob, titular, lotaTitular)).classe("once").build());
+				
+				addAcao(AcaoVO.builder().nome("_Anotar").descr("Acrescentar uma movimentação de anotação ao documento. As anotações podem ser excluídas a qualquer momento.").icone("note_add").nameSpace("/app/expediente/mov").acao("anotar")
+						.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeAnotar(mob, titular, lotaTitular)).build());	
+	
+				addAcao(AcaoVO.builder().nome("Ar_q. Corrente").descr("Arquivar este documento no Arquivo Corrente.").icone("box_add").nameSpace("/app/expediente/mov").acao("arquivar_corrente_gravar")
+						.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeArquivarCorrente(mob, titular, lotaTitular)).classe("once siga-btn-arq-corrente").build());
+	
+				addAcao(AcaoVO.builder().nome("Reclassificar").icone("table_edit").descr("Alterar a classificação documental.").nameSpace("/app/expediente/mov").acao("reclassificar")
+						.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReclassificar(mob, titular, lotaTitular)).build());
+			}
+			
+			ExMovimentacao ultimaMovNaoCancelada = mob.getUltimaMovimentacaoNaoCancelada();
+			if (mob.getExDocumento().isFinalizado()	&& ultimaMovNaoCancelada != null) {
+				
+				//Cria lista de Movimentações que não podem ser canceladas
+				List<ITipoDeMovimentacao> listaMovimentacoesNaoCancelavel = new ArrayList<>();
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.CIENCIA);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.INCLUSAO_DE_COSIGNATARIO);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.CONTROLE_DE_COLABORACAO);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.RESTRINGIR_ACESSO);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.REFAZER);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ASSINATURA_POR);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.GERAR_PROTOCOLO);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.PUBLICACAO_PORTAL_TRANSPARENCIA);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ENVIO_SIAFEM);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.GERAR_LINK_PUBLICO_PROCESSO);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ENVIO_PARA_VISUALIZACAO_EXTERNA);
+				listaMovimentacoesNaoCancelavel.add(ExTipoDeMovimentacao.ORDEM_ASSINATURA);
+				
+				if (!listaMovimentacoesNaoCancelavel.contains(ultimaMovNaoCancelada.getExTipoMovimentacao())) {
+					addAcao(AcaoVO.builder().nome("Desfa_zer "
+							+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()).icone("arrow_undo").nameSpace("/app/expediente/mov").acao("cancelarMovimentacao")
+							.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarMovimentacao(mob, titular, lotaTitular)).msgConfirmacao(SigaMessages.getMessage("documento.confirma.cancelamento") + "("
+									+ mob.getDescricaoUltimaMovimentacaoNaoCancelada()
+									+ ")?").classe("once").build());
+				}
+				listaMovimentacoesNaoCancelavel = null;
+			}
+			ultimaMovNaoCancelada = null;			
+			
+
+			} else {
+
 			addAcao(AcaoVO.builder().nome("Incluir _Documento").descr("Cria um novo documento que será posteriormente juntado ao documento corrente.").icone("page_white_add").nameSpace("/app/expediente/doc").acao("editar")
 					.params("mobilPaiSel.sigla", mob.getCodigoCompacto()).params("criandoAnexo", "true").exp(new ExPodeIncluirDocumento(mob, titular, lotaTitular)).build());
 
@@ -403,7 +466,18 @@ public class ExMobilVO extends ExVO {
 
 			addAcao(AcaoVO.builder().nome("Assinar Anexos " + (mob.isVia() ? "da Via" : "do Volume")).descr("Exibe a página de Anexos Pendentes de Assinatura.").icone("script_key").nameSpace("/app/expediente/mov").acao("assinarAnexos")
 					.params("sigla", mob.getCodigoCompacto()).params("assinandoAnexosGeral", "true").exp(new ExTemAnexos(mob)).build());
+			
 		}
+		}
+		
+		if (Prop.isTRF2() && exPodePorConfiguracao.eval() ) {
+		//	addAcao(AcaoVO.builder().nome("Registrar migração SEI").descr("Registrar migração do documento para o Sistema SEI.").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("migrarSEI")
+		//			.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeMigrarSEI(mob, titular, lotaTitular)).msgConfirmacao("ATENÇÃO: antes de prosseguir esta operação verifique se está anexada neste processo informação com o novo número do processo no SEI em que o seu dossiê integral em .pdf foi incluído para prosseguimento. Após você confirmá-la, este processo SIGA-DOC permanecerá disponível somente para consulta e nenhuma outra operação poderá ser realizada. O cancelamento dessa situação poderá ser realizado somente mediante abertura de chamado pelo gestor da unidade justificadamente. Deseja prosseguir?").classe("once").build());
+
+			addAcao(AcaoVO.builder().nome("Registrar migração SEI").descr("Registrar migração do documento para o Sistema SEI.").icone("hourglass_add").nameSpace("/app/expediente/mov").acao("migrarSEI")
+		 			.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeMigrarSEI(mob, titular, lotaTitular)).classe("once").build());
+		} else {
+		
 
 		addAcao(AcaoVO.builder().nome("Desentranhar").descr("Desentranhar este documento, separando ele do documento ao qual foi juntado.").icone("page_white_error").nameSpace("/app/expediente/mov").acao("cancelar_juntada")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarJuntada(mob, titular, lotaTitular)).classe("once siga-btn-desentranhar").build());
@@ -557,6 +631,7 @@ public class ExMobilVO extends ExVO {
 		addAcao(AcaoVO.builder().nome("Desfazer Ciência").icone("arrow_undo").nameSpace("/app/expediente/mov").acao("cancelar_ciencia")
 				.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeCancelarCiencia(mob, titular, lotaTitular)).classe("once").build());
 		
+		}
 	}
 
 	public String getMarcadoresEmHtml(List<ExMarca> marcasAtivas, DpPessoa pess, DpLotacao lota) {

@@ -37,9 +37,13 @@
                                 <select class="custom-select" id="tipoResponsavel" name="tipoResponsavel"
                                         value="${tipoResponsavel}" onchange="updateTipoResponsavel()">
                                     <c:forEach var="item" items="${listaTipoResp}">
-                                        <option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
-                                                ${item.value}
-                                        </option>
+							<%-- Filtro: Só renderiza se a chave for diferente de 2 e 3 --%>
+							        <c:if test="${item.key != 2 && item.key != 3}">
+							            <option value="${item.key}"							
+									<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
+										${item.value}
+									</option>  
+							        </c:if>
                                     </c:forEach>
                                 </select>
                             </div>

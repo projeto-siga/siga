@@ -758,6 +758,14 @@ public class ExDocumentoVO extends ExVO {
 			vo.addAcao(AcaoVO.builder().nome(SigaMessages.getMessage("documento.ver.mais")).descr("Exibe mais detalhes e possibilita auditar todas as movimentações.").icone(SigaMessages.getMessage("icon.ver.mais")).nameSpace("/app/expediente/doc").acao(SigaMessages.getMessage("documento.acao.exibirAntigo"))
 					.params("sigla", mob.getCodigoCompacto()).exp(new CpPodeSempre()).msgConfirmacao(doc.getNumUltimoMobil() < 20 ? "" : "Exibir todos os " + doc.getNumUltimoMobil() + " volumes do processo simultaneamente pode exigir um tempo maior de processamento. Deseja exibi-los?").classe("once").build());
 
+			vo.addAcao(AcaoVO.builder().nome("Fina_lizar").icone("lock").descr("Conclui a elaboração do documento fazendo com que ele deixe de ser temporário (TMP) e atribui seu código definitivo.").nameSpace("/app/expediente/doc").acao("finalizar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeFinalizar(doc, titular, lotaTitular)).classe("once").build());
+			
+			vo.addAcao(AcaoVO.builder().nome("Edita_r").descr("Exibe a página de edição para que ajustes possam ser feitos.").icone("pencil").nameSpace("/app/expediente/doc").acao("editar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeEditar(mob, titular, lotaTitular)).build());
+
+			vo.addAcao(AcaoVO.builder().nome("_Anotar").descr("Acrescentar uma movimentação de anotação ao documento. As anotações podem ser excluídas a qualquer momento.").icone("note_add").nameSpace("/app/expediente/mov").acao("anotar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeFazerAnotacao(mob, titular, lotaTitular)).build());
 		} else {
 		
 		vo.addAcao(AcaoVO.builder().nome("Fina_lizar").icone("lock").descr("Conclui a elaboração do documento fazendo com que ele deixe de ser temporário (TMP) e atribui seu código definitivo.").nameSpace("/app/expediente/doc").acao("finalizar")

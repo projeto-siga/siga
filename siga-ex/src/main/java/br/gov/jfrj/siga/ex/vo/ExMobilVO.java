@@ -411,6 +411,9 @@ public class ExMobilVO extends ExVO {
 			addAcao(AcaoVO.builder().nome("Receber").descr("Receber o documento, indicando que o trâmite está concluído.").icone("email_open").nameSpace("/app/expediente/mov").acao("receber")
 					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeReceber(mob, titular, lotaTitular)).classe("once").build());
 
+			addAcao(AcaoVO.builder().nome("_Juntar").descr("Junta o documento a um documento pai, formando ou complementando um dossiê.").icone("page_white_go").nameSpace("/app/expediente/mov").acao("juntar")
+					.params("sigla", mob.getCodigoCompacto()).exp(new ExPodeJuntar(mob, titular, lotaTitular)).classe("once").build());
+
 			if (exPodePorConfiguracaoParaArquivo.eval())
 			{	
 				addAcao(AcaoVO.builder().nome("Desapensar").descr("Cancelar o vínculo de apensação existente.").icone("link_delete").nameSpace("/app/expediente/mov").acao("desapensar")

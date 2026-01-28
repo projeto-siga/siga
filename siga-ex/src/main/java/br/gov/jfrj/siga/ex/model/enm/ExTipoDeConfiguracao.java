@@ -638,7 +638,7 @@ public enum ExTipoDeConfiguracao implements ITipoDeConfiguracao {
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },
 			CpSituacaoDeConfiguracaoEnum.PODE, true),
 	
-	EXIBIR_ACOES_ARQUIVO(68, "Exibir Ações para o Arquivo", "Complementar Ações Inibidas pela configuração INIBIR_ACOES para o setor de arquivo válido somente no TRF2 e com a configuração anterior citada ativada",
+	EXIBIR_ACOES_ARQUIVO(69, "Exibir Ações para o Arquivo", "Complementar Ações Inibidas pela configuração INIBIR_ACOES para o setor de arquivo válido somente no TRF2 e com a configuração anterior citada ativada",
 			new Enum[] { CpParamCfg.ORGAO, CpParamCfg.LOTACAO, CpParamCfg.PESSOA },
 			new Enum[] { CpParamCfg.SITUACAO }, 
 			new CpSituacaoDeConfiguracaoEnum[] { CpSituacaoDeConfiguracaoEnum.PODE, CpSituacaoDeConfiguracaoEnum.NAO_PODE },

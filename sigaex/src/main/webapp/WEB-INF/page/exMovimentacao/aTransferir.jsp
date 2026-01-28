@@ -137,9 +137,13 @@
 							<label>Destinatário</label> 
 							<select name="tipoResponsavel" onchange="javascript:sbmt();" class="form-control" >
 								<c:forEach items="${listaTipoResp}" var="item">
+							<%-- Filtro: Só renderiza se a chave for diferente de 2 e 3 --%>
+							        <c:if test="${item.key != 2 && item.key != 3}">
+							            <option value="${item.key}"							
 									<option value="${item.key}" ${item.key == tipoResponsavel ? 'selected' : ''}>
 										${item.value}
 									</option>  
+							        </c:if>
 								</c:forEach>
 							</select> 
 						</div>

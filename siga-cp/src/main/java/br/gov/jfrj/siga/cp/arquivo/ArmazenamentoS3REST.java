@@ -143,7 +143,7 @@ public class ArmazenamentoS3REST implements Armazenamento {
                             return null;
                         return SigaHTTP.convertStreamToByteArray(content, 8192);
                     }
-                    throw new RuntimeException("Erro de storage " + response.getStatusLine().getReasonPhrase());
+                    throw new RuntimeException("Erro de storage " + response.getStatusLine().getReasonPhrase() + " " + bucketAndPath);
                 }
             }
         } catch (RuntimeException e) {

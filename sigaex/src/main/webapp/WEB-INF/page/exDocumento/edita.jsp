@@ -478,9 +478,13 @@
 										name="exDocumentoDTO.tipoDestinatario"
 										onchange="javascript:sbmt();" class="form-control">
 										<c:forEach items="${exDocumentoDTO.listaTipoDest}" var="item">
-											<option value="${item.key}"
-												${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
-												${item.value}</option>
+										<%-- Filtro: Só renderiza se a chave for diferente de 1 e 3 e 4 --%>
+										        <c:if test="${item.key != 1 && item.key != 3  && item.key != 4}">
+										            <option value="${item.key}"
+										                ${item.key == exDocumentoDTO.tipoDestinatario ? 'selected' : ''}>
+										                ${item.value}
+										            </option>
+										        </c:if>
 										</c:forEach>
 									</select>
 								</div>

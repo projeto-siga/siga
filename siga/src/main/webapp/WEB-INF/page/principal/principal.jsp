@@ -83,7 +83,7 @@
 					<div class="mt-2">
 						<a class="btn btn-primary float-right btn-sm ml-2"
 							href="javascript: window.location.href='/sigaex/app/expediente/doc/editar'"
-							title="Criar novo expediente ou processo administrativo">
+							title="Criar novo MIG">
 							<fmt:message key = "documento.novo"/></a> 
 							<c:if test="${!ehPublicoExterno}">
 								<a

@@ -29,6 +29,7 @@ import br.gov.jfrj.siga.idp.jwt.SigaJwtOptions;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtOptionsBuilder;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtProvider;
 import br.gov.jfrj.siga.idp.jwt.SigaJwtProviderException;
+import br.gov.jfrj.siga.model.DadosParaCriacaoDeUsuario;
 
 public class AutenticadorJwtCookie implements Autenticador {
     @Override
@@ -71,7 +72,24 @@ public class AutenticadorJwtCookie implements Autenticador {
         }
         return principal;
     }
-
+    
+    @Override
+    public DadosParaCriacaoDeUsuario obterDadosParaCriacaoDeUsuario(HttpServletRequest req, HttpServletResponse resp)
+            throws InvalidKeyException, IllegalArgumentException, NoSuchAlgorithmException, IllegalStateException,
+            SignatureException, SigaJwtInvalidException, SigaJwtProviderException, IOException, JWTVerifyException {
+        String token = extrairAuthorization(req);
+        Map<String, Object> decodedToken = validarToken(token);
+        String nome = (String) decodedToken.get("nome");
+        String email = (String) decodedToken.get("email");
+        String cpf = (String) decodedToken.get("cpf");
+        if (nome == null || nome.isEmpty() || email == null || email.isEmpty() || cpf == null || cpf.isEmpty())
+            throw new SigaJwtInvalidException("Token inválido para criação de usuário");
+        
+        //TODO: acrescentar validação de email e CPF
+        
+        return new DadosParaCriacaoDeUsuario(nome, email, cpf);
+    }
+    
     @Override
     public void removerCookie(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         addCookie(req, resp, buildEraseCookie());

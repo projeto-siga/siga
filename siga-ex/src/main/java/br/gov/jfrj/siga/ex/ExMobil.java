@@ -154,6 +154,21 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		return movsTp;
 	}
 	
+	public List<ExMovimentacao> getMovimentacoesReferenciaPorTipo(ITipoDeMovimentacao tpMov, boolean somenteAtivas) {
+
+		final Set<ExMovimentacao> movs = getExMovimentacaoReferenciaSet();
+		List<ExMovimentacao> movsTp = new ArrayList<ExMovimentacao>();
+
+		if (movs != null)
+			for (final ExMovimentacao m : movs) {
+				if (somenteAtivas && m.isCancelada())
+					continue;
+				if (m.getExTipoMovimentacao() == tpMov)
+					movsTp.add(m);
+			}
+		return movsTp;
+	}
+	
 	public List<DpPessoa> getSubscritoresMovimentacoesPorTipo(ITipoDeMovimentacao tpMov, boolean somenteAtivas) {
 		List<ExMovimentacao> movimentacoes = getMovimentacoesPorTipo(tpMov, somenteAtivas);
 		List<DpPessoa> subscritores = new ArrayList<DpPessoa>();
@@ -570,6 +585,14 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 			throw new Error("Via e Volume devem possuir número válido de sequencia.");
 		String terminacao = getTerminacaoSigla();
 		return getExDocumento().getSigla() + (terminacao.equals("") ? "" : "-") + getTerminacaoSigla();
+	}
+	
+	public String getSiglaCompacta() {
+		String s = getSigla();
+		if (s == null)
+			return null;
+		s = s.replace("/", "").replace("-", "");
+		return s;
 	}
 
 	/**

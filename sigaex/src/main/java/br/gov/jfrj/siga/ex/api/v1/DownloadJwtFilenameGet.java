@@ -16,8 +16,10 @@ import com.auth0.jwt.JWTVerifyException;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.context.AcessoPublico;
 import br.gov.jfrj.siga.ex.api.v1.IExApiV1.IDownloadJwtFilenameGet;
+import br.gov.jfrj.siga.vraptor.UsuarioExterno;
 
 @AcessoPublico
+@UsuarioExterno
 public class DownloadJwtFilenameGet implements IDownloadJwtFilenameGet {
 
 	@Override

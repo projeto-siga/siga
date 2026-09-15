@@ -171,8 +171,9 @@ ${meta}
 </head>
 
 
-<body onload="${onLoad}" class="${body_color}">
+<body onload="${onLoad}" class="${body_color}" style="${usuarioExterno ? 'margin-top: 1em;' : ''}">
 	<c:if test="${popup!='true'}">
+		<div style="display: ${usuarioExterno ? 'none' : 'block'}">
    		<nav id="siga-top-menu" class="navbar navbar-expand-lg ${navbar_class} ${menu_class}">
 			<a class="navbar-brand pt-0 pb-0" href="/siga"> <img
 				src="${navbar_logo}" height="${navbar_logo_size}">
@@ -481,7 +482,7 @@ ${meta}
 
 		<div id="quadroAviso"
 			style="position: absolute; font-weight: bold; padding: 4px; color: white; visibility: hidden">-</div>
-
+		</div>
 	</c:if>
 
 	<div id="carregando"

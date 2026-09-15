@@ -92,6 +92,7 @@ public class ExArquivoController extends ExController {
 	}
 
 	@TrackRequest
+	@UsuarioExterno
 	@Get("/app/arquivo/exibir")
 	public Download aExibir(final String sigla, final boolean popup, final String arquivo, byte[] certificado,
 			String hash, final String HASH_ALGORITHM, final String certificadoB64, boolean completo,
@@ -189,7 +190,7 @@ public class ExArquivoController extends ExController {
 				
 				DocumentosSiglaArquivoGet.iniciarGeracaoDePdf(req, resp, ContextoPersistencia.getUserPrincipal(),
 						filename, contextpath, servernameport, reduzirVisuAssinPdf);
-				result.redirectTo("/app/arquivo/status/" + mob.getCodigoCompacto() + "/" + resp.uuid + "/"
+				result.redirectTo(Prop.get("/siga.base.url") + "/sigaex/app/arquivo/status/" + mob.getCodigoCompacto() + "/" + resp.uuid + "/"
 						+ resp.jwt + "/" + filename);
 				return null;
 			}
@@ -279,7 +280,7 @@ public class ExArquivoController extends ExController {
 		}
 	}
 
-
+	@UsuarioExterno
 	@Get("/app/arquivo/status/{sigla}/{uuid}/{jwt}/{filename}")
 	public void status(String sigla, String uuid, String jwt, String filename) {
 		result.include("sigla", sigla);

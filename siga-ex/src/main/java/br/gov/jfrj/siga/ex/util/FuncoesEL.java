@@ -100,6 +100,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.BIE.ModeloBIE;
 import br.gov.jfrj.siga.ex.util.notificador.geral.Notificador;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import freemarker.ext.dom.NodeModel;
 
 public class FuncoesEL {
@@ -1262,5 +1263,9 @@ public class FuncoesEL {
     public static Boolean podeAcessarDocumento(DpPessoa titular, DpLotacao lotaTitular, ExMobil mob) throws Exception {
         return Ex.getInstance().getComp()
                 .pode(ExPodeAcessarDocumento.class, titular, lotaTitular, mob);
+    }
+    
+    public static Boolean isUsuarioExterno() {
+    	return ContextoPersistencia.isUsuarioExterno();
     }
 }

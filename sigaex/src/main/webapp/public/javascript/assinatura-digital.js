@@ -16,6 +16,7 @@ var gUrlPost;
 var gOperacoes;
 var gLogin;
 var gPassword;
+var gUsuarioExterno;
 
 var gAssinando = false;
 
@@ -48,7 +49,8 @@ function TestarAssinaturaDigital() {
 // pagina
 //
 function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo) {
-	
+	gUsuarioExterno = ((document.getElementsByName("ad_usuario_externo") || [])[0] || {}).value === 'true'
+
 	if (gAssinando)
 		return;
 	gAssinando = true;
@@ -83,9 +85,13 @@ function AssinarDocumentos(copia, politica, juntar, tramitar, exibirNoProtocolo)
 
 	if (tipo == 2) {
 		provider = providerPassword;
-		providerPassword.inicializar(function() {
+		if (gUsuarioExterno) {
 			ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
-		});
+		} else {
+			providerPassword.inicializar(function() {
+				ExecutarAssinarDocumentos(copia, juntar, tramitar, exibirNoProtocolo);
+			});
+		}
 	}
 
 	if (tipo == 3) {
@@ -1110,7 +1116,7 @@ function ExecutarAssinarDocumentos(Copia, Juntar, Tramitar, ExibirNoProtocolo) {
 					+ o.urlPostPassword + "';");
 
 			process.push(function() {
-				Log(gNome + ": Gravando assinatura com senha de " + gLogin)
+				Log(gNome + ": Gravando assinatura com senha" + gUsuarioExterno ? "" : " de " + gLogin)
 			});
 
 			process.push(function() {
@@ -1253,7 +1259,7 @@ function identificarOperacoes() {
 			var oChkAut = document.getElementsByName("ad_aut_"
 					+ operacao.codigo)[0];
 			if (oChkAut != null) {
-				operacao.autenticar = oChkAut.checked;
+				operacao.autenticar = oChkAut.checked || oChkAut.value == "true";
 				if (operacao.autenticar)
 					operacao.enabled = true;
 			}

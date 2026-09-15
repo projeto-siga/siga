@@ -49,7 +49,7 @@ import br.gov.jfrj.siga.base.log.RequestExceptionLogger;
 import br.gov.jfrj.siga.base.util.Paginador;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
-import br.gov.jfrj.siga.cp.model.HistoricoSuporte;
+import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -154,6 +154,7 @@ public class SigaController {
 		result.include("meusDelegados", getMeusDelegados());
 		result.include("identidadeCadastrante", getIdentidadeCadastrante());
 		result.include("logadoviaGovBr",(request.getSession().getAttribute(CallBackServlet.PUBLIC_CPF_USER_SSO) != null?true:false));
+		result.include("usuarioExterno", isUsuarioExterno());
 	}
 
 	@Inject
@@ -301,7 +302,11 @@ public class SigaController {
 	protected CpIdentidade getIdentidadeCadastrante() {
 		return so.getIdentidadeCadastrante();
 	}
-
+	
+	protected boolean isUsuarioExterno() {
+		return CpBL.isUsuarioExterno(getCadastrante(), getLotaTitular());
+	}
+	
 	protected String param(final String parameterName) {
 		final String[] as = getRequest().getParameterValues(parameterName);
 		if (as == null || as[0].equals("null"))
@@ -528,5 +533,5 @@ public class SigaController {
 	public void setContext(ServletContext context) {
 		this.context = context;
 	}
-
+	
 }

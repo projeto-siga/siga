@@ -122,8 +122,14 @@
 							<div class="col-sm-12 text-center">
 					            <span class="spinner spinner--salvando js-spinner--salvando"></span>
 					            <span class="icone-salvo-sucesso"><i class="fas fa-check-circle"></i></span>
-					            <a id="btnGoToMesa" class="btn btn-primary text-center" href="/siga/app/principal" title="Ir para Mesa Virtual" style="margin-top:50px;">Ir para Mesa Virtual</a>
-					            				            					            					           
+					            <c:choose>
+						            <c:when test="${empty redirect}">
+						            	<a id="btnGoToMesa" class="btn btn-primary text-center" href="/siga/app/principal" title="Ir para Mesa Virtual" style="margin-top:50px;">Ir para Mesa Virtual</a>
+						            </c:when>
+						            <c:otherwise>
+						            	<a id="btnGoToSignPage" class="btn btn-primary text-center" href="${redirect}" title="Retornar para a Página de Assinatura" style="margin-top:50px;">Retornar para a Página de Assinatura</a>
+						            </c:otherwise>
+						        </c:choose>
 							</div>						
 						</div>
 					</div>

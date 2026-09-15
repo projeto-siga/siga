@@ -897,6 +897,13 @@ public class ExDao extends CpDao {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public ExMobil consultarPorSigla(final String sigla) {
+		final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+		filter.setSigla(sigla);
+		ExMobil mob = (ExMobil) consultarPorSigla(filter);
+		return mob;
+	}
 
 	public ExMobil consultarPorSigla(final ExMobilDaoFiltro flt) {
 		try {

@@ -12,8 +12,10 @@ import org.apache.commons.logging.LogFactory;
 import br.gov.jfrj.siga.acesso.ConheceUsuario;
 import br.gov.jfrj.siga.acesso.UsuarioAutenticado;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.bl.Cp;
+import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -24,6 +26,7 @@ import br.gov.jfrj.siga.dp.dao.CpOrgaoUsuarioDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpLotacaoDaoFiltro;
 import br.gov.jfrj.siga.dp.dao.DpPessoaDaoFiltro;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
+import br.gov.jfrj.siga.model.DadosParaCriacaoDeUsuario;
 
 @RequestScoped
 public class SigaObjects implements ConheceUsuario {
@@ -81,6 +84,35 @@ public class SigaObjects implements ConheceUsuario {
 
 		// autenticação por formulário
 		String principal = ContextoPersistencia.getUserPrincipal();
+		
+		CpIdentidade id = null;
+		try {
+			id = dao().consultaIdentidadeCadastrante(principal, true);
+		} catch (Exception ex) {
+			// swallow and test if id == null later
+		}
+		if (id == null) {
+			// Criar o usuário externo no banco de dados e depois carregar a identidade
+			//
+			DadosParaCriacaoDeUsuario dados = ContextoPersistencia.getDadosParaCriacaoDeUsuario();
+			// Verificar se temos dados para criação de usuário
+			if (dados != null && dados.getNome() != null && dados.getEmail() != null && dados.getCpf() != null) {
+				Boolean criarUsuarioExterno = Prop.getBool("/siga.usuario.externo.criar");
+				String idOrgaoUsuarioExterno = Prop.get("/siga.usuario.externo.criar.no.id.orgao");
+				String idCargoOrgaoExterno = Prop.get("/siga.usuario.externo.criar.no.id.cargo");
+				String idLotacaoOrgaoExterno = Prop.get("/siga.usuario.externo.criar.no.id.lotacao");
+				// Verificar se temos parâmetros habilitando a criação de usuário
+				if (criarUsuarioExterno && idOrgaoUsuarioExterno != null && idCargoOrgaoExterno != null && idLotacaoOrgaoExterno != null) {
+					boolean transactional = ContextoPersistencia.isTransactional();
+					if (!transactional)
+						ContextoPersistencia.upgradeToTransactional();
+					new CpBL().criarUsuario(null, null, Long.parseLong(idOrgaoUsuarioExterno),Long.parseLong(idCargoOrgaoExterno), null, Long.parseLong(idLotacaoOrgaoExterno), dados.getNome(), null, dados.getCpf(), dados.getEmail(), null,
+							null, null, null, null, "S");
+					if (!transactional)
+						ContextoPersistencia.flushTransactionAndDowngradeToNonTransactional();
+				}
+			}
+		}
 		UsuarioAutenticado.carregarUsuarioAutenticado(principal, this);
 	}
 

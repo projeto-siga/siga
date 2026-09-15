@@ -304,7 +304,7 @@ public class ExServiceImpl implements ExService {
 		return mob.doc().getPrimeiraVia() != null && mob.doc().getSetVias().size() == 1;
 	}
 
-	private static boolean isAtendente(final DpPessoa titular,
+	private static boolean testIsAtendente(final DpPessoa titular,
 			final DpLotacao lotaTitular, final ExMobil mob) throws Exception {
 		if (mob.isGeral()) {
 			for (ExMobil m : mob.doc().getExMobilSet()) {
@@ -324,7 +324,7 @@ public class ExServiceImpl implements ExService {
 			try {
 				PessoaLotacaoParser cadastranteParser = new PessoaLotacaoParser(siglaTitular);
 				ExMobil mob = buscarMobil(codigoDocumento);
-				return isAtendente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), mob);
+				return testIsAtendente(cadastranteParser.getPessoa(), cadastranteParser.getLotacao(), mob);
 			} catch (Exception ex) {
 				Exception e = ctx.exceptionWithMessageFileAndLine(ex);
 				ctx.rollback(e);

@@ -99,7 +99,7 @@ import br.gov.jfrj.siga.model.CarimboDeTempo;
 @Table(name = "siga.ex_documento")
 @DynamicUpdate
 public class ExDocumento extends AbstractExDocumento implements Serializable,
-		CarimboDeTempo {
+		CarimboDeTempo, Comparable<ExDocumento> {
 
 	private static final Logger log = Logger.getLogger(ExDocumento.class);
 
@@ -3353,5 +3353,20 @@ public class ExDocumento extends AbstractExDocumento implements Serializable,
         if(createBlob != null)
             setCpArquivo(CpArquivo.updateConteudo(getCpArquivo(), createBlob, getCodigoCompacto(), isFinalizado() ? ArmazenamentoTemporalidadeEnum.MANTER_POR_30_ANOS : ArmazenamentoTemporalidadeEnum.TEMPORARIO));
     }
+
+	@Override
+	public int compareTo(ExDocumento o) {
+		if (this == o)
+			return 0;
+		if (o == null)
+			return 1;
+		if (this.getIdDoc() != null && o.getIdDoc() == null)
+			return 1;
+		if (this.getIdDoc() == null && o.getIdDoc() != null)
+			return -1;
+		if (this.getIdDoc() == null && o.getIdDoc() == null)
+			return 0;
+		return this.getIdDoc() > o.getIdDoc() ? 1 : this.getIdDoc() == o.getIdDoc() ? 0 : -1;
+	}
 
 }

@@ -1527,7 +1527,7 @@ function MixWithNewPage(aElements, sPage, sIdObj) {
 //	alert(j);
 //	alert(len);
 //alert(s.substring(j, len));
-								eval(s.substring(j, len));
+								(0, eval)(s.substring(j, len));
 							} while (true)
 						}
 					}

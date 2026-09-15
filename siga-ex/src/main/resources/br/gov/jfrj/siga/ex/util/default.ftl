@@ -5282,7 +5282,7 @@ ${texto}
 	[/#if]
 [/#compress][/#macro]
 
-[#macro field var index=(_index!'') title=var+index kind="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true sensitivity=""]
+[#macro field var index=(_index!'') title=var+index kind="" columns=80 lines=3 maxchars="" refresh=false required=false value="" default="" options="" searchClosed=false atts={} altered="" id="" col="" hint="" document=true sensitivity="" model="" config=""]
 	[#if col?is_number]
 		[#local colr=('col-' + col) /]
 	[#elseif col?is_string]
@@ -5292,7 +5292,7 @@ ${texto}
 			[#local colr='col-12'/]
 		[/#if]
 	[/#if]
-	[@field_impl var=var+index title=title kind=kind columns=columns lines=lines maxchars=maxchars refresh=refresh required=required value=value default=default options=options searchClosed=searchClosed atts=atts id=id col=colr hint=hint /]
+	[@field_impl var=var+index title=title kind=kind columns=columns lines=lines maxchars=maxchars refresh=refresh required=required value=value default=default options=options searchClosed=searchClosed atts=atts id=id col=colr hint=hint model=model config=config /]
 [/#macro]
 
 [#--
@@ -5396,7 +5396,7 @@ Exemplos de utilização:
 [@field kind="radio" var="radNumeral" title="Terceiro" value="Terceiro" refresh="rad" /]
 [@group depend="rad"]${radNumeral!}[/@group]
 --]
-[#macro field_impl var title=var kind="" maxchars="" refresh=false required=false columns=80 lines=3  value="" default="" options="" searchClosed=false atts={} id="" col="" hint=""]
+[#macro field_impl var title=var kind="" maxchars="" refresh=false required=false columns=80 lines=3  value="" default="" options="" searchClosed=false atts={} id="" col="" hint="" model="" config=""]
     [#if gerar_formulario!false]
     	[#return]
     [/#if]
@@ -5493,7 +5493,7 @@ Exemplos de utilização:
 			[#if kind == "texto"]
 				<input type="text" id="${var}" name="${var}" value="${v}" ${refresh_inc!} ${maxchars_inc!} ${placeholder_inc!} ${attsHtml} onkeyup="${onkeyup!}" class="form-control" [#if isCpf]data-formatar-cpf="true"[#elseif isCnpj]data-formatar-cnpj="true"[#elseif isTelefone]data-formatar-telefone="true"[#else][/#if]/>
 				[#if isCpf]    
-					<script>
+					<script type="text/javascript">
 						function aplicarMascaraCPF(evento) {	     			             
 							cpf = this.value.replace(/([^\d])/g, '');
 
@@ -5511,7 +5511,7 @@ Exemplos de utilização:
 						document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraCPF);
 					</script>  
 				[#elseif isCnpj]
-					<script>
+					<script type="text/javascript">
 						function aplicarMascaraCNPJ(evento) {	     			             
 							cnpj = this.value.replace(/([^\d])/g, '');
 
@@ -5530,7 +5530,7 @@ Exemplos de utilização:
 						document.querySelector('input[name=${var}]').addEventListener('change', aplicarMascaraCNPJ);
 					</script> 
           		[#elseif isTelefone]
-					<script>
+					<script type="text/javascript">
 						function aplicarMascaraTELEFONE(evento) {	     			             
 							telefone = this.value.replace(/([^\d])/g, '');               
     							telefone = telefone.replace(/^(\d\d)(\d)/g,"($1) $2");
@@ -5564,7 +5564,7 @@ Exemplos de utilização:
 					[@inlineTemplate/]
 				[/#if]
 				[#if v == value]
-					<script>document.getElementById('${var}').value = '${value}';</script>
+					<script type="text/javascript">document.getElementById('${var}').value = '${value}';</script>
 				[/#if]
 				<div class="custom-control custom-radio">
 					<input class="form-check-input" type="radio" id="${id}" name="${var}_chk" value="${value}" [#if v == value]checked[/#if] onclick="javascript: if (this.checked) document.getElementById('${var}').value = '${value}'; ${onclique!}; ${refresh_js!};" ${attsHtml} [#if id == ""]data-criar-id="true"[/#if]/>     			
@@ -5954,7 +5954,9 @@ Exemplos de utilização:
 				[@field_selectable tipo="funcao" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
 			[#elseif kind == "documento"]
 			    [@field_selectable tipo="expediente" modulo="sigaex" titulo=title var=var refresh_js=refresh_js paramList=paramList obrigatorio=required col=col hint=hint /]
-			[/#if]
+			[#elseif kind == "file"]
+        		[@field_file var=var title=title model=model refresh=refresh required=required col=col hint=hint config=config /]
+    		[/#if]
 		        [#if required]            		    
 			   		<div class="invalid-feedback invalid-feedback-${var}${suffix!}">Preenchimento obrigatório</div>
 				[/#if]    
@@ -5965,7 +5967,139 @@ Exemplos de utilização:
 		[/#if]
 [/#macro]
 
-[#macro field_selectable titulo var tipo refresh_js="" default="" obrigatorio=false paramList="" modulo="" col="" hint=""]
+[#assign contadorDeDocumentosASeremJuntados = 0 /]
+
+[#macro field_file var title model="" refresh=false required=false col="col-12" hint="" config=""]
+    [#local v = .vars[var]!""]
+    [#local vfn = .vars[var+'_filename']!""]
+    [#local idAjax = "" /]
+    [#if refresh?is_string][#local idAjax = refresh /][/#if]
+    <input type="hidden" id="${var}" name="${var}" value="${v}"/>
+    
+    [#-- Cria uma nova variável indicando o número desse documento na lista de documentos a serem juntado --]
+	[#assign contadorDeDocumentosASeremJuntados = contadorDeDocumentosASeremJuntados + 1 /]
+    <input type="hidden" name="vars" value="${var}_document_submission_index" />
+    <input type="hidden" name="${var}_document_submission_index" value="${contadorDeDocumentosASeremJuntados}"/>
+    <input type="hidden" name="vars" value="${var}_filename" />
+    <input type="hidden" name="${var}_filename" value="${vfn}" id="${var}_filename"/>
+    [#if config??]
+	    <input type="hidden" name="vars" value="${var}_config" />
+	    <input type="hidden" name="${var}_config" value="${config}" id="${var}_config"/>
+    [/#if]
+    
+    [#-- Área de Upload --]
+    <div id="upload_zone_${var}" style="display: [#if v == ""]block[#else]none[/#if];">
+        <div class="custom-file">
+            <input type="file" id="input_file_${var}" class="custom-file-input" onchange="uploadFile_${var}(this)" accept="application/pdf" />
+            <label class="custom-file-label" for="input_file_${var}">Escolha o arquivo...</label>
+        </div>
+        
+        <div id="progress_wrapper_${var}" style="display:none; margin-top: 5px;">
+            <div class="progress" style="height: 5px;">
+                <div id="progress_bar_${var}" class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>
+            </div>
+            <small class="text-muted">Enviando documento...</small>
+        </div>
+    </div>
+
+    [#-- Área de Resultado --]
+    <div id="result_zone_${var}" style="display: [#if v != ""]flex[#else]none[/#if]; align-items: center;">
+        <div class="input-group">
+            <input type="text" class="form-control" value="${(vfn??)?then(vfn,v)}" readonly 
+                   style="background-color: #e9ecef; font-weight: bold; color: #28a745;" id="id_display_${var}" />
+            <div class="input-group-append">
+                <button class="btn btn-outline-danger" type="button" onclick="clearFile_${var}()">
+                    <i class="fa fa-trash"></i> Limpar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    function uploadFile_${var}(inputEl) {
+        if (!inputEl.files || inputEl.files.length === 0) return;
+
+        var file = inputEl.files[0];
+        var filename = file.name;
+        var formData = new FormData();
+        
+        // Parâmetro corrigido para 'model' conforme solicitado
+        formData.append("modelo", "${model}"); 
+        formData.append("arquivo", file);
+        formData.append("entrevista", ""); 
+        formData.append("eletronico", "true");
+
+        $("#progress_wrapper_${var}").show();
+        $(inputEl).attr("disabled", true);
+        
+        $.ajax({
+            url: '/sigaex/api/v1/documentos',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percent = Math.round((evt.loaded / evt.total) * 100);
+                        $("#progress_bar_${var}").css("width", percent + "%");
+                    }
+                }, false);
+                return xhr;
+            },
+            success: function(data) {
+                if (data && data.sigladoc) {
+                    var sigla = data.sigladoc;
+                    document.getElementById("${var}").value = sigla;
+                    document.getElementById("${var}_filename").value = filename;
+                    $("#id_display_${var}").val(filename);
+                    
+                    $("#upload_zone_${var}").hide();
+                    $("#result_zone_${var}").css("display", "flex");
+
+                    [#if idAjax != ""]
+                        sbmt('${idAjax}');
+                    [#elseif refresh == true]
+                        sbmt('');
+                    [/#if]
+                }
+            },
+            error: function(xhr) {
+                alert("Erro: " + (xhr.responseJSON ? xhr.responseJSON.errormsg : "Falha na comunicação"));
+                $(inputEl).val("");
+            },
+            complete: function() {
+                $("#progress_wrapper_${var}").hide();
+                $("#progress_bar_${var}").css("width", "0%");
+                $(inputEl).attr("disabled", false);
+            }
+        });
+    }
+
+    function clearFile_${var}() {
+        // Limpeza imediata sem confirmação
+        document.getElementById("${var}").value = "";
+        
+        var fInput = document.getElementById("input_file_${var}");
+        if (fInput) {
+            fInput.value = "";
+            $(fInput).next('.custom-file-label').html("Escolha o arquivo...");
+        }
+        
+        $("#result_zone_${var}").hide();
+        $("#upload_zone_${var}").show();
+        
+        [#if idAjax != ""]
+            sbmt('${idAjax}');
+        [#elseif refresh == true]
+            sbmt('');
+        [/#if]
+    }
+    </script>
+[/#macro]
+
+[#macro field_selectable titulo var tipo refresh_js="" default="" obrigatorio=false paramList="" modulo="" col="" hint="" model=""]
     [#assign tipoSel = "_" + tipo /]
 
     [#assign varName = var + tipoSel + "Sel.id" /]    

@@ -24,6 +24,7 @@ import com.auth0.jwt.JWTVerifyException;
 
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.SigaMessages;
+import br.gov.jfrj.siga.cp.auth.Autenticador;
 import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
 import br.gov.jfrj.siga.model.ContextoPersistencia;
 
@@ -55,7 +56,11 @@ public class AuthJwtFormFilter implements Filter {
 
 		try {
 			if (!req.getRequestURI().equals("/sigaex/autenticar.action")) {
-				ContextoPersistencia.setUserPrincipal(AutenticadorFabrica.getInstance().obterPrincipal(req, resp));
+				Autenticador autenticador = AutenticadorFabrica.getInstance();
+				String principal = autenticador.obterPrincipal(req, resp);
+				ContextoPersistencia.setUserPrincipal(principal);
+				if (principal.matches("\\d+"))
+					ContextoPersistencia.setDadosParaCriacaoDeUsuario(autenticador.obterDadosParaCriacaoDeUsuario(req, resp));
 			}
 			chain.doFilter(request, response);
 			/*

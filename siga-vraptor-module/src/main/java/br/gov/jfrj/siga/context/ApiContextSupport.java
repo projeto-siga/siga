@@ -28,6 +28,7 @@ import br.gov.jfrj.siga.base.RequestInfo;
 import br.gov.jfrj.siga.base.log.RequestLoggerFilter;
 import br.gov.jfrj.siga.cp.CpIdentidade;
 import br.gov.jfrj.siga.cp.auth.AutenticadorFabrica;
+import br.gov.jfrj.siga.cp.bl.CpBL;
 import br.gov.jfrj.siga.dp.DpLotacao;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.dp.dao.CpDao;
@@ -38,6 +39,7 @@ import br.gov.jfrj.siga.vraptor.RequestParamsCheck;
 import br.gov.jfrj.siga.vraptor.RequestParamsPermissiveCheck;
 import br.gov.jfrj.siga.vraptor.SigaObjects;
 import br.gov.jfrj.siga.vraptor.Transacional;
+import br.gov.jfrj.siga.vraptor.UsuarioExterno;
 
 abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 
@@ -148,8 +150,19 @@ abstract public class ApiContextSupport extends SwaggerApiContextSupport {
 		//Verifica a conformidade dos parâmetros informados antes de continuar
 		checkRequestParams();
 
-		if (ContextoPersistencia.getUserPrincipal() != null)
+		if (ContextoPersistencia.getUserPrincipal() != null) {
 			assertAcesso("");
+
+			//Testar acesso de usuário externo apenas para requests que são sejam de AcessoPublico
+			boolean b = CpBL.isUsuarioExterno(getCadastrante(), getLotaCadastrante());
+			ContextoPersistencia.setUsuarioExterno(b);
+			//Verifica se o usuário externo pode acessar esse método de API
+			if (!getCtx().getAction().getClass().isAnnotationPresent(UsuarioExterno.class)) {
+				if (b) {
+					throw new SwaggerAuthorizationException("Usuário externo não pode acessar esse método da API.");
+				}
+			}
+		}
 	}
 	
 	@Override

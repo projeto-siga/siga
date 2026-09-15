@@ -3,6 +3,8 @@ package br.gov.jfrj.siga.cp.auth;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.gov.jfrj.siga.model.DadosParaCriacaoDeUsuario;
+
 public interface Autenticador {
     public static final String SIGA_JWT_AUTH_COOKIE_NAME = "siga-jwt-auth";
     public static final String SIGA_JWT_AUTH_COOKIE_DOMAIN = null;
@@ -18,10 +20,14 @@ public interface Autenticador {
     static final String TOKEN_TYPE_KEY = "typ";
     static final String TOKEN_TYPE_VALUE = "auth";
     static long DEFAULT_TTL_TOKEN = 3600; // default 1 hora
-
+    
     String criarCookie(HttpServletRequest req, HttpServletResponse resp, String principal) throws Exception;
 
     String obterPrincipal(HttpServletRequest req, HttpServletResponse resp) throws Exception;
+    
+    default DadosParaCriacaoDeUsuario obterDadosParaCriacaoDeUsuario(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    	return null;
+    };
 
     void removerCookie(HttpServletRequest req, HttpServletResponse resp) throws Exception;
 }

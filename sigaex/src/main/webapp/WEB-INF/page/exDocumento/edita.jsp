@@ -101,6 +101,7 @@
 					</c:choose>
 					<input type="hidden" name="campos" value="idTpDoc" />
 
+<div style="${usuarioExterno ? 'display: none' : ''}">
 					<!-- Modelo -->
 					<div class="row">
 						<div class="col col-12 col-lg-8">
@@ -749,6 +750,7 @@
 							</div>
 						</div>
 					</c:if>
+</div>					
 					<c:if
 						test='${exDocumentoDTO.tipoDocumento == "interno" or exDocumentoDTO.capturado}'>
 						<c:if

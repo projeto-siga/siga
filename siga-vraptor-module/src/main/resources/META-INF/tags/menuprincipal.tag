@@ -47,7 +47,7 @@
 		</c:if>
 		<c:if test="${f:resource('/siga.local') != 'GOVSP'}">
 			<li><a class="dropdown-item" href="/siga/app/principal">Página
-					Inicial</a></li>
+					Inicial vs ${teste}</a></li>
 		</c:if>
 		<c:if
 			test="${f:podeUtilizarServicoPorConfiguracao(titular,lotaTitular,'SIGA;WF:Módulo de Workflow') or

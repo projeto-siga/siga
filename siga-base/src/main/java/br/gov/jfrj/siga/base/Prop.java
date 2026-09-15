@@ -159,6 +159,8 @@ public class Prop {
 		provider.addPublicProperty("/siga.usuario.externo.criar.no.id.orgao",null);
 		provider.addPublicProperty("/siga.usuario.externo.criar.no.id.cargo",null);
 		provider.addPublicProperty("/siga.usuario.externo.criar.no.id.lotacao",null);
+		provider.addPublicProperty("/siga.usuario.externo.pagina.modelos.url",null);
+		provider.addPublicProperty("/siga.usuario.externo.pagina.modelos.botao",null);
 		
 
 		provider.addPublicProperty("/siga.omitir.metodo2", "true");

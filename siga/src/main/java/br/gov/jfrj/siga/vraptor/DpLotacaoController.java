@@ -176,6 +176,7 @@ public class DpLotacaoController extends SigaSelecionavelControllerSupport<DpLot
 		return null;
 	}
 
+	@UsuarioExterno
 	@Get
 	@Post
 	@Path({ "/public/app/lotacao/selecionar", "app/lotacao/selecionar", "/lotacao/selecionar.action" })

@@ -53,6 +53,7 @@ import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -64,6 +65,7 @@ import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.cp.model.CpOrgaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpLotacaoSelecao;
 import br.gov.jfrj.siga.cp.model.DpPessoaSelecao;
+import br.gov.jfrj.siga.cp.model.enm.CpMarcadorEnum;
 import br.gov.jfrj.siga.cp.model.enm.CpTipoDeConfiguracao;
 import br.gov.jfrj.siga.dp.CpOrgaoUsuario;
 import br.gov.jfrj.siga.dp.DpPessoa;
@@ -74,6 +76,7 @@ import br.gov.jfrj.siga.ex.ExMarca;
 import br.gov.jfrj.siga.ex.ExMobil;
 import br.gov.jfrj.siga.ex.ExModelo;
 import br.gov.jfrj.siga.ex.ExNivelAcesso;
+import br.gov.jfrj.siga.ex.ExPapel;
 import br.gov.jfrj.siga.ex.ExTipoDocumento;
 import br.gov.jfrj.siga.ex.ExTipoFormaDoc;
 import br.gov.jfrj.siga.ex.bl.Ex;
@@ -82,6 +85,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeAcessarDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodePorConfiguracao;
 import br.gov.jfrj.siga.ex.logic.ExPodeReceber;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.GenericoSelecao; 
 import br.gov.jfrj.siga.model.Selecionavel;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
@@ -100,6 +104,7 @@ public class ExMobilController extends
 	private static final int MAX_ITENS_PAGINA_RECLASSIFICACAO_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_ARQUIVAR_CORRENTE_LOTE = 200;
 	private static final int MAX_ITENS_PAGINA_CINQUENTA = 50;
+	private static final int MAX_ITENS_PAGINA_USUARIO_EXTERNO = 10;
 	/**
 	 * @deprecated CDI eyes only
 	 */
@@ -1219,4 +1224,90 @@ public class ExMobilController extends
 		
 	}
 	
+	@UsuarioExterno
+	@Get("/app/expediente/doc/mesa-usuario-externo")
+	public void mesaUsuarioExterno(final String sigla, final int offset) throws InterruptedException {
+		
+		if (sigla != null && !sigla.isEmpty()) {
+			final ExMobilDaoFiltro filter = new ExMobilDaoFiltro();
+			filter.setSigla(sigla);
+			ExMobil mob = (ExMobil) dao().consultarPorSigla(filter);
+			ExDocumento doc = mob.doc();
+			ExMobil geral = doc.getMobilGeral();
+			boolean interessado = false;
+			for (ExMarca marca : geral.getExMarcaSetAtivas()) {
+				if (marca.getCpMarcador().getIdMarcador().equals(CpMarcadorEnum.COMO_INTERESSADO.getId()) 
+						&& getCadastrante().getIdInicial().equals(marca.getDpPessoaIni().getId())) {
+					interessado = true;
+					break;
+				}
+			}
+			
+			if (!interessado && doc.getSubscritor() != null 
+					&& getCadastrante().getIdInicial().equals(doc.getSubscritor().getIdInicial())) {
+				ContextoPersistencia.upgradeToTransactional();
+				Ex.getInstance().getBL().vincularPapel(getCadastrante(), getLotaCadastrante(), geral, 
+						null, getLotaCadastrante(), getCadastrante(), getCadastrante(), getTitular(), 
+						null, null, dao().em().find(ExPapel.class, ExPapel.PAPEL_INTERESSADO));
+				ContextoPersistencia.flushTransactionAndDowngradeToNonTransactional();
+				
+				// Parece ser necessário aguardar algum tempo antes de redirecionar para que o documento
+				// recém criado apareça na lista
+				//
+				Thread.sleep(1000);
+				result.redirectTo("/app/expediente/doc/mesa-usuario-externo");
+				return;
+			}
+		}
+		
+		
+		Long pessoaId = null;
+		Long lotacaoId = null;
+		pessoaId = getTitular().getPessoaInicial().getId();
+		
+		final ExMobilDaoFiltro flt = createDaoFiltro();
+		flt.setIdOrgaoUsu(null);
+		flt.setUltMovIdEstadoDoc(CpMarcadorEnum.COMO_INTERESSADO.getId());
+		flt.setUltMovRespSelId(getCadastrante().getIdInicial());
+		Integer tamanho = dao().consultarQuantidadePorFiltroOtimizado(flt, getTitular(), getLotaTitular());
+		
+		// Tenta localizar a página do usuário por email, ou usa a página padrão
+		String paginaModelosUrl = null;
+		String email = getCadastrante().getEmailPessoa();
+		String[] partes = email.split("@");
+        if (partes.length > 1) {
+            String machineName = partes[1];
+            String paginaProperty = "siga.usuario.externo.pagina.modelos." + machineName.toLowerCase() + ".url";
+            paginaModelosUrl = System.getProperty(paginaProperty);
+        }
+        if (paginaModelosUrl == null)
+        	paginaModelosUrl = Prop.get("/siga.usuario.externo.pagina.modelos.url");
+        result.include("paginaModelosUrl", paginaModelosUrl);
+        
+		if (Objects.nonNull(tamanho)) {
+			setItemPagina(MAX_ITENS_PAGINA_USUARIO_EXTERNO);
+			final List<Object[]> itens = dao().consultarPorFiltroOtimizado(flt, offset, getItemPagina(), getTitular(), getLotaTitular());
+			
+			for (Object[] item : itens) {
+				ExMobil m = (ExMobil) ((ExDocumento) item[0]).getMobilDefaultParaReceberJuntada();
+				item[1] = m;
+				item[2] = null;
+				if (m == null) 
+					continue;
+				SortedSet<ExMarca> set = m.getExMarcaSetAtivas();
+				if (set == null || set.isEmpty())
+					continue;
+				item[2] = set.first();
+			}
+			
+			getP().setOffset(offset);
+			setItens(itens);
+			setTamanho(tamanho);
+
+			result.include("itens", this.getItens());
+			result.include("itemPagina", this.getItemPagina());
+			result.include("tamanho", this.getTamanho());
+			result.include("currentPageNumber", calculaPaginaAtual(offset));
+		}
+	}
 }

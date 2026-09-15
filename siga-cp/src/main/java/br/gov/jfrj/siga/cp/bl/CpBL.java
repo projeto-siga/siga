@@ -3069,4 +3069,10 @@ public class CpBL {
 	public int quantidadeTentativasRestantes(CpIdentidade identidade) {
 		return CpIdentidade.PIN_NUM_MAX_TENTATIVAS - identidade.getPinContadorTentativa().intValue();
 	}
+	
+	public static boolean isUsuarioExterno(DpPessoa cadastrante, DpLotacao lotacao) {
+		if (cadastrante == null || lotacao == null)
+			return false;
+		return lotacao.getIdInicial().equals(Prop.getLong("/siga.usuario.externo.criar.no.id.lotacao"));
+	}
 }

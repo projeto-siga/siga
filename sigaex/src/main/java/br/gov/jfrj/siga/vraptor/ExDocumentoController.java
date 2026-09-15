@@ -68,6 +68,7 @@ import br.com.caelum.vraptor.observer.download.InputStreamDownload;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.Prop;
 import br.gov.jfrj.siga.base.RegraNegocioException;
@@ -127,6 +128,7 @@ import br.gov.jfrj.siga.ex.model.enm.ExTipoDeMovimentacao;
 import br.gov.jfrj.siga.ex.util.FuncoesEL;
 import br.gov.jfrj.siga.ex.vo.ExDocumentoVO;
 import br.gov.jfrj.siga.hibernate.ExDao;
+import br.gov.jfrj.siga.model.ContextoPersistencia;
 import br.gov.jfrj.siga.model.Selecao;
 import br.gov.jfrj.siga.persistencia.ExMobilDaoFiltro;
 import br.gov.jfrj.siga.vraptor.builder.BuscaDocumentoBuilder;
@@ -474,6 +476,7 @@ public class ExDocumentoController extends ExController {
 				exDocumentoDTO.getSigla());
 	}
 
+	@UsuarioExterno
 	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/recarregar")
 	public ExDocumentoDTO recarregar(final ExDocumentoDTO exDocumentoDTO,
@@ -501,6 +504,7 @@ public class ExDocumentoController extends ExController {
 		return exDocumentoDTO;
 	}
 
+	@UsuarioExterno
 	@Post("app/expediente/doc/editar")
 	@Get("app/expediente/doc/editar")
 	@RequestParamsPermissiveCheck
@@ -897,7 +901,6 @@ public class ExDocumentoController extends ExController {
 		result.include("podeExibirArvoreDocsSubscr", podeExibirArvoreDocsSubscr);
 		result.include("tamanhoMaximoArquivo", TAMANHO_MAXIMO_CAPTURADO);
 		result.include("tamanhoMaximoArquivoFormatoLivre", TAMANHO_MAXIMO_CAPTURADO_FORMATO_LIVRE);
-		
 
 		// Desabilita a proteção contra injeção maldosa de html e js
 		this.response.addHeader("X-XSS-Protection", "0");
@@ -1651,9 +1654,10 @@ public class ExDocumentoController extends ExController {
 
 		result.redirectTo("exibir?sigla=" + exDocumentoDto.getDoc().getCodigo());
 	}
-
+	
 	@Transacional
 	@RequestParamsPermissiveCheck
+	@UsuarioExterno
 	@Post("/app/expediente/doc/gravar")
 	public void gravar(final ExDocumentoDTO exDocumentoDTO,
 			final String[] vars, final String[] campos,
@@ -1910,7 +1914,7 @@ public class ExDocumentoController extends ExController {
 				// }
 			}
 
-			exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
+			ExDocumento doc = exBL.gravar(getCadastrante(), getTitular(), getLotaTitular(),
 					exDocumentoDTO.getDoc());
 			
 			/*
@@ -1967,7 +1971,6 @@ public class ExDocumentoController extends ExController {
 						"Erro ao tentar incluir os cosignatários deste documento",
 						0, e);
 			}
-
 		} catch (final AplicacaoException e) {
 			throw e;
 		} catch (final Exception e) {
@@ -1980,15 +1983,31 @@ public class ExDocumentoController extends ExController {
 							.getDtRegDocDDMMYY());
 			result.use(Results.http()).body(body);
 		} else {
-			final String url = MessageFormat.format(
+			if (isUsuarioExterno()) {
+				ExDocumento doc = exDocumentoDTO.getDoc();
+				if (!doc.isFinalizado())
+					Ex.getInstance().getBL().finalizar(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), doc);
+				ContextoPersistencia.flushTransaction();
+				ContextoPersistencia.getEntityManager().clear();
+				doc = dao().carregar(doc);
+				try {
+					Ex.getInstance().getBL().tratarDocumentosSubmetidosNaEntrevista(getCadastrante(), getLotaCadastrante(), getTitular(), getLotaTitular(), doc);
+				} catch (Exception exc) {
+					throw new RuntimeException("Erro no tratamento dos documentos submetidos na entrevista", exc);
+				}
+				final String url = MessageFormat.format("{0}/sigaex/app/expediente/mov/assinar-principal-e-juntados?sigla={1}",
+					Contexto.urlBase(request), doc.getSigla());
+				result.redirectTo(url);
+			} else {
+				final String url = MessageFormat.format(
 					"exibir?sigla={0}{1}",
 					exDocumentoDTO.getDoc().getSigla(),
-					exDocumentoDTO.getDesativ() == null ? "" : exDocumentoDTO
-							.getDesativ());
-			result.redirectTo(url);
+					exDocumentoDTO.getDesativ() == null ? "" : exDocumentoDTO.getDesativ());
+				result.redirectTo(url);
+			}
 		}
 	}
-
+	
 	@Transacional
 	@RequestParamsPermissiveCheck
 	@Post("app/expediente/doc/gravarpreench")

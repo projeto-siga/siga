@@ -41,6 +41,19 @@ function getQueryParameterByName(name, url = window.location.href) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+function renumberDocumentSubmissionIndexes() {
+    var $fields = $('input[type="hidden"]').filter(function() {
+	    return this.name.endsWith('_document_submission_index');
+    });
+    $fields.each(function (index) {
+		if (this.value != index + 1) {
+			console.log('renumerando índice de submissão de ' + this.value + ' para ' + (index + 1));		
+	        this.value = index + 1; // sequência começa em 1
+		}
+    });
+    return $fields.length;
+}
+
 // <c:set var="url" value="editar" />
 function sbmt(id) {
 	var frm = document.getElementById('frm');
@@ -54,7 +67,7 @@ function sbmt(id) {
 		onSave();
 	}
 	if (id && !IsRunningAjaxRequest()) {
-		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
+		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id, renumberDocumentSubmissionIndexes);
 	} else {
 		var paiSigla = document.getElementsByName('exDocumentoDTO.mobilPaiSel.sigla')[0].value;
 		var criandoAnexo = document.getElementsByName('exDocumentoDTO.criandoAnexo')[0].value;
@@ -81,7 +94,7 @@ function sbmt(id) {
 		frm.submit = frm.submitsave;
 		frm.submit();
 	} else {
-		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id);
+		ReplaceInnerHTMLFromAjaxResponse('recarregar', frm, id, renumberDocumentSubmissionIndexes);
 	}
 }
 

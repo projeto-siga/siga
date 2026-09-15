@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.impl.dv.util.Base64;
+import org.hibernate.Hibernate;
 import org.jboss.logging.Logger;
 import org.json.JSONObject;
 
@@ -64,6 +64,7 @@ import br.gov.jfrj.itextpdf.Documento;
 import br.gov.jfrj.itextpdf.Stamp;
 import br.gov.jfrj.siga.base.AcaoVO;
 import br.gov.jfrj.siga.base.AplicacaoException;
+import br.gov.jfrj.siga.base.Contexto;
 import br.gov.jfrj.siga.base.Correio;
 import br.gov.jfrj.siga.base.Data;
 import br.gov.jfrj.siga.base.DateUtils;
@@ -879,6 +880,35 @@ public class ExMovimentacaoController extends ExController {
 		result.include("tramitarFixo", afTramite.fixo);
 		result.include("tramitarExplicacao", afTramite.explicacao);
 	}
+	
+	@Transacional
+	@UsuarioExterno
+	@Get("app/expediente/mov/assinar-principal-e-juntados")
+	public void aAssinarPrincipalEJuntados(String sigla, Boolean autenticando) throws Exception {
+		aAssinar(sigla, autenticando);
+		
+		BuscaDocumentoBuilder builder = BuscaDocumentoBuilder.novaInstancia()
+				.setSigla(sigla);
+		ExDocumento doc = buscarDocumento(builder);
+		List<ExDocumento> l = new ArrayList<>();
+		if (doc.isPendenteDeAssinatura())
+			l.add(doc);
+
+		ExMobil mob = doc.getPrimeiroMobil();
+		if (mob != null) {
+			List<ExMovimentacao> juntadasAtivas = Ex.getInstance().getBL().juntadasAtivas(mob);
+			if (juntadasAtivas != null) {
+				for (ExMovimentacao mov : juntadasAtivas) {
+					ExDocumento juntado = (ExDocumento) Hibernate.unproxy(mov.getExMobil().doc());
+					if (juntado.isPendenteDeAssinatura())
+						l.add(juntado);
+				}
+			}
+		}
+		result.include("juntados", l);
+		result.include("usuarioExterno", isUsuarioExterno());
+	}
+
 	
 	private boolean permiteAutenticar(ExDocumento doc) {
 		ExPodeAutenticarDocumento podeAutenticar = new ExPodeAutenticarDocumento(doc, getTitular(), getLotaTitular());
@@ -3459,6 +3489,7 @@ public class ExMovimentacaoController extends ExController {
 	}
 
 	@Transacional
+	@UsuarioExterno
 	@Post("/app/expediente/mov/assinar_senha_gravar")
 	public void aAssinarSenhaGravar(String sigla, final Boolean copia, final Boolean juntar, 
 			final Boolean tramitar, final Boolean exibirNoProtocolo, String nomeUsuarioSubscritor,

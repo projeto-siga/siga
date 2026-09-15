@@ -148,7 +148,7 @@ public abstract class AbstractExMobil extends Objeto implements Serializable {
 
 	@BatchSize(size=1)
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobilPai")
-	private java.util.Set<ExDocumento> exDocumentoFilhoSet;
+	private java.util.Set<ExDocumento> exDocumentoFilhoSet = new TreeSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "exMobil")
 	@Sort(type = SortType.NATURAL)

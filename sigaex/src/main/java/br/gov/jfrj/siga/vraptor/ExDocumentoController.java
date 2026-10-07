@@ -114,6 +114,7 @@ import br.gov.jfrj.siga.ex.logic.ExPodeDuplicar;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditar;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditarData;
 import br.gov.jfrj.siga.ex.logic.ExPodeEditarDescricao;
+import br.gov.jfrj.siga.ex.logic.ExPodeEditarDocumentoFilhoPorUsuarioExterno;
 import br.gov.jfrj.siga.ex.logic.ExPodeExibirQuemTemAcessoAoDocumento;
 import br.gov.jfrj.siga.ex.logic.ExPodeFinalizar;
 import br.gov.jfrj.siga.ex.logic.ExPodeIncluirDocumento;
@@ -668,7 +669,6 @@ public class ExDocumentoController extends ExController {
 			}
 		}
 		
-
 		if (exDocumentoDTO.getTipoDocumento() != null
 				&& exDocumentoDTO.getTipoDocumento().equals("externo")) {
 			exDocumentoDTO.setIdMod(((ExModelo) dao()
@@ -679,7 +679,10 @@ public class ExDocumentoController extends ExController {
 
 		if (exDocumentoDTO.getMobilPaiSel().getId() != null) {
 			hasPai = true;
-			isPaiEletronico = exDocumentoDTO.getMobilPaiSel().buscarObjeto().doc().isEletronico();
+			ExMobil pai = exDocumentoDTO.getMobilPaiSel().buscarObjeto();
+			isPaiEletronico = pai.doc().isEletronico();
+			Ex.getInstance().getComp().afirmar("Não é permitido criar documento filho de documento no qual o usuário externo não consta como interessado", 
+					ExPodeEditarDocumentoFilhoPorUsuarioExterno.class, getTitular(), getLotaTitular(), pai);
 		}
 		
 		final CpSituacaoDeConfiguracaoEnum idSit = Ex
@@ -1673,9 +1676,10 @@ public class ExDocumentoController extends ExController {
 			if (mobPai != null) {
 				if (mobPai.isGeral() && mobPai.doc().isProcesso())
 					mobPai = mobPai.doc().getMobilDefaultParaReceberJuntada();
-				Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + mobPai.getSigla()
-						+ " pelo usuário " + getTitular().getSigla() + ".", 
-						ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), mobPai);
+				if (!ContextoPersistencia.isUsuarioExterno())
+					Ex.getInstance().getComp().afirmar("Documento não pode ser incluído no documento " + mobPai.getSigla()
+							+ " pelo usuário " + getTitular().getSigla() + ".", 
+							ExPodeIncluirDocumento.class, getTitular(), getLotaTitular(), mobPai);
 			}
 		}
 		

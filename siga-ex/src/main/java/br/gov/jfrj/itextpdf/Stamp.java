@@ -34,13 +34,20 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.Barcode39;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
+import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfRectangle;
 import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.PdfWriter;
 import com.swetake.util.Qrcode;
 
@@ -81,8 +88,9 @@ public class Stamp {
 			abPdf = estamparAssinaturas(abPdf, idsAssinantes);
 
 		PdfReader pdfIn = new PdfReader(abPdf);
-		
-		if (!tamanhoOriginal) { 
+
+		List<List<PdfDictionary>> linksPorPagina = null;
+		if (!tamanhoOriginal) {
 			Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
 			try (ByteArrayOutputStream boA4 = new ByteArrayOutputStream()) {
 	
@@ -90,6 +98,8 @@ public class Stamp {
 				doc.open();
 				PdfContentByte cb = writer.getDirectContent();
 				
+				linksPorPagina = new ArrayList<List<PdfDictionary>>(pdfIn.getNumberOfPages());
+
 				// Resize every page to A4 size
 				for (int i = 1; i <= pdfIn.getNumberOfPages(); i++) {
 					int rot = pdfIn.getPageRotation(i);
@@ -118,30 +128,39 @@ public class Stamp {
 					double scale = Math.min(pw / w, ph / h);
 	
 					// do my transformations :
-					cb.transform(AffineTransform.getScaleInstance(scale, scale));
-	
+					// A mesma sequência de transformações é acumulada em "at", na mesma
+					// ordem, para que copiarLinks() reposicione as âncoras junto com o
+					// conteúdo redimensionado
+					AffineTransform at = new AffineTransform();
+
+					transformar(cb, at, AffineTransform.getScaleInstance(scale, scale));
+
 					if (!internoProduzido) {
-						cb.transform(AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
-						cb.transform(AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
+						transformar(cb, at, AffineTransform.getTranslateInstance(pw * SAFETY_MARGIN, ph * SAFETY_MARGIN));
+						transformar(cb, at, AffineTransform.getScaleInstance(1.0f - 2 * SAFETY_MARGIN, 1.0f - 2 * SAFETY_MARGIN));
 					}
-	
+
 					if (rot != 0) {
 						double theta = -rot * (Math.PI / 180);
 						if (rot == 180) {
-							cb.transform(AffineTransform.getRotateInstance(theta, w / 2, h / 2));
+							transformar(cb, at, AffineTransform.getRotateInstance(theta, w / 2, h / 2));
 						} else {
-							cb.transform(AffineTransform.getRotateInstance(theta, h / 2, w / 2));
+							transformar(cb, at, AffineTransform.getRotateInstance(theta, h / 2, w / 2));
 						}
 						if (rot == 90) {
-							cb.transform(AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
+							transformar(cb, at, AffineTransform.getTranslateInstance((w - h) / 2, (w - h) / 2));
 						} else if (rot == 270) {
-							cb.transform(AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
+							transformar(cb, at, AffineTransform.getTranslateInstance((h - w) / 2, (h - w) / 2));
 						}
 					}
-	
+
 					// put the page
 					cb.addTemplate(page, 0, 0);
 					cb.restoreState();
+
+					List<PdfDictionary> linksDaPagina = new ArrayList<PdfDictionary>();
+					copiarLinks(pdfIn, i, at, linksDaPagina);
+					linksPorPagina.add(linksDaPagina);
 				}
 				doc.close();
 	
@@ -154,6 +173,24 @@ public class Stamp {
 
 			final int n = reader.getNumberOfPages();
 			final PdfStamper stamp = new PdfStamper(reader, bo2);
+
+			// Anexa às páginas, sem alteração de coordenadas, os links copiados
+			// durante o redimensionamento para A4
+			if (linksPorPagina != null) {
+				for (int i = 1; i <= linksPorPagina.size(); i++) {
+					List<PdfDictionary> linksDaPagina = linksPorPagina.get(i - 1);
+					if (linksDaPagina.isEmpty())
+						continue;
+					PdfDictionary pageDict = reader.getPageN(i);
+					PdfArray annots = pageDict.getAsArray(PdfName.ANNOTS);
+					if (annots == null) {
+						annots = new PdfArray();
+						pageDict.put(PdfName.ANNOTS, annots);
+					}
+					for (PdfDictionary link : linksDaPagina)
+						annots.add(stamp.getWriter().addToBody(link).getIndirectReference());
+				}
+			}
 
 			// adding content to each page
 			int i = 0;
@@ -404,6 +441,96 @@ public class Stamp {
 		}
 	}
 	
+	// O addTemplate usado no redimensionamento para A4 copia apenas o conteúdo da
+	// página, perdendo as anotações. Este método produz, para a página nova, a
+	// cópia dos links externos (anotações /Link com ação /URI) da página original,
+	// com o /Rect transformado pela mesma matriz aplicada ao conteúdo. As anotações
+	// são criadas como dicionários simples e anexadas diretamente ao /Annots da
+	// página na fase do carimbo, porque as APIs de anotação do iText aplicam uma
+	// rotação adicional às coordenadas em páginas com /Rotate.
+	private static void copiarLinks(PdfReader reader, int pagina, AffineTransform at, List<PdfDictionary> destino) {
+		PdfArray annots = reader.getPageN(pagina).getAsArray(PdfName.ANNOTS);
+		if (annots == null)
+			return;
+		for (int k = 0; k < annots.size(); k++) {
+			PdfObject obj = PdfReader.getPdfObject(annots.getPdfObject(k));
+			if (!(obj instanceof PdfDictionary))
+				continue;
+			PdfDictionary annot = (PdfDictionary) obj;
+			if (!PdfName.LINK.equals(annot.getAsName(PdfName.SUBTYPE)))
+				continue;
+			PdfDictionary action = annot.getAsDict(PdfName.A);
+			if (action == null || !PdfName.URI.equals(action.getAsName(PdfName.S)))
+				continue;
+			PdfString uri = action.getAsString(PdfName.URI);
+			PdfArray rect = annot.getAsArray(PdfName.RECT);
+			if (uri == null || rect == null || rect.size() != 4)
+				continue;
+
+			float[] r = new float[4];
+			boolean ok = true;
+			for (int j = 0; j < 4; j++) {
+				PdfNumber n = rect.getAsNumber(j);
+				if (n == null) {
+					ok = false;
+					break;
+				}
+				r[j] = n.floatValue();
+			}
+			if (!ok)
+				continue;
+
+			// transforma os 4 cantos do retângulo e recalcula o /Rect como o menor
+			// retângulo que os contém
+			float[] pts = { r[0], r[1], r[2], r[1], r[2], r[3], r[0], r[3] };
+			at.transform(pts, 0, pts, 0, 4);
+			float x1 = Math.min(Math.min(pts[0], pts[2]), Math.min(pts[4], pts[6]));
+			float y1 = Math.min(Math.min(pts[1], pts[3]), Math.min(pts[5], pts[7]));
+			float x2 = Math.max(Math.max(pts[0], pts[2]), Math.max(pts[4], pts[6]));
+			float y2 = Math.max(Math.max(pts[1], pts[3]), Math.max(pts[5], pts[7]));
+
+			PdfDictionary link = new PdfDictionary();
+			link.put(PdfName.SUBTYPE, PdfName.LINK);
+			link.put(PdfName.RECT, new PdfRectangle(x1, y1, x2, y2));
+			PdfDictionary acao = new PdfDictionary();
+			acao.put(PdfName.S, PdfName.URI);
+			acao.put(PdfName.URI, new PdfString(uri.toUnicodeString()));
+			link.put(PdfName.A, acao);
+
+			// áreas de clique não retangulares: transforma também os QuadPoints,
+			// quando existirem
+			PdfArray quadPoints = annot.getAsArray(PdfName.QUADPOINTS);
+			if (quadPoints != null && quadPoints.size() % 2 == 0) {
+				float[] q = new float[quadPoints.size()];
+				boolean qok = true;
+				for (int j = 0; j < q.length; j++) {
+					PdfNumber n = quadPoints.getAsNumber(j);
+					if (n == null) {
+						qok = false;
+						break;
+					}
+					q[j] = n.floatValue();
+				}
+				if (qok) {
+					at.transform(q, 0, q, 0, q.length / 2);
+					PdfArray novosQuadPoints = new PdfArray();
+					for (float v : q)
+						novosQuadPoints.add(new PdfNumber(v));
+					link.put(PdfName.QUADPOINTS, novosQuadPoints);
+				}
+			}
+
+			destino.add(link);
+		}
+	}
+
+	// aplica a transformação tanto no content stream quanto na matriz usada para
+	// reposicionar as âncoras dos links
+	private static void transformar(PdfContentByte cb, AffineTransform at, AffineTransform t) {
+		cb.transform(t);
+		at.preConcatenate(t);
+	}
+
 	private static String gerarReducaoAssinaturas(boolean reduzirVisuAssinPdf, String mensagem) {
 		Pattern pattern = Pattern.compile("\\b(Assinado|Autenticado)\\b");
 		if (reduzirVisuAssinPdf && pattern.matcher(mensagem).find()) {

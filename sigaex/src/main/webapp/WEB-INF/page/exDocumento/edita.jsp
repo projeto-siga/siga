@@ -783,16 +783,18 @@
 							<c:if test='${exDocumentoDTO.tipoDocumento == "interno"}'>
 								<c:if
 									test="${not empty exDocumentoDTO.modelo.nmArqMod or exDocumentoDTO.modelo.conteudoTpBlob == 'template/freemarker'}">
-									<button type="button" name="ver_doc"
-										onclick="javascript: popitup_documento(false); return false;"
-										class="btn btn-info ${hide_only_GOVSP}" accesskey="v">
-										<u>V</u>er Documento
-									</button>
-									<button type="button" name="ver_doc_pdf"
-										onclick="javascript: popitup_documento(true); return false;"
-										class="btn btn-info" accesskey="i">
-										<fmt:message key="documento.btn.ver.impressao2" />
-									</button>
+									<c:if test="${not usuarioExterno}">
+										<button type="button" name="ver_doc"
+											onclick="javascript: popitup_documento(false); return false;"
+											class="btn btn-info ${hide_only_GOVSP}" accesskey="v">
+											<u>V</u>er Documento
+										</button>
+										<button type="button" name="ver_doc_pdf"
+											onclick="javascript: popitup_documento(true); return false;"
+											class="btn btn-info" accesskey="i">
+											<fmt:message key="documento.btn.ver.impressao2" />
+										</button>
+									</c:if>
 									<button type="button" name="voltar"
 										onclick="javascript: history.back();"
 										class="btn btn-info ${hide_only_TRF2}" accesskey="r">
@@ -958,7 +960,7 @@
 	}
 
 	$(document).ready(function() {
-		getListaModelos();
+		${usuarioExterno ? '' : 'getListaModelos();'}
 		personalizacaoSeparar();
 	});
 	window.onbeforeunload = function() {

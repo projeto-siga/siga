@@ -51,6 +51,7 @@ public class PinController extends SigaController {
 	
 	@Get
 	@Path("/troca")
+	@UsuarioExterno
 	public void troca() throws Exception {	
 		if (!Cp.getInstance().getComp().podeSegundoFatorPin( getCadastrante(), getLotaCadastrante())) {
 			throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");
@@ -60,6 +61,7 @@ public class PinController extends SigaController {
 	
 	@Get
 	@Path("/reset")
+	@UsuarioExterno
 	public void reset() throws Exception {	
 		if (!Cp.getInstance().getComp().podeSegundoFatorPin( getCadastrante(), getLotaCadastrante())) {
 			throw new AplicacaoException("PIN como Segundo Fator de Autenticação: Acesso não permitido a esse recurso.");

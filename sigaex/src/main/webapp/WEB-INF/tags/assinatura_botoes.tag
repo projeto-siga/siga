@@ -133,7 +133,7 @@
 						<c:if test="${not empty juntarAtivo}">
 							<div class="custom-control custom-checkbox ${hide_only_GOVSP}">
 								<input class="form-check-input " type="checkbox" name="ad_juntar_0"
-									id="ad_juntar_0" <c:if test="${juntarAtivo}">checked</c:if>
+									id="ad_juntar_0" <c:if test="${usuarioExterno ? false : juntarAtivo}">checked</c:if>
 									<c:if test="${juntarFixo}">disabled</c:if> /> <label
 									class="form-check-label" for="ad_juntar_0">Juntar</label>
 							</div>

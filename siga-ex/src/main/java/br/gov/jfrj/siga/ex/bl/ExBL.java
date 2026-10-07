@@ -1945,7 +1945,7 @@ public class ExBL extends CpBL {
 			if (juntar == null)
 				juntar = deveJuntarAutomaticamente(cadastrante, lotaCadastrante, doc);
 
-			if (doc.getExMobilPai() != null && juntar) {
+			if (doc.getExMobilPai() != null && juntar) { 
 				if (doc.getExMobilPai().getDoc().isProcesso() && doc.getExMobilPai().isVolumeEncerrado()) {
 					doc.setExMobilPai(doc.getExMobilPai().doc().getUltimoVolume());
 					gravar(cadastrante, cadastrante, lotaCadastrante, doc);
@@ -1953,7 +1953,9 @@ public class ExBL extends CpBL {
 				// Receber o móbil pai caso ele tenha sido tramitado para o cadastrante ou sua lotação
 				if (Ex.getInstance().getComp().pode(ExPodeReceber.class, cadastrante, lotaCadastrante, doc.getExMobilPai())) 
 					receber(cadastrante, cadastrante, lotaCadastrante, doc.getExMobilPai(), null);
-				juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
+				if (!ContextoPersistencia.isUsuarioExterno() 
+						|| Ex.getInstance().getComp().pode(ExPodeMovimentar.class, cadastrante, lotaCadastrante, doc.getExMobilPai())) 
+					juntarAoDocumentoPai(cadastrante, lotaCadastrante, doc, dtMov, cadastrante, cadastrante, mov);
 			}
 
 			if (doc.getExMobilAutuado() != null) {
@@ -2051,7 +2053,6 @@ public class ExBL extends CpBL {
 		
 		if (isUsuarioExterno(cadastrante, lotaCadastrante)) {
 			matriculaSubscritor = cadastrante.getSigla();
-			validarSenha = false;
 		}
 
 		final CpIdentidade id = dao().consultaIdentidadeCadastrante(matriculaSubscritor, true);

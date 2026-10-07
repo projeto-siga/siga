@@ -9,8 +9,10 @@ import br.gov.jfrj.siga.cp.CpToken;
 import br.gov.jfrj.siga.cp.bl.Cp;
 import br.gov.jfrj.siga.dp.DpPessoa;
 import br.gov.jfrj.siga.vraptor.Transacional;
+import br.gov.jfrj.siga.vraptor.UsuarioExterno;
 
 @Transacional
+@UsuarioExterno
 public class PinGerarTokenResetPost implements IPinGerarTokenResetPost {
 
 	@Override

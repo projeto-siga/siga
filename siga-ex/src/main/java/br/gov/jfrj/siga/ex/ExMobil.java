@@ -1399,6 +1399,25 @@ public class ExMobil extends AbstractExMobil implements Serializable, Selecionav
 		}
 		return null;
 	}
+	
+	// Obter o mobil mais alto numa cadeia de juntados
+	public ExMobil getGrandeJuntado() {
+		ExMobil mb = this;
+		Set<ExMobil> set = new HashSet<>();
+		set.add(mb);
+		
+		while (true) {
+			ExMovimentacao m = getUltimaMovimentacaoNaoCancelada(ExTipoDeMovimentacao.JUNTADA, ExTipoDeMovimentacao.CANCELAMENTO_JUNTADA);
+			if (m == null || mb == m.getExMobilRef())
+				return mb;
+			mb = m.getExMobilRef();
+			if (mb == null)
+				throw new RuntimeException("Juntada realizada sem informação do documento referente");
+			if (set.contains(mb))
+				throw new RuntimeException("Juntada cíclica detectada");
+			set.add(mb);
+		}
+	}
 
 	public SortedSet<ExMobil> getMobilEApensosExcetoVolumeApensadoAoProximo() {
 		TreeSet<ExMobil> setFinal = new TreeSet<ExMobil>();
